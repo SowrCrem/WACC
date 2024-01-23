@@ -1,0 +1,20 @@
+stages:
+  - build
+  - test
+
+build-job:
+  stage: build
+  script: 
+    - make
+
+test_job:
+  stage: test
+  script:
+    - scala-cli test . > test_output.txt || true
+    - FAILED_TESTS=$(grep -c "FAILED" test_output.txt)
+    - echo "Number of tests failed"
+    - echo $FAILED_TESTS
+  artifacts:
+    paths:
+      - test_output.txt
+  allow_failure: true

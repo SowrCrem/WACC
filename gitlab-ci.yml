@@ -1,0 +1,13 @@
+stages:
+  - build
+  - test
+
+build-job:
+  stage: build
+  script: 
+  - scala-cli compile .
+
+test-job:
+  stage: test
+  script:
+  - scala-cli test .

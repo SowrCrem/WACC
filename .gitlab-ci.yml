@@ -5,6 +5,7 @@ stages:
 build-job:
   stage: build
   script: 
+    - ls
     - make
 
 test_job:

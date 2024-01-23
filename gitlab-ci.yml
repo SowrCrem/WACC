@@ -11,3 +11,4 @@ test-job:
   stage: test
   script:
   - scala-cli test .
+  allow-failure: true

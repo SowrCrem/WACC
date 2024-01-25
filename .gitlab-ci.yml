@@ -1,15 +1,3 @@
-before_script:
-  - |
-    if ! command -v scala-cli &> /dev/null
-    then
-      echo "Installing scala-cli..."
-      curl -fLo cs https://git.io/coursier-cli-"$(uname | tr LD ld)"
-      chmod +x cs
-      ./cs install scala-cli
-    else
-      echo "scala-cli is already installed."
-    fi
-
 stages:
   - build
   - test

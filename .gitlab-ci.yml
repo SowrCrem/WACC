@@ -14,7 +14,7 @@ test_job:
   stage: test
   image: jamacz/scala-cli:latest
   script:
-    - scala-cli test .
+    - scala-cli --power test .
   artifacts:
     paths:
       - test_output.txt

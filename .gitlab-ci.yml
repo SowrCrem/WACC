@@ -11,9 +11,7 @@ build-job:
 test_job:
   stage: test
   script:
-    - scala-cli test . > test_output.txt || true
-    - FAILED_TESTS=$(grep -c "FAILED" test_output.txt)
-    - echo "Number of tests failed: $FAILED_TESTS"
+    - scala-cli test .
   artifacts:
     paths:
       - test_output.txt

@@ -6,7 +6,6 @@ build-job:
   stage: build
   image: jamacz/scala-cli:latest
   script: 
-    - apt-get update && apt-get install -y make  # Install make
     - ls
     - make
 

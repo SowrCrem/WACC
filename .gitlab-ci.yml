@@ -7,7 +7,7 @@ build-job:
   image: jamacz/scala-cli:latest
   script: 
     - ls
-    - make
+    - scala-cli --power package . --server=false --jvm system --force
 
 test_job:
   stage: test

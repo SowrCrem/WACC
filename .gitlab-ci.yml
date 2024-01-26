@@ -4,14 +4,14 @@ stages:
 
 build-job:
   stage: build
-  image: jamacz/scala-cli:latest
+  image: gumjoe/wacc-ci-scala:slim
   script: 
     - ls
     - scala-cli --power package . --server=false --jvm system --force
 
 test_job:
   stage: test
-  image: jamacz/scala-cli:latest
+  image: gumjoe/wacc-ci-scala:slim
   script:
     - scala-cli --power test .
   artifacts:

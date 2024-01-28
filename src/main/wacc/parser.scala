@@ -8,8 +8,8 @@ import lexer.implicits.implicitSymbol
 import lexer.{integer, fully, char, implicits, ident, string}
 
 object parser {
-    def parse(input: String): Result[String, Node] = parser.parse(input)
-    private val parser = fully(program)
+    // def parse(input: String): Result[String, Node] = parser.parse(input)
+    val parser = fully(program)
 
     private lazy val program: Parsley[Node] = expr
     
@@ -21,13 +21,13 @@ object parser {
     lazy val atoms: Parsley[Atom] = {
         val int = integer.map(n => {if (n.isValidInt) IntLiterNode(n.toInt) else ErrorNode("Integer too large")})
         val bool = ("true" as BoolLiterNode(true)) | ("false" as BoolLiterNode(false))
-        val char = ("'" ~> lexer.char <~ "'") map CharLiterNode
+        val char = lexer.char map CharLiterNode
         val string = lexer.string map StringLiterNode
         val ident = lexer.ident map IdentNode
         val brackets = "(" ~> expr <~ ")" map BracketsNode
         val pair = "null" as PairLiterNode()
         
-        int | bool | char | string | ident | pair
+        int | bool | char | string | ident | brackets | pair
     }
 
     

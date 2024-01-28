@@ -5,7 +5,6 @@ import parsley.token.descriptions._
 import parsley.token.errors._
 import parsley.token.numeric._
 import parsley.token.symbol._
-import parsley.combinator._
 import parsley.character.{noneOf, string}
 
 

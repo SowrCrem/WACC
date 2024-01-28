@@ -3,6 +3,7 @@ package wacc
 import parsley.{Success, Failure}
 import scala.sys.process._
 
+
 object Main {
     def main(args: Array[String]): Unit = {
         println("hello WACC!")
@@ -16,7 +17,7 @@ object Main {
         args.headOption match {
             case Some(filename) => {
             val expr = ("cat " + filename).!!
-                    parser.parse(expr) match {
+                    parser.parser.parse(expr) match {
                     case Success(x) => { 
                         println(s"$expr = $x")
                         0

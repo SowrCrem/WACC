@@ -34,31 +34,31 @@ class lexerTests extends AnyFlatSpec {
   }
 
   "atom" should "parse int literals" in {
-    atoms.parse("123") shouldBe Success(IntLiter(123))
+    intParser.parse("123") shouldBe Success(IntLiter(123))
   }
 
   it should "parse bool literals" in {
-    atoms.parse("true") shouldBe Success(BoolLiter(true))
+    boolParser.parse("true") shouldBe Success(BoolLiter(true))
   }
 
   it should "parse char literals" in {
-    atoms.parse("'a'") shouldBe Success(CharLiter('a'))
+    charParser.parse("'a'") shouldBe Success(CharLiter('a'))
   }
 
   it should "parse string literals" in {
-    atoms.parse("\"hello\"") shouldBe Success(StringLiter("hello"))
+    stringParser.parse("\"hello\"") shouldBe Success(StringLiter("hello"))
   }
 
   it should "parse identifiers" in {
-    atoms.parse("hello") shouldBe Success(Ident("hello"))
+    identifierParser.parse("hello") shouldBe Success(Ident("hello"))
   }
 
   it should "parse brackets" in {
-    atoms.parse("(123)") shouldBe Success(Brackets(IntLiter(123)))
+    bracketsParser.parse("(123)") shouldBe Success(Brackets(IntLiter(123)))
   }
 
   it should "parse pair literals" in {
-    atoms.parse("null") shouldBe Success(Null())
+    pairLitParser.parse("null") shouldBe Success(Null())
   }
 
 }

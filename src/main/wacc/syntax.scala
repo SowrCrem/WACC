@@ -5,11 +5,56 @@ sealed trait Node
 
 
 
+// Statements (Extending Node)
+sealed trait Stat extends Node
+
+case class Skip() extends Stat
+case class IdentAsgn (typeNode: Type, ident: Expr, expr:RValue) extends Stat
+object IdentAsgn extends generic.ParserBridge3[Type, Expr, RValue, Stat]
+case class AsgnEq(lhs: Expr, rhs: RValue) extends Stat
+object AsgnEq extends generic.ParserBridge2[Expr, RValue, Stat]
+case class Read(lhs: LValue) extends Stat
+object Read extends generic.ParserBridge1[LValue, Stat]
+case class Free(expr: Expr) extends Stat
+object Free extends generic.ParserBridge1[Expr, Stat]
+case class Return(expr: Expr) extends Stat
+object Return extends generic.ParserBridge1[Expr, Stat]
+case class Exit(expr: Expr) extends Stat
+object Exit extends generic.ParserBridge1[Expr, Stat]
+case class Print(expr: Expr) extends Stat
+object Print extends generic.ParserBridge1[Expr, Stat]
+case class Println(expr: Expr) extends Stat
+object Println extends generic.ParserBridge1[Expr, Stat]
+case class If(expr: Expr, stat1: Stat, stat2: Stat) extends Stat
+object If extends generic.ParserBridge3[Expr, Stat, Stat, Stat]
+case class While(expr: Expr, stat: Stat) extends Stat
+object While extends generic.ParserBridge2[Expr, Stat, Stat]
+case class BeginEnd(stat: Stat) extends Stat
+object BeginEnd extends generic.ParserBridge1[Stat, Stat]
+case class StatJoin (stat1: Stat, stat2: Stat) extends Stat
+object StatJoin extends generic.ParserBridge2[Stat, Stat, Stat]
+
+// RValue 
+
+sealed trait RValue 
+
 // Expr (Extending Node)
 
-sealed trait Expr extends Node
+sealed trait Expr extends Node with RValue
 
-case class ArrayElem(ident: Ident, eList: List[Expr]) extends Expr // list of expressions so we can have x[1][2][3] etc
+
+case class newPair(fst: Expr, snd: Expr) extends Expr
+object newPair extends generic.ParserBridge2[Expr, Expr, Expr]
+
+case class Call(ident: Ident, exprList: List[Expr]) extends Expr
+object Call extends generic.ParserBridge2[Ident, List[Expr], Expr]
+
+// LValue (Extending Expr)
+
+sealed trait LValue extends Expr
+
+
+case class ArrayElem(ident: Ident, eList: List[Expr]) extends LValue// list of expressions so we can have x[1][2][3] etc
 object ArrayElem extends generic.ParserBridge2[Atom, List[Expr], Expr] {
   def apply(atom: Atom, exprList: List[Expr]): Expr = atom match {
     case ident: Ident => ArrayElem(ident, exprList)
@@ -72,14 +117,14 @@ object Len extends generic.ParserBridge1[Expr, UnaryOp]
 
 // Atoms (Extending Expr)
 sealed trait Atom extends Expr
-case class IntLiter(value: Int) extends Atom
+case class IntLiter(value: Int) extends Atom 
 case class BoolLiter(value: Boolean) extends Atom
 case class CharLiter(value: Char) extends Atom
 case class StringLiter(value: String) extends Atom
 case class Brackets(expr: Expr) extends Atom
-case class Null() extends Atom
-case class Ident(value: String) extends Atom
-case class Error(value: String) extends Atom
+case class Null() extends Atom with LValue with PairElemType
+case class Ident(value: String) extends Atom with LValue
+case class Error(value: String) extends Atom 
 
 object IntLiter extends generic.ParserBridge1[Int, Atom]
 object BoolLiter extends generic.ParserBridge1[Boolean, Atom]
@@ -92,22 +137,22 @@ object Ident extends generic.ParserBridge1[String, Atom]
 // Types 
 sealed trait Type
 
-sealed trait BaseType extends Type
-case class IntType() extends BaseType with PairElemType
-case class BoolType() extends BaseType with PairElemType
-case class CharType() extends BaseType with PairElemType
-case class StringType() extends BaseType with PairElemType
+sealed trait BaseType extends Type with PairElemType
+case class IntType() extends BaseType 
+case class BoolType() extends BaseType 
+case class CharType() extends BaseType 
+case class StringType() extends BaseType 
 
-case class ArrayType(elementType: Type) extends Type with PairElemType
-case class PairType(fst: PairElemType, snd: PairElemType) extends Type with PairElemType
+case class ArrayType(elementType: Type) extends PairElemType
 
 sealed trait PairElemType extends Type
 
 // sealed trait PairBaseType extends PairElemType
-
 // case class PairBaseIntType() extends PairBaseType
 // case class PairBaseBoolType() extends PairBaseType
 // case class PairBaseCharType() extends PairBaseType
 // case class PairBaseStringType() extends PairBaseType
 
-case class PairArrayType(elementType: Type) extends PairElemType
+
+case class PairType(fst: PairElemType, snd: PairElemType) extends Type with LValue
+object PairType extends generic.ParserBridge2[PairElemType, PairElemType, Type]

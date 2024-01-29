@@ -2,14 +2,14 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
 import wacc.{
-  IntLiterNode,
-  CharLiterNode,
-  StringLiterNode,
-  BoolLiterNode,
-  IdentNode,
-  BracketsNode,
-  PairLiterNode,
-  ErrorNode
+  IntLiter,
+  CharLiter,
+  StringLiter,
+  BoolLiter,
+  Ident,
+  Brackets,
+  PairLiter,
+  Error
 }
 import parsley.{Failure, Result, Success}
 import wacc.parser._

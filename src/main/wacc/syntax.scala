@@ -89,24 +89,25 @@ object Brackets extends generic.ParserBridge1[Expr, Atom]
 object Ident extends generic.ParserBridge1[String, Atom]
 
 
-// Type nodes
+// Types 
 sealed trait Type
 
-case class BaseType(value: String) extends Type
-case class ArrayType(elementType: Type) extends Type
-case class PairType(fst: PairElemType, snd: PairElemType) extends Type
+sealed trait BaseType extends Type
+case class IntType() extends BaseType with PairElemType
+case class BoolType() extends BaseType with PairElemType
+case class CharType() extends BaseType with PairElemType
+case class StringType() extends BaseType with PairElemType
 
-// TODO: How to add keywords 'int', 'bool', 'char', 'string'?
-// case class IntType() extends BaseType
-// case class BoolType() extends BaseType
-// case class CharType() extends BaseType
-// case class StringType() extends BaseType
+case class ArrayType(elementType: Type) extends Type with PairElemType
+case class PairType(fst: PairElemType, snd: PairElemType) extends Type with PairElemType
 
 sealed trait PairElemType extends Type
-case class PairBaseType(value: String) extends PairElemType
-case class PairArrayType(elementType: Type) extends PairElemType
-case class NestedPairType(firstType: PairElemType, secondType: PairElemType) extends PairElemType
 
-// case class PairElemTypeBase(baseType: BaseType) extends PairElemType
-// case class PairElemTypeArray(arrayType: ArrayType) extends PairElemType
-// case class PairElemTypePair(pairType: PairType) extends PairElemType
+// sealed trait PairBaseType extends PairElemType
+
+// case class PairBaseIntType() extends PairBaseType
+// case class PairBaseBoolType() extends PairBaseType
+// case class PairBaseCharType() extends PairBaseType
+// case class PairBaseStringType() extends PairBaseType
+
+case class PairArrayType(elementType: Type) extends PairElemType

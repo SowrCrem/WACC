@@ -30,7 +30,7 @@ object parser {
   val bracketsParser: Parsley[Expr] = Brackets("(" ~> expr <~ ")")
   val pairLitParser: Parsley[Expr] = "null" as Null()
   val expr: Parsley[Expr] = precedence(
-    intParser | boolParser | charParser | stringParser | identifierParser | bracketsParser | pairLitParser
+    intParser | boolParser | charParser | stringParser | identifierParser | bracketsParser | arrayelemParser | pairLitParser
   )(
     Ops(Prefix)(Not from "!"),
     Ops(Prefix)(Neg from "-"),
@@ -53,19 +53,5 @@ object parser {
 
   )
 
-//   lazy val atoms: Parsley[Atom] = {
-//     val int: Parsley[Atom] = integer.map(n => {
-//       if (n.isValidInt) IntLiter(n.toInt) else Error("Integer too large")
-//     })
-//     val bool: Parsley[Atom] =
-//       ("true" as BoolLiter(true)) | ("false" as BoolLiter(false))
-//     val char: Parsley[Atom] = CharLiter(lexer.char)
-//     val string: Parsley[Atom] = StringLiter(lexer.string)
-//     val ident: Parsley[Atom] = Ident(lexer.ident)
-//     val brackets: Parsley[Atom] = Brackets("(" ~> expr <~ ")")
-//     val pair: Parsley[Atom] = "null" as Null()
-
-//     int | bool | char | string | ident | brackets | pair
-//   }
 
 }

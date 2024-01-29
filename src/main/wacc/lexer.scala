@@ -46,13 +46,14 @@ object lexer {
         "true",
         "false",
         "null"
-      )
+      ),
+      hardOperators = Set("*", "/", "+", "-")
     )
   )
   private val lexer = new Lexer(desc)
 
 
-  val integer = lexer.lexeme.integer.decimal
+  val integer = lexer.lexeme.integer.number32
   val implicits = lexer.lexeme.symbol.implicits
   val char: Parsley[Char] = lexer.lexeme.character.ascii
   val string: Parsley[String] = lexer.lexeme.string.ascii

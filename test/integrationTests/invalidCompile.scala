@@ -21,5 +21,4 @@ class InvalidCompile extends AnyFlatSpec {
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
   }
-
 }

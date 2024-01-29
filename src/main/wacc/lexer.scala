@@ -57,6 +57,6 @@ object lexer {
   val char: Parsley[Char] = lexer.lexeme.character.ascii
   val string: Parsley[String] = lexer.lexeme.string.ascii
   val ident: Parsley[String] = lexer.lexeme.names.identifier
-
+  // lazy val arrayelem: Parsley[ArrayElem] = ident ~ ("[" *> expr.sepBy1(",") <* "]") map ArrayElem.tupled
   def fully[A](p: Parsley[A]): Parsley[A] = lexer.fully(p)
 }

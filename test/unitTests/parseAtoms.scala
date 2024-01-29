@@ -15,25 +15,12 @@ import parsley.{Failure, Result, Success}
 import wacc.parser._
 import wacc.lexer._
 
+//TODO: tests for integer overflow
+//TODO: tests for plus sign optional
+
 class parseAtoms extends AnyFlatSpec {
 
-  it should "parse int literals" in {
-    parser.parse("123") shouldBe Success(123)
-  }
-
-  it should "parse char literals" in {
-    parser.parse("'a'") shouldBe Success('a')
-  }
-
-  it should "parse string literals" in {
-    parser.parse("\"hello\"") shouldBe Success("hello")
-  }
-
-  it should "parse identifiers" in {
-    parser.parse("hello") shouldBe Success("hello")
-  }
-
-  "atom" should "parse int literals" in {
+  "prog" should "parse int literals" in {
     parser.parse("123") shouldBe Success(IntLiter(123))
   }
 
@@ -51,7 +38,7 @@ class parseAtoms extends AnyFlatSpec {
 
   it should "parse identifiers" in {
     parser.parse("hello") shouldBe Success(Ident("hello"))
-  }
+  }  
 
   it should "parse brackets" in {
     parser.parse("(123)") shouldBe Success(Brackets(IntLiter(123)))

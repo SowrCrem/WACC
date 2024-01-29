@@ -8,6 +8,7 @@ sealed trait Expr extends Node
 // Atoms (Extending Expr)
 sealed trait Atom extends Expr
 case class IntLiter(value: Int) extends Atom
+case class IntSign(sign: Char) extends Atom
 case class BoolLiter(value: Boolean) extends Atom
 case class CharLiter(value: Char) extends Atom
 case class StringLiter(value: String) extends Atom

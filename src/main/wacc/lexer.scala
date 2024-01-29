@@ -6,6 +6,8 @@ import parsley.token.errors._
 import parsley.token.numeric._
 import parsley.token.symbol._
 import parsley.character.{noneOf, string}
+import parsley.token.descriptions.numeric.NumericDesc
+import parsley.token.descriptions.numeric.PlusSignPresence
 
 object lexer {
   private val desc = LexicalDesc.plain.copy(
@@ -13,11 +15,11 @@ object lexer {
       identifierStart = predicate.Basic(_.isLetter),
       identifierLetter = predicate.Basic(_.isLetterOrDigit)
     ),
+    numericDesc = NumericDesc.plain.copy(
+      positiveSign = PlusSignPresence.Optional
+    ),
     symbolDesc = SymbolDesc.plain.copy(
       hardKeywords = Set(
-        "len",
-        "ord",
-        "chr",
         "int",
         "bool",
         "char",
@@ -47,7 +49,24 @@ object lexer {
         "false",
         "null"
       ),
-      hardOperators = Set("*", "/", "+", "-")
+      hardOperators = Set("*", 
+      "/", 
+      "+", 
+      "-", 
+      "!", 
+      "ord", 
+      "len", 
+      "chr", 
+      "%", 
+      ">", 
+      ">=", 
+      "<", 
+      "<=", 
+      "==", 
+      "!=", 
+      "&&", 
+      "||"
+      )
     )
   )
   private val lexer = new Lexer(desc)

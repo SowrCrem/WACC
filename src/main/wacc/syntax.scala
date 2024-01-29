@@ -87,3 +87,26 @@ object CharLiter extends generic.ParserBridge1[Char, Atom]
 object StringLiter extends generic.ParserBridge1[String, Atom]
 object Brackets extends generic.ParserBridge1[Expr, Atom]
 object Ident extends generic.ParserBridge1[String, Atom]
+
+
+// Type nodes
+sealed trait Type
+
+case class BaseType(value: String) extends Type
+case class ArrayType(elementType: Type) extends Type
+case class PairType(fst: PairElemType, snd: PairElemType) extends Type
+
+// TODO: How to add keywords 'int', 'bool', 'char', 'string'?
+// case class IntType() extends BaseType
+// case class BoolType() extends BaseType
+// case class CharType() extends BaseType
+// case class StringType() extends BaseType
+
+sealed trait PairElemType extends Type
+case class PairBaseType(value: String) extends PairElemType
+case class PairArrayType(elementType: Type) extends PairElemType
+case class NestedPairType(firstType: PairElemType, secondType: PairElemType) extends PairElemType
+
+// case class PairElemTypeBase(baseType: BaseType) extends PairElemType
+// case class PairElemTypeArray(arrayType: ArrayType) extends PairElemType
+// case class PairElemTypePair(pairType: PairType) extends PairElemType

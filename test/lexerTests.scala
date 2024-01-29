@@ -8,7 +8,7 @@ import wacc.{
   BoolLiter,
   Ident,
   Brackets,
-  PairLiter,
+  Null,
   Error
 }
 import parsley.{Failure, Result, Success}
@@ -34,31 +34,31 @@ class lexerTests extends AnyFlatSpec {
   }
 
   "atom" should "parse int literals" in {
-    atoms.parse("123") shouldBe Success(IntLiterNode(123))
+    atoms.parse("123") shouldBe Success(IntLiter(123))
   }
 
   it should "parse bool literals" in {
-    atoms.parse("true") shouldBe Success(BoolLiterNode(true))
+    atoms.parse("true") shouldBe Success(BoolLiter(true))
   }
 
   it should "parse char literals" in {
-    atoms.parse("'a'") shouldBe Success(CharLiterNode('a'))
+    atoms.parse("'a'") shouldBe Success(CharLiter('a'))
   }
 
   it should "parse string literals" in {
-    atoms.parse("\"hello\"") shouldBe Success(StringLiterNode("hello"))
+    atoms.parse("\"hello\"") shouldBe Success(StringLiter("hello"))
   }
 
   it should "parse identifiers" in {
-    atoms.parse("hello") shouldBe Success(IdentNode("hello"))
+    atoms.parse("hello") shouldBe Success(Ident("hello"))
   }
 
   it should "parse brackets" in {
-    atoms.parse("(123)") shouldBe Success(BracketsNode(IntLiterNode(123)))
+    atoms.parse("(123)") shouldBe Success(Brackets(IntLiter(123)))
   }
 
   it should "parse pair literals" in {
-    atoms.parse("null") shouldBe Success(PairLiterNode())
+    atoms.parse("null") shouldBe Success(Null())
   }
 
 }

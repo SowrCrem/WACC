@@ -7,7 +7,6 @@ import parsley.token.numeric._
 import parsley.token.symbol._
 import parsley.character.{noneOf, string}
 
-
 object lexer {
   private val desc = LexicalDesc.plain.copy(
     nameDesc = NameDesc.plain.copy(

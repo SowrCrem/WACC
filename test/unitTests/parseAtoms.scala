@@ -52,14 +52,20 @@ class ParseAtoms extends AnyFlatSpec {
 
   it should "reject backslash characters" in {
     parser.parse("'\\'") shouldBe Error("") // TODO: Write Appropriate Error Message
+
+    pending
   }
 
   it should "reject single quote characters" in {
     parser.parse("'\''") shouldBe Error("") // TODO: Write Appropriate Error Message
+
+    pending
   }
 
   it should "reject double quote characters" in {
     parser.parse("'\"'") shouldBe Error("") // TODO: Write Appropriate Error Message
+
+    pending
   }
 
   it should "parse escaped char literals" in {
@@ -71,6 +77,8 @@ class ParseAtoms extends AnyFlatSpec {
     parser.parse("'\\r") shouldBe Success(CharLiter('\b'))
     parser.parse("'\\\"") shouldBe Success(CharLiter('\b'))
     parser.parse("'\\r") shouldBe Success(CharLiter('\b'))
+
+    pending
   }
 
   // Tests for StringLiter

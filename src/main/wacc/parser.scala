@@ -22,6 +22,7 @@ import parsley.Parsley.lookAhead
 
 object parser {
 
+  
   lazy val arrayelemParser: Parsley[Expr] =
     ArrayElem(Ident(lexer.ident), some("[" *> exprParser <* "]"))
   lazy val intParser: Parsley[Expr] = integer.map(n => {
@@ -201,9 +202,6 @@ object parser {
     "is" ~> stmtParser <~ "end"
   )
 
-
-  // -- Program Parser --------------------------------------------- //
-  
   val program: Parsley[Node] =
     Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
 

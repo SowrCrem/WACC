@@ -15,6 +15,9 @@ object lexer {
       identifierStart = predicate.Basic(_.isLetter),
       identifierLetter = predicate.Basic(_.isLetterOrDigit)
     ),
+    spaceDesc = SpaceDesc.plain.copy(
+      lineCommentStart = "#"
+    ),
     symbolDesc = SymbolDesc.plain.copy(
       hardKeywords = Set(
         "len",
@@ -53,12 +56,11 @@ object lexer {
   )
   private val lexer = new Lexer(desc)
 
-
   val integer = lexer.lexeme.integer.decimal
   val implicits = lexer.lexeme.symbol.implicits
   val char: Parsley[Char] = lexer.lexeme.character.ascii
   val string: Parsley[String] = lexer.lexeme.string.ascii
   val ident: Parsley[String] = lexer.lexeme.names.identifier
-  
+
   def fully[A](p: Parsley[A]): Parsley[A] = lexer.fully(p)
 }

@@ -23,8 +23,4 @@ import wacc.lexer._
 
 class exprParsingTests extends AnyFlatSpec {
 
-
-    
-
-
 }

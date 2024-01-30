@@ -30,10 +30,10 @@ object Param extends generic.ParserBridge2[Type, Expr, Param]
 sealed trait Stat extends Node
 
 case class Skip() extends Stat
-case class IdentAsgn (typeNode: Type, ident: Expr, expr:RValue) extends Stat
-object IdentAsgn extends generic.ParserBridge3[Type, Expr, RValue, Stat]
-case class AsgnEq(lhs: Expr, rhs: RValue) extends Stat
-object AsgnEq extends generic.ParserBridge2[Expr, RValue, Stat]
+case class IdentAsgn (typeNode: Type, ident: Expr, expr: Node) extends Stat
+object IdentAsgn extends generic.ParserBridge3[Type, Expr, Node, Stat]
+case class AsgnEq(lhs: Node, rhs: Node) extends Stat
+object AsgnEq extends generic.ParserBridge2[Node, Node, Stat]
 case class Read(lhs: LValue) extends Stat
 object Read extends generic.ParserBridge1[LValue, Stat]
 case class Free(expr: Expr) extends Stat
@@ -55,6 +55,8 @@ object BeginEnd extends generic.ParserBridge1[Stat, Stat]
 case class StatJoin (statList: List[Stat]) extends Stat
 object StatJoin extends generic.ParserBridge1[List[Stat], Stat]
 
+
+
 // RValue 
 
 sealed trait RValue 
@@ -67,8 +69,22 @@ sealed trait Expr extends Node with RValue
 case class NewPair(fst: Expr, snd: Expr) extends Expr
 object NewPair extends generic.ParserBridge2[Expr, Expr, Expr]
 
-case class Call(ident: Ident, exprList: List[Expr]) extends Expr
-object Call extends generic.ParserBridge2[Ident, List[Expr], Expr]
+case class Call(ident: Ident, exprList: List[Expr]) extends Stat
+object Call extends generic.ParserBridge2[Ident, List[Expr], Stat]
+
+
+case class ArgList (argList: List[Expr]) extends Node
+object ArgList extends generic.ParserBridge1[List[Expr], ArgList]
+
+case class ArrayLiter(exprList: List[Expr]) extends Expr  
+object ArrayLiter extends generic.ParserBridge1[List[Expr], Expr]
+
+case class FstNode(expr: Expr) extends Expr
+object FstNode extends generic.ParserBridge1[Expr, Expr]
+
+case class SndNode(expr: Expr) extends Expr
+object SndNode extends generic.ParserBridge1[Expr, Expr]
+
 
 // LValue (Extending Expr)
 

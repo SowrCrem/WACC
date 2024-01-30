@@ -29,6 +29,33 @@ class lexerTests extends AnyFlatSpec {
     string.parse("\"hello\"") shouldBe Success("hello")
   }
 
+//   it should "parse a simple function program" in {
+//     val input =
+//       "begin int f() is return 3; return 5 end int ret = call f(); println ret end"
+//     val expected = Success(
+//       Program(
+//         List(
+//           Func(
+//             IntType(),
+//             Ident("f"),
+//             ParamList(List()),
+//             StatJoin(
+//               List(Return(IntLiter(3)), Return(IntLiter(5)))
+//             )
+//           )
+//         ),
+//         StatJoin(
+//           List(
+//             IdentAsgn(IntType(), Ident("ret"), Call(Ident("f"), List())),
+//             Println(Ident("ret"))
+//           )
+//         )
+//       )
+//     )
+
+//     parser.parse(input) shouldBe expected
+
+//   }
   it should "parse identifiers" in {
     ident.parse("hello") shouldBe Success("hello")
   }

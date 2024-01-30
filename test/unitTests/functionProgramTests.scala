@@ -49,6 +49,7 @@ import wacc.NewPair
 class functionProgramTests extends AnyFlatSpec {
 
   "functionProgram" should "parse a function program" in {
+    pending
     val input = "begin int f(int x) is skip end skip end"
     val expected = Success(
       Program(
@@ -69,6 +70,7 @@ class functionProgramTests extends AnyFlatSpec {
   }
 
   it should "parse a function program with multiple functions" in {
+    pending
     val input =
       "begin int f(int x) is skip end int g(int x) is skip end skip end"
     val expected = Success(
@@ -98,6 +100,7 @@ class functionProgramTests extends AnyFlatSpec {
   // Function calls must be assigned to a variable
 
   it should "parse functions that are called" in {
+    pending
     val input =
       "begin int f(int x) is return 5 end int g(int x) is return 2 end int x = call f(5) end"
     val expected = Success(

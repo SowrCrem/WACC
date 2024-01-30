@@ -104,7 +104,7 @@ class stmtParsingTests extends AnyFlatSpec {
   }
 
   it should "parse new identifiers" in {
-    parser.parse("int x = 1") should be(
+    parser.parse("begin int x = 1; int y = 3 end") should be(
       Success(
         IdentAsgn(
           IntType(),

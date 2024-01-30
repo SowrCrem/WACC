@@ -18,32 +18,34 @@ import parsley.syntax.lift
 import lexer.{integer, fully, char, implicits, ident, string}
 import parsley.Parsley.notFollowedBy
 import parsley.debug._
+import parsley.Parsley.lookAhead
+
 object parser {
 
-  val arrayelemParser: Parsley[Expr] =
+  lazy val arrayelemParser: Parsley[Expr] =
     ArrayElem(Ident(lexer.ident), some("[" *> exprParser <* "]"))
-  val intParser: Parsley[Expr] = integer.map(n => {
+  lazy val intParser: Parsley[Expr] = integer.map(n => {
     if (n.isValidInt) IntLiter(n.toInt) else Error("Integer too large")
   })
-  val boolParser: Parsley[Expr] =
+  lazy val boolParser: Parsley[Expr] =
     ("true" as BoolLiter(true)) | ("false" as BoolLiter(false))
-  val charParser: Parsley[Expr] = CharLiter(lexer.char)
-  val stringParser: Parsley[Expr] = StringLiter(lexer.string)
-  val identifierParser: Parsley[Expr] = Ident(lexer.ident)
-  val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
+  lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
+  lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string)
+  lazy val identifierParser: Parsley[Expr] = Ident(lexer.ident)
+  lazy val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
 
-  val atoms = intParser | boolParser | charParser | stringParser | identifierParser | bracketsParser | arrayelemParser
+  lazy val atoms = intParser.debug("int") | boolParser | charParser | stringParser | atomic(identifierParser) | bracketsParser | arrayelemParser
 
   // Pair Parser
 
-  val newpairParser: Parsley[Expr] = {
+  lazy val newpairParser: Parsley[Expr] = {
     val newpair = "newpair" ~> ("(" ~> exprParser <~ ",") <~> (exprParser <~ ")")
     newpair.map(x => NewPair(x._1, x._2))
   }
-  val pairLitParser: Parsley[Expr] = ("null" as Null()) | newpairParser
+  lazy val pairLitParser: Parsley[Expr] = ("null" as Null()) | newpairParser
 
   // Expression Parser
-  val exprParser: Parsley[Expr] = precedence(
+  lazy val exprParser: Parsley[Expr] = precedence(
     atoms | pairLitParser
   )(
     Ops(Prefix)(Not from "!"),
@@ -64,16 +66,16 @@ object parser {
     Ops(InfixN)(NotEquals from "!="),
     Ops(InfixR)(And from "&&"),
     Ops(InfixR)(Or from "||")
-  )
+  ).debug("exprparser")
 
   // Type Parser
 
-  val intType: Parsley[BaseType] = "int" as IntType()
-  val boolType: Parsley[BaseType] = "bool" as BoolType()
-  val charType: Parsley[BaseType] = "char" as CharType()
-  val stringType: Parsley[BaseType] = "string" as StringType()
+  lazy val intType: Parsley[BaseType] = "int" as IntType()
+  lazy val boolType: Parsley[BaseType] = "bool" as BoolType()
+  lazy val charType: Parsley[BaseType] = "char" as CharType()
+  lazy val stringType: Parsley[BaseType] = "string" as StringType()
 
-  val baseType: Parsley[BaseType] = intType | boolType | charType | stringType
+  lazy val baseType: Parsley[BaseType] = intType | boolType | charType | stringType
 
 
   lazy val arrayType: Parsley[ArrayType] = {
@@ -123,7 +125,7 @@ object parser {
     "println" ~> exprParser.map(x => Println(x))
 
   val identAsgnParser: Parsley[Stat] = {
-    val identAsgn = typeParser.debug("typeparsing") <~> identifierParser <~ "=" <~> exprParser
+    val identAsgn = typeParser.debug("typeparsing") <~> atomic(identifierParser.debug("identifiername")) <~ "=" <~> atomic(exprParser)
     identAsgn.map(x => IdentAsgn(x._1._1, x._1._2, x._2))
   }
 
@@ -133,7 +135,7 @@ object parser {
   }
 
   val statAtoms: Parsley[Stat] = {
-    skipParser | identAsgnParser.debug("ident") | asgnEqParser |
+    skipParser | atomic(identAsgnParser.debug("ident")) | atomic(asgnEqParser) |
       readParser | freeParser | returnParser |
       exitParser | printParser | printlnParser |
       ifParser | whileParser | beginParser
@@ -143,9 +145,26 @@ object parser {
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
 
   val stmtParser: Parsley[Stat] =
-    atomic((statAtoms <~ notFollowedBy(";"))) | statJoinParser
+    atomic((atomic(statAtoms) <~ notFollowedBy(";"))) | statJoinParser
 
-  private val program: Parsley[Node] = stmtParser
+
+  // Param Parser
+
+  val paramParser: Parsley[Param] = {
+    val param = typeParser <~> ident.map(x => Ident(x))
+    param.map(x => Param(x._1, x._2))
+  }
+
+  val paramListParser: Parsley[ParamList] = ParamList(sepBy(paramParser, ","))
+
+  // Function Parser
+
+  val funcParser: Parsley[Func] = Func(typeParser, ident.map(x => Ident(x)), paramListParser, stmtParser)
+
+  private val program: Parsley[Node] = {
+    val program = "begin" ~> manyTill(funcParser, stmtParser) <~> (stmtParser <~ "end")
+    program.map(x => Program(x._1, x._2))
+  }
 
   val parser = fully(program)
 

@@ -5,6 +5,27 @@ sealed trait Node
 
 
 
+// Program (Extending Node)
+
+case class Program(funcList: List[Func], stat: Stat) extends Node
+object Program extends generic.ParserBridge2[List[Func], Stat, Program]
+
+
+case class Func(typeNode: Type, ident: Ident, paramList: ParamList, stat: Stat) extends Node
+object Func extends generic.ParserBridge4[Type, Ident, ParamList, Stat, Func]
+
+// Param-List (Extending Node)
+
+case class ParamList(paramList: List[Param]) extends Node
+object ParamList extends generic.ParserBridge1[List[Param], ParamList]
+
+
+
+// Param (Extending Node)
+
+case class Param(typeNode: Type, ident: Expr) extends Node
+object Param extends generic.ParserBridge2[Type, Expr, Param]
+
 // Statements (Extending Node)
 sealed trait Stat extends Node
 

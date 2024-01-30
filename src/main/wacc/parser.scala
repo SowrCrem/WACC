@@ -22,6 +22,11 @@ import parsley.Parsley.lookAhead
 
 object parser {
 
+  val program: Parsley[Node] = Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
+  
+  val parser = fully(program)
+  def parse(input: String): Result[String, Node] = parser.parse(input)
+
   lazy val arrayelemParser: Parsley[Expr] =
     ArrayElem(Ident(lexer.ident), some("[" *> exprParser <* "]"))
   lazy val intParser: Parsley[Expr] = integer.map(n => {
@@ -174,12 +179,5 @@ object parser {
     "(" ~> paramListParser <~ ")",
     "is" ~> stmtParser <~ "end"
   )
-
-  val program: Parsley[Node] =
-    Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
-
-  val parser = fully(program)
-
-  def parse(input: String): Result[String, Node] = parser.parse(input)
 
 }

@@ -31,8 +31,8 @@ case class While(expr: Expr, stat: Stat) extends Stat
 object While extends generic.ParserBridge2[Expr, Stat, Stat]
 case class BeginEnd(stat: Stat) extends Stat
 object BeginEnd extends generic.ParserBridge1[Stat, Stat]
-case class StatJoin (stat1: Stat, stat2: Stat) extends Stat
-object StatJoin extends generic.ParserBridge2[Stat, Stat, Stat]
+case class StatJoin (statList: List[Stat]) extends Stat
+object StatJoin extends generic.ParserBridge1[List[Stat], Stat]
 
 // RValue 
 
@@ -43,8 +43,8 @@ sealed trait RValue
 sealed trait Expr extends Node with RValue
 
 
-case class newPair(fst: Expr, snd: Expr) extends Expr
-object newPair extends generic.ParserBridge2[Expr, Expr, Expr]
+case class NewPair(fst: Expr, snd: Expr) extends Expr
+object NewPair extends generic.ParserBridge2[Expr, Expr, Expr]
 
 case class Call(ident: Ident, exprList: List[Expr]) extends Expr
 object Call extends generic.ParserBridge2[Ident, List[Expr], Expr]

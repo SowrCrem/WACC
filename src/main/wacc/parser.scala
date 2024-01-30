@@ -140,12 +140,10 @@ object parser {
   }
 
   val statAtoms: Parsley[Stat] = {
-    skipParser | identAsgnParser.debug("ident") |
-      asgnEqParser.debug("asgneq")
-    |
-    readParser.debug("read") | freeParser.debug("free") | returnParser.debug(
-      "return"
-    ) |
+    skipParser | identAsgnParser.debug("ident") | asgnEqParser.debug("asgneq") |
+      readParser.debug("read") | freeParser.debug("free") | returnParser.debug(
+        "return"
+      ) |
       exitParser.debug("exit") | printParser.debug(
         "print"
       ) | printlnParser |
@@ -158,7 +156,7 @@ object parser {
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
 
   val stmtParser: Parsley[Stat] =
-    (atomic(statAtoms) <~ notFollowedBy(";")) | statJoinParser
+    atomic((atomic(statAtoms) <~ notFollowedBy(";"))) | statJoinParser
 
   // Param Parser
 

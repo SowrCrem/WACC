@@ -8,6 +8,8 @@ import parsley.token.symbol._
 import parsley.character.{noneOf, string}
 import parsley.token.descriptions.numeric.NumericDesc
 import parsley.token.descriptions.numeric.PlusSignPresence
+import parsley.combinator._
+import parsley.syntax._
 
 object lexer {
   private val desc = LexicalDesc.plain.copy(
@@ -17,6 +19,9 @@ object lexer {
     ),
     numericDesc = NumericDesc.plain.copy(
       positiveSign = PlusSignPresence.Optional
+    ),
+    spaceDesc = SpaceDesc.plain.copy(
+      lineCommentStart = "#"
     ),
     symbolDesc = SymbolDesc.plain.copy(
       hardKeywords = Set(
@@ -70,8 +75,6 @@ object lexer {
     )
   )
   private val lexer = new Lexer(desc)
-
-
   val integer = lexer.lexeme.integer.number32
   val implicits = lexer.lexeme.symbol.implicits
   val char: Parsley[Char] = lexer.lexeme.character.ascii

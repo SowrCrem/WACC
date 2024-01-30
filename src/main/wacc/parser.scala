@@ -35,9 +35,8 @@ object parser {
   lazy val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
 
   lazy val atoms =
-    intParser.debug("int") | boolParser | charParser | stringParser | atomic(
-      identifierParser
-    ) | bracketsParser | atomic(arrayelemParser)
+    intParser.debug("int") | boolParser | charParser | stringParser | 
+      identifierParser | bracketsParser | arrayelemParser
 
   // Pair Parser
 
@@ -129,7 +128,7 @@ object parser {
 
   val identAsgnParser: Parsley[Stat] = {
     val identAsgn = typeParser.debug("typeparsing") <~> atomic(
-      identifierParser.debug("identifiername")
+      identifierParser
     ) <~ "=" <~> exprParser
     identAsgn.map(x => IdentAsgn(x._1._1, x._1._2, x._2))
   }
@@ -155,8 +154,7 @@ object parser {
 
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
 
-  val stmtParser: Parsley[Stat] =
-    atomic((atomic(statAtoms) <~ notFollowedBy(";"))) | statJoinParser
+  val stmtParser: Parsley[Stat] = (atomic(statAtoms) <~ notFollowedBy(";")) | statJoinParser
 
   // Param Parser
 

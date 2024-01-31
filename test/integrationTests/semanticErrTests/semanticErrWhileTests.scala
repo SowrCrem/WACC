@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SemanticErrWhileTests extends AnyFlatSpec {
 
   "semanticErr - while tests: falsErr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/while/falsErr.wacc")
@@ -19,7 +18,6 @@ class SemanticErrWhileTests extends AnyFlatSpec {
   }
 
   "semanticErr - while tests: truErr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/while/truErr.wacc")
@@ -29,7 +27,6 @@ class SemanticErrWhileTests extends AnyFlatSpec {
   }
 
   "semanticErr - while tests: whileIntCondition.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/while/whileIntCondition.wacc")

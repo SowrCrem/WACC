@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SyntaxErrFunctionTests extends AnyFlatSpec {
 
   "syntaxErr - function tests: badlyNamed.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/badlyNamed.wacc")
     val exitCode = Main.compile(path)
@@ -18,7 +17,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: badlyPlaced.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/badlyPlaced.wacc")
     val exitCode = Main.compile(path)
@@ -27,7 +25,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/funcExpr2.wacc")
     val exitCode = Main.compile(path)
@@ -36,7 +33,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/funcExpr.wacc")
     val exitCode = Main.compile(path)
@@ -45,7 +41,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionConditionalNoReturn.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionConditionalNoReturn.wacc")
     val exitCode = Main.compile(path)
@@ -54,7 +49,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionEndingNotReturn.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionEndingNotReturn.wacc")
     val exitCode = Main.compile(path)
@@ -63,7 +57,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionLateDefine.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionLateDefine.wacc")
     val exitCode = Main.compile(path)
@@ -72,7 +65,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionMissingCall.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionMissingCall.wacc")
     val exitCode = Main.compile(path)
@@ -81,7 +73,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionMissingParam.wacc")
     val exitCode = Main.compile(path)
@@ -90,7 +81,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionMissingPType.wacc")
     val exitCode = Main.compile(path)
@@ -99,7 +89,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionMissingType.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionMissingType.wacc")
     val exitCode = Main.compile(path)
@@ -108,7 +97,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionNoReturn.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionNoReturn.wacc")
     val exitCode = Main.compile(path)
@@ -117,7 +105,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionReturnInLoop.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionReturnInLoop.wacc")
     val exitCode = Main.compile(path)
@@ -126,7 +113,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: functionScopeDef.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionScopeDef.wacc")
     val exitCode = Main.compile(path)
@@ -135,7 +121,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: mutualRecursionNoReturn.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/mutualRecursionNoReturn.wacc")
     val exitCode = Main.compile(path)
@@ -144,7 +129,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: noBodyAfterFuncs.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/noBodyAfterFuncs.wacc")
     val exitCode = Main.compile(path)
@@ -153,7 +137,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
   }
 
   "syntaxErr - function tests: thisIsNotC.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/thisIsNotC.wacc")
     val exitCode = Main.compile(path)

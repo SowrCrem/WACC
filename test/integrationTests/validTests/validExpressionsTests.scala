@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class ValidExpressionsTests extends AnyFlatSpec {
 
   "valid - expressions tests: andExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/andExpr.wacc")
@@ -19,7 +18,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: andOverOrExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/andOverOrExpr.wacc")
@@ -29,7 +27,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: boolCalc.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/boolCalc.wacc")
@@ -39,7 +36,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: boolExpr1.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/boolExpr1.wacc")
@@ -49,7 +45,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: charComparisonExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/charComparisonExpr.wacc")
@@ -59,7 +54,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: divExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/divExpr.wacc")
@@ -69,7 +63,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: equalsExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/equalsExpr.wacc")
@@ -79,7 +72,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: equalsOverAnd.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/equalsOverAnd.wacc")
@@ -89,7 +81,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: equalsOverBool.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/equalsOverBool.wacc")
@@ -99,7 +90,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: equalsOverOr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/equalsOverOr.wacc")
@@ -109,7 +99,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: greaterEqExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/greaterEqExpr.wacc")
@@ -119,7 +108,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: greaterExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/greaterExpr.wacc")
@@ -129,7 +117,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: intCalc.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/intCalc.wacc")
@@ -139,7 +126,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: intExpr1.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/intExpr1.wacc")
@@ -149,7 +135,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: lessCharExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/lessCharExpr.wacc")
@@ -159,7 +144,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: lessEqExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/lessEqExpr.wacc")
@@ -169,7 +153,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: lessExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/lessExpr.wacc")
@@ -179,7 +162,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: longExpr2.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longExpr2.wacc")
@@ -189,7 +171,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: longExpr3.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longExpr3.wacc")
@@ -199,7 +180,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longExpr.wacc")
@@ -209,7 +189,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: longSplitExpr2.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longSplitExpr2.wacc")
@@ -219,7 +198,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longSplitExpr.wacc")
@@ -229,7 +207,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: minusExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/minusExpr.wacc")
@@ -239,7 +216,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: minusMinusExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/minusMinusExpr.wacc")
@@ -249,7 +225,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: minusNoWhitespaceExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/minusNoWhitespaceExpr.wacc")
@@ -259,7 +234,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: minusPlusExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/minusPlusExpr.wacc")
@@ -269,7 +243,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: modExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/modExpr.wacc")
@@ -279,7 +252,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: multExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/multExpr.wacc")
@@ -289,7 +261,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: multNoWhitespaceExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/multNoWhitespaceExpr.wacc")
@@ -299,7 +270,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: negBothDiv.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negBothDiv.wacc")
@@ -309,7 +279,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: negBothMod.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negBothMod.wacc")
@@ -319,7 +288,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: negDividendDiv.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negDividendDiv.wacc")
@@ -329,7 +297,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: negDividendMod.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negDividendMod.wacc")
@@ -339,7 +306,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: negDivisorDiv.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negDivisorDiv.wacc")
@@ -349,7 +315,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: negDivisorMod.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negDivisorMod.wacc")
@@ -359,7 +324,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: negExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negExpr.wacc")
@@ -369,7 +333,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/notequalsExpr.wacc")
@@ -379,7 +342,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: notExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/notExpr.wacc")
@@ -389,7 +351,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/ordAndchrExpr.wacc")
@@ -399,7 +360,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: orExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/orExpr.wacc")
@@ -409,7 +369,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: plusExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/plusExpr.wacc")
@@ -419,7 +378,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: plusMinusExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/plusMinusExpr.wacc")
@@ -429,7 +387,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: plusNoWhitespaceExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/plusNoWhitespaceExpr.wacc")
@@ -439,7 +396,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: plusPlusExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/plusPlusExpr.wacc")
@@ -449,7 +405,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: sequentialCount.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/sequentialCount.wacc")
@@ -459,7 +414,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
   }
 
   "valid - expressions tests: stringEqualsExpr.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/expressions/stringEqualsExpr.wacc")

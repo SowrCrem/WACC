@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SemanticErrMultipleTests extends AnyFlatSpec {
 
   "semanticErr - multiple tests: funcMess.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/funcMess.wacc")
@@ -19,7 +18,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: ifAndWhileErrs.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/ifAndWhileErrs.wacc")
@@ -29,7 +27,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: messyExpr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/messyExpr.wacc")
@@ -39,7 +36,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: multiCaseSensitivity.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/multiCaseSensitivity.wacc")
@@ -49,7 +45,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: multiTypeErrs.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/multiTypeErrs.wacc")
@@ -59,7 +54,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: obfuscatingReturnsWithWhile.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/obfuscatingReturnsWithWhile.wacc")

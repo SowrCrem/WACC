@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class ValidPairsTests extends AnyFlatSpec {
 
   "valid - pairs tests: checkRefPair.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/checkRefPair.wacc")
@@ -19,7 +18,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: createPair02.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/createPair02.wacc")
@@ -29,7 +27,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: createPair03.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/createPair03.wacc")
@@ -39,7 +36,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: createPair.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/createPair.wacc")
@@ -49,7 +45,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: createRefPair.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/createRefPair.wacc")
@@ -59,7 +54,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: free.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/free.wacc")
@@ -69,7 +63,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: linkedList.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/linkedList.wacc")
@@ -79,7 +72,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: nestedPairLeftAssign.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/nestedPairLeftAssign.wacc")
@@ -89,7 +81,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: nestedPairRightExtract.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/nestedPairRightExtract.wacc")
@@ -99,7 +90,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: nestedPair.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/nestedPair.wacc")
@@ -109,7 +99,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: null.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/null.wacc")
@@ -119,7 +108,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: pairarray.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/pairarray.wacc")
@@ -129,7 +117,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/pairExchangeArrayOk.wacc")
@@ -139,7 +126,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: printNullPair.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/printNullPair.wacc")
@@ -149,7 +135,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: printNull.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/printNull.wacc")
@@ -159,7 +144,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: printPairOfNulls.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/printPairOfNulls.wacc")
@@ -169,7 +153,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: printPair.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/printPair.wacc")
@@ -179,7 +162,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: readPair.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/readPair.wacc")
@@ -189,7 +171,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: writeFst.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/writeFst.wacc")
@@ -199,7 +180,6 @@ class ValidPairsTests extends AnyFlatSpec {
   }
 
   "valid - pairs tests: writeSnd.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/pairs/writeSnd.wacc")

@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SemanticErrExitTests extends AnyFlatSpec {
 
   "semanticErr - exit tests: badCharExit.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/exit/badCharExit.wacc")
@@ -19,7 +18,6 @@ class SemanticErrExitTests extends AnyFlatSpec {
   }
 
   "semanticErr - exit tests: exitNonInt.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/exit/exitNonInt.wacc")
@@ -29,7 +27,6 @@ class SemanticErrExitTests extends AnyFlatSpec {
   }
 
   "semanticErr - exit tests: globalReturn.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/exit/globalReturn.wacc")
@@ -39,7 +36,6 @@ class SemanticErrExitTests extends AnyFlatSpec {
   }
 
   "semanticErr - exit tests: returnsInMain.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/exit/returnsInMain.wacc")

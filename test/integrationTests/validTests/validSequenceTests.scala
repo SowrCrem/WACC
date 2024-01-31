@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class ValidSequenceTests extends AnyFlatSpec {
 
   "valid - sequence tests: basicSeq2.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/sequence/basicSeq2.wacc")
@@ -19,7 +18,6 @@ class ValidSequenceTests extends AnyFlatSpec {
   }
 
   "valid - sequence tests: basicSeq.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/sequence/basicSeq.wacc")
@@ -29,7 +27,6 @@ class ValidSequenceTests extends AnyFlatSpec {
   }
 
   "valid - sequence tests: boolAssignment.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/sequence/boolAssignment.wacc")
@@ -39,7 +36,6 @@ class ValidSequenceTests extends AnyFlatSpec {
   }
 
   "valid - sequence tests: charAssignment.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/sequence/charAssignment.wacc")
@@ -49,7 +45,6 @@ class ValidSequenceTests extends AnyFlatSpec {
   }
 
   "valid - sequence tests: exitSimple.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/sequence/exitSimple.wacc")
@@ -59,7 +54,6 @@ class ValidSequenceTests extends AnyFlatSpec {
   }
 
   "valid - sequence tests: intAssignment.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/sequence/intAssignment.wacc")
@@ -69,7 +63,6 @@ class ValidSequenceTests extends AnyFlatSpec {
   }
 
   "valid - sequence tests: intLeadingZeros.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/sequence/intLeadingZeros.wacc")
@@ -79,7 +72,6 @@ class ValidSequenceTests extends AnyFlatSpec {
   }
 
   "valid - sequence tests: stringAssignment.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/sequence/stringAssignment.wacc")

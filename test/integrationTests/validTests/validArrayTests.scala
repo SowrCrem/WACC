@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class ValidArrayTests extends AnyFlatSpec {
 
   "valid - array tests: arrayBasic.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayBasic.wacc")
@@ -19,7 +18,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: arrayEmpty.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayEmpty.wacc")
@@ -29,7 +27,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: arrayIndexMayBeArrayIndex.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayIndexMayBeArrayIndex.wacc")
@@ -39,7 +36,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: arrayLength.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayLength.wacc")
@@ -49,7 +45,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: arrayLookup.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayLookup.wacc")
@@ -59,7 +54,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: arrayNested.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayNested.wacc")
@@ -69,7 +63,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: arrayOnHeap.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayOnHeap.wacc")
@@ -79,7 +72,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: arrayPrint.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayPrint.wacc")
@@ -89,7 +81,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: arraySimple.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arraySimple.wacc")
@@ -99,7 +90,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: array.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/array.wacc")
@@ -109,7 +99,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: charArrayInStringArray.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/charArrayInStringArray.wacc")
@@ -119,7 +108,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: emptyArrayAloneIsFine.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/emptyArrayAloneIsFine.wacc")
@@ -129,7 +117,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: emptyArrayNextLine.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/emptyArrayNextLine.wacc")
@@ -139,7 +126,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: emptyArrayPrint.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/emptyArrayPrint.wacc")
@@ -149,7 +135,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: emptyArrayReplace.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/emptyArrayReplace.wacc")
@@ -159,7 +144,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: emptyArrayScope.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/emptyArrayScope.wacc")
@@ -169,7 +153,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: free.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/free.wacc")
@@ -179,7 +162,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: lenArrayIndex.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/lenArrayIndex.wacc")
@@ -189,7 +171,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: modifyString.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/modifyString.wacc")
@@ -199,7 +180,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: printRef.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/printRef.wacc")
@@ -209,7 +189,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: stringFromArray.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/array/stringFromArray.wacc")

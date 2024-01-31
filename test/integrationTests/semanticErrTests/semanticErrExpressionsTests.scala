@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SemanticErrExpressionsTests extends AnyFlatSpec {
 
   "semanticErr - expressions tests: boolOpTypeErr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/expressions/boolOpTypeErr.wacc")
@@ -19,7 +18,6 @@ class SemanticErrExpressionsTests extends AnyFlatSpec {
   }
 
   "semanticErr - expressions tests: exprTypeErr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/expressions/exprTypeErr.wacc")
@@ -29,7 +27,6 @@ class SemanticErrExpressionsTests extends AnyFlatSpec {
   }
 
   "semanticErr - expressions tests: intOpTypeErr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/expressions/intOpTypeErr.wacc")
@@ -39,7 +36,6 @@ class SemanticErrExpressionsTests extends AnyFlatSpec {
   }
 
   "semanticErr - expressions tests: lessPairExpr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/expressions/lessPairExpr.wacc")
@@ -49,7 +45,6 @@ class SemanticErrExpressionsTests extends AnyFlatSpec {
   }
 
   "semanticErr - expressions tests: mixedOpTypeErr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/expressions/mixedOpTypeErr.wacc")
@@ -59,7 +54,6 @@ class SemanticErrExpressionsTests extends AnyFlatSpec {
   }
 
   "semanticErr - expressions tests: moreArrExpr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/expressions/moreArrExpr.wacc")
@@ -69,7 +63,6 @@ class SemanticErrExpressionsTests extends AnyFlatSpec {
   }
 
   "semanticErr - expressions tests: stringElemErr.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/expressions/stringElemErr.wacc")

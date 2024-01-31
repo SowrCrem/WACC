@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class ValidScopeTests extends AnyFlatSpec {
 
   "valid - scope tests: ifNested1.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/ifNested1.wacc")
@@ -19,7 +18,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: ifNested2.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/ifNested2.wacc")
@@ -29,7 +27,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: indentationNotImportant.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/indentationNotImportant.wacc")
@@ -39,7 +36,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: intsAndKeywords.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/intsAndKeywords.wacc")
@@ -49,7 +45,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: printAllTypes.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/printAllTypes.wacc")
@@ -59,7 +54,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: scopeBasic.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeBasic.wacc")
@@ -69,7 +63,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: scopeIfRedefine.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeIfRedefine.wacc")
@@ -79,7 +72,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: scopeRedefine.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeRedefine.wacc")
@@ -89,7 +81,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: scopeSimpleRedefine.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeSimpleRedefine.wacc")
@@ -99,7 +90,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: scopeVars.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeVars.wacc")
@@ -109,7 +99,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: scope.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/scope.wacc")
@@ -119,7 +108,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: scopeWhileNested.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeWhileNested.wacc")
@@ -129,7 +117,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: scopeWhileRedefine.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeWhileRedefine.wacc")
@@ -139,7 +126,6 @@ class ValidScopeTests extends AnyFlatSpec {
   }
 
   "valid - scope tests: splitScope.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/scope/splitScope.wacc")

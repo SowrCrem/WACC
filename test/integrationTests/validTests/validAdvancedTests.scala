@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class ValidAdvancedTests extends AnyFlatSpec {
 
   "valid - advanced tests: binarySortTree.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/advanced/binarySortTree.wacc")
@@ -19,7 +18,6 @@ class ValidAdvancedTests extends AnyFlatSpec {
   }
 
   "valid - advanced tests: hashTable.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/advanced/hashTable.wacc")
@@ -29,7 +27,6 @@ class ValidAdvancedTests extends AnyFlatSpec {
   }
 
   "valid - advanced tests: ticTacToe.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/advanced/ticTacToe.wacc")

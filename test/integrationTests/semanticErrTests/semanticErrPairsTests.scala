@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SemanticErrPairsTests extends AnyFlatSpec {
 
   "semanticErr - pairs tests: badPairAssign.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/badPairAssign.wacc")
@@ -19,7 +18,6 @@ class SemanticErrPairsTests extends AnyFlatSpec {
   }
 
   "semanticErr - pairs tests: badPairExchange.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/badPairExchange.wacc")
@@ -29,7 +27,6 @@ class SemanticErrPairsTests extends AnyFlatSpec {
   }
 
   "semanticErr - pairs tests: freeNonPair.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/freeNonPair.wacc")
@@ -39,7 +36,6 @@ class SemanticErrPairsTests extends AnyFlatSpec {
   }
 
   "semanticErr - pairs tests: mismatchedPair.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/mismatchedPair.wacc")
@@ -49,7 +45,6 @@ class SemanticErrPairsTests extends AnyFlatSpec {
   }
 
   "semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/nonMatchingPairs.wacc")
@@ -59,7 +54,6 @@ class SemanticErrPairsTests extends AnyFlatSpec {
   }
 
   "semanticErr - pairs tests: noPairCovariance.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/noPairCovariance.wacc")
@@ -69,7 +63,6 @@ class SemanticErrPairsTests extends AnyFlatSpec {
   }
 
   "semanticErr - pairs tests: readUnknown.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/readUnknown.wacc")
@@ -79,7 +72,6 @@ class SemanticErrPairsTests extends AnyFlatSpec {
   }
 
   "semanticErr - pairs tests: wrongTypeInParameterlessPair.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/wrongTypeInParameterlessPair.wacc")

@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SyntaxErrIfTests extends AnyFlatSpec {
 
   "syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/if/ifiErr.wacc")
     val exitCode = Main.compile(path)
@@ -18,7 +17,6 @@ class SyntaxErrIfTests extends AnyFlatSpec {
   }
 
   "syntaxErr - if tests: ifNoelse.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/if/ifNoelse.wacc")
     val exitCode = Main.compile(path)
@@ -27,7 +25,6 @@ class SyntaxErrIfTests extends AnyFlatSpec {
   }
 
   "syntaxErr - if tests: ifNofi.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/if/ifNofi.wacc")
     val exitCode = Main.compile(path)
@@ -36,7 +33,6 @@ class SyntaxErrIfTests extends AnyFlatSpec {
   }
 
   "syntaxErr - if tests: ifNothen.wacc" should "return exit code 100" in {
-    
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/if/ifNothen.wacc")
     val exitCode = Main.compile(path)

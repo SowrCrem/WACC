@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SemanticErrArrayTests extends AnyFlatSpec {
 
   "semanticErr - array tests: arrayIndexComplexNotInt.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
@@ -19,7 +18,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: arrayIndexNotInt.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/arrayIndexNotInt.wacc")
@@ -29,7 +27,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: arrayMultipleIndexError.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/arrayMultipleIndexError.wacc")
@@ -39,7 +36,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: badIndex.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/badIndex.wacc")
@@ -49,7 +45,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: indexUndefIdent.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/indexUndefIdent.wacc")
@@ -59,7 +54,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: mixingTypesInArrays.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/mixingTypesInArrays.wacc")
@@ -69,7 +63,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: noArrayCovariance.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/noArrayCovariance.wacc")
@@ -79,7 +72,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/nonMatchingArrays.wacc")
@@ -89,7 +81,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/noStringIndex.wacc")
@@ -99,7 +90,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: wrongArrayDimension.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/wrongArrayDimension.wacc")
@@ -109,7 +99,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: wrongArrayType.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/wrongArrayType.wacc")

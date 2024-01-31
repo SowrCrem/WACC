@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SemanticErrReadTests extends AnyFlatSpec {
 
   "semanticErr - read tests: readIntoBadFst.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/read/readIntoBadFst.wacc")
@@ -19,7 +18,6 @@ class SemanticErrReadTests extends AnyFlatSpec {
   }
 
   "semanticErr - read tests: readIntoBadSnd.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/read/readIntoBadSnd.wacc")
@@ -29,7 +27,6 @@ class SemanticErrReadTests extends AnyFlatSpec {
   }
 
   "semanticErr - read tests: readTypeErr01.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/read/readTypeErr01.wacc")

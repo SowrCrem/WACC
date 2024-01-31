@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class ValidIfTests extends AnyFlatSpec {
 
   "valid - if tests: if1.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/if1.wacc")
@@ -19,7 +18,6 @@ class ValidIfTests extends AnyFlatSpec {
   }
 
   "valid - if tests: if2.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/if2.wacc")
@@ -29,7 +27,6 @@ class ValidIfTests extends AnyFlatSpec {
   }
 
   "valid - if tests: if3.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/if3.wacc")
@@ -39,7 +36,6 @@ class ValidIfTests extends AnyFlatSpec {
   }
 
   "valid - if tests: if4.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/if4.wacc")
@@ -49,7 +45,6 @@ class ValidIfTests extends AnyFlatSpec {
   }
 
   "valid - if tests: if5.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/if5.wacc")
@@ -59,7 +54,6 @@ class ValidIfTests extends AnyFlatSpec {
   }
 
   "valid - if tests: if6.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/if6.wacc")
@@ -69,7 +63,6 @@ class ValidIfTests extends AnyFlatSpec {
   }
 
   "valid - if tests: ifBasic.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/ifBasic.wacc")
@@ -79,7 +72,6 @@ class ValidIfTests extends AnyFlatSpec {
   }
 
   "valid - if tests: ifFalse.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/ifFalse.wacc")
@@ -89,7 +81,6 @@ class ValidIfTests extends AnyFlatSpec {
   }
 
   "valid - if tests: ifTrue.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/ifTrue.wacc")
@@ -99,7 +90,6 @@ class ValidIfTests extends AnyFlatSpec {
   }
 
   "valid - if tests: whitespace.wacc" should "return exit code 0" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/valid/if/whitespace.wacc")

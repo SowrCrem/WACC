@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class SemanticErrFunctionTests extends AnyFlatSpec {
 
   "semanticErr - function tests: callUndefFunction.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/callUndefFunction.wacc")
@@ -19,7 +18,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: doubleArgDef.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/doubleArgDef.wacc")
@@ -29,7 +27,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: functionAssign.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionAssign.wacc")
@@ -39,7 +36,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: functionBadArgUse.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionBadArgUse.wacc")
@@ -49,7 +45,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: functionBadCall.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionBadCall.wacc")
@@ -59,7 +54,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: functionBadParam.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionBadParam.wacc")
@@ -69,7 +63,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: functionBadReturn.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionBadReturn.wacc")
@@ -79,7 +72,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: functionOverArgs.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionOverArgs.wacc")
@@ -89,7 +81,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: functionRedefine.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionRedefine.wacc")
@@ -99,7 +90,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: functionSwapArgs.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionSwapArgs.wacc")
@@ -109,7 +99,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: functionUnderArgs.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionUnderArgs.wacc")
@@ -119,7 +108,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/funcVarAccess.wacc")
@@ -129,7 +117,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: invalidReturnsBranched.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/invalidReturnsBranched.wacc")
@@ -139,7 +126,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
   }
 
   "semanticErr - function tests: mismatchingReturns.wacc" should "return exit code 200" in {
-    
     pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/mismatchingReturns.wacc")

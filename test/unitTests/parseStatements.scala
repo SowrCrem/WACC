@@ -21,6 +21,6 @@ import parsley.{Failure, Result, Success}
 import wacc.parser._
 import wacc.lexer._
 
-class parseExprs extends AnyFlatSpec {
+class parseStatements extends AnyFlatSpec {
 
 }

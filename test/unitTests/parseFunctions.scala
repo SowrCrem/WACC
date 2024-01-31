@@ -46,7 +46,7 @@ import wacc.parser._
 import wacc.lexer._
 import wacc.NewPair
 
-class functionProgramTests extends AnyFlatSpec {
+class parseFunctions extends AnyFlatSpec {
 
   "functionProgram" should "parse a function program" in {
     pending

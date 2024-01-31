@@ -36,7 +36,7 @@ object parser {
   lazy val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
 
   lazy val atoms =
-    intParser.debug("int") | boolParser | charParser | stringParser |
+    intParser | boolParser | charParser | stringParser |
       identifierParser | bracketsParser | arrayelemParser
 
   // -- Pair Parser ----------------------------------------------- //
@@ -72,7 +72,7 @@ object parser {
     Ops(InfixN)(NotEquals from "!="),
     Ops(InfixR)(And from "&&"),
     Ops(InfixR)(Or from "||")
-  ).debug("exprparser")
+  )
 
   val arrayLiteralParser: Parsley[Expr] = {
     val arrayLiteral = "[" ~> sepBy(exprParser, ",") <~ "]"
@@ -100,7 +100,7 @@ object parser {
     val pairType =
       "pair" ~> ("(" ~> pairElemTypeParser <~ ",") <~> (pairElemTypeParser <~ ")")
     pairType.map(x => PairType(x._1, x._2))
-  }.debug("type of pair")
+  }
 
   lazy val typeParser: Parsley[Type] = baseType | atomic(arrayType) | pairType
 
@@ -148,7 +148,7 @@ object parser {
   }
 
   val identAsgnParser: Parsley[Stat] = {
-    val identAsgn = typeParser.debug("typeparsing") <~> atomic(
+    val identAsgn = typeParser <~> atomic(
       identifierParser
     ) <~ "=" <~> assignRhs
     identAsgn.map(x => IdentAsgn(x._1._1, x._1._2, x._2))
@@ -165,16 +165,10 @@ object parser {
   }
 
   val statAtoms: Parsley[Stat] = {
-    skipParser | identAsgnParser.debug("ident") | asgnEqParser.debug("asgneq") |
-      readParser.debug("read") | freeParser.debug("free") | returnParser.debug(
-        "return"
-      ) |
-      exitParser.debug("exit") | printParser.debug(
-        "print"
-      ) | printlnParser |
-      ifParser.debug("if") | whileParser.debug("while") | beginParser.debug(
-        "begin"
-      )
+    skipParser | identAsgnParser | asgnEqParser |
+      readParser | freeParser | returnParser |
+      exitParser | printParser | printlnParser |
+      ifParser | whileParser | beginParser
 
   }
 

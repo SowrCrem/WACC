@@ -8,174 +8,140 @@ import org.scalatest.Pending
 
 class SyntaxErrFunctionTests extends AnyFlatSpec {
 
-  "syntaxErr - function tests: badlyNamed.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: badlyNamed.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/badlyNamed.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/badlyNamed.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: badlyPlaced.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: badlyPlaced.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/badlyPlaced.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/badlyPlaced.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: funcExpr2.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/funcExpr2.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/funcExpr2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: funcExpr.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/funcExpr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/funcExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionConditionalNoReturn.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionConditionalNoReturn.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionConditionalNoReturn.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionConditionalNoReturn.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionEndingNotReturn.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionEndingNotReturn.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionEndingNotReturn.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionEndingNotReturn.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionLateDefine.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionLateDefine.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionLateDefine.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionLateDefine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionMissingCall.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionMissingCall.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionMissingCall.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionMissingCall.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionMissingParam.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionMissingParam.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionMissingPType.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionMissingPType.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionMissingType.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionMissingType.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionMissingType.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionMissingType.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionNoReturn.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionNoReturn.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionNoReturn.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionNoReturn.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionReturnInLoop.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionReturnInLoop.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionReturnInLoop.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionReturnInLoop.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionScopeDef.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: functionScopeDef.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/functionScopeDef.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionScopeDef.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: mutualRecursionNoReturn.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: mutualRecursionNoReturn.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/mutualRecursionNoReturn.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/mutualRecursionNoReturn.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: noBodyAfterFuncs.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: noBodyAfterFuncs.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/noBodyAfterFuncs.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/noBodyAfterFuncs.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: thisIsNotC.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - function tests: thisIsNotC.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Function/thisIsNotC.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/thisIsNotC.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
 }

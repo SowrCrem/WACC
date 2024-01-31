@@ -8,51 +8,208 @@ import org.scalatest.Pending
 
 class ValidRuntimeErrTests extends AnyFlatSpec {
 
-  "valid - runtimeErr tests: arrayOutOfBounds" should "return exit code 0" in {
-    
+  "valid - arrayOutOfBounds tests: arrayNegBounds.wacc" should "return exit code 0" in {
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/arrayOutOfBounds")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/arrayOutOfBounds/arrayNegBounds.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
-  "valid - runtimeErr tests: badChar" should "return exit code 0" in {
-    
+  "valid - arrayOutOfBounds tests: arrayOutOfBounds.wacc" should "return exit code 0" in {
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/badChar")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/arrayOutOfBounds/arrayOutOfBounds.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
-  "valid - runtimeErr tests: divideByZero" should "return exit code 0" in {
-    
+  "valid - arrayOutOfBounds tests: arrayOutOfBoundsWrite.wacc" should "return exit code 0" in {
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/divideByZero")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/arrayOutOfBounds/arrayOutOfBoundsWrite.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
-  "valid - runtimeErr tests: integerOverflow" should "return exit code 0" in {
-    
+  "valid - badChar tests: negativeChr.wacc" should "return exit code 0" in {
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/integerOverflow")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/badChar/negativeChr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
-  "valid - runtimeErr tests: nullDereference" should "return exit code 0" in {
-    
+  "valid - badChar tests: tooBigChr.wacc" should "return exit code 0" in {
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/nullDereference")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/badChar/tooBigChr.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero/divideByZero.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - divideByZero tests: divZero.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero/divZero.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - divideByZero tests: modByZero.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero/modByZero.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intJustOverflow.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intJustOverflow.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intmultOverflow.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intmultOverflow.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intnegateOverflow2.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow2.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intnegateOverflow3.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow3.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intnegateOverflow4.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow4.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intUnderflow.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intWayOverflow.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - nullDereference tests: freeNull.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/freeNull.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - nullDereference tests: readNull1.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/readNull1.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - nullDereference tests: readNull2.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/readNull2.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - nullDereference tests: setNull1.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/setNull1.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - nullDereference tests: setNull2.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/setNull2.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - nullDereference tests: useNull1.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/useNull1.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 0
+  }
+
+  "valid - nullDereference tests: useNull2.wacc" should "return exit code 0" in {
+    pending
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/useNull2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

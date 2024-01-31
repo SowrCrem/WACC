@@ -8,14 +8,12 @@ import org.scalatest.Pending
 
 class SyntaxErrArrayTests extends AnyFlatSpec {
 
-  "syntaxErr - array tests: arrayExpr.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - array tests: arrayExpr.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Array/arrayExpr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/array/arrayExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
 }

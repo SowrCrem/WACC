@@ -8,54 +8,44 @@ import org.scalatest.Pending
 
 class SyntaxErrWhileTests extends AnyFlatSpec {
 
-  "syntaxErr - while tests: donoErr.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - while tests: donoErr.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/While/donoErr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/while/donoErr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - while tests: dooErr.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - while tests: dooErr.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/While/dooErr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/while/dooErr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - while tests: whileNodone.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/While/whileNodone.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/while/whileNodone.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - while tests: whileNodo.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - while tests: whileNodo.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/While/whileNodo.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/while/whileNodo.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - while tests: whilErr.wacc" should "return exit code 200" in {
-    
-    pending
+  "syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/While/whilErr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/while/whilErr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
 }

@@ -9,140 +9,126 @@ import org.scalatest.Pending
 class ValidScopeTests extends AnyFlatSpec {
 
   "valid - scope tests: ifNested1.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/ifNested1.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/ifNested1.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: ifNested2.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/ifNested2.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/ifNested2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: indentationNotImportant.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/indentationNotImportant.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/indentationNotImportant.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: intsAndKeywords.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/intsAndKeywords.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/intsAndKeywords.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: printAllTypes.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/printAllTypes.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/printAllTypes.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: scopeBasic.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeBasic.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeBasic.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: scopeIfRedefine.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeIfRedefine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeIfRedefine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: scopeRedefine.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeRedefine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeRedefine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: scopeSimpleRedefine.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeSimpleRedefine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeSimpleRedefine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: scopeVars.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeVars.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeVars.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: scope.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scope.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scope.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: scopeWhileNested.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeWhileNested.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeWhileNested.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: scopeWhileRedefine.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeWhileRedefine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeWhileRedefine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - scope tests: splitScope.wacc" should "return exit code 0" in {
-    
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/splitScope.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/splitScope.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

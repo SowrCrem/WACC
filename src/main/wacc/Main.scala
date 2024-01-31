@@ -22,7 +22,8 @@ object Main {
             0
           }
           case Failure(msg) => {
-            println(msg)
+            // println(msg)
+            println("failed")
             100
           }
         }

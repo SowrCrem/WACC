@@ -8,34 +8,34 @@ import org.scalatest.Pending
 
 class SemanticErrWhileTests extends AnyFlatSpec {
 
-  "semanticErr - while tests: falsErr.wacc" should "return exit code 100" in {
+  "semanticErr - while tests: falsErr.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/While/falsErr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/while/falsErr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
-  "semanticErr - while tests: truErr.wacc" should "return exit code 100" in {
+  "semanticErr - while tests: truErr.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/While/truErr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/while/truErr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
-  "semanticErr - while tests: whileIntCondition.wacc" should "return exit code 100" in {
+  "semanticErr - while tests: whileIntCondition.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/While/whileIntCondition.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/while/whileIntCondition.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
 }

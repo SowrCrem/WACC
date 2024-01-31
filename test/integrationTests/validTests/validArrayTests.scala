@@ -12,7 +12,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/arrayBasic.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/arrayBasic.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/arrayEmpty.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/arrayEmpty.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -32,7 +32,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/arrayIndexMayBeArrayIndex.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/arrayIndexMayBeArrayIndex.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -42,7 +42,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/arrayLength.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/arrayLength.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -52,7 +52,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/arrayLookup.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/arrayLookup.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -62,7 +62,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/arrayNested.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/arrayNested.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -72,7 +72,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/arrayOnHeap.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/arrayOnHeap.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -82,7 +82,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/arrayPrint.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/arrayPrint.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -92,7 +92,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/arraySimple.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/arraySimple.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -102,7 +102,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/array.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/array.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -112,7 +112,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/charArrayInStringArray.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/charArrayInStringArray.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -122,7 +122,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/emptyArrayAloneIsFine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/emptyArrayAloneIsFine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -132,7 +132,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/emptyArrayNextLine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/emptyArrayNextLine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -142,7 +142,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/emptyArrayPrint.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/emptyArrayPrint.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -152,7 +152,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/emptyArrayReplace.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/emptyArrayReplace.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -162,7 +162,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/emptyArrayScope.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/emptyArrayScope.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -172,7 +172,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/free.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/free.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -182,7 +182,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/lenArrayIndex.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/lenArrayIndex.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -192,7 +192,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/modifyString.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/modifyString.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -202,7 +202,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/printRef.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/printRef.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -212,7 +212,7 @@ class ValidArrayTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Array/stringFromArray.wacc")
+    val path : Array[String] = Array("test/wacc/valid/array/stringFromArray.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

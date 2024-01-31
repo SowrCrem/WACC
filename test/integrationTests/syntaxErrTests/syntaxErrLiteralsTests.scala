@@ -8,31 +8,31 @@ import org.scalatest.Pending
 
 class SyntaxErrLiteralsTests extends AnyFlatSpec {
 
-  "syntaxErr - literals tests: charLiteralSingle.wacc" should "return exit code 200" in {
+  "syntaxErr - literals tests: charLiteralSingle.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Literals/charLiteralSingle.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/literals/charLiteralSingle.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - literals tests: stringLiteralNoNewlines.wacc" should "return exit code 200" in {
+  "syntaxErr - literals tests: stringLiteralNoNewlines.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Literals/stringLiteralNoNewlines.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/literals/stringLiteralNoNewlines.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - literals tests: stringLiteralOnlyAscii.wacc" should "return exit code 200" in {
+  "syntaxErr - literals tests: stringLiteralOnlyAscii.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Literals/stringLiteralOnlyAscii.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/literals/stringLiteralOnlyAscii.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
 }

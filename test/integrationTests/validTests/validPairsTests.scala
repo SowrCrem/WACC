@@ -12,7 +12,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/checkRefPair.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/checkRefPair.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/createPair02.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/createPair02.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -32,7 +32,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/createPair03.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/createPair03.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -42,7 +42,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/createPair.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/createPair.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -52,7 +52,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/createRefPair.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/createRefPair.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -62,7 +62,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/free.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/free.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -72,7 +72,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/linkedList.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/linkedList.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -82,7 +82,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/nestedPairLeftAssign.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/nestedPairLeftAssign.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -92,7 +92,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/nestedPairRightExtract.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/nestedPairRightExtract.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -102,7 +102,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/nestedPair.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/nestedPair.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -112,7 +112,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/null.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/null.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -122,7 +122,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/pairarray.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/pairarray.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -132,7 +132,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/pairExchangeArrayOk.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/pairExchangeArrayOk.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -142,7 +142,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/printNullPair.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/printNullPair.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -152,7 +152,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/printNull.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/printNull.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -162,7 +162,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/printPairOfNulls.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/printPairOfNulls.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -172,7 +172,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/printPair.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/printPair.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -182,7 +182,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/readPair.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/readPair.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -192,7 +192,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/writeFst.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/writeFst.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -202,7 +202,7 @@ class ValidPairsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Pairs/writeSnd.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/writeSnd.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

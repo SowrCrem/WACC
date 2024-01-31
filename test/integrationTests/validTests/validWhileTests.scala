@@ -12,7 +12,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/fibonacciFullIt.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/fibonacciFullIt.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/fibonacciIterative.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/fibonacciIterative.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -32,7 +32,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/loopCharCondition.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/loopCharCondition.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -42,7 +42,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/loopIntCondition.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/loopIntCondition.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -52,7 +52,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/max.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/max.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -62,7 +62,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/min.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/min.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -72,7 +72,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/rmStyleAddIO.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/rmStyleAddIO.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -82,7 +82,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/rmStyleAdd.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/rmStyleAdd.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -92,7 +92,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/whileBasic.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/whileBasic.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -102,7 +102,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/whileBoolFlip.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/whileBoolFlip.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -112,7 +112,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/whileCount.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/whileCount.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -122,7 +122,7 @@ class ValidWhileTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/While/whileFalse.wacc")
+    val path : Array[String] = Array("test/wacc/valid/while/whileFalse.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

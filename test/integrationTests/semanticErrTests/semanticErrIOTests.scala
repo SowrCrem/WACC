@@ -8,14 +8,14 @@ import org.scalatest.Pending
 
 class SemanticErrIOTests extends AnyFlatSpec {
 
-  "semanticErr - IO tests: readTypeErr.wacc" should "return exit code 100" in {
+  "semanticErr - IO tests: readTypeErr.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/IO/readTypeErr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/IO/readTypeErr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
 }

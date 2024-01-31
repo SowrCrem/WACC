@@ -8,14 +8,14 @@ import org.scalatest.Pending
 
 class SemanticErrIfTests extends AnyFlatSpec {
 
-  "semanticErr - if tests: ifIntCondition.wacc" should "return exit code 100" in {
+  "semanticErr - if tests: ifIntCondition.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/If/ifIntCondition.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/if/ifIntCondition.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
 }

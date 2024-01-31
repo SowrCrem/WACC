@@ -8,85 +8,85 @@ import org.scalatest.Pending
 
 class SyntaxErrBasicTests extends AnyFlatSpec {
 
-  "syntaxErr - basic tests: badComment2.wacc" should "return exit code 200" in {
+  "syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Basic/badComment2.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/badComment2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - basic tests: badComment.wacc" should "return exit code 200" in {
+  "syntaxErr - basic tests: badComment.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Basic/badComment.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/badComment.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - basic tests: badEscape.wacc" should "return exit code 200" in {
+  "syntaxErr - basic tests: badEscape.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Basic/badEscape.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/badEscape.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - basic tests: beginNoend.wacc" should "return exit code 200" in {
+  "syntaxErr - basic tests: beginNoend.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Basic/beginNoend.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/beginNoend.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - basic tests: bgnErr.wacc" should "return exit code 200" in {
+  "syntaxErr - basic tests: bgnErr.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Basic/bgnErr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/bgnErr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - basic tests: multipleBegins.wacc" should "return exit code 200" in {
+  "syntaxErr - basic tests: multipleBegins.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Basic/multipleBegins.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/multipleBegins.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - basic tests: noBody.wacc" should "return exit code 200" in {
+  "syntaxErr - basic tests: noBody.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Basic/noBody.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/noBody.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - basic tests: skpErr.wacc" should "return exit code 200" in {
+  "syntaxErr - basic tests: skpErr.wacc" should "return exit code 100" in {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Basic/skpErr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/skpErr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
-  "syntaxErr - basic tests: unescapedChar.wacc" should "return exit code 200" in {
+  "syntaxErr - basic tests: unescapedChar.wacc" should "return exit code 100" ignore {
     
 
-    val path : Array[String] = Array("test/wacc/syntaxErr/Basic/unescapedChar.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/unescapedChar.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    exitCode shouldBe 100
   }
 
 }

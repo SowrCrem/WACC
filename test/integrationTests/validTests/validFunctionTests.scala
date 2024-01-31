@@ -12,7 +12,7 @@ class ValidFunctionTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Function/nested_functions")
+    val path : Array[String] = Array("test/wacc/valid/function/nested_functions")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidFunctionTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Function/simple_functions")
+    val path : Array[String] = Array("test/wacc/valid/function/simple_functions")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

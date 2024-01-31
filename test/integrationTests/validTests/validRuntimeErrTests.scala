@@ -12,7 +12,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/arrayOutOfBounds")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/arrayOutOfBounds")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/badChar")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/badChar")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -32,7 +32,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/divideByZero")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -42,7 +42,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/integerOverflow")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -52,7 +52,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/RuntimeErr/nullDereference")
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

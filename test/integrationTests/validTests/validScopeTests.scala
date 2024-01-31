@@ -12,7 +12,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/ifNested1.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/ifNested1.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/ifNested2.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/ifNested2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -32,7 +32,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/indentationNotImportant.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/indentationNotImportant.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -42,7 +42,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/intsAndKeywords.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/intsAndKeywords.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -52,7 +52,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/printAllTypes.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/printAllTypes.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -62,7 +62,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeBasic.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeBasic.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -72,7 +72,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeIfRedefine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeIfRedefine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -82,7 +82,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeRedefine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeRedefine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -92,7 +92,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeSimpleRedefine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeSimpleRedefine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -102,7 +102,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeVars.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeVars.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -112,7 +112,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scope.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scope.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -122,7 +122,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeWhileNested.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeWhileNested.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -132,7 +132,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/scopeWhileRedefine.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/scopeWhileRedefine.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -142,7 +142,7 @@ class ValidScopeTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Scope/splitScope.wacc")
+    val path : Array[String] = Array("test/wacc/valid/scope/splitScope.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

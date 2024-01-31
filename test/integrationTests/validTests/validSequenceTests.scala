@@ -12,7 +12,7 @@ class ValidSequenceTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Sequence/basicSeq2.wacc")
+    val path : Array[String] = Array("test/wacc/valid/sequence/basicSeq2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidSequenceTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Sequence/basicSeq.wacc")
+    val path : Array[String] = Array("test/wacc/valid/sequence/basicSeq.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -32,7 +32,7 @@ class ValidSequenceTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Sequence/boolAssignment.wacc")
+    val path : Array[String] = Array("test/wacc/valid/sequence/boolAssignment.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -42,7 +42,7 @@ class ValidSequenceTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Sequence/charAssignment.wacc")
+    val path : Array[String] = Array("test/wacc/valid/sequence/charAssignment.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -52,7 +52,7 @@ class ValidSequenceTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Sequence/exitSimple.wacc")
+    val path : Array[String] = Array("test/wacc/valid/sequence/exitSimple.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -62,7 +62,7 @@ class ValidSequenceTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Sequence/intAssignment.wacc")
+    val path : Array[String] = Array("test/wacc/valid/sequence/intAssignment.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -72,7 +72,7 @@ class ValidSequenceTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Sequence/intLeadingZeros.wacc")
+    val path : Array[String] = Array("test/wacc/valid/sequence/intLeadingZeros.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -82,7 +82,7 @@ class ValidSequenceTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Sequence/stringAssignment.wacc")
+    val path : Array[String] = Array("test/wacc/valid/sequence/stringAssignment.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

@@ -8,64 +8,64 @@ import org.scalatest.Pending
 
 class SemanticErrMultipleTests extends AnyFlatSpec {
 
-  "semanticErr - multiple tests: funcMess.wacc" should "return exit code 100" in {
+  "semanticErr - multiple tests: funcMess.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/Multiple/funcMess.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/funcMess.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
-  "semanticErr - multiple tests: ifAndWhileErrs.wacc" should "return exit code 100" in {
+  "semanticErr - multiple tests: ifAndWhileErrs.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/Multiple/ifAndWhileErrs.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/ifAndWhileErrs.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
-  "semanticErr - multiple tests: messyExpr.wacc" should "return exit code 100" in {
+  "semanticErr - multiple tests: messyExpr.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/Multiple/messyExpr.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/messyExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
-  "semanticErr - multiple tests: multiCaseSensitivity.wacc" should "return exit code 100" in {
+  "semanticErr - multiple tests: multiCaseSensitivity.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/Multiple/multiCaseSensitivity.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/multiCaseSensitivity.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
-  "semanticErr - multiple tests: multiTypeErrs.wacc" should "return exit code 100" in {
+  "semanticErr - multiple tests: multiTypeErrs.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/Multiple/multiTypeErrs.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/multiTypeErrs.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
-  "semanticErr - multiple tests: obfuscatingReturnsWithWhile.wacc" should "return exit code 100" in {
+  "semanticErr - multiple tests: obfuscatingReturnsWithWhile.wacc" should "return exit code 200" in {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/semanticErr/Multiple/obfuscatingReturnsWithWhile.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/obfuscatingReturnsWithWhile.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
-    exitCode shouldBe 100
+    exitCode shouldBe 200
   }
 
 }

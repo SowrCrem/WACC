@@ -12,7 +12,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/andExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/andExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/andOverOrExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/andOverOrExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -32,7 +32,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/boolCalc.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/boolCalc.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -42,7 +42,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/boolExpr1.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/boolExpr1.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -52,7 +52,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/charComparisonExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/charComparisonExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -62,7 +62,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/divExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/divExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -72,7 +72,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/equalsExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/equalsExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -82,7 +82,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/equalsOverAnd.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/equalsOverAnd.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -92,7 +92,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/equalsOverBool.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/equalsOverBool.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -102,7 +102,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/equalsOverOr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/equalsOverOr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -112,7 +112,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/greaterEqExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/greaterEqExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -122,7 +122,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/greaterExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/greaterExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -132,7 +132,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/intCalc.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/intCalc.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -142,7 +142,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/intExpr1.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/intExpr1.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -152,7 +152,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/lessCharExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/lessCharExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -162,7 +162,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/lessEqExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/lessEqExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -172,7 +172,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/lessExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/lessExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -182,7 +182,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/longExpr2.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/longExpr2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -192,7 +192,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/longExpr3.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/longExpr3.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -202,7 +202,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/longExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/longExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -212,7 +212,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/longSplitExpr2.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/longSplitExpr2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -222,7 +222,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/longSplitExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/longSplitExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -232,7 +232,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/minusExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/minusExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -242,7 +242,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/minusMinusExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/minusMinusExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -252,7 +252,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/minusNoWhitespaceExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/minusNoWhitespaceExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -262,7 +262,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/minusPlusExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/minusPlusExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -272,7 +272,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/modExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/modExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -282,7 +282,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/multExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/multExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -292,7 +292,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/multNoWhitespaceExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/multNoWhitespaceExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -302,7 +302,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/negBothDiv.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/negBothDiv.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -312,7 +312,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/negBothMod.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/negBothMod.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -322,7 +322,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/negDividendDiv.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/negDividendDiv.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -332,7 +332,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/negDividendMod.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/negDividendMod.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -342,7 +342,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/negDivisorDiv.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/negDivisorDiv.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -352,7 +352,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/negDivisorMod.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/negDivisorMod.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -362,7 +362,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/negExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/negExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -372,7 +372,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/notequalsExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/notequalsExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -382,7 +382,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/notExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/notExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -392,7 +392,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/ordAndchrExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/ordAndchrExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -402,7 +402,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/orExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/orExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -412,7 +412,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/plusExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/plusExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -422,7 +422,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/plusMinusExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/plusMinusExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -432,7 +432,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/plusNoWhitespaceExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/plusNoWhitespaceExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -442,7 +442,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/plusPlusExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/plusPlusExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -452,7 +452,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/sequentialCount.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/sequentialCount.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -462,7 +462,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Expressions/stringEqualsExpr.wacc")
+    val path : Array[String] = Array("test/wacc/valid/expressions/stringEqualsExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

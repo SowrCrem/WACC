@@ -12,7 +12,7 @@ class ValidAdvancedTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Advanced/binarySortTree.wacc")
+    val path : Array[String] = Array("test/wacc/valid/advanced/binarySortTree.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidAdvancedTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Advanced/hashTable.wacc")
+    val path : Array[String] = Array("test/wacc/valid/advanced/hashTable.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -32,7 +32,7 @@ class ValidAdvancedTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Advanced/ticTacToe.wacc")
+    val path : Array[String] = Array("test/wacc/valid/advanced/ticTacToe.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

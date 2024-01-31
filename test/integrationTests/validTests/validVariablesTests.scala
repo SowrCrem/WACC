@@ -12,7 +12,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/boolDeclaration2.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/boolDeclaration2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -22,7 +22,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/boolDeclaration.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/boolDeclaration.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -32,7 +32,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/capCharDeclaration.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/capCharDeclaration.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -42,7 +42,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/charDeclaration2.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/charDeclaration2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -52,7 +52,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/charDeclaration.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/charDeclaration.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -62,7 +62,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/emptyStringDeclaration.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/emptyStringDeclaration.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -72,7 +72,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/intDeclaration.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/intDeclaration.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -82,7 +82,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/longVarNames.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/longVarNames.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -92,7 +92,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/manyVariables.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/manyVariables.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -102,7 +102,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/negIntDeclaration.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/negIntDeclaration.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -112,7 +112,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/puncCharDeclaration.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/puncCharDeclaration.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -122,7 +122,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/stringCarriageReturn.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/stringCarriageReturn.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -132,7 +132,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/stringDeclaration.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/stringDeclaration.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -142,7 +142,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/_VarNames.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/_VarNames.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
@@ -152,7 +152,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     
     pending
 
-    val path : Array[String] = Array("test/wacc/valid/Variables/zeroIntDeclaration.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/zeroIntDeclaration.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

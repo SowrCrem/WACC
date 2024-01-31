@@ -10,7 +10,6 @@ class SyntaxErrPrintTests extends AnyFlatSpec {
 
   "syntaxErr - print tests: printlnCharArry.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Print/printlnCharArry.wacc")
     val exitCode = Main.compile(path)

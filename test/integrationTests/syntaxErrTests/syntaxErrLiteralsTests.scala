@@ -10,7 +10,6 @@ class SyntaxErrLiteralsTests extends AnyFlatSpec {
 
   "syntaxErr - literals tests: charLiteralSingle.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Literals/charLiteralSingle.wacc")
     val exitCode = Main.compile(path)
@@ -20,7 +19,6 @@ class SyntaxErrLiteralsTests extends AnyFlatSpec {
 
   "syntaxErr - literals tests: stringLiteralNoNewlines.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Literals/stringLiteralNoNewlines.wacc")
     val exitCode = Main.compile(path)
@@ -30,7 +28,6 @@ class SyntaxErrLiteralsTests extends AnyFlatSpec {
 
   "syntaxErr - literals tests: stringLiteralOnlyAscii.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Literals/stringLiteralOnlyAscii.wacc")
     val exitCode = Main.compile(path)

@@ -10,7 +10,6 @@ class SyntaxErrExpressionsTests extends AnyFlatSpec {
 
   "syntaxErr - expressions tests: missingOperand1.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Expressions/missingOperand1.wacc")
     val exitCode = Main.compile(path)
@@ -20,7 +19,6 @@ class SyntaxErrExpressionsTests extends AnyFlatSpec {
 
   "syntaxErr - expressions tests: missingOperand2.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Expressions/missingOperand2.wacc")
     val exitCode = Main.compile(path)
@@ -30,7 +28,6 @@ class SyntaxErrExpressionsTests extends AnyFlatSpec {
 
   "syntaxErr - expressions tests: printlnConcat.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Expressions/printlnConcat.wacc")
     val exitCode = Main.compile(path)

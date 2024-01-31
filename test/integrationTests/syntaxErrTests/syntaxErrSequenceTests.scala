@@ -10,7 +10,6 @@ class SyntaxErrSequenceTests extends AnyFlatSpec {
 
   "syntaxErr - sequence tests: doubleSeq.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Sequence/doubleSeq.wacc")
     val exitCode = Main.compile(path)
@@ -20,7 +19,6 @@ class SyntaxErrSequenceTests extends AnyFlatSpec {
 
   "syntaxErr - sequence tests: emptySeq.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Sequence/emptySeq.wacc")
     val exitCode = Main.compile(path)
@@ -30,7 +28,6 @@ class SyntaxErrSequenceTests extends AnyFlatSpec {
 
   "syntaxErr - sequence tests: endSeq.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Sequence/endSeq.wacc")
     val exitCode = Main.compile(path)
@@ -40,7 +37,6 @@ class SyntaxErrSequenceTests extends AnyFlatSpec {
 
   "syntaxErr - sequence tests: extraSeq.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Sequence/extraSeq.wacc")
     val exitCode = Main.compile(path)
@@ -50,7 +46,6 @@ class SyntaxErrSequenceTests extends AnyFlatSpec {
 
   "syntaxErr - sequence tests: missingSeq.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/Sequence/missingSeq.wacc")
     val exitCode = Main.compile(path)

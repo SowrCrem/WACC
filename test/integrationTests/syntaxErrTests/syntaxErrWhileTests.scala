@@ -10,7 +10,6 @@ class SyntaxErrWhileTests extends AnyFlatSpec {
 
   "syntaxErr - while tests: donoErr.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/While/donoErr.wacc")
     val exitCode = Main.compile(path)
@@ -20,7 +19,6 @@ class SyntaxErrWhileTests extends AnyFlatSpec {
 
   "syntaxErr - while tests: dooErr.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/While/dooErr.wacc")
     val exitCode = Main.compile(path)
@@ -30,7 +28,6 @@ class SyntaxErrWhileTests extends AnyFlatSpec {
 
   "syntaxErr - while tests: whileNodone.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/While/whileNodone.wacc")
     val exitCode = Main.compile(path)
@@ -40,7 +37,6 @@ class SyntaxErrWhileTests extends AnyFlatSpec {
 
   "syntaxErr - while tests: whileNodo.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/While/whileNodo.wacc")
     val exitCode = Main.compile(path)
@@ -50,7 +46,6 @@ class SyntaxErrWhileTests extends AnyFlatSpec {
 
   "syntaxErr - while tests: whilErr.wacc" should "return exit code 200" in {
     
-    pending
 
     val path : Array[String] = Array("test/wacc/syntaxErr/While/whilErr.wacc")
     val exitCode = Main.compile(path)

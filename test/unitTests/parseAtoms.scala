@@ -154,21 +154,21 @@ class parseAtoms extends AnyFlatSpec {
 
   it should "reject invalid string literals" in {
     pending
-    parseSucceeds("\"\""  , "string") // Empty char
-    parseSucceeds("\"\\\"", "string") // Backslash
-    parseSucceeds("\"\"\"", "string") // Double quote
-    parseSucceeds("\"\'\"", "string") // Single quote
+    parseFails("\"\""  , "string") // Empty char
+    parseFails("\"\\\"", "string") // Backslash
+    parseFails("\"\"\"", "string") // Double quote
+    parseFails("\"\'\"", "string") // Single quote
   }
 
   it should "reject invalid escaped string literals" in {
     pending
-    parseSucceeds("\"\\a\"" , "string")
-    parseSucceeds("\"\\z\"" , "string")
-    parseSucceeds("\"\\\'\"", "string")
-    parseSucceeds("\"\\\"\"", "string")
-    parseSucceeds("\"\\x\"" , "string")
-    parseSucceeds("\"\\u\"" , "string")
-    parseSucceeds("\"\\U\"" , "string")
+    parseFails("\"\\a\"" , "string")
+    parseFails("\"\\z\"" , "string")
+    parseFails("\"\\\'\"", "string")
+    parseFails("\"\\\"\"", "string")
+    parseFails("\"\\x\"" , "string")
+    parseFails("\"\\u\"" , "string")
+    parseFails("\"\\U\"" , "string")
   }
 
   // Tests for Null (PairLiter) ---------------------------------------------------------------------------------------

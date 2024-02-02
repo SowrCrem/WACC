@@ -72,8 +72,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("-123", Neg(IntLiter(123)))
   }
 
-  it should "reject doubly signed int literals" in {
-    pending
+  it should "reject doubly signed int literals" ignore {
     parseFails("++123", "int")
     parseFails("--123", "int")
   }
@@ -92,8 +91,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\'a\'", CharLiter('a'))
   }
 
-  it should "parse escaped char literals" in {
-    pending
+  it should "parse escaped char literals" ignore {
     parseSucceeds("\'\\0\'" , CharLiter('\u0000'))
     parseSucceeds("\'\\b\'" , CharLiter('\b'))
     parseSucceeds("\'\\n\'" , CharLiter('\n'))
@@ -114,8 +112,8 @@ class parseAtoms extends AnyFlatSpec {
     parseFails("\'\\U\'" , "char")
   }
 
-  it should "reject invalid char literals" in {
-    pending
+  it should "reject invalid char literals" ignore {
+    
     // TODO: Should we include empty char? If not, write a test making sure its not rejected
     parseFails("\'\'"  , "char") // Empty char
     parseFails("\'\\\'", "char") // Backslash
@@ -134,8 +132,8 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\"hello world\"", StringLiter("hello world"))
   }
 
-  it should "parse escaped string literals" in {
-    pending
+  it should "parse escaped string literals" ignore {
+    
     parseSucceeds("\"\\0\"", StringLiter("\u0000"))
     parseSucceeds("\"\\b\"", StringLiter("\b"))
     parseSucceeds("\"\\n\"", StringLiter("\n"))
@@ -144,16 +142,16 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\"\\t\"", StringLiter("\t"))
   }
 
-  it should "reject invalid string literals" in {
-    pending
+  it should "reject invalid string literals" ignore {
+    
     parseFails("\"\""  , "string") // Empty char
     parseFails("\"\\\"", "string") // Backslash
     parseFails("\"\"\"", "string") // Double quote
     parseFails("\"\'\"", "string") // Single quote
   }
 
-  it should "reject invalid escaped string literals" in {
-    pending
+  it should "reject invalid escaped string literals" ignore {
+    
     parseFails("\"\\a\"" , "string")
     parseFails("\"\\z\"" , "string")
     parseFails("\"\\\'\"", "string")
@@ -173,13 +171,13 @@ class parseAtoms extends AnyFlatSpec {
     parseWithIdentifier("hello", true)
   }
 
-  it should "parse identifiers with underscores" in {
-    pending
+  it should "parse identifiers with underscores" ignore {
+    
     parseWithIdentifier("hello_world", true)
   }
 
-  it should "parse identifiers starting with underscores" in {
-    pending
+  it should "parse identifiers starting with underscores" ignore {
+    
     parseWithIdentifier("_hello", true)
   }
 
@@ -191,8 +189,8 @@ class parseAtoms extends AnyFlatSpec {
     parseWithIdentifier("123hello", false)
   }
 
-  it should "parse identifiers with underscores and numbers" in {
-    pending
+  it should "parse identifiers with underscores and numbers" ignore {
+    
     parseWithIdentifier("hello_world123", true)
   }
 
@@ -230,13 +228,13 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   // Tests for ArrayElem ----------------------------------------------------------------------------------------
-  it should "parse array elements" in {
-    pending
+  it should "parse array elements" ignore {
+    
     parseSucceeds("arr[0]", IntLiter(1)) // TODO: Change to array
   }
 
-  it should "parse 2d array elements" in {
-    pending
+  it should "parse 2d array elements" ignore {
+    
     parseSucceeds("arr[0][1]", IntLiter(1)) // TODO: Change to array
   }
 

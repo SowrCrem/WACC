@@ -196,9 +196,12 @@ object parser {
     "is" ~> stmtParser <~ "end"
   )
 
+  // -- Program Parser --------------------------------------------- //
   val program: Parsley[Node] =
     Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
 
+
+  // -- Parser ---------------------------------------------------- //
   val parser = fully(program)
 
   def parse(input: String): Result[String, Node] = parser.parse(input)

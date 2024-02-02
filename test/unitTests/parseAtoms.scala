@@ -28,56 +28,48 @@ import wacc.Type
 
 class parseAtoms extends AnyFlatSpec {
 
-  def parseFails(input: String, inputType: String): Assertion = {
-    parser.parse("begin " + inputType + " input = " + input + " end") should matchPattern { 
-      // Match on any Failure with any String
-      case Failure(_) => 
+  // Testing Functions -------------------------------------------------------------------------------------------------
+  def getType(expected: Node): (String, Type) = expected match {
+    case IntLiter(_)    => ("int"   , IntType())
+    case Neg(_)         => ("int"   , IntType())
+    case BoolLiter(_)   => ("bool"  , BoolType())
+    case CharLiter(_)   => ("char"  , CharType())
+    case StringLiter(_) => ("string", StringType())
+    case Brackets(expr) => getType(expr)
+    case _              => ("int"   , IntType())
+  }
+
+  def parseSucceeds[T](input: String, expected: Node, identifier: String = "input", comment: String = ""): Assertion = {
+    val (literalType, typeNode) = getType(expected)
+    val assignment = IdentAsgn(typeNode, Ident(identifier), expected)
+    parser.parse("begin " + literalType + " " + identifier + " = " + input + " " + comment + "\n end") shouldBe Success(Program(List(), assignment))
+  }
+
+  def parseFails(input: String, inputType: String, identifier: String = "input"): Assertion = {
+    parser.parse("begin " + inputType + " " + identifier + " = " + input + " end") should matchPattern {
+      case Failure(_) => // Match on any Failure
     }
   }
 
-  def parseSucceeds[T](input: String, expected: T): Assertion = {
-    val identifier = Ident("input")
-    var literalType = "int"
-    var typeNode: Type = IntType()
-    
-    // Dynamically generate the literal node based on the expected type
-    var literal: Node = Null()
-    expected match {
-      case exp: Int =>
-        literal = if (exp < 0) Neg(IntLiter(exp * -1)) else IntLiter(exp)
-      case exp: Boolean =>
-        literalType = "bool"
-        literal     = BoolLiter(exp)
-        typeNode    = BoolType()
-      case exp: Char =>
-        literalType = "char"
-        literal     = CharLiter(exp)
-        typeNode    = CharType()
-      case exp: String =>
-        literalType = "string"
-        literal     = StringLiter(exp)
-        typeNode    = StringType()
-      case exp: Null =>
-        literal     = Null()
-      case _ =>
-        throw new IllegalArgumentException("Unsupported type")
-    }
+  def parseWithIdentifier(name:String, success:Boolean): Assertion = {
+    if (success) parseSucceeds("1", IntLiter(1), name) else parseFails("1", "int", name)
+  }
 
-    val assignment = IdentAsgn(typeNode, identifier, literal)
-    parser.parse("begin " + literalType + " input = " + input + " end") shouldBe Success(Program(List(), assignment))
+  def commentIgnored(comment: String) = {
+    parseSucceeds("1", IntLiter(1), "input", comment)
   }
 
   // Tests for IntLiter -----------------------------------------------------------------------------------------------
   "the parser" should "parse unsigned int literals" in {
-    parseSucceeds("123", 123)
+    parseSucceeds("123", IntLiter(123))
   }
 
   it should "parse signed positive int literals" in {
-    parseSucceeds("+123", 123)
+    parseSucceeds("+123", IntLiter(123))
   }
 
   it should "parse signed negative int literals" in {
-    parseSucceeds("-123", -123)
+    parseSucceeds("-123", Neg(IntLiter(123)))
   }
 
   it should "reject doubly signed int literals" in {
@@ -88,27 +80,27 @@ class parseAtoms extends AnyFlatSpec {
 
   // Tests for BoolLiter ----------------------------------------------------------------------------------------------
   it should "parse true bool literals" in {
-    parseSucceeds("true", true)
+    parseSucceeds("true", BoolLiter(true))
   }
 
   it should "parse false bool literals" in {
-    parseSucceeds("false", false)
+    parseSucceeds("false", BoolLiter(false))
   }
 
   // Tests for CharLiter ----------------------------------------------------------------------------------------------
   it should "parse char literals" in {
-    parseSucceeds("\'a\'", 'a')
+    parseSucceeds("\'a\'", CharLiter('a'))
   }
 
   it should "parse escaped char literals" in {
     pending
-    parseSucceeds("\'\\0\'" , '\u0000')
-    parseSucceeds("\'\\b\'" , '\b')
-    parseSucceeds("\'\\n\'" , '\n')
-    parseSucceeds("\'\\f\'" , '\f')
-    parseSucceeds("\'\\r\'" , '\r')
-    parseSucceeds("\'\\t\'" , '\t')
-    parseSucceeds("\'\\\'\'", '\'')
+    parseSucceeds("\'\\0\'" , CharLiter('\u0000'))
+    parseSucceeds("\'\\b\'" , CharLiter('\b'))
+    parseSucceeds("\'\\n\'" , CharLiter('\n'))
+    parseSucceeds("\'\\f\'" , CharLiter('\f'))
+    parseSucceeds("\'\\r\'" , CharLiter('\r'))
+    parseSucceeds("\'\\t\'" , CharLiter('\t'))
+    parseSucceeds("\'\\\'\'", CharLiter('\''))
   }
 
   it should "reject invalid escaped char literals" in {
@@ -134,22 +126,22 @@ class parseAtoms extends AnyFlatSpec {
   // Tests for StringLiter --------------------------------------------------------------------------------------------
 
   it should "parse empty string literals" in {
-    parseSucceeds("\"\"", "")
+    parseSucceeds("\"\"", StringLiter(""))
   }
 
   it should "parse string literals" in {
-    parseSucceeds("\"hello\"", "hello")
-    parseSucceeds("\"hello world\"", "hello world")
+    parseSucceeds("\"hello\"", StringLiter("hello"))
+    parseSucceeds("\"hello world\"", StringLiter("hello world"))
   }
 
   it should "parse escaped string literals" in {
     pending
-    parseSucceeds("\"\\0\"", "\u0000")
-    parseSucceeds("\"\\b\"", "\b")
-    parseSucceeds("\"\\n\"", "\n")
-    parseSucceeds("\"\\f\"", "\f")
-    parseSucceeds("\"\\r\"", "\r")
-    parseSucceeds("\"\\t\"", "\t")
+    parseSucceeds("\"\\0\"", StringLiter("\u0000"))
+    parseSucceeds("\"\\b\"", StringLiter("\b"))
+    parseSucceeds("\"\\n\"", StringLiter("\n"))
+    parseSucceeds("\"\\f\"", StringLiter("\f"))
+    parseSucceeds("\"\\r\"", StringLiter("\r"))
+    parseSucceeds("\"\\t\"", StringLiter("\t"))
   }
 
   it should "reject invalid string literals" in {
@@ -178,19 +170,74 @@ class parseAtoms extends AnyFlatSpec {
 
   // Tests for Ident --------------------------------------------------------------------------------------------------
   it should "parse identifiers" in {
-    pending
-    // parser.parse("hello") shouldBe Success(Ident("hello"))
+    parseWithIdentifier("hello", true)
   }
 
-  // TODO: Tests for Comment ------------------------------------------------------------------------------------------
+  it should "parse identifiers with underscores" in {
+    pending
+    parseWithIdentifier("hello_world", true)
+  }
 
+  it should "parse identifiers starting with underscores" in {
+    pending
+    parseWithIdentifier("_hello", true)
+  }
+
+  it should "parse identifiers with numbers" in {
+    parseWithIdentifier("hello123", true)
+  }
+
+  it should "reject identifiers starting with numbers" in {
+    parseWithIdentifier("123hello", false)
+  }
+
+  it should "parse identifiers with underscores and numbers" in {
+    pending
+    parseWithIdentifier("hello_world123", true)
+  }
+
+  // Tests for Comment ------------------------------------------------------------------------------------------
+  it should "ignore comments" in {
+    commentIgnored("# This is a comment")
+    commentIgnored("## This is a comment")
+  }
+
+  it should "reject comments without EOL" in {
+    parseFails("# This is a comment", "int")
+  }
 
   // Tests for Brackets -----------------------------------------------------------------------------------------------
   it should "parse brackets" in {
-    pending
-    parser.parse("(123)") shouldBe Success(Brackets(IntLiter(123)))
+    parseSucceeds("(123)"  , Brackets(IntLiter(123)))
+    parseSucceeds("(true)" , Brackets(BoolLiter(true)))
+    parseSucceeds("(\'a\')", Brackets(CharLiter('a')))
+    parseSucceeds("(\"\")" , Brackets(StringLiter("")))
+    parseSucceeds("(null)" , Brackets(Null()))
+    parseSucceeds("(hello)", Brackets(Ident("hello")))
   }
 
-  // TODO: Tests for ArrayElem ----------------------------------------------------------------------------------------
+  it should "reject brackets around identifiers" in {
+    parseWithIdentifier("(hello)", false)
+  }
+
+  it should "parse double brackets" in {
+    parseSucceeds("((123))"  , Brackets(Brackets(IntLiter(123))))
+    parseSucceeds("((true))" , Brackets(Brackets(BoolLiter(true))))
+    parseSucceeds("((\'a\'))", Brackets(Brackets(CharLiter('a'))))
+    parseSucceeds("((\"\"))" , Brackets(Brackets(StringLiter(""))))
+    parseSucceeds("((null))" , Brackets(Brackets(Null())))
+    parseSucceeds("((hello))", Brackets(Brackets(Ident("hello"))))
+  }
+
+  // Tests for ArrayElem ----------------------------------------------------------------------------------------
+  it should "parse array elements" in {
+    pending
+    parseSucceeds("arr[0]", IntLiter(1)) // TODO: Change to array
+  }
+
+  it should "parse 2d array elements" in {
+    pending
+    parseSucceeds("arr[0][1]", IntLiter(1)) // TODO: Change to array
+  }
 
 }

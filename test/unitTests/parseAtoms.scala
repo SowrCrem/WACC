@@ -26,6 +26,7 @@ import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
 import wacc.Type
 
+
 class parseAtoms extends AnyFlatSpec {
 
   // Testing Functions -------------------------------------------------------------------------------------------------
@@ -228,13 +229,13 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   // Tests for ArrayElem ----------------------------------------------------------------------------------------
-  it should "parse array elements" ignore {
-    
+  it should "parse array elements" in {
+    pending
     parseSucceeds("arr[0]", IntLiter(1)) // TODO: Change to array
   }
 
-  it should "parse 2d array elements" ignore {
-    
+  it should "parse 2d array elements" in {
+    pending
     parseSucceeds("arr[0][1]", IntLiter(1)) // TODO: Change to array
   }
 

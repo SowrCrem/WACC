@@ -3,8 +3,6 @@ import parsley.generic
 
 sealed trait Node
 
-
-
 // Program (Extending Node)
 
 case class Program(funcList: List[Func], stat: Stat) extends Node

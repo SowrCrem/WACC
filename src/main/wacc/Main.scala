@@ -19,8 +19,17 @@ object Main {
         val fileContent = ("cat " + filename).!!
         parser.parser.parse(fileContent) match {
           case Success(node) => {
-            println(s"$fileContent = $node")
-            0
+            // TODO: Perform semantic analysis
+            semanticAnalyser.analyse(node) match {
+              case 0 => {
+                println(s"$fileContent = $node")
+                0
+              }
+              case _ => { 
+                print("failed")
+                200
+              }
+            }
           }
           case Failure(msg) => {
             // println(msg)

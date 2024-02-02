@@ -9,7 +9,8 @@ object Main {
     // args.foreach { println(_) }
     // println("Num Args= " + args.length)
     val exitCode = compile(args)
-    println("Exit Code: " + exitCode)
+    // println("Exit Code: " + exitCode)
+    sys.exit(exitCode)
   }
 
   def compile(args: Array[String]): Int = {

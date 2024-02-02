@@ -10,18 +10,38 @@ import parsley.token.descriptions.numeric.NumericDesc
 import parsley.token.descriptions.numeric.PlusSignPresence
 import parsley.combinator._
 import parsley.syntax._
+import parsley.token.descriptions.text.TextDesc
+import parsley.token.descriptions.text.EscapeDesc
 
 object lexer {
+
+  val escLiterals = Set('0', '\\', '"', 'b', 't', 'n', 'f', 'r', '\'')
+
   private val desc = LexicalDesc.plain.copy(
     nameDesc = NameDesc.plain.copy(
-      identifierStart = predicate.Basic(_.isLetter),
-      identifierLetter = predicate.Basic(_.isLetterOrDigit)
+      identifierStart = predicate.Basic(c=> c.isLetter || c == '_'),
+      identifierLetter = predicate.Basic(c=> c.isLetterOrDigit || c == '_')
     ),
     numericDesc = NumericDesc.plain.copy(
       positiveSign = PlusSignPresence.Optional
     ),
     spaceDesc = SpaceDesc.plain.copy(
       lineCommentStart = "#"
+    ),
+    textDesc = TextDesc.plain.copy(
+      escapeSequences = EscapeDesc.plain.copy(
+        escBegin = '\\',
+        literals = escLiterals,
+        // mapping = Map("0" -> '\u0000',
+        //               "b" -> '\b',
+        //               "t" -> '\t',
+        //               "n" -> '\n',
+        //               "f" -> '\f',
+        //               "r" -> '\r',
+        //               "\"" -> '\"',
+        //               "'" -> '\'',
+        //               "\\" -> '\\')
+      )
     ),
     symbolDesc = SymbolDesc.plain.copy(
       hardKeywords = Set(

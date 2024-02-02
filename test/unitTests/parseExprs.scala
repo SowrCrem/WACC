@@ -12,12 +12,15 @@ import wacc.{
   CharLiter,
   CharType,
   StringLiter,
+  ArrayLiter,
   StringType,
   Ident,
   Brackets,
   Null,
   Error,
-  Node
+  Node,
+  Expr,
+  Exit
 }
 import parsley.{Failure, Result, Success}
 import wacc.parser._
@@ -39,10 +42,8 @@ class parseExprs extends AnyFlatSpec {
     case _              => ("int"   , IntType())
   }
 
-  def parseSucceeds[T](input: String, expected: Node, identifier: String = "input", comment: String = ""): Assertion = {
-    val (literalType, typeNode) = getType(expected)
-    val assignment = IdentAsgn(typeNode, Ident(identifier), expected)
-    parser.parse("begin " + literalType + " " + identifier + " = " + input + " " + comment + "\n end") shouldBe Success(Program(List(), assignment))
+  def parseSucceeds[T](input: String, expected: Expr, identifier: String = "input", comment: String = ""): Assertion = {
+    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)))
   }
 
   def parseFails(input: String, inputType: String, identifier: String = "input"): Assertion = {
@@ -65,12 +66,10 @@ class parseExprs extends AnyFlatSpec {
   // Tests for Binary Operator -----------------------------------------------------------------------------------------
 
 
-
-
   // Tests for ArrayElem ----------------------------------------------------------------------------------------
   // it should "parse array elements" in {
   //   pending
-  //   parseSucceeds("arr[0]", IntLiter(1)) // TODO: Change to array
+  //   parseSucceeds("arr[0]", ArrayLiter(List())) // TODO: Change to array
   // }
 
   // it should "parse 2d array elements" in {

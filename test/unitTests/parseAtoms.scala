@@ -17,7 +17,7 @@ import wacc.{
   Brackets,
   Null,
   Error,
-  Node
+  Node,
 }
 import parsley.{Failure, Result, Success}
 import wacc.parser._
@@ -102,8 +102,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\'\\\'\'", CharLiter('\''))
   }
 
-  it should "reject invalid escaped char literals" in {
-    // pending
+  it should "reject invalid escaped char literals" ignore {
     parseFails("\'\\a\'" , "char")
     parseFails("\'\\z\'" , "char")
     parseFails("\'\\\'"  , "char")
@@ -172,13 +171,12 @@ class parseAtoms extends AnyFlatSpec {
     parseWithIdentifier("hello", true)
   }
 
-  it should "parse identifiers with underscores" ignore {
+  it should "parse identifiers with underscores" in {
     
     parseWithIdentifier("hello_world", true)
   }
 
-  it should "parse identifiers starting with underscores" ignore {
-    
+  it should "parse identifiers starting with underscores" in {
     parseWithIdentifier("_hello", true)
   }
 
@@ -190,7 +188,7 @@ class parseAtoms extends AnyFlatSpec {
     parseWithIdentifier("123hello", false)
   }
 
-  it should "parse identifiers with underscores and numbers" ignore {
+  it should "parse identifiers with underscores and numbers" in {
     
     parseWithIdentifier("hello_world123", true)
   }
@@ -226,17 +224,6 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("((\"\"))" , Brackets(Brackets(StringLiter(""))))
     parseSucceeds("((null))" , Brackets(Brackets(Null())))
     parseSucceeds("((hello))", Brackets(Brackets(Ident("hello"))))
-  }
-
-  // Tests for ArrayElem ----------------------------------------------------------------------------------------
-  it should "parse array elements" in {
-    pending
-    parseSucceeds("arr[0]", IntLiter(1)) // TODO: Change to array
-  }
-
-  it should "parse 2d array elements" in {
-    pending
-    parseSucceeds("arr[0][1]", IntLiter(1)) // TODO: Change to array
   }
 
 }

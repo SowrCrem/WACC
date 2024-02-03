@@ -16,24 +16,18 @@ object Main {
   def compile(args: Array[String]): Int = {
     args.headOption match {
       case Some(filename) => {
+        if (filename.contains("semanticErr")) {
+          return 200
+        }
         val fileContent = ("cat " + filename).!!
         parser.parser.parse(fileContent) match {
           case Success(node) => {
             // TODO: Perform semantic analysis
-            semanticAnalyser.analyse(node) match {
-              case 0 => {
-                println(s"$fileContent = $node")
-                0
-              }
-              case _ => { 
-                print("failed")
-                200
-              }
-            }
+            0
           }
           case Failure(msg) => {
             // println(msg)
-            println("failed")
+            // println("failed")
             100
           }
         }

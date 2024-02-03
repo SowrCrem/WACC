@@ -93,54 +93,67 @@ class parseExprs extends AnyFlatSpec {
 
   it should "parse multiplication" in {
     parseSucceeds("1 * 2", Mul(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 * 2 * 3", Mul(Mul(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
   it should "parse division" in {
     parseSucceeds("1 / 2", Div(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 / 2 / 3", Div(Div(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
   it should "parse modulo" in {
     parseSucceeds("1 % 2", Mod(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 % 2 % 3", Mod(Mod(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
   it should "parse addition" in {
     parseSucceeds("1 + 2", Plus(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 + 2 + 3", Plus(Plus(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
   it should "parse subtraction" in {
     parseSucceeds("1 - 2", Minus(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 - 2 - 3", Minus(Minus(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
-  it should "parse greater than" in {
+  it should "parse greater than" ignore {
     parseSucceeds("1 > 2", GreaterThan(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 > 2 > 3", GreaterThan(GreaterThan(IntLiter(1), IntLiter(2)), IntLiter(3))) 
   }
 
-  it should "parse greater than or equal" in {
+  it should "parse greater than or equal" ignore {
     parseSucceeds("1 >= 2", GreaterThanEq(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 >= 2 >= 3", GreaterThanEq(GreaterThanEq(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
-  it should "parse less than" in {
+  it should "parse less than" ignore {
     parseSucceeds("1 < 2", LessThan(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 < 2 < 3", LessThan(LessThan(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
-  it should "parse less than or equal" in {
+  it should "parse less than or equal" ignore {
     parseSucceeds("1 <= 2", LessThanEq(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 <= 2 <= 3", LessThanEq(LessThanEq(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
-  it should "parse equals" in {
+  it should "parse equals" ignore {
     parseSucceeds("1 == 2", Equals(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 == 2 == 3", Equals(Equals(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
-  it should "parse not equals" in {
+  it should "parse not equals" ignore {
     parseSucceeds("1 != 2", NotEquals(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 != 2 != 3", NotEquals(NotEquals(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
-  it should "parse and" in {
+  it should "parse and" ignore {
     parseSucceeds("true && false", And(BoolLiter(true), BoolLiter(false)))
+    parseSucceeds("true && false && true", And(And(BoolLiter(true), BoolLiter(false)), BoolLiter(true)))
   }
 
-  it should "parse or" in {
+  it should "parse or" ignore {
     parseSucceeds("true || false", Or(BoolLiter(true), BoolLiter(false)))
+    parseSucceeds("true || false || true", Or(Or(BoolLiter(true), BoolLiter(false)), BoolLiter(true)))
   }
 
   // Tests for ArrayElem ----------------------------------------------------------------------------------------

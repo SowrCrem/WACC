@@ -67,20 +67,19 @@ sealed trait Expr extends Node with RValue
 case class NewPair(fst: Expr, snd: Expr) extends Expr
 object NewPair extends generic.ParserBridge2[Expr, Expr, Expr]
 
-case class Call(ident: Ident, exprList: List[Expr]) extends Stat
-object Call extends generic.ParserBridge2[Ident, List[Expr], Stat]
-
-
 case class ArgList (argList: List[Expr]) extends Node
 object ArgList extends generic.ParserBridge1[List[Expr], ArgList]
+
+case class Call(ident: Ident, argList: ArgList) extends Stat
+object Call extends generic.ParserBridge2[Ident, ArgList, Stat]
 
 case class ArrayLiter(exprList: List[Expr]) extends Expr  
 object ArrayLiter extends generic.ParserBridge1[List[Expr], Expr]
 
-case class FstNode(expr: Expr) extends Expr
+case class FstNode(expr: Expr) extends Expr with LValue
 object FstNode extends generic.ParserBridge1[Expr, Expr]
 
-case class SndNode(expr: Expr) extends Expr
+case class SndNode(expr: Expr) extends Expr with LValue
 object SndNode extends generic.ParserBridge1[Expr, Expr]
 
 

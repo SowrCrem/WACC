@@ -54,9 +54,12 @@ class parseExprs extends AnyFlatSpec {
     parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)))
   }
 
-  def parseFails(input: String): Assertion = {
-    parser.parse("begin exit " + input + " end") should matchPattern {
+  def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
+    case "" => parser.parse("begin exit " + input + " end") should matchPattern {
       case Failure(_) => // Match on any Failure
+    }
+    case _ => parser.parse("begin exit " + input + " end") should matchPattern {
+      case Failure(msg) if msg == errorMessage => // Match on a Failure with the specific error message
     }
   }
 

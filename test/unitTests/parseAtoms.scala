@@ -5,14 +5,14 @@ import wacc.{
   Program,
   IntLiter,
   IdentAsgn,
-  IntType,
+  IntTypeNode,
   Neg,
   BoolLiter,
-  BoolType,
+  BoolTypeNode,
   CharLiter,
-  CharType,
+  CharTypeNode,
   StringLiter,
-  StringType,
+  StringTypeNode,
   Ident,
   Brackets,
   Null,
@@ -24,20 +24,20 @@ import wacc.parser._
 import wacc.lexer._
 import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
-import wacc.Type
+import wacc.TypeNode
 
 
 class parseAtoms extends AnyFlatSpec {
 
   // Testing Functions -------------------------------------------------------------------------------------------------
-  def getType(expected: Node): (String, Type) = expected match {
-    case IntLiter(_)    => ("int"   , IntType())
-    case Neg(_)         => ("int"   , IntType())
-    case BoolLiter(_)   => ("bool"  , BoolType())
-    case CharLiter(_)   => ("char"  , CharType())
-    case StringLiter(_) => ("string", StringType())
+  def getType(expected: Node): (String, TypeNode) = expected match {
+    case IntLiter(_)    => ("int"   , IntTypeNode())
+    case Neg(_)         => ("int"   , IntTypeNode())
+    case BoolLiter(_)   => ("bool"  , BoolTypeNode())
+    case CharLiter(_)   => ("char"  , CharTypeNode())
+    case StringLiter(_) => ("string", StringTypeNode())
     case Brackets(expr) => getType(expr)
-    case _              => ("int"   , IntType())
+    case _              => ("int"   , IntTypeNode())
   }
 
   def parseSucceeds[T](input: String, expected: Node, identifier: String = "input", comment: String = ""): Assertion = {
@@ -73,7 +73,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("-123", Neg(IntLiter(123)))
   }
 
-  it should "reject doubly signed int literals" ignore {
+  it should "reject doubly signed int literals" in {
     parseFails("++123", "int")
     parseFails("--123", "int")
   }
@@ -92,7 +92,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\'a\'", CharLiter('a'))
   }
 
-  it should "parse escaped char literals" ignore {
+  it should "parse escaped char literals" in {
     parseSucceeds("\'\\0\'" , CharLiter('\u0000'))
     parseSucceeds("\'\\b\'" , CharLiter('\b'))
     parseSucceeds("\'\\n\'" , CharLiter('\n'))
@@ -102,7 +102,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\'\\\'\'", CharLiter('\''))
   }
 
-  it should "reject invalid escaped char literals" ignore {
+  it should "reject invalid escaped char literals" in {
     parseFails("\'\\a\'" , "char")
     parseFails("\'\\z\'" , "char")
     parseFails("\'\\\'"  , "char")
@@ -112,7 +112,7 @@ class parseAtoms extends AnyFlatSpec {
     parseFails("\'\\U\'" , "char")
   }
 
-  it should "reject invalid char literals" ignore {
+  it should "reject invalid char literals" in {
     
     // TODO: Should we include empty char? If not, write a test making sure its not rejected
     parseFails("\'\'"  , "char") // Empty char
@@ -132,7 +132,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\"hello world\"", StringLiter("hello world"))
   }
 
-  it should "parse escaped string literals" ignore {
+  it should "parse escaped string literals" in {
     
     parseSucceeds("\"\\0\"", StringLiter("\u0000"))
     parseSucceeds("\"\\b\"", StringLiter("\b"))
@@ -142,7 +142,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\"\\t\"", StringLiter("\t"))
   }
 
-  it should "reject invalid string literals" ignore {
+  it should "reject invalid string literals" in {
     
     parseFails("\"\""  , "string") // Empty char
     parseFails("\"\\\"", "string") // Backslash
@@ -150,7 +150,7 @@ class parseAtoms extends AnyFlatSpec {
     parseFails("\"\'\"", "string") // Single quote
   }
 
-  it should "reject invalid escaped string literals" ignore {
+  it should "reject invalid escaped string literals" in {
     
     parseFails("\"\\a\"" , "string")
     parseFails("\"\\z\"" , "string")
@@ -189,7 +189,6 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   it should "parse identifiers with underscores and numbers" in {
-    
     parseWithIdentifier("hello_world123", true)
   }
 

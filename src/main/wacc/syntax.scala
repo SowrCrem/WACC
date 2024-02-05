@@ -9,8 +9,8 @@ case class Program(funcList: List[Func], stat: Stat) extends Node
 object Program extends generic.ParserBridge2[List[Func], Stat, Program]
 
 
-case class Func(typeNode: Type, ident: Ident, paramList: ParamList, stat: Stat) extends Node
-object Func extends generic.ParserBridge4[Type, Ident, ParamList, Stat, Func]
+case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, stat: Stat) extends Node
+object Func extends generic.ParserBridge4[TypeNode, Ident, ParamList, Stat, Func]
 
 // Param-List (Extending Node)
 
@@ -21,15 +21,15 @@ object ParamList extends generic.ParserBridge1[List[Param], ParamList]
 
 // Param (Extending Node)
 
-case class Param(typeNode: Type, ident: Expr) extends Node
-object Param extends generic.ParserBridge2[Type, Expr, Param]
+case class Param(typeNode: TypeNode, ident: Expr) extends Node
+object Param extends generic.ParserBridge2[TypeNode, Expr, Param]
 
 // Statements (Extending Node)
 sealed trait Stat extends Node
 
 case class Skip() extends Stat
-case class IdentAsgn (typeNode: Type, ident: Expr, expr: Node) extends Stat
-object IdentAsgn extends generic.ParserBridge3[Type, Expr, Node, Stat]
+case class IdentAsgn (typeNode: TypeNode, ident: Expr, expr: Node) extends Stat
+object IdentAsgn extends generic.ParserBridge3[TypeNode, Expr, Node, Stat]
 case class AsgnEq(lhs: Node, rhs: Node) extends Stat
 object AsgnEq extends generic.ParserBridge2[Node, Node, Stat]
 case class Read(lhs: LValue) extends Stat
@@ -152,12 +152,14 @@ object Len extends generic.ParserBridge1[Expr, UnaryOp]
 
 // Atoms (Extending Expr)
 sealed trait Atom extends Expr
+
 case class IntLiter(value: Int) extends Atom
 case class BoolLiter(value: Boolean) extends Atom
 case class CharLiter(value: Char) extends Atom
 case class StringLiter(value: String) extends Atom
+
 case class Brackets(expr: Expr) extends Atom
-case class Null() extends Atom with LValue with PairElemType
+case class Null() extends Atom with LValue with PairElemTypeNode
 case class Ident(value: String) extends Atom with LValue
 case class Error(value: String) extends Atom 
 
@@ -169,25 +171,18 @@ object Brackets extends generic.ParserBridge1[Expr, Atom]
 object Ident extends generic.ParserBridge1[String, Atom]
 
 
-// Types 
-sealed trait Type
+// Type nodes
+trait TypeNode
 
-sealed trait BaseType extends Type with PairElemType
-case class IntType() extends BaseType 
-case class BoolType() extends BaseType 
-case class CharType() extends BaseType 
-case class StringType() extends BaseType 
+sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode
+case class IntTypeNode() extends BaseTypeNode 
+case class BoolTypeNode() extends BaseTypeNode 
+case class CharTypeNode() extends BaseTypeNode 
+case class StringTypeNode() extends BaseTypeNode 
 
-case class ArrayType(elementType: Type) extends PairElemType
+case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode
 
-sealed trait PairElemType extends Type
+sealed trait PairElemTypeNode extends TypeNode
 
-// sealed trait PairBaseType extends PairElemType
-// case class PairBaseIntType() extends PairBaseType
-// case class PairBaseBoolType() extends PairBaseType
-// case class PairBaseCharType() extends PairBaseType
-// case class PairBaseStringType() extends PairBaseType
-
-
-case class PairType(fst: PairElemType, snd: PairElemType) extends Type with LValue
-object PairType extends generic.ParserBridge2[PairElemType, PairElemType, Type]
+case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode) extends TypeNode with LValue
+object PairTypeNode extends generic.ParserBridge2[PairElemTypeNode, PairElemTypeNode, TypeNode]

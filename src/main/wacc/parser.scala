@@ -24,7 +24,7 @@ object parser {
 
   
   lazy val arrayelemParser: Parsley[Expr] =
-    ArrayElem(Ident(lexer.ident), some("[" *> exprParser <* "]"))
+    ArrayElem(Ident(lexer.ident), some("[" ~> exprParser <~ "]"))
   lazy val intParser: Parsley[Expr] = integer.map(n => {
     if (n.isValidInt) IntLiter(n.toInt) else Error("Integer too large")
   })
@@ -81,28 +81,28 @@ object parser {
 
   // -- Type Parsers ---------------------------------------------- //
 
-  lazy val intType: Parsley[BaseType] = "int" as IntType()
-  lazy val boolType: Parsley[BaseType] = "bool" as BoolType()
-  lazy val charType: Parsley[BaseType] = "char" as CharType()
-  lazy val stringType: Parsley[BaseType] = "string" as StringType()
+  lazy val intType: Parsley[BaseTypeNode] = "int" as IntTypeNode()
+  lazy val boolType: Parsley[BaseTypeNode] = "bool" as BoolTypeNode()
+  lazy val charType: Parsley[BaseTypeNode] = "char" as CharTypeNode()
+  lazy val stringType: Parsley[BaseTypeNode] = "string" as StringTypeNode()
 
-  lazy val baseType: Parsley[BaseType] =
+  lazy val baseType: Parsley[BaseTypeNode] =
     intType | boolType | charType | stringType
 
-  lazy val arrayType: Parsley[ArrayType] = {
+  lazy val arrayType: Parsley[ArrayTypeNode] = {
     val arrayType = (baseType | pairType) <~ "[]"
-    arrayType.map(x => ArrayType(x))
+    arrayType.map(x => ArrayTypeNode(x))
   }
 
-  lazy val pairElemTypeParser: Parsley[PairElemType] = baseType | arrayType
+  lazy val pairElemTypeParser: Parsley[PairElemTypeNode] = baseType | arrayType
 
-  lazy val pairType: Parsley[PairType] = {
+  lazy val pairType: Parsley[PairTypeNode] = {
     val pairType =
       "pair" ~> ("(" ~> pairElemTypeParser <~ ",") <~> (pairElemTypeParser <~ ")")
-    pairType.map(x => PairType(x._1, x._2))
+    pairType.map(x => PairTypeNode(x._1, x._2))
   }
 
-  lazy val typeParser: Parsley[Type] = baseType | atomic(arrayType) | pairType
+  lazy val typeParser: Parsley[TypeNode] = baseType | atomic(arrayType) | pairType
 
   // -- Statement Parsers ----------------------------------------- //
 

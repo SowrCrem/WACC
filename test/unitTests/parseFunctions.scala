@@ -27,18 +27,18 @@ import wacc.{
   Println,
   StatJoin,
   IdentAsgn,
-  IntType,
-  PairType,
-  PairElemType,
-  ArrayType,
-  BoolType,
-  CharType,
-  StringType,
+  IntTypeNode,
+  PairTypeNode,
+  PairElemTypeNode,
+  ArrayTypeNode,
+  BoolTypeNode,
+  CharTypeNode,
+  StringTypeNode,
   Func,
   ParamList,
   Param,
   Program,
-  Type,
+  TypeNode,
   Call
 }
 import parsley.{Failure, Result, Success}
@@ -55,9 +55,9 @@ class parseFunctions extends AnyFlatSpec {
       Program(
         List(
           Func(
-            IntType(),
+            IntTypeNode(),
             Ident("f"),
-            ParamList(List(Param(IntType(), Ident("x")))),
+            ParamList(List(Param(IntTypeNode(), Ident("x")))),
             Skip()
           )
         ),
@@ -77,15 +77,15 @@ class parseFunctions extends AnyFlatSpec {
       Program(
         List(
           Func(
-            IntType(),
+            IntTypeNode(),
             Ident("f"),
-            ParamList(List(Param(IntType(), Ident("x")))),
+            ParamList(List(Param(IntTypeNode(), Ident("x")))),
             Skip()
           ),
           Func(
-            IntType(),
+            IntTypeNode(),
             Ident("g"),
-            ParamList(List(Param(IntType(), Ident("x")))),
+            ParamList(List(Param(IntTypeNode(), Ident("x")))),
             Skip()
           )
         ),
@@ -107,19 +107,19 @@ class parseFunctions extends AnyFlatSpec {
       Program(
         List(
           Func(
-            IntType(),
+            IntTypeNode(),
             Ident("f"),
-            ParamList(List(Param(IntType(), Ident("x")))),
+            ParamList(List(Param(IntTypeNode(), Ident("x")))),
             Return(IntLiter(5))
           ),
           Func(
-            IntType(),
+            IntTypeNode(),
             Ident("g"),
-            ParamList(List(Param(IntType(), Ident("x")))),
+            ParamList(List(Param(IntTypeNode(), Ident("x")))),
             Return(IntLiter(2))
           )
         ),
-        IdentAsgn(IntType(), Ident("x"), Call(Ident("f"), List(IntLiter(5))))
+        IdentAsgn(IntTypeNode(), Ident("x"), Call(Ident("f"), List(IntLiter(5))))
       )
     )
 

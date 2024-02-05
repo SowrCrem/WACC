@@ -5,15 +5,15 @@ import wacc.{
   Program,
   IntLiter,
   IdentAsgn,
-  IntType,
+  IntTypeNode,
   Neg,
   BoolLiter,
-  BoolType,
+  BoolTypeNode,
   CharLiter,
-  CharType,
+  CharTypeNode,
   StringLiter,
   ArrayLiter,
-  StringType,
+  StringTypeNode,
   Ident,
   Brackets,
   Null,
@@ -27,19 +27,19 @@ import wacc.parser._
 import wacc.lexer._
 import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
-import wacc.Type
+import wacc.TypeNode
 
 class parseExprs extends AnyFlatSpec {
 
   // Testing Functions -------------------------------------------------------------------------------------------------
-   def getType(expected: Node): (String, Type) = expected match {
-    case IntLiter(_)    => ("int"   , IntType())
-    case Neg(_)         => ("int"   , IntType())
-    case BoolLiter(_)   => ("bool"  , BoolType())
-    case CharLiter(_)   => ("char"  , CharType())
-    case StringLiter(_) => ("string", StringType())
+   def getType(expected: Node): (String, TypeNode) = expected match {
+    case IntLiter(_)    => ("int"   , IntTypeNode())
+    case Neg(_)         => ("int"   , IntTypeNode())
+    case BoolLiter(_)   => ("bool"  , BoolTypeNode())
+    case CharLiter(_)   => ("char"  , CharTypeNode())
+    case StringLiter(_) => ("string", StringTypeNode())
     case Brackets(expr) => getType(expr)
-    case _              => ("int"   , IntType())
+    case _              => ("int"   , IntTypeNode())
   }
 
   def parseSucceeds[T](input: String, expected: Expr, identifier: String = "input", comment: String = ""): Assertion = {

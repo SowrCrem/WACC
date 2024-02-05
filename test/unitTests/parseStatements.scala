@@ -35,14 +35,14 @@ import wacc.{
   LValue,
   RValue,
   Call,
-  IntType,
   NewPair,
-  PairType,
-  PairElemType,
-  ArrayType,
-  BoolType,
-  CharType,
-  StringType,
+  IntTypeNode,
+  BoolTypeNode,
+  CharTypeNode,
+  StringTypeNode,
+  PairTypeNode,
+  PairElemTypeNode,
+  ArrayTypeNode,
   Func,
   ParamList,
   FstNode,
@@ -79,7 +79,7 @@ class parseStatements extends AnyFlatSpec {
   // Tests for assignment ------------------------------------------------------------------------------------------------
 
   it should "parse LHS new identifier assignments" in {
-    parseSucceeds("int x = 1", IdentAsgn(IntType(), Ident("x"), IntLiter(1)))
+    parseSucceeds("int x = 1", IdentAsgn(IntTypeNode(), Ident("x"), IntLiter(1)))
   }
 
   it should "parse LHS existing identifier assignments" ignore {

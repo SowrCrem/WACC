@@ -38,7 +38,7 @@ import wacc.{
   ParamList,
   Param,
   Program,
-  Type,
+  TypeNode,
   Call,
   Expr,
   NewPair,
@@ -134,7 +134,7 @@ class parseFunctions extends AnyFlatSpec {
             Return(IntLiter(2))
           )
         ),
-        IdentAsgn(IntType(), Ident("x"), Call(Ident("f"), (ParamList(List(Param(IntType(), IntLiter(5)))))))
+        IdentAsgn(IntTypeNode(), Ident("x"), Call(Ident("f"), (ParamList(List(Param(IntTypeNode(), IntLiter(5)))))))
       )
     )
 

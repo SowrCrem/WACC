@@ -139,7 +139,7 @@ object parser {
       exprParser,
       ","
     ) <~ ")"
-    call.map(x => Call(x._1, x._2))
+    call.map(x => Call(x._1, ArgList(x._2)))
   }
 
   val assignRhs = {

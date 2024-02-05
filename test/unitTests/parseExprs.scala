@@ -20,7 +20,24 @@ import wacc.{
   Error,
   Node,
   Expr,
-  Exit
+  Exit,
+  Not,
+  Len,
+  Ord,
+  Chr,
+  Mul,
+  Div,
+  Mod,
+  Plus,
+  Minus,
+  GreaterThan,
+  GreaterThanEq,
+  LessThan,
+  LessThanEq,
+  Equals,
+  NotEquals,
+  And,
+  Or
 }
 import parsley.{Failure, Result, Success}
 import wacc.parser._
@@ -32,48 +49,121 @@ import wacc.TypeNode
 class parseExprs extends AnyFlatSpec {
 
   // Testing Functions -------------------------------------------------------------------------------------------------
-   def getType(expected: Node): (String, TypeNode) = expected match {
-    case IntLiter(_)    => ("int"   , IntTypeNode())
-    case Neg(_)         => ("int"   , IntTypeNode())
-    case BoolLiter(_)   => ("bool"  , BoolTypeNode())
-    case CharLiter(_)   => ("char"  , CharTypeNode())
-    case StringLiter(_) => ("string", StringTypeNode())
-    case Brackets(expr) => getType(expr)
-    case _              => ("int"   , IntTypeNode())
-  }
 
-  def parseSucceeds[T](input: String, expected: Expr, identifier: String = "input", comment: String = ""): Assertion = {
+  def parseSucceeds[T](input: String, expected: Expr): Assertion = {
     parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)))
   }
 
-  def parseFails(input: String, inputType: String, identifier: String = "input"): Assertion = {
-    parser.parse("begin " + inputType + " " + identifier + " = " + input + " end") should matchPattern {
+  def parseFails(input: String): Assertion = {
+    parser.parse("begin exit " + input + " end") should matchPattern {
       case Failure(_) => // Match on any Failure
     }
   }
 
-  def parseWithIdentifier(name:String, success:Boolean): Assertion = {
-    if (success) parseSucceeds("1", IntLiter(1), name) else parseFails("1", "int", name)
-  }
-
-  def commentIgnored(comment: String) = {
-    parseSucceeds("1", IntLiter(1), "input", comment)
-  }
-
   // Tests for Unary Operator ------------------------------------------------------------------------------------------
 
+  it should "parse negations" in {
+    parseSucceeds("!true" , Not(BoolLiter(true)))
+    parseSucceeds("!false", Not(BoolLiter(false)))
+  }
+
+  it should "parse negations with brackets" in {
+    parseSucceeds("!(true)" , Not(Brackets(BoolLiter(true))))
+    parseSucceeds("!(false)", Not(Brackets(BoolLiter(false))))
+  }
+
+  it should "parse dashes" in {
+    parseSucceeds("-1", Neg(IntLiter(1)))
+  }
+
+  it should "parse len" ignore {
+    parseSucceeds("len \"hello\"", Len(StringLiter("hello")))
+    parseSucceeds("len [1,2,3]", Len(ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3)))))
+  }
+
+  it should "parse ord" in {
+    parseSucceeds("ord 'a'", Ord(CharLiter('a')))
+  }
+
+  it should "parse chr" in {
+    parseSucceeds("chr 97", Chr(IntLiter(97)))
+  }
 
   // Tests for Binary Operator -----------------------------------------------------------------------------------------
 
+  it should "parse multiplication" in {
+    parseSucceeds("1 * 2", Mul(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 * 2 * 3", Mul(Mul(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse division" in {
+    parseSucceeds("1 / 2", Div(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 / 2 / 3", Div(Div(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse modulo" in {
+    parseSucceeds("1 % 2", Mod(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 % 2 % 3", Mod(Mod(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse addition" in {
+    parseSucceeds("1 + 2", Plus(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 + 2 + 3", Plus(Plus(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse subtraction" in {
+    parseSucceeds("1 - 2", Minus(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 - 2 - 3", Minus(Minus(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse greater than" ignore {
+    parseSucceeds("1 > 2", GreaterThan(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 > 2 > 3", GreaterThan(GreaterThan(IntLiter(1), IntLiter(2)), IntLiter(3))) 
+  }
+
+  it should "parse greater than or equal" ignore {
+    parseSucceeds("1 >= 2", GreaterThanEq(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 >= 2 >= 3", GreaterThanEq(GreaterThanEq(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse less than" ignore {
+    parseSucceeds("1 < 2", LessThan(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 < 2 < 3", LessThan(LessThan(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse less than or equal" ignore {
+    parseSucceeds("1 <= 2", LessThanEq(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 <= 2 <= 3", LessThanEq(LessThanEq(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse equals" ignore {
+    parseSucceeds("1 == 2", Equals(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 == 2 == 3", Equals(Equals(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse not equals" ignore {
+    parseSucceeds("1 != 2", NotEquals(IntLiter(1), IntLiter(2)))
+    parseSucceeds("1 != 2 != 3", NotEquals(NotEquals(IntLiter(1), IntLiter(2)), IntLiter(3)))
+  }
+
+  it should "parse and" ignore {
+    parseSucceeds("true && false", And(BoolLiter(true), BoolLiter(false)))
+    parseSucceeds("true && false && true", And(And(BoolLiter(true), BoolLiter(false)), BoolLiter(true)))
+  }
+
+  it should "parse or" ignore {
+    parseSucceeds("true || false", Or(BoolLiter(true), BoolLiter(false)))
+    parseSucceeds("true || false || true", Or(Or(BoolLiter(true), BoolLiter(false)), BoolLiter(true)))
+  }
 
   // Tests for ArrayElem ----------------------------------------------------------------------------------------
-  // it should "parse array elements" in {
-  //   pending
-  //   parseSucceeds("arr[0]", ArrayLiter(List())) // TODO: Change to array
-  // }
+  
+  it should "parse array elements" ignore {
+    parseSucceeds("arr[0]", ArrayLiter(List(IntLiter(0))))
+  }
 
-  // it should "parse 2d array elements" in {
-  //   pending
-  //   parseSucceeds("arr[0][1]", IntLiter(1)) // TODO: Change to array
-  // }
+  it should "parse 2d array elements" ignore {
+    parseSucceeds("arr[0][1]", ArrayLiter(List(IntLiter(0), IntLiter(1))))
+  }
+
 }

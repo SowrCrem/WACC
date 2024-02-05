@@ -38,18 +38,35 @@ import wacc.{
   ParamList,
   Param,
   Program,
-  TypeNode,
-  Call
+  Type,
+  Call,
+  Expr,
+  NewPair,
+  ArgList
 }
 import parsley.{Failure, Result, Success}
 import wacc.parser._
 import wacc.lexer._
-import wacc.NewPair
+import org.scalactic.Bool
+import org.scalatest.compatible.Assertion
 
 class parseFunctions extends AnyFlatSpec {
 
-  "functionProgram" should "parse a function program" in {
-    pending
+  // Testing Functions -------------------------------------------------------------------------------------------------
+
+  def parseSucceeds[T](input: String, expected: Expr): Assertion = {
+    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)))
+  }
+
+  def parseFails(input: String): Assertion = {
+    parser.parse("begin exit " + input + " end") should matchPattern {
+      case Failure(_) => // Match on any Failure
+    }
+  }
+
+  // Tests --------------------------------------------------------------------------------------------------------------
+
+  "functionProgram" should "parse a function program" ignore {
     val input = "begin int f(int x) is skip end skip end"
     val expected = Success(
       Program(
@@ -69,8 +86,7 @@ class parseFunctions extends AnyFlatSpec {
 
   }
 
-  it should "parse a function program with multiple functions" in {
-    pending
+  it should "parse a function program with multiple functions" ignore {
     val input =
       "begin int f(int x) is skip end int g(int x) is skip end skip end"
     val expected = Success(
@@ -99,8 +115,7 @@ class parseFunctions extends AnyFlatSpec {
 
   // Function calls must be assigned to a variable
 
-  it should "parse functions that are called" in {
-    pending
+  it should "parse functions that are called" ignore {
     val input =
       "begin int f(int x) is return 5 end int g(int x) is return 2 end int x = call f(5) end"
     val expected = Success(
@@ -119,10 +134,11 @@ class parseFunctions extends AnyFlatSpec {
             Return(IntLiter(2))
           )
         ),
-        IdentAsgn(IntTypeNode(), Ident("x"), Call(Ident("f"), List(IntLiter(5))))
+        IdentAsgn(IntType(), Ident("x"), Call(Ident("f"), (ParamList(List(Param(IntType(), IntLiter(5)))))))
       )
     )
 
     parser.parse(input) shouldBe expected
   }
+
 }

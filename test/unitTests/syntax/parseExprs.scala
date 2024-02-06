@@ -45,6 +45,7 @@ import wacc.lexer._
 import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
 import wacc.TypeNode
+import wacc.ArrayElem
 
 class parseExprs extends AnyFlatSpec {
 
@@ -124,36 +125,49 @@ class parseExprs extends AnyFlatSpec {
     parseSucceeds("1 > 2 > 3", GreaterThan(GreaterThan(IntLiter(1), IntLiter(2)), IntLiter(3))) 
   }
 
+
+  //TODO: operation is not associative, so it should fail
   it should "parse greater than or equal" ignore {
     parseSucceeds("1 >= 2", GreaterThanEq(IntLiter(1), IntLiter(2)))
     parseSucceeds("1 >= 2 >= 3", GreaterThanEq(GreaterThanEq(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
+
+
+  //TODO: operation is not associative, so it should fail
   it should "parse less than" ignore {
     parseSucceeds("1 < 2", LessThan(IntLiter(1), IntLiter(2)))
     parseSucceeds("1 < 2 < 3", LessThan(LessThan(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
+
+  //TODO: operation is not associative, so it should fail
   it should "parse less than or equal" ignore {
     parseSucceeds("1 <= 2", LessThanEq(IntLiter(1), IntLiter(2)))
     parseSucceeds("1 <= 2 <= 3", LessThanEq(LessThanEq(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
+
+  //TODO: operation is not associative, so it should fail
   it should "parse equals" ignore {
     parseSucceeds("1 == 2", Equals(IntLiter(1), IntLiter(2)))
     parseSucceeds("1 == 2 == 3", Equals(Equals(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
+
+  //TODO: operation is not associative, so it should fail
   it should "parse not equals" ignore {
     parseSucceeds("1 != 2", NotEquals(IntLiter(1), IntLiter(2)))
     parseSucceeds("1 != 2 != 3", NotEquals(NotEquals(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
+  //TODO: operation is not associative, so it should fail
   it should "parse and" ignore {
     parseSucceeds("true && false", And(BoolLiter(true), BoolLiter(false)))
     parseSucceeds("true && false && true", And(And(BoolLiter(true), BoolLiter(false)), BoolLiter(true)))
   }
 
+  //TODO: operation is not associative, so it should fail
   it should "parse or" ignore {
     parseSucceeds("true || false", Or(BoolLiter(true), BoolLiter(false)))
     parseSucceeds("true || false || true", Or(Or(BoolLiter(true), BoolLiter(false)), BoolLiter(true)))
@@ -161,9 +175,12 @@ class parseExprs extends AnyFlatSpec {
 
   // Tests for ArrayElem ----------------------------------------------------------------------------------------
   
-  it should "parse array elements" ignore {
-    parseSucceeds("arr[0]", ArrayLiter(List(IntLiter(0))))
+  it should "parse array elements" in {
+    // parseSucceeds("arr[0]", ArrayLiter(List(IntLiter(0))))
+    arrayelemParser.parse("arr[0]") shouldBe Success(ArrayElem(Ident("arr"), List(IntLiter(0))))
   }
+
+
 
   it should "parse 2d array elements" ignore {
     parseSucceeds("arr[0][1]", ArrayLiter(List(IntLiter(0), IntLiter(1))))

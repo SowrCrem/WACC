@@ -37,11 +37,11 @@ object Read extends generic.ParserBridge1[LValue, Stat]
 case class Free(expr: Expr) extends Stat
 object Free extends generic.ParserBridge1[Expr, Stat]
 case class Return(expr: Expr) extends Stat
-object Return extends generic.ParserBridge1[Expr, Stat] = {
+object Return extends generic.ParserBridge1[Expr, Stat] {
   override def labels() = List("return")
 }
 case class Exit(expr: Expr) extends Stat
-object Exit extends generic.ParserBridge1[Expr, Stat] = {
+object Exit extends generic.ParserBridge1[Expr, Stat] {
   override def labels() = List("exit statement")
 }
 case class Print(expr: Expr) extends Stat
@@ -49,17 +49,17 @@ object Print extends generic.ParserBridge1[Expr, Stat]
 case class Println(expr: Expr) extends Stat
 object Println extends generic.ParserBridge1[Expr, Stat]
 case class If(expr: Expr, stat1: Stat, stat2: Stat) extends Stat
-object If extends generic.ParserBridge3[Expr, Stat, Stat, Stat] = {
+object If extends generic.ParserBridge3[Expr, Stat, Stat, Stat] {
   override def labels() = List("if statement")
 }
 case class While(expr: Expr, stat: Stat) extends Stat
-object While extends generic.ParserBridge2[Expr, Stat, Stat] = {
+object While extends generic.ParserBridge2[Expr, Stat, Stat] {
   override def labels() = List("while loop")
 }
 case class BeginEnd(stat: Stat) extends Stat
 object BeginEnd extends generic.ParserBridge1[Stat, Stat]
 case class StatJoin (statList: List[Stat]) extends Stat
-object StatJoin extends generic.ParserBridge1[List[Stat], Stat] = {
+object StatJoin extends generic.ParserBridge1[List[Stat], Stat] {
   override def labels() = List("statement")
 }
 
@@ -181,7 +181,7 @@ case class Error(value: String) extends Atom
 
 
 // Type nodes
-trait TypeNode
+trait TypeNode 
 
 sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode
 case class IntTypeNode() extends BaseTypeNode 

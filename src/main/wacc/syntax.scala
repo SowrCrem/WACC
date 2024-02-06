@@ -37,21 +37,31 @@ object Read extends generic.ParserBridge1[LValue, Stat]
 case class Free(expr: Expr) extends Stat
 object Free extends generic.ParserBridge1[Expr, Stat]
 case class Return(expr: Expr) extends Stat
-object Return extends generic.ParserBridge1[Expr, Stat]
+object Return extends generic.ParserBridge1[Expr, Stat] = {
+  override def labels() = List("return")
+}
 case class Exit(expr: Expr) extends Stat
-object Exit extends generic.ParserBridge1[Expr, Stat]
+object Exit extends generic.ParserBridge1[Expr, Stat] = {
+  override def labels() = List("exit statement")
+}
 case class Print(expr: Expr) extends Stat
 object Print extends generic.ParserBridge1[Expr, Stat]
 case class Println(expr: Expr) extends Stat
 object Println extends generic.ParserBridge1[Expr, Stat]
 case class If(expr: Expr, stat1: Stat, stat2: Stat) extends Stat
-object If extends generic.ParserBridge3[Expr, Stat, Stat, Stat]
+object If extends generic.ParserBridge3[Expr, Stat, Stat, Stat] = {
+  override def labels() = List("if statement")
+}
 case class While(expr: Expr, stat: Stat) extends Stat
-object While extends generic.ParserBridge2[Expr, Stat, Stat]
+object While extends generic.ParserBridge2[Expr, Stat, Stat] = {
+  override def labels() = List("while loop")
+}
 case class BeginEnd(stat: Stat) extends Stat
 object BeginEnd extends generic.ParserBridge1[Stat, Stat]
 case class StatJoin (statList: List[Stat]) extends Stat
-object StatJoin extends generic.ParserBridge1[List[Stat], Stat]
+object StatJoin extends generic.ParserBridge1[List[Stat], Stat] = {
+  override def labels() = List("statement")
+}
 
 
 
@@ -153,21 +163,21 @@ object Len extends generic.ParserBridge1[Expr, UnaryOp]
 sealed trait Atom extends Expr
 
 case class IntLiter(value: Int) extends Atom
+object IntLiter extends generic.ParserBridge1[Int, Atom]
 case class BoolLiter(value: Boolean) extends Atom
+object BoolLiter extends generic.ParserBridge1[Boolean, Atom]
 case class CharLiter(value: Char) extends Atom
+object CharLiter extends generic.ParserBridge1[Char, Atom]
 case class StringLiter(value: String) extends Atom
+object StringLiter extends generic.ParserBridge1[String, Atom]
 
 case class Brackets(expr: Expr) extends Atom
+object Brackets extends generic.ParserBridge1[Expr, Atom]
 case class Null() extends Atom with LValue with PairElemTypeNode
 case class Ident(value: String) extends Atom with LValue
+object Ident extends generic.ParserBridge1[String, Atom]
 case class Error(value: String) extends Atom 
 
-object IntLiter extends generic.ParserBridge1[Int, Atom]
-object BoolLiter extends generic.ParserBridge1[Boolean, Atom]
-object CharLiter extends generic.ParserBridge1[Char, Atom]
-object StringLiter extends generic.ParserBridge1[String, Atom]
-object Brackets extends generic.ParserBridge1[Expr, Atom]
-object Ident extends generic.ParserBridge1[String, Atom]
 
 
 // Type nodes

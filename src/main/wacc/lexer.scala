@@ -17,6 +17,15 @@ object lexer {
 
   val escLiterals = Set('0', '\\', '"', 'b', 't', 'n', 'f', 'r', '\'')
 
+  private val errorConfig = new ErrorConfig {
+    override def labelSymbol = Map(
+      ")" -> LabelAndReason(
+        reason="unclosed braces", 
+        label="closing braces"
+      )
+    )
+  }
+
   private val desc = LexicalDesc.plain.copy(
     nameDesc = NameDesc.plain.copy(
       identifierStart = predicate.Basic(c=> c.isLetter || c == '_'),
@@ -95,7 +104,7 @@ object lexer {
       )
     )
   )
-  private val lexer = new Lexer(desc)
+  private val lexer = new Lexer(desc, errorConfig)
   val integer = lexer.lexeme.integer.number32
   val implicits = lexer.lexeme.symbol.implicits
   val char: Parsley[Char] = lexer.lexeme.character.ascii

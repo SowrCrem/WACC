@@ -22,6 +22,57 @@ object lexer {
       ")" -> LabelAndReason(
         reason="unclosed braces", 
         label="closing braces"
+      ),
+      ">=" -> Label(
+        label="comparison operator"
+      ),
+      "<=" -> Label(
+        label="comparison operator"
+      ),
+      "<" -> Label(
+        label="comparison operator"
+      ),
+      ">" -> Label(
+        label="comparison operator"
+      ),
+      "==" -> Label(
+        label="comparison operator"
+      ),
+      "!=" -> Label(
+        label="comparison operator"
+      ),
+      "&&" -> Label(
+        label="logical operator"
+      ),
+      "||" -> Label(
+        label="logical operator"
+      ),
+      "!" -> Label(
+        label="logical operator"
+      ),
+      "+" -> Label(
+        label="arithmetic operator"
+      ),
+      "-" -> Label(
+        label="arithmetic operator"
+      ),
+      "*" -> Label(
+        label="arithmetic operator"
+      ),
+      "/" -> Label(
+        label="arithmetic operator"
+      ),
+      "%" -> Label(
+        label="arithmetic operator"
+      ),
+      "ord" -> Label(
+        label="unary operator"
+      ),
+      "chr" -> Label(
+        label="unary operator"
+      ),
+      "len" -> Label(
+        label="unary operator"
       )
     )
   }

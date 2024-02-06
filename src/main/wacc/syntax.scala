@@ -165,7 +165,9 @@ sealed trait Atom extends Expr
 case class IntLiter(value: Int) extends Atom
 object IntLiter extends generic.ParserBridge1[Int, Atom]
 case class BoolLiter(value: Boolean) extends Atom
-object BoolLiter extends generic.ParserBridge1[Boolean, Atom]
+object BoolLiter extends generic.ParserBridge1[Boolean, Atom] {
+  override def labels() = List("boolean")
+}
 case class CharLiter(value: Char) extends Atom
 object CharLiter extends generic.ParserBridge1[Char, Atom]
 case class StringLiter(value: String) extends Atom

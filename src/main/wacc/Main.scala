@@ -29,15 +29,15 @@ object Main {
                 0
               }
               case Left(msg) => {
-                // println(msg)
-                // println("failed")
+                println(msg)
+                println("failed")
                 200
               }
             }
           }
           case Failure(msg) => {
-            // println(msg)
-            // println("failed")
+            println(msg)
+            println("failed")
             100
           }
         }

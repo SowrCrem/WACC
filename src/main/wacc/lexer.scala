@@ -73,7 +73,13 @@ object lexer {
       ),
       "len" -> Label(
         label="unary operator"
-      )
+      ),
+      "false" -> Label(
+        label="boolean"
+      ),
+      "true" -> Label(
+        label="boolean"
+      ),
     )
   }
 

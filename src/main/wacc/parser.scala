@@ -22,12 +22,18 @@ import parsley.Parsley.lookAhead
 
 object parser {
 
-  
   lazy val arrayelemParser: Parsley[Expr] =
     ArrayElem(Ident(lexer.ident), some("[" ~> exprParser <~ "]"))
-  lazy val intParser: Parsley[Expr] = integer.map(n => {
+
+  lazy val signedInteger: Parsley[BigInt] = option("-").flatMap {
+    case Some(_) => lexer.integer.map(n => -n)
+    case None    => lexer.integer.map(n => n)
+  }
+
+  lazy val intParser: Parsley[Expr] = signedInteger.map(n => {
     if (n.isValidInt) IntLiter(n.toInt) else Error("Integer too large")
   })
+
   lazy val boolParser: Parsley[Expr] =
     ("true" as BoolLiter(true)) | ("false" as BoolLiter(false))
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
@@ -40,7 +46,7 @@ object parser {
       identifierParser | bracketsParser | arrayelemParser
 
   // -- Pair Parser ----------------------------------------------- //
- 
+
   lazy val newpairParser: Parsley[Expr] = {
     val newpair =
       "newpair" ~> ("(" ~> exprParser <~ ",") <~> (exprParser <~ ")")
@@ -55,7 +61,7 @@ object parser {
     atoms | pairLitParser
   )(
     Ops(Prefix)(Not from "!"),
-    Ops(Prefix)(Neg from "-"),
+    Ops(Prefix)(Neg from "-" <~ notFollowedBy("-")),
     Ops(Prefix)(Len from "len"),
     Ops(Prefix)(Ord from "ord"),
     Ops(Prefix)(Chr from "chr"),
@@ -102,7 +108,8 @@ object parser {
     pairType.map(x => PairTypeNode(x._1, x._2))
   }
 
-  lazy val typeParser: Parsley[TypeNode] = baseType | atomic(arrayType) | pairType
+  lazy val typeParser: Parsley[TypeNode] =
+    baseType | atomic(arrayType) | pairType
 
   // -- Statement Parsers ----------------------------------------- //
 
@@ -199,7 +206,6 @@ object parser {
   // -- Program Parser --------------------------------------------- //
   val program: Parsley[Node] =
     Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
-
 
   // -- Parser ---------------------------------------------------- //
   val parser = fully(program)

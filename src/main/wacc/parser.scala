@@ -37,8 +37,8 @@ object parser {
   lazy val boolParser: Parsley[Expr] =
     ("true" as BoolLiter(true)) | ("false" as BoolLiter(false))
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
-  lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string)
-  lazy val identifierParser: Parsley[Expr] = Ident(lexer.ident)
+  lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string) 
+  lazy val identifierParser: Parsley[Ident] = Ident(lexer.ident)
   lazy val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
 
   lazy val atoms =
@@ -154,7 +154,7 @@ object parser {
     assignRhs
   }
 
-  val identAsgnParser: Parsley[Stat] = {
+  val identAsgnParser: Parsley[IdentAsgn] = {
     val identAsgn = typeParser <~> atomic(
       identifierParser
     ) <~ "=" <~> assignRhs

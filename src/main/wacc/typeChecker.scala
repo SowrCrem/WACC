@@ -32,14 +32,17 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       Some(typeNode)
     case IdentAsgn(typeNode, ident, expr) =>
       val exprType = check(expr, symbolTable, returnType)
-      val identType = symbolTable.lookup(ident.value)
-      if (exprType != identType) {
-        throw new SemanticError(
-          s"Type mismatch: expected $identType, got $exprType"
-        )
+
+      (exprType) match {
+        case Some(t) if t == typeNode => None
+        case _ =>
+          throw new SemanticError(
+            s"Type mismatch: expected $typeNode, got $exprType"
+          )
       }
       symbolTable.add(ident.value, typeNode)
       Some(typeNode)
+
     case AsgnEq(lhs, rhs) =>
       val lhsType = check(lhs, symbolTable, returnType)
       val rhsType = check(rhs, symbolTable, returnType)

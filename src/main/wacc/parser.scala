@@ -100,7 +100,7 @@ object parser {
     arrayType.map(x => ArrayTypeNode(x))
   }
 
-  lazy val pairElemTypeParser: Parsley[PairElemTypeNode] = baseType | arrayType
+  lazy val pairElemTypeParser: Parsley[PairElemTypeNode] = atomic(arrayType) | baseType 
 
   lazy val pairType: Parsley[PairTypeNode] = {
     val pairType =
@@ -109,7 +109,7 @@ object parser {
   }
 
   lazy val typeParser: Parsley[TypeNode] =
-    baseType | atomic(arrayType) | pairType
+    atomic(arrayType) | baseType | pairType
 
   // -- Statement Parsers ----------------------------------------- //
 
@@ -182,7 +182,7 @@ object parser {
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
 
   val stmtParser: Parsley[Stat] =
-    (atomic(statAtoms) <~ notFollowedBy(";")) | statJoinParser
+    atomic(statAtoms <~ notFollowedBy(";")) | statJoinParser
 
   // -- Param Parser ----------------------------------------------- //
 

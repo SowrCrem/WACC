@@ -23,22 +23,21 @@ object Main {
         parser.parser.parse(fileContent) match {
           case Success(node) => {
             // TODO: Perform semantic analysis
-            // semanticChecker.check(node) match { // Use the semanticChecker object
-            //   case Right(_) => {
-            //     // println("exit code: " + exitCode)
-            //     0
-            //   }
-            //   case Left(msg) => {
-            //     // println(msg)
-            //     // println("failed")
-            //     200
-            //   }
-            // }
-            0
+            semanticChecker.check(node) match { // Use the semanticChecker object
+              case Right(exitCode) => {
+                println("exit code: " + exitCode)
+                0
+              }
+              case Left(msg) => {
+                println(msg)
+                println("failed")
+                200
+              }
+            }
           }
           case Failure(msg) => {
-            // println(msg)
-            // println("failed")
+            println(msg)
+            println("failed")
             100
           }
         }

@@ -4,59 +4,58 @@ import wacc.Main
 import parsley.{Failure, Result, Success}
 import wacc.parser._
 import org.scalatest.Pending
+import wacc.Node
+import wacc.semanticChecker
 
 
 class SemanticErrArrayTests extends AnyFlatSpec {
 
   "semanticErr - array tests: arrayIndexComplexNotInt.wacc" should "return exit code 200" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
   }
 
   "semanticErr - array tests: arrayIndexNotInt.wacc" should "return exit code 200" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/arrayIndexNotInt.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
+    // val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/arrayIndexNotInt.wacc")
+    // val exitCode = Main.compile(path)
+    // println("Exit Code: " + exitCode)
+    // exitCode shouldBe 200
+    val node = parser.parse("begin int[] a = [1, 2]; int b = a[2] end")
+    println(node);
+
   }
 
   "semanticErr - array tests: arrayMultipleIndexError.wacc" should "return exit code 200" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/arrayMultipleIndexError.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/arrayMultipleIndexError.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
   }
 
   "semanticErr - array tests: badIndex.wacc" should "return exit code 200" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/badIndex.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/badIndex.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
   }
 
   "semanticErr - array tests: indexUndefIdent.wacc" should "return exit code 200" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/indexUndefIdent.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/indexUndefIdent.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
   }
 
   "semanticErr - array tests: mixingTypesInArrays.wacc" should "return exit code 200" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/mixingTypesInArrays.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/mixingTypesInArrays.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200

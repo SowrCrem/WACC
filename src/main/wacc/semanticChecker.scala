@@ -1,6 +1,22 @@
 package wacc
 
 object semanticChecker {
+
+
+  var symbolTable: SymbolTable = new SymbolTable(None)
+  var typeChecker: TypeChecker = new TypeChecker(symbolTable)
+
+
+  def check(node: Node): Either[String, Int] = {
+    // Check that no exception is thrown for a valid type check
+    try {
+      typeChecker.check(node)
+      return Right(0)
+    } catch {
+      case e: Exception => return Left(e.getMessage)
+    }
+  }
+
   // Initialise top-level symbol table with no parent
   // private val topLevelST: SymbolTable = new SymbolTable(None) 
 

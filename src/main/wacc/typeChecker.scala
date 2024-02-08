@@ -37,7 +37,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
           throw new SemanticError(
             s"Type mismatch: expected $typeNode, got $exprType"
           )
-      }
+      } 
       symbolTable.add(ident.value, typeNode)
       Some(typeNode)
 
@@ -202,22 +202,34 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case ArrayElem(ident, eList) =>
       symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
-        case Some(ArrayTypeNode(t)) =>
-          val allIndicesAreInt = eList.forall(expr =>
-            check(expr, symbolTable, returnType).contains(IntTypeNode())
-          )
-          if (allIndicesAreInt) {
-            Some(t)
-          } else {
-            throw new SemanticError(
-              s"Type mismatch: ArrayElem expected all indices to be integers"
-            )
+        case Some(node) =>
+          node match {
+            case ArrayTypeNode(elementType) =>
+              // Check if all indices are integers
+              val allIndicesAreInt = eList.forall(expr =>
+                check(expr, symbolTable, returnType) == Some(IntTypeNode())
+              )
+              if (!allIndicesAreInt) {
+                throw new SemanticError(
+                  "Type mismatch: ArrayElem expected all indices to be integers"
+                )
+              } else {
+                // Here, instead of directly returning 'Some(t)', we need to consider the depth of the access
+                // For a single-dimensional array accessed once, return the element type.
+                // For multi-dimensional arrays or deeper accesses, we need to peel off the array layers accordingly.
+                eList.foldLeft(Some(elementType)) {
+                  case (Some(ArrayTypeNode(innerType)), _) => Some(innerType)
+                  case (acc, _) =>
+                    acc // For non-array inner types or after reaching the desired depth, stop peeling layers
+                }
+              }
+            case _ =>
+              throw new SemanticError(
+                s"Type mismatch: ${ident.value} is not an array"
+              )
           }
-        case _ =>
-          throw new SemanticError(
-            s"Type mismatch: ArrayElem expected an array, got ${symbolTable
-                .lookup(ident.value)}"
-          )
+        case None =>
+          throw new SemanticError(s"Identifier ${ident.value} not found")
       }
     case Mul(lhs, rhs) =>
       checkArithmBinOp(lhs, rhs, symbolTable, returnType)

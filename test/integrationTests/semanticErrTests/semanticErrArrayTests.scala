@@ -25,7 +25,7 @@ class SemanticErrArrayTests extends AnyFlatSpec {
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
 
-  }
+  } 
 
   "semanticErr - array tests: arrayMultipleIndexError.wacc" should "return exit code 200" in {
 

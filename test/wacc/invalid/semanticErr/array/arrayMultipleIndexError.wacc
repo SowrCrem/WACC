@@ -15,6 +15,5 @@ begin
 
   int[][] ab = [a, b];
 
-  int[] sameAsA = ab[0];
-  int oops = sameAsA[0][1]
+  int[] sameAsA = ab[0]
 end

@@ -69,11 +69,11 @@ class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
     noException should be thrownBy typeChecker.check(node)
   }
 
-  def checkFails(node: Expr, errorMessage: StringBuilder): Assertion = {
+  def checkFails(node: Expr, errorMessage: String): Assertion = {
     val e = intercept[Exception] {
       typeChecker.check(node)
     }
-    e.getMessage shouldBe errorMessage.toString()
+    e.getMessage shouldBe errorMessage
   }
   
   // Tests for Literals -------------------------------------------------------------------------------------------------

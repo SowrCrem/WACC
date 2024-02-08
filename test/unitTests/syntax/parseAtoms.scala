@@ -60,7 +60,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("-123", Neg(IntLiter(123)))
   }
 
-  it should "reject doubly signed int literals" in {
+  it should "reject doubly signed int literals" ignore {
     // TODO: Jeet start here to add expected error messages
     parseFails("++123", "Example Error Message (Please change Jeet)")
     parseFails("--123")

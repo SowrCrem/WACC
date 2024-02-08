@@ -66,7 +66,7 @@ class parseFunctions extends AnyFlatSpec {
 
   // Tests --------------------------------------------------------------------------------------------------------------
 
-  "functionProgram" should "parse a function program" ignore {
+  "functionProgram" should "parse a function program" in {
     val input = "begin int f(int x) is skip end skip end"
     val expected = Success(
       Program(
@@ -86,7 +86,7 @@ class parseFunctions extends AnyFlatSpec {
 
   }
 
-  it should "parse a function program with multiple functions" ignore {
+  it should "parse a function program with multiple functions" in {
     val input =
       "begin int f(int x) is skip end int g(int x) is skip end skip end"
     val expected = Success(
@@ -115,7 +115,7 @@ class parseFunctions extends AnyFlatSpec {
 
   // Function calls must be assigned to a variable
 
-  it should "parse functions that are called" ignore {
+  it should "parse functions that are called" in  {
     val input =
       "begin int f(int x) is return 5 end int g(int x) is return 2 end int x = call f(5) end"
     val expected = Success(
@@ -134,7 +134,8 @@ class parseFunctions extends AnyFlatSpec {
             Return(IntLiter(2))
           )
         ),
-        IdentAsgn(IntTypeNode(), Ident("x"), Call(Ident("f"), (ParamList(List(Param(IntTypeNode(), IntLiter(5)))))))
+        IdentAsgn(IntTypeNode(), Ident("x"), Call(Ident("f"), (ArgList(List(IntLiter(5)))))
+        )
       )
     )
 

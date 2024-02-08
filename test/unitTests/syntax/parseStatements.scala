@@ -55,6 +55,7 @@ import wacc.parser._
 import wacc.lexer._
 import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
+import org.scalactic.Fail
 
 class parseStatements extends AnyFlatSpec {
 
@@ -182,7 +183,8 @@ class parseStatements extends AnyFlatSpec {
 
   // Tests for semicolon -------------------------------------------------------------------------------------------------
 
-  it should "parse multiple statements" ignore {
+  it should "parse multiple statements" in {
     parseSucceeds("skip; skip", StatJoin(List(Skip(), Skip())))
+
   }
 }

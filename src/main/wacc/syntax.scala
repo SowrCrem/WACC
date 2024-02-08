@@ -21,15 +21,15 @@ object ParamList extends generic.ParserBridge1[List[Param], ParamList]
 
 // Param (Extending Node)
 
-case class Param(typeNode: TypeNode, ident: Expr) extends Node
-object Param extends generic.ParserBridge2[TypeNode, Expr, Param]
+case class Param(typeNode: TypeNode, ident: Ident) extends Node
+object Param extends generic.ParserBridge2[TypeNode, Ident, Param]
 
 // Statements (Extending Node)
 sealed trait Stat extends Node
 
 case class Skip() extends Stat
-case class IdentAsgn (typeNode: TypeNode, ident: Expr, expr: Node) extends Stat
-object IdentAsgn extends generic.ParserBridge3[TypeNode, Expr, Node, Stat]
+case class IdentAsgn (typeNode: TypeNode, ident: Ident, expr: Node) extends Stat
+object IdentAsgn extends generic.ParserBridge3[TypeNode, Ident, Node, Stat]
 case class AsgnEq(lhs: Node, rhs: Node) extends Stat
 object AsgnEq extends generic.ParserBridge2[Node, Node, Stat]
 case class Read(lhs: LValue) extends Stat
@@ -80,8 +80,8 @@ object NewPair extends generic.ParserBridge2[Expr, Expr, Expr]
 case class ArgList (argList: List[Expr]) extends Node
 object ArgList extends generic.ParserBridge1[List[Expr], ArgList]
 
-case class Call(ident: Ident, list: Node) extends Stat
-object Call extends generic.ParserBridge2[Ident, Node, Stat]
+case class Call(ident: Ident, args: ArgList) extends Stat
+object Call extends generic.ParserBridge2[Ident, ArgList, Stat]
 
 case class ArrayLiter(exprList: List[Expr]) extends Expr  
 object ArrayLiter extends generic.ParserBridge1[List[Expr], Expr]
@@ -115,8 +115,12 @@ sealed trait CompBinOp extends BinOp
 sealed trait BoolBinOp extends BinOp
 
 case class Mul(lhs: Expr, rhs: Expr) extends IntBinOp 
-object Mul extends generic.ParserBridge2[Expr, Expr, IntBinOp] 
-case class Div(lhs: Expr, rhs: Expr) extends IntBinOp
+object Mul extends generic.ParserBridge2[Expr, Expr, IntBinOp] {
+  def unapply(mul: Mul): Option[(Expr, Expr)] = Some((mul.lhs, mul.rhs))
+}
+case class Div(lhs: Expr, rhs: Expr) extends IntBinOp {
+  def unapply(div: Div): Option[(Expr, Expr)] = Some((div.lhs, div.rhs))
+}
 object Div extends generic.ParserBridge2[Expr, Expr, IntBinOp]
 case class Mod(lhs: Expr, rhs: Expr) extends IntBinOp
 object Mod extends generic.ParserBridge2[Expr, Expr, IntBinOp]
@@ -175,16 +179,16 @@ case class Brackets(expr: Expr) extends Atom
 object Brackets extends generic.ParserBridge1[Expr, Atom]
 case class Null() extends Atom with LValue with PairElemTypeNode
 case class Ident(value: String) extends Atom with LValue
-object Ident extends generic.ParserBridge1[String, Atom]
+object Ident extends generic.ParserBridge1[String, Ident]
 case class Error(value: String) extends Atom 
 
 
 
 // Type nodes
-trait TypeNode 
+trait TypeNode extends Node 
 
 sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode
-case class IntTypeNode() extends BaseTypeNode 
+case class IntTypeNode() extends BaseTypeNode
 case class BoolTypeNode() extends BaseTypeNode 
 case class CharTypeNode() extends BaseTypeNode 
 case class StringTypeNode() extends BaseTypeNode 
@@ -192,6 +196,9 @@ case class StringTypeNode() extends BaseTypeNode
 case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode
 
 sealed trait PairElemTypeNode extends TypeNode
+
+case class ErrorTypeNode() extends TypeNode with PairElemTypeNode 
+
 
 case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode) extends TypeNode with LValue
 object PairTypeNode extends generic.ParserBridge2[PairElemTypeNode, PairElemTypeNode, TypeNode]

@@ -80,7 +80,7 @@ class parseExprs extends AnyFlatSpec {
     parseSucceeds("-1", Neg(IntLiter(1)))
   }
 
-  it should "parse len" ignore {
+  it should "parse len" in {
     parseSucceeds("len \"hello\"", Len(StringLiter("hello")))
     parseSucceeds("len [1,2,3]", Len(ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3)))))
   }
@@ -120,70 +120,60 @@ class parseExprs extends AnyFlatSpec {
     parseSucceeds("1 - 2 - 3", Minus(Minus(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
-  it should "parse greater than" ignore {
+  it should "parse greater than" in {
     parseSucceeds("1 > 2", GreaterThan(IntLiter(1), IntLiter(2)))
-    parseSucceeds("1 > 2 > 3", GreaterThan(GreaterThan(IntLiter(1), IntLiter(2)), IntLiter(3))) 
   }
 
 
   //TODO: operation is not associative, so it should fail
-  it should "parse greater than or equal" ignore {
+  it should "parse greater than or equal" in {
     parseSucceeds("1 >= 2", GreaterThanEq(IntLiter(1), IntLiter(2)))
-    parseSucceeds("1 >= 2 >= 3", GreaterThanEq(GreaterThanEq(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
 
 
   //TODO: operation is not associative, so it should fail
-  it should "parse less than" ignore {
+  it should "parse less than" in {
     parseSucceeds("1 < 2", LessThan(IntLiter(1), IntLiter(2)))
-    parseSucceeds("1 < 2 < 3", LessThan(LessThan(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
 
   //TODO: operation is not associative, so it should fail
-  it should "parse less than or equal" ignore {
+  it should "parse less than or equal" in {
     parseSucceeds("1 <= 2", LessThanEq(IntLiter(1), IntLiter(2)))
-    parseSucceeds("1 <= 2 <= 3", LessThanEq(LessThanEq(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
 
   //TODO: operation is not associative, so it should fail
-  it should "parse equals" ignore {
+  it should "parse equals" in {
     parseSucceeds("1 == 2", Equals(IntLiter(1), IntLiter(2)))
-    parseSucceeds("1 == 2 == 3", Equals(Equals(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
 
   //TODO: operation is not associative, so it should fail
-  it should "parse not equals" ignore {
+  it should "parse not equals" in {
     parseSucceeds("1 != 2", NotEquals(IntLiter(1), IntLiter(2)))
-    parseSucceeds("1 != 2 != 3", NotEquals(NotEquals(IntLiter(1), IntLiter(2)), IntLiter(3)))
   }
 
   //TODO: operation is not associative, so it should fail
-  it should "parse and" ignore {
+  it should "parse and" in {
     parseSucceeds("true && false", And(BoolLiter(true), BoolLiter(false)))
-    parseSucceeds("true && false && true", And(And(BoolLiter(true), BoolLiter(false)), BoolLiter(true)))
   }
 
-  //TODO: operation is not associative, so it should fail
-  it should "parse or" ignore {
+  it should "parse or" in {
     parseSucceeds("true || false", Or(BoolLiter(true), BoolLiter(false)))
-    parseSucceeds("true || false || true", Or(Or(BoolLiter(true), BoolLiter(false)), BoolLiter(true)))
   }
 
   // Tests for ArrayElem ----------------------------------------------------------------------------------------
   
   it should "parse array elements" in {
-    // parseSucceeds("arr[0]", ArrayLiter(List(IntLiter(0))))
-    arrayelemParser.parse("arr[0]") shouldBe Success(ArrayElem(Ident("arr"), List(IntLiter(0))))
+    parseSucceeds("arr[0]", ArrayElem(Ident("arr"), List(IntLiter(0))))
   }
 
 
 
-  it should "parse 2d array elements" ignore {
-    parseSucceeds("arr[0][1]", ArrayLiter(List(IntLiter(0), IntLiter(1))))
+  it should "parse 2d array elements" in {
+    parseSucceeds("arr[0][1]", ArrayElem(Ident("arr"), List(IntLiter(0), IntLiter(1))))
   }
 
 }

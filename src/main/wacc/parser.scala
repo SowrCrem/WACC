@@ -42,8 +42,8 @@ object parser {
   lazy val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
 
   lazy val atoms =
-    intParser | boolParser | charParser | stringParser |
-      identifierParser | bracketsParser | arrayelemParser
+    atomic(arrayelemParser) | intParser | boolParser | charParser | stringParser |
+      identifierParser | bracketsParser 
 
   // -- Pair Parser ----------------------------------------------- //
 
@@ -53,12 +53,12 @@ object parser {
     newpair.map(x => NewPair(x._1, x._2))
   }
 
-  lazy val pairLitParser: Parsley[Expr] = ("null" as Null()) | newpairParser
+  lazy val pairLitParser: Parsley[Expr] =  "fst" ~> FstNode(identifierParser) | "snd" ~> SndNode(identifierParser) | newpairParser | ("null" as Null()) 
 
   // -- Expression Parsers ----------------------------------------- //
 
   lazy val exprParser: Parsley[Expr] = precedence(
-    atoms | pairLitParser
+    atoms | pairLitParser | arrayLiteralParser
   )(
     Ops(Prefix)(Not from "!"),
     Ops(Prefix)(Neg from "-" <~ notFollowedBy("-")),
@@ -80,7 +80,7 @@ object parser {
     Ops(InfixR)(Or from "||")
   )
 
-  val arrayLiteralParser: Parsley[Expr] = {
+  lazy val arrayLiteralParser: Parsley[Expr] = {
     val arrayLiteral = "[" ~> sepBy(exprParser, ",") <~ "]"
     arrayLiteral.map(x => ArrayLiter(x))
   }
@@ -126,7 +126,6 @@ object parser {
 
   val skipParser: Parsley[Stat] = "skip" as Skip()
 
-  val readParser: Parsley[Stat] = "read" ~> ident.map(x => Read(Ident(x)))
 
   val freeParser: Parsley[Stat] = "free" ~> exprParser.map(x => Free(x))
 
@@ -150,9 +149,10 @@ object parser {
   }
 
   val assignRhs = {
-    val assignRhs = arrayLiteralParser | pairLitParser | callParser | exprParser
+    val assignRhs = exprParser | pairLitParser | callParser
     assignRhs
-  }
+  }.debug("assignRhs")
+
 
   val identAsgnParser: Parsley[IdentAsgn] = {
     val identAsgn = typeParser <~> atomic(
@@ -162,14 +162,17 @@ object parser {
   }
 
   val assignLhs = {
-    val assignLhs = arrayelemParser | identifierParser
+    val assignLhs = atomic(arrayelemParser) | identifierParser | pairLitParser
     assignLhs
-  }
+  }.debug("assignLhs")
+
+  val readParser: Parsley[Stat] = "read" ~> Read(assignLhs)
+
 
   val asgnEqParser: Parsley[Stat] = {
     val asgnEq = assignLhs <~ "=" <~> assignRhs
     asgnEq.map(x => AsgnEq(x._1, x._2))
-  }
+  }.debug("asgnEqParser")
 
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser | asgnEqParser |

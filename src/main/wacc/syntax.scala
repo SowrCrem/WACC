@@ -32,8 +32,8 @@ case class IdentAsgn (typeNode: TypeNode, ident: Ident, expr: Node) extends Stat
 object IdentAsgn extends generic.ParserBridge3[TypeNode, Ident, Node, Stat]
 case class AsgnEq(lhs: Node, rhs: Node) extends Stat
 object AsgnEq extends generic.ParserBridge2[Node, Node, Stat]
-case class Read(lhs: LValue) extends Stat
-object Read extends generic.ParserBridge1[LValue, Stat]
+case class Read(lhs: Expr) extends Stat
+object Read extends generic.ParserBridge1[Expr, Stat]
 case class Free(expr: Expr) extends Stat
 object Free extends generic.ParserBridge1[Expr, Stat]
 case class Return(expr: Expr) extends Stat

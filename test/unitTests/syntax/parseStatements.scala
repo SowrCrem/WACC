@@ -83,20 +83,21 @@ class parseStatements extends AnyFlatSpec {
     parseSucceeds("int x = 1", IdentAsgn(IntTypeNode(), Ident("x"), IntLiter(1)))
   }
 
-  it should "parse LHS existing identifier assignments" ignore {
-    parseSucceeds("int x = 1; x = 3", AsgnEq(Ident("x"), IntLiter(3)))
+  it should "parse LHS existing identifier assignments" in{
+    asgnEqParser.parse("x = 3") shouldBe Success(AsgnEq(Ident("x"), IntLiter(3)))
+    asgnEqParser.parse("x[2] = 2") shouldBe Success(AsgnEq(ArrayElem(Ident("x"), List(IntLiter(2))), IntLiter(2)))
   }
 
   it should "parse LHS array elem assignments" in {
     parseSucceeds("x[1] = 3", AsgnEq(ArrayElem(Ident("x"), List(IntLiter(1))), IntLiter(3)))
   }
 
-  it should "parse LHS pair elem assignments" ignore {
+  it should "parse LHS pair elem assignments" in {
     parseSucceeds("fst p = 3", AsgnEq(FstNode(Ident("p")), IntLiter(3)))
     parseSucceeds("snd p = 3", AsgnEq(SndNode(Ident("p")), IntLiter(3)))
   }
 
-  it should "parse RHS expression assignments" ignore {
+  it should "parse RHS expression assignments" in {
     parseSucceeds("x = 1 + 2", AsgnEq(Ident("x"), Plus(IntLiter(1), IntLiter(2))))
     parseSucceeds("x = 1 * 2", AsgnEq(Ident("x"), Mul(IntLiter(1), IntLiter(2))))
     parseSucceeds("x = 1 / 2", AsgnEq(Ident("x"), Div(IntLiter(1), IntLiter(2))))
@@ -104,22 +105,22 @@ class parseStatements extends AnyFlatSpec {
     parseSucceeds("x = len \"hello\"", AsgnEq(Ident("x"), Len(StringLiter("hello"))))
   }
 
-  it should "parse RHS array literal assignments" ignore {
+  it should "parse RHS array literal assignments" in {
     parseSucceeds("x = []", AsgnEq(Ident("x"), ArrayLiter(List())))
     parseSucceeds("x = [1]", AsgnEq(Ident("x"), ArrayLiter(List(IntLiter(1)))))
     parseSucceeds("x = [1, 2, 3]", AsgnEq(Ident("x"), ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3)))))
   }
 
-  it should "parse RHS new pair assignments" ignore {
+  it should "parse RHS new pair assignments" in {
     parseSucceeds("x = newpair(1, 2)", AsgnEq(Ident("x"), NewPair(IntLiter(1), IntLiter(2))))
   }
 
-  it should "parse RHS pair elem assignments" ignore {
+  it should "parse RHS pair elem assignments" in {
     parseSucceeds("x = fst p", AsgnEq(Ident("x"), FstNode(Ident("p"))))
     parseSucceeds("x = snd p", AsgnEq(Ident("x"), SndNode(Ident("p"))))
   }
 
-  it should "parse RHS call assignments" ignore {
+  it should "parse RHS call assignments" in {
     parseSucceeds("x = call f()", AsgnEq(Ident("x"), Call(Ident("f"), ArgList(List()))))
     parseSucceeds("x = call f(1, 2, 3)", AsgnEq(Ident("x"), Call(Ident("f"), ArgList( List(IntLiter(1), IntLiter(2), IntLiter(3)) ) )))
   }
@@ -130,11 +131,11 @@ class parseStatements extends AnyFlatSpec {
     parseSucceeds("read x", Read(Ident("x")))
   }
 
-  it should "parse read with array elem" ignore {
+  it should "parse read with array elem" in {
     parseSucceeds("read x[1]", Read(ArrayElem(Ident("x"), List(IntLiter(1)))))
   }
 
-  it should "parse read with pair elem" ignore {
+  it should "parse read with pair elem" in {
     parseSucceeds("read fst p", Read(FstNode(Ident("p"))))
     parseSucceeds("read snd p", Read(SndNode(Ident("p"))))
   }

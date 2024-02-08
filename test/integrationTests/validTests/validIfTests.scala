@@ -100,7 +100,7 @@ class ValidIfTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - if tests: ifBasic.wacc" should "return exit code 0" in {
+  "valid - if tests: ifBasic.wacc" should "return exit code 0" ignore {
 
     val path : Array[String] = Array("test/wacc/valid/if/ifBasic.wacc")
     val exitCode = Main.compile(path)

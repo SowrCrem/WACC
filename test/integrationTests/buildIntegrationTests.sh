@@ -12,7 +12,7 @@ create_test_entries () {
     for file in "$subdirectory"/*; do 
         subdirectory_name=$(basename "$subdirectory")
         if [ -d "$file" ]; then
-            create_test_entries "$file" "${path_var}/${subdirectory_name}" "$src_name" "$expected_exit_code" "$this_filename"
+            create_test_entries "$file" "${path_var}/${subdirectory_name}" "$src_name" "$expected_exit_code" "$this_filename" "$file_path_arg"
         elif [[ "$file" == *.wacc ]]; then
             file_name=$(basename "$file")
             src_test_path="test/wacc/${path_var}/${subdirectory_name}/${file_name}"

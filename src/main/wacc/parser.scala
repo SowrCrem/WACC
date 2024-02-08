@@ -151,7 +151,7 @@ object parser {
   val assignRhs = {
     val assignRhs = exprParser | pairLitParser | callParser
     assignRhs
-  }.debug("assignRhs")
+  }
 
 
   val identAsgnParser: Parsley[IdentAsgn] = {
@@ -164,7 +164,7 @@ object parser {
   val assignLhs = {
     val assignLhs = atomic(arrayelemParser) | identifierParser | pairLitParser
     assignLhs
-  }.debug("assignLhs")
+  }
 
   val readParser: Parsley[Stat] = "read" ~> Read(assignLhs)
 
@@ -172,7 +172,7 @@ object parser {
   val asgnEqParser: Parsley[Stat] = {
     val asgnEq = assignLhs <~ "=" <~> assignRhs
     asgnEq.map(x => AsgnEq(x._1, x._2))
-  }.debug("asgnEqParser")
+  }
 
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser | asgnEqParser |

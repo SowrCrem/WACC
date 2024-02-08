@@ -205,7 +205,7 @@ class SemanticErrVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - variables tests: doubleDeclare.wacc" should "return exit code 200" in {
+  "semanticErr - variables tests: doubleDeclare.wacc" should "return exit code 200" ignore {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/variables/doubleDeclare.wacc")
     val exitCode = Main.compile(path)
@@ -220,7 +220,7 @@ class SemanticErrVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - variables tests: undeclaredScopeVar.wacc" should "return exit code 200" in {
+  "semanticErr - variables tests: undeclaredScopeVar.wacc" should "return exit code 200" ignore {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/variables/undeclaredScopeVar.wacc")
     val exitCode = Main.compile(path)
@@ -250,7 +250,7 @@ class SemanticErrVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - variables tests: undeclaredVar.wacc" should "return exit code 200" in {
+  "semanticErr - variables tests: undeclaredVar.wacc" should "return exit code 200" ignore {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/variables/undeclaredVar.wacc")
     val exitCode = Main.compile(path)

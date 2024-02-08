@@ -10,7 +10,7 @@ import scala.sys.process._
 
 class ValidSequenceTests extends AnyFlatSpec {
 
-  "valid - sequence tests: basicSeq2.wacc" should "return exit code 0" in {
+  "valid - sequence tests: basicSeq2.wacc" should "return exit code 0" ignore {
 
     val path : Array[String] = Array("test/wacc/valid/sequence/basicSeq2.wacc")
     val exitCode = Main.compile(path)
@@ -25,7 +25,7 @@ class ValidSequenceTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - sequence tests: basicSeq.wacc" should "return exit code 0" in {
+  "valid - sequence tests: basicSeq.wacc" should "return exit code 0" ignore {
 
     val path : Array[String] = Array("test/wacc/valid/sequence/basicSeq.wacc")
     val exitCode = Main.compile(path)

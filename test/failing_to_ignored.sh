@@ -1,26 +1,36 @@
 #!/bin/bash
 
-# Check if two arguments are provided
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <test_directory> <package_name>"
+# Check if an argument is provided
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <test_suite_file>"
     exit 1
 fi
 
-# Extract arguments
-test_directory="$1"
-package_name="$2"
+# Extract the test suite file from the argument
+test_suite="$1"
 
-# Iterate through Scala test files
-for file in $(find "$test_directory" -type f -name "*.scala"); do
-    # Run tests and collect the output
-    test_output=$(scala-cli test . --test-only "$package_name.$(basename "$file" .scala)" .)
+# Check if the test suite file exists
+if [ ! -f "$test_suite" ]; then
+    echo "Error: Test suite file not found."
+    exit 1
+fi
 
-    # Check if the tests failed
+# Compile your Scala code (if not compiled already)
+if [ ! -d "out" ]; then
+    scala-cli compile .
+fi
+
+# Read the test suite file line by line
+while IFS= read -r test_case; do
+    # Run the individual test case
+    test_output=$(scala-cli test . --tests "$test_case" .)
+    
+    # Check if the test failed
     if [[ $test_output == *"FAILED"* ]]; then
-        echo "Modifying $file"
+        echo "Modifying $test_case"
         # Replace " in {" with " ignore {" in the test file
-        sed -i 's/\(.*\) in \({\)/\1 ignore \2/' "$file"
+        sed -i 's/\(.*\) in \({\)/\1 ignore \2/' "$test_case"
     fi
-done
+done < "$test_suite"
 
-echo "Tests run, modifications complete"
+echo "Test suite run and modifications complete"

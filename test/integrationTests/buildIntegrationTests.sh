@@ -93,4 +93,4 @@ echo "Scala files created for each subdirectory."
 echo "Add removePending statements as required to this script"
 sh ../removePendings.sh -d syntaxErrTests/
 sh ../removePendings.sh -d semanticErrTests/
-sh removePendings.sh -d validTests/
+sh ../removePendings.sh -d validTests/

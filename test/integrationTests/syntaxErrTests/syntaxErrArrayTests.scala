@@ -15,12 +15,13 @@ class SyntaxErrArrayTests extends AnyFlatSpec {
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/array/arrayExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
+
     if (exitCode != 100) {
-      // Replace " in {" with "\"syntaxErr - array tests: arrayExpr.wacc\" should \"return exit code 100\" in {" in the test case
       val filePath = "test/integrationTests/syntaxErrTests/syntaxErrArrayTests.scala"
-      val sedCommand = s"""sed -i 's/"syntaxErr - array tests: arrayExpr.wacc" should "return exit code 100" ignore {/"syntaxErr - array tests: arrayExpr.wacc" should "return exit code 100" ignore {/g' $filePath"""
+      val sedCommand = s"""sed -i '0,/"syntaxErr - array tests: arrayExpr.wacc" should "return exit code 100" in {/s/"syntaxErr - array tests: arrayExpr.wacc" should "return exit code 100" in {/"syntaxErr - array tests: arrayExpr.wacc" should "return exit code 100" ignore {/' $filePath"""
       sedCommand.!
     }
+
     exitCode shouldBe 100
   }
 

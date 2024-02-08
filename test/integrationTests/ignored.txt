@@ -1,3 +1,0 @@
-This contains all the tests marked with the ignored flag (should pass but don't).
-
-syntaxErr - basic tests: unescapedChar.wacc

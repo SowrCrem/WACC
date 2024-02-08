@@ -3,4 +3,6 @@
 .scala-build/
 .vscode/
 .idea/
+target/
+test/testResults.txt
 wacc-compiler

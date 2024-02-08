@@ -17,13 +17,13 @@ create_test_entries () {
             src_test_path="test/wacc/${path_var}/${subdirectory_name}/${file_name}"
 
             echo -e "  \"${src_name} - ${subdirectory_name} tests: ${file_name}\" should \"return exit code ${expected_exit_code}\" in {
-    pending
+            pending
 
-    val path : Array[String] = Array(\"$src_test_path\")
-    val exitCode = Main.compile(path)
-    println(\"Exit Code: \" + exitCode)
-    exitCode shouldBe ${expected_exit_code}
-  }\n" >> "$this_filename"
+                val path : Array[String] = Array(\"$src_test_path\")
+                val exitCode = Main.compile(path)
+                println(\"Exit Code: \" + exitCode)
+                exitCode shouldBe ${expected_exit_code}
+            }\n" >> "$this_filename"
         fi
     done
 }                       

@@ -12,6 +12,8 @@ import parsley.combinator._
 import parsley.syntax._
 import parsley.token.descriptions.text.TextDesc
 import parsley.token.descriptions.text.EscapeDesc
+import parsley.errors.Token
+import parsley.errors.tokenextractors._
 
 
 object lexer {
@@ -23,6 +25,14 @@ object lexer {
       ")" -> LabelAndReason(
         reason="unclosed braces", 
         label="closing braces"
+      ),
+      "]" -> LabelAndReason(
+        reason="unclosed braces", 
+        label="closing braces"
+      ),
+      "[" -> LabelAndReason(
+        reason="unclosed braces", 
+        label="expected start of array"
       ),
       ">=" -> Label(
         label="comparison operator"
@@ -74,7 +84,55 @@ object lexer {
       ),
       "len" -> Label(
         label="unary operator"
-      )
+      ),
+      "false" -> Label(
+        label="boolean"
+      ),
+      "true" -> Label(
+        label="boolean"
+      ),
+      ";" -> Label(
+        label="semicolon"
+      ),
+      "int" -> Label(
+        label="type"
+      ),
+      "bool" -> Label(
+        label="type"
+      ),
+      "char" -> Label(
+        label="type"
+      ),
+      "string" -> Label(
+        label="type"
+      ),
+      "pair" -> Label(
+        label="type"
+      ),
+      "skip" -> Label(
+        label="statement"
+      ),
+      "read" -> Label(
+        label="statement"
+      ),
+      "free" -> Label(
+        label="statement"
+      ),
+      "return" -> Label(
+        label="statement"
+      ),
+      "exit" -> Label(
+        label="statement"
+      ),
+      "print" -> Label(
+        label="statement"
+      ),
+      "println" -> Label(
+        label="statement"
+      ),
+      "while" -> Label(
+        label="while loopS"
+      ),
     )
   }
 
@@ -157,6 +215,16 @@ object lexer {
       )
     )
   )
+
+val builder = new WaccErrorBuilder with LexToken {
+    def tokens = Seq(
+        lexer.nonlexeme.integer.decimal.map(n => s"integer $n"),
+        lexer.nonlexeme.names.identifier.map(v => s"identifier $v")
+    ) ++ desc.symbolDesc.hardKeywords.map { k =>
+        lexer.nonlexeme.symbol(k).as(s"keyword $k")
+    }
+}
+
   private val lexer = new Lexer(desc, errorConfig)
   val integer = lexer.lexeme.integer.number32
   val implicits = lexer.lexeme.symbol.implicits

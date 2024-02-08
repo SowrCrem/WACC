@@ -68,9 +68,13 @@ class parseAtoms extends AnyFlatSpec {
     errorBuilder.append("  expected digit\n")
     errorBuilder.append("  >begin exit ++123 end\n")
     errorBuilder.append("               ^")
-
     parseFails("++123", errorBuilder.toString())
-    parseFails("--123")
+    val errorBuilder2 = new StringBuilder()
+    errorBuilder2.append("(line 1, column 13):\n");
+    errorBuilder2.append("  unexpected \"-\"\n");
+    errorBuilder2.append("  >begin exit --123 end\n");
+    errorBuilder2.append("               ^");
+    parseFails("--123", errorBuilder2.toString())
   }
 
   // Tests for BoolLiter ----------------------------------------------------------------------------------------------

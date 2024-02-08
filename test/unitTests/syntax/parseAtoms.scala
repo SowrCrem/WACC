@@ -2,6 +2,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
 import wacc.{
+  Expr,
   Program,
   IntLiter,
   IdentAsgn,
@@ -18,6 +19,7 @@ import wacc.{
   Null, 
   Error,
   Node,
+  Exit
 }
 import parsley.{Failure, Result, Success}
 import wacc.parser._
@@ -40,14 +42,25 @@ class parseAtoms extends AnyFlatSpec {
     case _              => ("int"   , IntTypeNode())
   }
 
-  def parseSucceeds[T](input: String, expected: Node, identifier: String = "input", comment: String = ""): Assertion = {
-    val (literalType, typeNode) = getType(expected)
-    val assignment = IdentAsgn(typeNode, Ident(identifier), expected)
-    parser.parse("begin " + literalType + " " + identifier + " = " + input + " " + comment + "\n end") shouldBe Success(Program(List(), assignment))
+  def parseSucceeds[T](input: String, expected: Expr, identifier: String = "", comment: String = ""): Assertion = identifier match {
+    case "" => parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)))
+    case _  => {
+      val (literalType, typeNode) = getType(expected)
+      val assignment = IdentAsgn(IntTypeNode(), Ident(identifier), expected)
+      parser.parse("begin int " + identifier + " = " + input + " " + comment + " end") shouldBe Success(Program(List(), assignment))
+    }
   }
 
-  def parseFails(input: String, inputType: String, identifier: String = "input"): Assertion = {
-    parser.parse("begin " + inputType + " " + identifier + " = " + input + " end") should matchPattern {
+  def parseFails(input: String, errorMessage: String = "", identifier: String = ""): Assertion = identifier match {
+    case "" => errorMessage match {
+      case "" => parser.parse("begin exit " + input + " end") should matchPattern {
+        case Failure(_) => // Match on any Failure
+      }
+      case _ => parser.parse("begin exit " + input + " end") should matchPattern {
+        case Failure(msg) if msg == errorMessage => // Match on a Failure with the specific error message
+      }
+    }
+    case _  => parser.parse("begin int " + identifier + " = " + input + " end") should matchPattern {
       case Failure(_) => // Match on any Failure
     }
   }
@@ -55,7 +68,7 @@ class parseAtoms extends AnyFlatSpec {
   def parseWithIdentifier(name:String, success:Boolean): Assertion = {
     if (success) parseSucceeds("1", IntLiter(1), name) else parseFails("1", "int", name)
   }
-
+  
   def commentIgnored(comment: String) = {
     parseSucceeds("1", IntLiter(1), "input", comment)
   }
@@ -74,8 +87,8 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   it should "reject doubly signed int literals" in {
-    // parseFails("++123", "int")
-    parseFails("--123", "int")
+    parseFails("++123")
+    parseFails("--123")
   }
 
   // Tests for BoolLiter ----------------------------------------------------------------------------------------------
@@ -103,22 +116,22 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   it should "reject invalid escaped char literals" ignore {
-    parseFails("\'\\a\'" , "char")
-    parseFails("\'\\z\'" , "char")
-    parseFails("\'\\\'"  , "char")
-    parseFails("\'\\\"\'", "char")
-    parseFails("\'\\x\'" , "char")
-    parseFails("\'\\u\'" , "char")
-    parseFails("\'\\U\'" , "char")
+    parseFails("\'\\a\'")
+    parseFails("\'\\z\'")
+    parseFails("\'\\ \'")
+    parseFails("\'\\\"\'")
+    parseFails("\'\\x\'")
+    parseFails("\'\\u\'")
+    parseFails("\'\\U\'")
   }
 
   it should "reject invalid char literals" ignore {
     
     // TODO: Should we include empty char? If not, write a test making sure its not rejected
-    parseFails("\'\'"  , "char") // Empty char
-    parseFails("\'\\\'", "char") // Backslash
-    parseFails("\'\"\'", "char") // Double quote
-    parseFails("\'\'\'", "char") // Single quote
+    parseFails("\'\'") // Empty char
+    parseFails("\'\\\'") // Backslash
+    parseFails("\'\"\'") // Double quote
+    parseFails("\'\'\'") // Single quote
   }
 
   // Tests for StringLiter --------------------------------------------------------------------------------------------
@@ -144,21 +157,21 @@ class parseAtoms extends AnyFlatSpec {
 
   it should "reject invalid string literals" ignore {
     
-    parseFails("\"\""  , "string") // Empty char
-    parseFails("\"\\\"", "string") // Backslash
-    parseFails("\"\"\"", "string") // Double quote
-    parseFails("\"\'\"", "string") // Single quote
+    parseFails("\"\""  ) // Empty char
+    parseFails("\"\\\"") // Backslash
+    parseFails("\"\"\"") // Double quote
+    parseFails("\"\'\"") // Single quote
   }
 
   it should "reject invalid escaped string literals" ignore {
     
-    parseFails("\"\\a\"" , "string")
-    parseFails("\"\\z\"" , "string")
-    parseFails("\"\\\'\"", "string")
-    parseFails("\"\\\"\"", "string")
-    parseFails("\"\\x\"" , "string")
-    parseFails("\"\\u\"" , "string")
-    parseFails("\"\\U\"" , "string")
+    parseFails("\"\\a\"" )
+    parseFails("\"\\z\"" )
+    parseFails("\"\\\'\"")
+    parseFails("\"\\\"\"")
+    parseFails("\"\\x\"" )
+    parseFails("\"\\u\"" )
+    parseFails("\"\\U\"" )
   }
 
   // Tests for Null (PairLiter) ---------------------------------------------------------------------------------------
@@ -194,12 +207,12 @@ class parseAtoms extends AnyFlatSpec {
 
   // Tests for Comment ------------------------------------------------------------------------------------------
   it should "ignore comments" in {
-    commentIgnored("# This is a comment")
-    commentIgnored("## This is a comment")
+    commentIgnored("# This is a comment\n")
+    commentIgnored("## This is a comment\n")
   }
 
   it should "reject comments without EOL" in {
-    parseFails("# This is a comment", "int")
+    parseFails("# This is a comment")
   }
 
   // Tests for Brackets -----------------------------------------------------------------------------------------------

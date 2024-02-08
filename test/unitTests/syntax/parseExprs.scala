@@ -170,8 +170,6 @@ class parseExprs extends AnyFlatSpec {
     parseSucceeds("arr[0]", ArrayElem(Ident("arr"), List(IntLiter(0))))
   }
 
-
-
   it should "parse 2d array elements" in {
     parseSucceeds("arr[0][1]", ArrayElem(Ident("arr"), List(IntLiter(0), IntLiter(1))))
   }

@@ -12,6 +12,8 @@ import parsley.combinator._
 import parsley.syntax._
 import parsley.token.descriptions.text.TextDesc
 import parsley.token.descriptions.text.EscapeDesc
+import parsley.errors.Token
+import parsley.errors.tokenextractors._
 
 object lexer {
 
@@ -211,6 +213,16 @@ object lexer {
       )
     )
   )
+
+val builder = new WaccErrorBuilder with LexToken {
+    def tokens = Seq(
+        lexer.nonlexeme.integer.decimal.map(n => s"integer $n"),
+        lexer.nonlexeme.names.identifier.map(v => s"identifier $v")
+    ) ++ desc.symbolDesc.hardKeywords.map { k =>
+        lexer.nonlexeme.symbol(k).as(s"keyword $k")
+    }
+}
+
   private val lexer = new Lexer(desc, errorConfig)
   val integer = lexer.lexeme.integer.number32
   val implicits = lexer.lexeme.symbol.implicits

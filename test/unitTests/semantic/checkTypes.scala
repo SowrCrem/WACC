@@ -55,42 +55,42 @@ import wacc.TypeChecker
 
 class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
 
-  // Tests --------------------------------------------------------------------------------------------------------------
 
   var symbolTable: SymbolTable = _
   var typeChecker: TypeChecker = _
+
+
 
   override def beforeEach(): Unit = {
     symbolTable = new SymbolTable(None)
     typeChecker = new TypeChecker(symbolTable)
   }
 
-  "the type checker" should "correctly type check integer literals" in {
-
-    val node = IntLiter(1)
-    // Check that no exception is thrown for a valid type check
+  def checkSucceeds(node: Expr): Assertion = {
     noException should be thrownBy typeChecker.check(node)
   }
 
-  it should "correctly type check character literals" in {
-
-    val node = CharLiter('a')
-    // Check that no exception is thrown for a valid type check
+  def checkSucceeds(node: Expr, errorMessage: StringBuilder): Assertion = {
     noException should be thrownBy typeChecker.check(node)
   }
+  
+  // Tests --------------------------------------------------------------------------------------------------------------
 
-  it should "correctly type check string literals" in {
+  "The type checker" should "accept integer literals" in {
+    checkSucceeds(IntLiter(1))
+  }
 
-    val node = StringLiter("hello")
-    // Check that no exception is thrown for a valid type check
-    noException should be thrownBy typeChecker.check(node)
+  it should "accept character literals" in {
+    checkSucceeds(CharLiter('a'))
+  }
+
+  it should "accept string literals" in {
+    checkSucceeds(StringLiter("hello"))
   }
 
   it should "correctly type check boolean literals" in {
-
-    val node = BoolLiter(true)
-    // Check that no exception is thrown for a valid type check
-    noException should be thrownBy typeChecker.check(node)
+    checkSucceeds(BoolLiter(true))
+    checkSucceeds(BoolLiter(false))
   }
 
   it should "correctly type check brackets" in {

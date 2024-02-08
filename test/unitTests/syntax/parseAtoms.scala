@@ -33,7 +33,7 @@ class parseAtoms extends AnyFlatSpec {
 
   // Testing Functions -------------------------------------------------------------------------------------------------
 
-  def parseSucceeds[T](input: String, expected: Expr): Assertion =
+  def parseSucceeds(input: String, expected: Expr): Assertion =
     parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)))
 
   def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
@@ -59,7 +59,8 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   it should "reject doubly signed int literals" in {
-    parseFails("++123")
+    // TODO: Jeet start here to add expected error messages
+    parseFails("++123", "Example Error Message (Please change Jeet)")
     parseFails("--123")
   }
 

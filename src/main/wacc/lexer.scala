@@ -23,6 +23,14 @@ object lexer {
         reason="unclosed braces", 
         label="closing braces"
       ),
+      "]" -> LabelAndReason(
+        reason="unclosed braces", 
+        label="closing braces"
+      ),
+      "[" -> LabelAndReason(
+        reason="unclosed braces", 
+        label="expected start of array"
+      ),
       ">=" -> Label(
         label="comparison operator"
       ),
@@ -79,6 +87,48 @@ object lexer {
       ),
       "true" -> Label(
         label="boolean"
+      ),
+      ";" -> Label(
+        label="semicolon"
+      ),
+      "int" -> Label(
+        label="type"
+      ),
+      "bool" -> Label(
+        label="type"
+      ),
+      "char" -> Label(
+        label="type"
+      ),
+      "string" -> Label(
+        label="type"
+      ),
+      "pair" -> Label(
+        label="type"
+      ),
+      "skip" -> Label(
+        label="statement"
+      ),
+      "read" -> Label(
+        label="statement"
+      ),
+      "free" -> Label(
+        label="statement"
+      ),
+      "return" -> Label(
+        label="statement"
+      ),
+      "exit" -> Label(
+        label="statement"
+      ),
+      "print" -> Label(
+        label="statement"
+      ),
+      "println" -> Label(
+        label="statement"
+      ),
+      "while" -> Label(
+        label="while loopS"
       ),
     )
   }

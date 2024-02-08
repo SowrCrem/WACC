@@ -50,7 +50,10 @@ case class Println(expr: Expr) extends Stat
 object Println extends generic.ParserBridge1[Expr, Stat]
 case class If(expr: Expr, stat1: Stat, stat2: Stat) extends Stat
 object If extends generic.ParserBridge3[Expr, Stat, Stat, Stat] {
-  override def labels() = List("if statement")
+  override def labels() = {
+    List("if statement")
+  }
+  
 }
 case class While(expr: Expr, stat: Stat) extends Stat
 object While extends generic.ParserBridge2[Expr, Stat, Stat] {

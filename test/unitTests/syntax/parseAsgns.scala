@@ -28,6 +28,7 @@ import wacc.lexer._
 import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
 import wacc.TypeNode
+import wacc.ArrayTypeNode
 
 
 class parseAsgns extends AnyFlatSpec {
@@ -101,8 +102,8 @@ class parseAsgns extends AnyFlatSpec {
   }
 
   // We need to parse assignments of the format "int[][] ident = expr". Dont use the functions above for this
-  it should "parse arrays of arrays" ignore {
-    val expected = IdentAsgn(IntTypeNode(), Ident("input"), ArrayLiter(List(ArrayLiter(List(IntLiter(1), IntLiter(2))), ArrayLiter(List(IntLiter(3), IntLiter(4))))))
+  it should "parse arrays of arrays" in {
+    val expected = IdentAsgn(ArrayTypeNode(ArrayTypeNode(IntTypeNode())), Ident("input"), ArrayLiter(List(ArrayLiter(List(IntLiter(1), IntLiter(2))), ArrayLiter(List(IntLiter(3), IntLiter(4))))))
     parser.parse("begin int[][] input = [[1,2],[3,4]] end") shouldBe Success(Program(List(), expected))
   }
 

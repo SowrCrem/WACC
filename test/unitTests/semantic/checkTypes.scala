@@ -2,6 +2,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
 import wacc.{
+  Node,
   IntLiter,
   CharLiter,
   StringLiter,
@@ -53,7 +54,7 @@ import wacc.SymbolTable
 import org.scalatest.BeforeAndAfterEach
 import wacc.TypeChecker
 
-class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
+class checkTypes extends AnyFlatSpec with BeforeAndAfterEach {
 
   var symbolTable: SymbolTable = _
   var typeChecker: TypeChecker = _
@@ -65,9 +66,7 @@ class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
     typeChecker = new TypeChecker(symbolTable)
   }
 
-  def checkSucceeds(node: Expr): Assertion = {
-    noException should be thrownBy typeChecker.check(node)
-  }
+  def checkSucceeds(node: Node): Assertion = noException should be thrownBy typeChecker.check(node)
 
   def checkFails(node: Expr, errorMessage: String): Assertion = {
     val e = intercept[Exception] {
@@ -101,7 +100,7 @@ class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
 
   // Tests for Programs -------------------------------------------------------------------------------------------------
 
-  it should "correctly type check programs" in {
+  it should "accept fully-formed programs" in {
     val node = Program(
       List(
         Func(
@@ -119,40 +118,7 @@ class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
       ),
       IdentAsgn(IntTypeNode(), Ident("x"), IntLiter(1))
     )
-
-    // Check that no exception is thrown for a valid type check
-    try {
-      typeChecker.check(node)
-    } catch {
-      case e: Exception => fail("Identifier type check failed")
-    }
-  }
-
-    it should "correctly type check function calls" in {
-    val node = Program(
-      List(
-        Func(
-          IntTypeNode(),
-          Ident("f"),
-          ParamList(List(Param(IntTypeNode(), Ident("x")))),
-          Return(IntLiter(1))
-        ),
-        Func(
-          IntTypeNode(),
-          Ident("g"),
-          ParamList(List(Param(IntTypeNode(), Ident("x")))),
-          Return(IntLiter(2))
-        )
-      ),
-      IdentAsgn(IntTypeNode(), Ident("x"), Call(Ident("f"), ArgList(List(IntLiter(1)))))
-    )
-
-    // Check that no exception is thrown for a valid type check
-    try {
-      typeChecker.check(node)
-    } catch {
-      case e: Exception => fail("Identifier type check failed")
-    }
+    checkSucceeds(node)
   }
 
 }

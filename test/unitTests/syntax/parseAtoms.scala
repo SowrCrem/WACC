@@ -40,8 +40,10 @@ class parseAtoms extends AnyFlatSpec {
     case "" => parser.parse("begin exit " + input + " end") should matchPattern {
       case Failure(_) => // Match on any Failure
     }
-    case _ => parser.parse("begin exit " + input + " end") should matchPattern {
-      case Failure(msg) if msg == errorMessage => // Match on a Failure with the specific error message
+    // Match on a Failure with the specific error message
+    case _ => parser.parse("begin exit " + input + " end") match {
+      case Failure (msg) => msg shouldBe errorMessage
+      case _ => fail("Wrong Error Message")
     }
   }
 

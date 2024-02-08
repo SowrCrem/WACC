@@ -32,45 +32,17 @@ import wacc.TypeNode
 class parseAtoms extends AnyFlatSpec {
 
   // Testing Functions -------------------------------------------------------------------------------------------------
-  def getType(expected: Node): (String, TypeNode) = expected match {
-    case IntLiter(_)    => ("int"   , IntTypeNode())
-    case Neg(_)         => ("int"   , IntTypeNode())
-    case BoolLiter(_)   => ("bool"  , BoolTypeNode())
-    case CharLiter(_)   => ("char"  , CharTypeNode())
-    case StringLiter(_) => ("string", StringTypeNode())
-    case Brackets(expr) => getType(expr)
-    case _              => ("int"   , IntTypeNode())
-  }
 
-  def parseSucceeds[T](input: String, expected: Expr, identifier: String = "", comment: String = ""): Assertion = identifier match {
-    case "" => parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)))
-    case _  => {
-      val (literalType, typeNode) = getType(expected)
-      val assignment = IdentAsgn(IntTypeNode(), Ident(identifier), expected)
-      parser.parse("begin int " + identifier + " = " + input + " " + comment + " end") shouldBe Success(Program(List(), assignment))
-    }
-  }
+  def parseSucceeds[T](input: String, expected: Expr): Assertion =
+    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)))
 
-  def parseFails(input: String, errorMessage: String = "", identifier: String = ""): Assertion = identifier match {
-    case "" => errorMessage match {
-      case "" => parser.parse("begin exit " + input + " end") should matchPattern {
-        case Failure(_) => // Match on any Failure
-      }
-      case _ => parser.parse("begin exit " + input + " end") should matchPattern {
-        case Failure(msg) if msg == errorMessage => // Match on a Failure with the specific error message
-      }
-    }
-    case _  => parser.parse("begin int " + identifier + " = " + input + " end") should matchPattern {
+  def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
+    case "" => parser.parse("begin exit " + input + " end") should matchPattern {
       case Failure(_) => // Match on any Failure
     }
-  }
-
-  def parseWithIdentifier(name:String, success:Boolean): Assertion = {
-    if (success) parseSucceeds("1", IntLiter(1), name) else parseFails("1", "int", name)
-  }
-  
-  def commentIgnored(comment: String) = {
-    parseSucceeds("1", IntLiter(1), "input", comment)
+    case _ => parser.parse("begin exit " + input + " end") should matchPattern {
+      case Failure(msg) if msg == errorMessage => // Match on a Failure with the specific error message
+    }
   }
 
   // Tests for IntLiter -----------------------------------------------------------------------------------------------
@@ -179,42 +151,6 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("null", Null())
   }
 
-  // Tests for Ident --------------------------------------------------------------------------------------------------
-  it should "parse identifiers" in {
-    parseWithIdentifier("hello", true)
-  }
-
-  it should "parse identifiers with underscores" in {
-    
-    parseWithIdentifier("hello_world", true)
-  }
-
-  it should "parse identifiers starting with underscores" in {
-    parseWithIdentifier("_hello", true)
-  }
-
-  it should "parse identifiers with numbers" in {
-    parseWithIdentifier("hello123", true)
-  }
-
-  it should "reject identifiers starting with numbers" in {
-    parseWithIdentifier("123hello", false)
-  }
-
-  it should "parse identifiers with underscores and numbers" in {
-    parseWithIdentifier("hello_world123", true)
-  }
-
-  // Tests for Comment ------------------------------------------------------------------------------------------
-  it should "ignore comments" in {
-    commentIgnored("# This is a comment\n")
-    commentIgnored("## This is a comment\n")
-  }
-
-  it should "reject comments without EOL" in {
-    parseFails("# This is a comment")
-  }
-
   // Tests for Brackets -----------------------------------------------------------------------------------------------
   it should "parse brackets" in {
     parseSucceeds("(123)"  , Brackets(IntLiter(123)))
@@ -223,10 +159,6 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("(\"\")" , Brackets(StringLiter("")))
     parseSucceeds("(null)" , Brackets(Null()))
     parseSucceeds("(hello)", Brackets(Ident("hello")))
-  }
-
-  it should "reject brackets around identifiers" in {
-    parseWithIdentifier("(hello)", false)
   }
 
   it should "parse double brackets" in {

@@ -214,13 +214,13 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
                   "Type mismatch: ArrayElem expected all indices to be integers"
                 )
               } else {
-                // Here, instead of directly returning 'Some(t)', we need to consider the depth of the access
                 // For a single-dimensional array accessed once, return the element type.
                 // For multi-dimensional arrays or deeper accesses, we need to peel off the array layers accordingly.
-                eList.foldLeft(Some(elementType)) {
-                  case (Some(ArrayTypeNode(innerType)), _) => Some(innerType)
-                  case (acc, _) =>
-                    acc // For non-array inner types or after reaching the desired depth, stop peeling layers
+                eList.length match {
+                  case 1 => Some(elementType)
+                  case _ =>
+                    val node = eList.foldLeft(elementType)((acc, _) => ArrayTypeNode(acc))
+                    Some(node)
                 }
               }
             case _ =>

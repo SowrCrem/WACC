@@ -201,7 +201,9 @@ case class StringTypeNode() extends BaseTypeNode {
   override def toString: String = "string"
 }
 
-case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode
+case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode {
+  override def toString: String = s"array of $elementType"
+}
 
 sealed trait PairElemTypeNode extends TypeNode
 

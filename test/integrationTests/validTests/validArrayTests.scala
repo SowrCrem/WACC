@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class ValidArrayTests extends AnyFlatSpec {
 
   "valid - array tests: arrayBasic.wacc" should "return exit code 0" in {
-    pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayBasic.wacc")
     val exitCode = Main.compile(path)
@@ -18,7 +17,6 @@ class ValidArrayTests extends AnyFlatSpec {
   }
 
   "valid - array tests: arrayEmpty.wacc" should "return exit code 0" in {
-    pending
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayEmpty.wacc")
     val exitCode = Main.compile(path)

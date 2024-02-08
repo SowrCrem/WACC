@@ -9,7 +9,6 @@ import org.scalatest.Pending
 class ValidAdvancedTests extends AnyFlatSpec {
 
   "valid - advanced tests: binarySortTree.wacc" should "return exit code 0" in {
-    pending
 
     val path : Array[String] = Array("test/wacc/valid/advanced/binarySortTree.wacc")
     val exitCode = Main.compile(path)

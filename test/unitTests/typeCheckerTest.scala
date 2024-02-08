@@ -52,6 +52,7 @@ import org.scalatest.compatible.Assertion
 import wacc.SymbolTable
 import org.scalatest.BeforeAndAfterEach
 import wacc.TypeChecker
+import wacc.semanticChecker
 
 class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
 
@@ -124,6 +125,7 @@ class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
     )
 
     // Check that no exception is thrown for a valid type check
+
     try {
       typeChecker.check(node)
     } catch {

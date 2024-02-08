@@ -22,40 +22,46 @@ import parsley.Parsley.lookAhead
 
 object parser {
 
-  
   lazy val arrayelemParser: Parsley[Expr] =
     ArrayElem(Ident(lexer.ident), some("[" ~> exprParser <~ "]"))
-  lazy val intParser: Parsley[Expr] = integer.map(n => {
+
+  lazy val signedInteger: Parsley[BigInt] = option("-").flatMap {
+    case Some(_) => lexer.integer.map(n => -n)
+    case None    => lexer.integer.map(n => n)
+  }
+
+  lazy val intParser: Parsley[Expr] = signedInteger.map(n => {
     if (n.isValidInt) IntLiter(n.toInt) else Error("Integer too large")
   })
+
   lazy val boolParser: Parsley[Expr] =
     ("true" as BoolLiter(true)) | ("false" as BoolLiter(false))
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
-  lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string)
-  lazy val identifierParser: Parsley[Expr] = Ident(lexer.ident)
+  lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string) 
+  lazy val identifierParser: Parsley[Ident] = Ident(lexer.ident)
   lazy val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
 
   lazy val atoms =
-    intParser | boolParser | charParser | stringParser |
-      identifierParser | bracketsParser | arrayelemParser
+    atomic(arrayelemParser) | intParser | boolParser | charParser | stringParser |
+      identifierParser | bracketsParser 
 
   // -- Pair Parser ----------------------------------------------- //
- 
+
   lazy val newpairParser: Parsley[Expr] = {
     val newpair =
       "newpair" ~> ("(" ~> exprParser <~ ",") <~> (exprParser <~ ")")
     newpair.map(x => NewPair(x._1, x._2))
   }
 
-  lazy val pairLitParser: Parsley[Expr] = ("null" as Null()) | newpairParser
+  lazy val pairLitParser: Parsley[Expr] =  "fst" ~> FstNode(identifierParser) | "snd" ~> SndNode(identifierParser) | newpairParser | ("null" as Null()) 
 
   // -- Expression Parsers ----------------------------------------- //
 
   lazy val exprParser: Parsley[Expr] = precedence(
-    atoms | pairLitParser
+    atoms | pairLitParser | arrayLiteralParser
   )(
     Ops(Prefix)(Not from "!"),
-    Ops(Prefix)(Neg from "-"),
+    Ops(Prefix)(Neg from "-" <~ notFollowedBy("-")),
     Ops(Prefix)(Len from "len"),
     Ops(Prefix)(Ord from "ord"),
     Ops(Prefix)(Chr from "chr"),
@@ -74,7 +80,7 @@ object parser {
     Ops(InfixR)(Or from "||")
   )
 
-  val arrayLiteralParser: Parsley[Expr] = {
+  lazy val arrayLiteralParser: Parsley[Expr] = {
     val arrayLiteral = "[" ~> sepBy(exprParser, ",") <~ "]"
     arrayLiteral.map(x => ArrayLiter(x))
   }
@@ -94,7 +100,7 @@ object parser {
     arrayType.map(x => ArrayTypeNode(x))
   }
 
-  lazy val pairElemTypeParser: Parsley[PairElemTypeNode] = baseType | arrayType
+  lazy val pairElemTypeParser: Parsley[PairElemTypeNode] = atomic(arrayType) | baseType 
 
   lazy val pairType: Parsley[PairTypeNode] = {
     val pairType =
@@ -102,7 +108,8 @@ object parser {
     pairType.map(x => PairTypeNode(x._1, x._2))
   }
 
-  lazy val typeParser: Parsley[TypeNode] = baseType | atomic(arrayType) | pairType
+  lazy val typeParser: Parsley[TypeNode] =
+    atomic(arrayType) | baseType | pairType
 
   // -- Statement Parsers ----------------------------------------- //
 
@@ -119,7 +126,6 @@ object parser {
 
   val skipParser: Parsley[Stat] = "skip" as Skip()
 
-  val readParser: Parsley[Stat] = "read" ~> ident.map(x => Read(Ident(x)))
 
   val freeParser: Parsley[Stat] = "free" ~> exprParser.map(x => Free(x))
 
@@ -143,11 +149,12 @@ object parser {
   }
 
   val assignRhs = {
-    val assignRhs = arrayLiteralParser | pairLitParser | callParser | exprParser
+    val assignRhs = exprParser | pairLitParser | callParser
     assignRhs
-  }
+  }.debug("assignRhs")
 
-  val identAsgnParser: Parsley[Stat] = {
+
+  val identAsgnParser: Parsley[IdentAsgn] = {
     val identAsgn = typeParser <~> atomic(
       identifierParser
     ) <~ "=" <~> assignRhs
@@ -155,14 +162,17 @@ object parser {
   }
 
   val assignLhs = {
-    val assignLhs = arrayelemParser | identifierParser
+    val assignLhs = atomic(arrayelemParser) | identifierParser | pairLitParser
     assignLhs
-  }
+  }.debug("assignLhs")
+
+  val readParser: Parsley[Stat] = "read" ~> Read(assignLhs)
+
 
   val asgnEqParser: Parsley[Stat] = {
     val asgnEq = assignLhs <~ "=" <~> assignRhs
     asgnEq.map(x => AsgnEq(x._1, x._2))
-  }
+  }.debug("asgnEqParser")
 
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser | asgnEqParser |
@@ -175,7 +185,7 @@ object parser {
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
 
   val stmtParser: Parsley[Stat] =
-    (atomic(statAtoms) <~ notFollowedBy(";")) | statJoinParser
+    atomic(statAtoms <~ notFollowedBy(";")) | statJoinParser
 
   // -- Param Parser ----------------------------------------------- //
 
@@ -199,7 +209,6 @@ object parser {
   // -- Program Parser --------------------------------------------- //
   val program: Parsley[Node] =
     Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
-
 
   // -- Parser ---------------------------------------------------- //
   val parser = fully(program)

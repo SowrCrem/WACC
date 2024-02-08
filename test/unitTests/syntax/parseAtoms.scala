@@ -75,8 +75,9 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   it should "reject doubly signed int literals" ignore {
-    parseFails("++123", "int")
-    parseFails("--123", "int")
+    // TODO: Jeet start here to add expected error messages
+    parseFails("++123", "Example Error Message (Please change Jeet)")
+    parseFails("--123", "INT")
   }
 
   // Tests for BoolLiter ----------------------------------------------------------------------------------------------
@@ -111,6 +112,7 @@ class parseAtoms extends AnyFlatSpec {
     parseFails("\'\\x\'" , "char")
     parseFails("\'\\u\'" , "char")
     parseFails("\'\\U\'" , "char")
+
   }
 
   it should "reject invalid char literals" ignore {

@@ -24,8 +24,8 @@ object Main {
           case Success(node) => {
             // TODO: Perform semantic analysis
             semanticChecker.check(node) match { // Use the semanticChecker object
-              case Right(_) => {
-                // println("exit code: " + exitCode)
+              case Right(exitCode) => {
+                println("exit code: " + exitCode)
                 0
               }
               case Left(msg) => {

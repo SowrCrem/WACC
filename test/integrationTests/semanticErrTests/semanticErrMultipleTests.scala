@@ -1,3 +1,5 @@
+package integrationTests.semanticErrTests
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
@@ -9,7 +11,6 @@ import org.scalatest.Pending
 class SemanticErrMultipleTests extends AnyFlatSpec {
 
   "semanticErr - multiple tests: funcMess.wacc" should "return exit code 200" in {
-    pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/funcMess.wacc")
     val exitCode = Main.compile(path)
@@ -18,7 +19,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: ifAndWhileErrs.wacc" should "return exit code 200" in {
-    pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/ifAndWhileErrs.wacc")
     val exitCode = Main.compile(path)
@@ -27,7 +27,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: messyExpr.wacc" should "return exit code 200" in {
-    pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/messyExpr.wacc")
     val exitCode = Main.compile(path)
@@ -36,7 +35,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: multiCaseSensitivity.wacc" should "return exit code 200" in {
-    pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/multiCaseSensitivity.wacc")
     val exitCode = Main.compile(path)
@@ -45,7 +43,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: multiTypeErrs.wacc" should "return exit code 200" in {
-    pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/multiTypeErrs.wacc")
     val exitCode = Main.compile(path)
@@ -54,7 +51,6 @@ class SemanticErrMultipleTests extends AnyFlatSpec {
   }
 
   "semanticErr - multiple tests: obfuscatingReturnsWithWhile.wacc" should "return exit code 200" in {
-    pending
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/multiple/obfuscatingReturnsWithWhile.wacc")
     val exitCode = Main.compile(path)

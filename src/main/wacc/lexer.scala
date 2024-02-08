@@ -15,6 +15,7 @@ import parsley.token.descriptions.text.EscapeDesc
 import parsley.errors.Token
 import parsley.errors.tokenextractors._
 
+
 object lexer {
 
   val escLiterals = Set('0', '\\', '"', 'b', 't', 'n', 'f', 'r', '\'')
@@ -137,8 +138,8 @@ object lexer {
 
   private val desc = LexicalDesc.plain.copy(
     nameDesc = NameDesc.plain.copy(
-      identifierStart = predicate.Basic(c=> c.isLetter || c == '_'),
-      identifierLetter = predicate.Basic(c=> c.isLetterOrDigit || c == '_')
+      identifierStart = predicate.Basic(c => c.isLetter || c == '_'),
+      identifierLetter = predicate.Basic(c => c.isLetterOrDigit || c == '_')
     ),
     numericDesc = NumericDesc.plain.copy(
       positiveSign = PlusSignPresence.Optional
@@ -149,7 +150,8 @@ object lexer {
     textDesc = TextDesc.plain.copy(
       escapeSequences = EscapeDesc.plain.copy(
         escBegin = '\\',
-        literals = escLiterals,
+        literals = escLiterals
+        // mapping = Map("0" -> '\u0000')
         // mapping = Map("0" -> '\u0000',
         //               "b" -> '\b',
         //               "t" -> '\t',
@@ -193,22 +195,22 @@ object lexer {
         "null"
       ),
       hardOperators = Set(
-        "*", 
-        "/", 
-        "+", 
-        "-", 
-        "!", 
-        "ord", 
-        "len", 
-        "chr", 
-        "%", 
-        ">", 
-        ">=", 
-        "<", 
-        "<=", 
-        "==", 
-        "!=", 
-        "&&", 
+        "*",
+        "/",
+        "+",
+        "-",
+        "!",
+        "ord",
+        "len",
+        "chr",
+        "%",
+        ">",
+        ">=",
+        "<",
+        "<=",
+        "==",
+        "!=",
+        "&&",
         "||"
       )
     )
@@ -226,6 +228,15 @@ val builder = new WaccErrorBuilder with LexToken {
   private val lexer = new Lexer(desc, errorConfig)
   val integer = lexer.lexeme.integer.number32
   val implicits = lexer.lexeme.symbol.implicits
+
+
+
+  
+  private val escapeChar: Parsley[Char] = {
+    implicits.implicitSymbol("0").as('\u0000') |  
+    implicits.implicitSymbol("\\").as('\\')
+  }
+  
   val char: Parsley[Char] = lexer.lexeme.character.ascii
   val string: Parsley[String] = lexer.lexeme.string.ascii
   val ident: Parsley[String] = lexer.lexeme.names.identifier

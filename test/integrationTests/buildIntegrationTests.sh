@@ -70,7 +70,9 @@ for src in "${directories[@]}"; do
             touch "$this_filename"
 
 
-            echo -e "import org.scalatest.flatspec.AnyFlatSpec
+            echo -e "package integrationTests.${src_name}Tests
+
+import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
 import parsley.{Failure, Result, Success}
@@ -89,6 +91,6 @@ done
 
 echo "Scala files created for each subdirectory."
 echo "Add removePending statements as required to this script"
-sh removePendings.sh -d syntaxErrTests/
-# sh removePendings.sh -d semanticErrTests/
-# sh removePendings.sh -d validTests/
+sh ../removePendings.sh -d syntaxErrTests/
+sh ../removePendings.sh -d semanticErrTests/
+sh removePendings.sh -d validTests/

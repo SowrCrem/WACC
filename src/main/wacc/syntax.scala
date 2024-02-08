@@ -50,7 +50,10 @@ case class Println(expr: Expr) extends Stat
 object Println extends generic.ParserBridge1[Expr, Stat]
 case class If(expr: Expr, stat1: Stat, stat2: Stat) extends Stat
 object If extends generic.ParserBridge3[Expr, Stat, Stat, Stat] {
-  override def labels() = List("if statement")
+  override def labels() = {
+    List("if statement")
+  }
+  
 }
 case class While(expr: Expr, stat: Stat) extends Stat
 object While extends generic.ParserBridge2[Expr, Stat, Stat] {
@@ -169,7 +172,9 @@ sealed trait Atom extends Expr
 case class IntLiter(value: Int) extends Atom
 object IntLiter extends generic.ParserBridge1[Int, Atom]
 case class BoolLiter(value: Boolean) extends Atom
-object BoolLiter extends generic.ParserBridge1[Boolean, Atom]
+object BoolLiter extends generic.ParserBridge1[Boolean, Atom] {
+  override def labels() = List("boolean")
+}
 case class CharLiter(value: Char) extends Atom
 object CharLiter extends generic.ParserBridge1[Char, Atom]
 case class StringLiter(value: String) extends Atom

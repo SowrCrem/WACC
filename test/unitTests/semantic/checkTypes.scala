@@ -65,7 +65,7 @@ class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
     typeChecker = new TypeChecker(symbolTable)
   }
 
-  "TypeChecker" should "correctly type check integer literals" in {
+  "the type checker" should "correctly type check integer literals" in {
 
     val node = IntLiter(1)
     // Check that no exception is thrown for a valid type check

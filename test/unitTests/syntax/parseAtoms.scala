@@ -27,6 +27,7 @@ import wacc.lexer._
 import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
 import wacc.TypeNode
+import java.lang.StringBuilder
 
 
 class parseAtoms extends AnyFlatSpec {
@@ -61,8 +62,14 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   it should "reject doubly signed int literals" in {
-    // TODO: Jeet start here to add expected error messages
-    parseFails("++123", "Example Error Message (Please change Jeet)")
+    val errorBuilder = new StringBuilder()
+    errorBuilder.append("(line 1, column 13):\n")
+    errorBuilder.append("  unexpected \"+\"\n")
+    errorBuilder.append("  expected digit\n")
+    errorBuilder.append("  >begin exit ++123 end\n")
+    errorBuilder.append("               ^")
+
+    parseFails("++123", errorBuilder.toString())
     parseFails("--123")
   }
 

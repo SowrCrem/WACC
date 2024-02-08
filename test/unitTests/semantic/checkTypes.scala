@@ -55,11 +55,10 @@ import wacc.TypeChecker
 
 class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
 
-
   var symbolTable: SymbolTable = _
   var typeChecker: TypeChecker = _
 
-
+  // Testing Functions -------------------------------------------------------------------------------------------------
 
   override def beforeEach(): Unit = {
     symbolTable = new SymbolTable(None)
@@ -70,11 +69,14 @@ class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
     noException should be thrownBy typeChecker.check(node)
   }
 
-  def checkSucceeds(node: Expr, errorMessage: StringBuilder): Assertion = {
-    noException should be thrownBy typeChecker.check(node)
+  def checkFails(node: Expr, errorMessage: StringBuilder): Assertion = {
+    val e = intercept[Exception] {
+      typeChecker.check(node)
+    }
+    e.getMessage shouldBe errorMessage.toString()
   }
   
-  // Tests --------------------------------------------------------------------------------------------------------------
+  // Tests for Literals -------------------------------------------------------------------------------------------------
 
   "The type checker" should "accept integer literals" in {
     checkSucceeds(IntLiter(1))
@@ -88,21 +90,16 @@ class typeCheckerTest extends AnyFlatSpec with BeforeAndAfterEach {
     checkSucceeds(StringLiter("hello"))
   }
 
-  it should "correctly type check boolean literals" in {
+  it should "accept boolean literals" in {
     checkSucceeds(BoolLiter(true))
     checkSucceeds(BoolLiter(false))
   }
 
-  it should "correctly type check brackets" in {
-
-    val node = Brackets(IntLiter(1))
-    // Check that no exception is thrown for a valid type check
-    try {
-      typeChecker.check(node)
-    } catch {
-      case e: Exception => fail("Identifier type check failed")
-    }
+  it should "accept brackets" in {
+    checkSucceeds(Brackets(IntLiter(1)))
   }
+
+  // Tests for Programs -------------------------------------------------------------------------------------------------
 
   it should "correctly type check programs" in {
     val node = Program(

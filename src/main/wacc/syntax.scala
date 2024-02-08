@@ -38,7 +38,7 @@ case class Free(expr: Expr) extends Stat
 object Free extends generic.ParserBridge1[Expr, Stat]
 case class Return(expr: Expr) extends Stat
 object Return extends generic.ParserBridge1[Expr, Stat] {
-  override def labels = List("return")
+  override def labels: List[String] = List("return")
 }
 case class Exit(expr: Expr) extends Stat
 object Exit extends generic.ParserBridge1[Expr, Stat] {
@@ -170,7 +170,7 @@ case class IntLiter(value: Int) extends Atom
 object IntLiter extends generic.ParserBridge1[Int, Atom]
 case class BoolLiter(value: Boolean) extends Atom
 object BoolLiter extends generic.ParserBridge1[Boolean, Atom] {
-  override def labels() = List("boolean")
+  override def labels: List[String] = List("boolean")
 }
 case class CharLiter(value: Char) extends Atom
 object CharLiter extends generic.ParserBridge1[Char, Atom]
@@ -203,7 +203,9 @@ case class StringTypeNode() extends BaseTypeNode {
   override def toString: String = "string"
 }
 
-case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode
+case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode {
+  override def toString: String = s"array of $elementType"
+}
 
 sealed trait PairElemTypeNode extends TypeNode
 

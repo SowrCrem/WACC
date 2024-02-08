@@ -16,6 +16,7 @@ import wacc.{
   StringTypeNode,
   Ident,
   Brackets,
+  ArrayLiter,
   Null, 
   Error,
   Node,
@@ -91,6 +92,20 @@ class parseAsgns extends AnyFlatSpec {
   it should "reject brackets around identifiers" in {
     parseWithIdentifier("(hello)", false)
   }
+
+  
+  // Tests for Arrays --------------------------------------------------------------------------------------------------
+
+  it should "parse arrays" in {
+    parseSucceeds("[1,2,3]", ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3))))
+  }
+
+  // We need to parse assignments of the format "int[][] ident = expr". Dont use the functions above for this
+  it should "parse arrays of arrays" in {
+    val expected = IdentAsgn(IntTypeNode(), Ident("input"), ArrayLiter(List(ArrayLiter(List(IntLiter(1), IntLiter(2))), ArrayLiter(List(IntLiter(3), IntLiter(4))))))
+    parser.parse("begin int[][] input = [[1,2],[3,4]] end") shouldBe Success(Program(List(), expected))
+  }
+
 
   // Tests for Comment ------------------------------------------------------------------------------------------
   it should "ignore comments" in {

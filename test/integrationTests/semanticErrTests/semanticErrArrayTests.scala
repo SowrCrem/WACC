@@ -20,12 +20,10 @@ class SemanticErrArrayTests extends AnyFlatSpec {
 
   "semanticErr - array tests: arrayIndexNotInt.wacc" should "return exit code 200" in {
 
-    // val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/arrayIndexNotInt.wacc")
-    // val exitCode = Main.compile(path)
-    // println("Exit Code: " + exitCode)
-    // exitCode shouldBe 200
-    val node = parser.parse("begin int[] a = [1, 2]; int b = a[2] end")
-    println(node);
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/arrayIndexNotInt.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+    exitCode shouldBe 200
 
   }
 

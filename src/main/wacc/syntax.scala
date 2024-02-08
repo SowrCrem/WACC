@@ -188,10 +188,18 @@ case class Error(value: String) extends Atom
 trait TypeNode extends Node 
 
 sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode
-case class IntTypeNode() extends BaseTypeNode
-case class BoolTypeNode() extends BaseTypeNode 
-case class CharTypeNode() extends BaseTypeNode 
-case class StringTypeNode() extends BaseTypeNode 
+case class IntTypeNode() extends BaseTypeNode {
+  override def toString: String = "integer"
+}
+case class BoolTypeNode() extends BaseTypeNode {
+  override def toString: String = "bool"
+}
+case class CharTypeNode() extends BaseTypeNode {
+  override def toString: String = "char"
+}
+case class StringTypeNode() extends BaseTypeNode {
+  override def toString: String = "string"
+}
 
 case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode
 

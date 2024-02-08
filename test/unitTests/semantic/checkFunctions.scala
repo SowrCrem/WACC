@@ -68,7 +68,7 @@ class checkFunctions extends AnyFlatSpec with BeforeAndAfterEach {
 
   def checkSucceeds(node: Node): Assertion = noException should be thrownBy typeChecker.check(node)
 
-  def checkFails(node: Node, errorMessage: StringBuilder): Assertion = {
+  def checkFails(node: Node, errorMessage: String): Assertion = {
     val e = intercept[Exception] {
       typeChecker.check(node)
     }

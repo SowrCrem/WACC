@@ -98,10 +98,10 @@ class checkExprs extends AnyFlatSpec with BeforeAndAfterEach {
   }
 
   it should "reject negations with non-bool types" in {
-    checkFails(Not(IntLiter(1)), "Expected bool type, but got int type")
-    checkFails(Not(CharLiter('a')), "Expected bool type, but got char type")
+    checkFails(Not(IntLiter(1)),          "Expected bool type, but got int type")
+    checkFails(Not(CharLiter('a')),       "Expected bool type, but got char type")
     checkFails(Not(StringLiter("hello")), "Expected bool type, but got string type")
-    checkFails(Not(Null()), "Expected bool type, but got null type")
+    checkFails(Not(Null()),               "Expected bool type, but got null type")
   }
 
   it should "accept negations with brackets" in {
@@ -114,10 +114,10 @@ class checkExprs extends AnyFlatSpec with BeforeAndAfterEach {
   }
 
   it should "reject negations with non-int types" in {
-    checkFails(Neg(BoolLiter(true)), "Expected int type, but got bool type")
-    checkFails(Neg(CharLiter('a')), "Expected int type, but got char type")
+    checkFails(Neg(BoolLiter(true)),      "Expected int type, but got bool type")
+    checkFails(Neg(CharLiter('a')),       "Expected int type, but got char type")
     checkFails(Neg(StringLiter("hello")), "Expected int type, but got string type")
-    checkFails(Neg(Null()), "Expected int type, but got null type")
+    checkFails(Neg(Null()),               "Expected int type, but got null type")
   }
 
   it should "accept len" in {
@@ -127,9 +127,9 @@ class checkExprs extends AnyFlatSpec with BeforeAndAfterEach {
 
   it should "reject len with non-array or non-string types" in {
     checkFails(Len(BoolLiter(true)), "Expected array or string type, but got bool type")
-    checkFails(Len(IntLiter(1)), "Expected array or string type, but got int type")
-    checkFails(Len(CharLiter('a')), "Expected array or string type, but got char type")
-    checkFails(Len(Null()), "Expected array or string type, but got null type")
+    checkFails(Len(IntLiter(1)),     "Expected array or string type, but got int type")
+    checkFails(Len(CharLiter('a')),  "Expected array or string type, but got char type")
+    checkFails(Len(Null()),          "Expected array or string type, but got null type")
   }
 
   it should "accept ord" in {
@@ -137,10 +137,10 @@ class checkExprs extends AnyFlatSpec with BeforeAndAfterEach {
   }
 
   it should "reject ord with non-char types" in {
-    checkFails(Ord(BoolLiter(true)), "Expected char type, but got bool type")
-    checkFails(Ord(IntLiter(1)), "Expected char type, but got int type")
+    checkFails(Ord(BoolLiter(true)),      "Expected char type, but got bool type")
+    checkFails(Ord(IntLiter(1)),          "Expected char type, but got int type")
     checkFails(Ord(StringLiter("hello")), "Expected char type, but got string type")
-    checkFails(Ord(Null()), "Expected char type, but got null type")
+    checkFails(Ord(Null()),               "Expected char type, but got null type")
   }
 
   it should "accept chr" in {
@@ -148,10 +148,10 @@ class checkExprs extends AnyFlatSpec with BeforeAndAfterEach {
   }
 
   it should "reject chr with non-int types" in {
-    checkFails(Chr(BoolLiter(true)), "Expected int type, but got bool type")
-    checkFails(Chr(CharLiter('a')), "Expected int type, but got char type")
+    checkFails(Chr(BoolLiter(true)),      "Expected int type, but got bool type")
+    checkFails(Chr(CharLiter('a')),       "Expected int type, but got char type")
     checkFails(Chr(StringLiter("hello")), "Expected int type, but got string type")
-    checkFails(Chr(Null()), "Expected int type, but got null type")
+    checkFails(Chr(Null()),               "Expected int type, but got null type")
   }
 
   // Tests for Binary Operator -----------------------------------------------------------------------------------------
@@ -162,10 +162,10 @@ class checkExprs extends AnyFlatSpec with BeforeAndAfterEach {
   }
 
   it should "reject multiplication with non-int types" in {
-    checkFails(Mul(BoolLiter(true), IntLiter(1)), "Expected int type, but got bool type")
-    checkFails(Mul(CharLiter('a'), IntLiter(1)), "Expected int type, but got char type")
+    checkFails(Mul(BoolLiter(true), IntLiter(1)),      "Expected int type, but got bool type")
+    checkFails(Mul(CharLiter('a'), IntLiter(1)),       "Expected int type, but got char type")
     checkFails(Mul(StringLiter("hello"), IntLiter(1)), "Expected int type, but got string type")
-    checkFails(Mul(Null(), IntLiter(1)), "Expected int type, but got null type")
+    checkFails(Mul(Null(), IntLiter(1)),               "Expected int type, but got null type")
   }
 
   it should "accept division" in {
@@ -174,10 +174,10 @@ class checkExprs extends AnyFlatSpec with BeforeAndAfterEach {
   }
 
   it should "reject division with non-int types" in {
-    checkFails(Div(BoolLiter(true), IntLiter(1)), "Expected int type, but got bool type")
-    checkFails(Div(CharLiter('a'), IntLiter(1)), "Expected int type, but got char type")
+    checkFails(Div(BoolLiter(true), IntLiter(1)),      "Expected int type, but got bool type")
+    checkFails(Div(CharLiter('a'), IntLiter(1)),       "Expected int type, but got char type")
     checkFails(Div(StringLiter("hello"), IntLiter(1)), "Expected int type, but got string type")
-    checkFails(Div(Null(), IntLiter(1)), "Expected int type, but got null type")
+    checkFails(Div(Null(), IntLiter(1)),               "Expected int type, but got null type")
   }
 
   it should "accept modulo" in {
@@ -186,10 +186,10 @@ class checkExprs extends AnyFlatSpec with BeforeAndAfterEach {
   }
 
   it should "reject modulo with non-int types" in {
-    checkFails(Mod(BoolLiter(true), IntLiter(1)), "Expected int type, but got bool type")
-    checkFails(Mod(CharLiter('a'), IntLiter(1)), "Expected int type, but got char type")
+    checkFails(Mod(BoolLiter(true), IntLiter(1)),      "Expected int type, but got bool type")
+    checkFails(Mod(CharLiter('a'), IntLiter(1)),       "Expected int type, but got char type")
     checkFails(Mod(StringLiter("hello"), IntLiter(1)), "Expected int type, but got string type")
-    checkFails(Mod(Null(), IntLiter(1)), "Expected int type, but got null type")
+    checkFails(Mod(Null(), IntLiter(1)),               "Expected int type, but got null type")
   }
 
   it should "accept addition" in {

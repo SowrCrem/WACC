@@ -227,6 +227,7 @@ object parser {
       case If(_, s1, s2) => 
         validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
       case While(_, s) => validEndingStatement(List(s))
+      case BeginEnd(stat) => validEndingStatement(stat)
       case _           => false
     } 
   }

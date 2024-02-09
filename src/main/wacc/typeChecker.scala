@@ -18,7 +18,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       returnType: Option[TypeNode]
   ): Option[TypeNode] = position match {
     case Program(funcList, stat) =>
-      println(Program(funcList, stat))
+      println(Program(funcList, stat)(position.pos))
       funcList.foreach {
         case func @ Func(typeNode, ident, paramList, stat) => {
           (symbolTable.lookupAll(ident.value + "_f", Some(symbolTable))) match {
@@ -30,7 +30,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
             case _ => {
               symbolTable.add(
                 ident.value + "_f",
-                Func(typeNode, ident, paramList, stat)
+                Func(typeNode, ident, paramList, stat)(position.pos)
               )
             }
           }
@@ -59,7 +59,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
             }
             newSymbolTable.add(param.ident.value, param.typeNode)
           })
-          symbolTable.add(ident.value, Func(typeNode, ident, paramList, stat))
+          symbolTable.add(ident.value, Func(typeNode, ident, paramList, stat)(position.pos))
           check(stat, newSymbolTable, Some(typeNode))
           Some(typeNode)
         case _ => {
@@ -101,11 +101,11 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
             case PairTypeNode(expectedX, expectedY) => {
               val xCompat = (x, expectedX) match {
                 case (Null(), PairTypeNode(a, b)) => {
-                  symbol = PairTypeNode(expectedX, PairTypeNode(a, b))
+                  symbol = PairTypeNode(expectedX, PairTypeNode(a, b)(position.pos))(position.pos)
                   true
                 }
                 case (PairTypeNode(a, b), Null()) => {
-                  symbol = PairTypeNode(PairTypeNode(a, b), expectedX)
+                  symbol = PairTypeNode(PairTypeNode(a, b)(position.pos), expectedX)(position.pos)
                   true
                 }
                 case (a, b) => a == b
@@ -113,11 +113,11 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
               }
               val yCompat = (y, expectedY) match {
                 case (Null(), PairTypeNode(a, b)) => {
-                  symbol = PairTypeNode(a, b)
+                  symbol = PairTypeNode(a, b)(position.pos)
                   true
                 }
                 case (PairTypeNode(_, _), Null()) => {
-                  symbol = PairTypeNode(x, y)
+                  symbol = PairTypeNode(x, y)(position.pos)
                   true
                 }
                 case (a, b) => a == b
@@ -136,14 +136,14 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
         }
         case _ =>
           if (
-            (typeNode == StringTypeNode() && exprType == Some(
-              ArrayTypeNode(CharTypeNode())
+            (typeNode == StringTypeNode()(position.pos) && exprType == Some(
+              ArrayTypeNode(CharTypeNode()(position.pos))(position.pos)
             ))
           ) {
             symbolTable.add(ident.value, symbol)
             None
           } else {
-            if (expr != ArrayLiter(List()) && expr != Null() && exprType.getOrElse(None) != Null()) {
+            if (expr != ArrayLiter(List())(position.pos) && expr != Null()(position.pos) && exprType.getOrElse(None) != Null()(position.pos)) {
               throw new SemanticError(
                 s"Type mismatch: expected $typeNode, got ${exprType.getOrElse("None").toString()}"
               )
@@ -160,9 +160,9 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       val rhsType = check(rhs, symbolTable, returnType)
       if (
         lhsType != rhsType && !compatiblePairTypes(
-          lhsType.getOrElse(IntLiter(0)),
-          rhsType.getOrElse(IntLiter(0))
-        ) && (rhs != Null())
+          lhsType.getOrElse(IntLiter(0)(position.pos)),
+          rhsType.getOrElse(IntLiter(0)(position.pos))
+        , position) && (rhs != Null()(position.pos))
       ) {
         println(lhs, rhs)
         if (rhsType.getOrElse(None) != None) {
@@ -213,9 +213,9 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
 
       if (
         exprType != returnType && !(compatiblePairTypes(
-          exprType.getOrElse(IntLiter(0)),
-          returnType.getOrElse(IntLiter(0))
-        ))
+          exprType.getOrElse(IntLiter(0)(position.pos)),
+          returnType.getOrElse(IntLiter(0)(position.pos))
+        , position))
       ) {
 
         throw new SemanticError(
@@ -307,7 +307,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
         println(argTypes)
 
         argTypes.zip(expected).forall { case (argType, expectedType) =>
-          argType == Some(expectedType) || argType == Some(Null())
+          argType == Some(expectedType) || argType == Some(Null()(position.pos))
         }
 
       }
@@ -329,17 +329,17 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
     case ArrayLiter(exprList) =>
       val exprType = exprList.map(expr => check(expr, symbolTable, returnType))
       if (exprType.distinct.length == 1) {
-        Some(ArrayTypeNode(exprType.head.get))
+        Some(ArrayTypeNode(exprType.head.get)(position.pos))
       } else if (exprType.distinct.length == 0) {
         None
       } else {
         // need to allow weakening of char[] into string
         if (
           exprType.distinct.length == 2 && exprType.contains(
-            Some(ArrayTypeNode(CharTypeNode()))
-          ) && exprType.contains(Some(StringTypeNode()))
+            Some(ArrayTypeNode(CharTypeNode()(position.pos))(position.pos))
+          ) && exprType.contains(Some(StringTypeNode()(position.pos)))
         ) {
-          Some(ArrayTypeNode(StringTypeNode()))
+          Some(ArrayTypeNode(StringTypeNode()(position.pos))(position.pos))
         } else
           throw new SemanticError(
             s"Type mismatch: ArrayLiter expected all elements to be of the same type"
@@ -389,7 +389,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
                   val node = eList.foldLeft(elementType)((acc, _) =>
                     acc match {
                       case ArrayTypeNode(t) if t != arrType => t
-                      case ArrayTypeNode(t)                 => ArrayTypeNode(t)
+                      case ArrayTypeNode(t)                 => ArrayTypeNode(t)(position.pos)
                       case t =>
                         throw new SemanticError(
                           s"Array access too deep"
@@ -424,14 +424,14 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
     case LessThan(lhs, rhs) =>
       checkCompBinOp(position, lhs, rhs, symbolTable, returnType)
     case LessThanEq(lhs, rhs) =>
-      checkCompBinOp(lhs, rhs, symbolTable, returnType)
+      checkCompBinOp(position, lhs, rhs, symbolTable, returnType)
     case Equals(lhs, rhs) => {
       val lhsType = check(lhs, symbolTable, returnType)
       val rhsType = check(rhs, symbolTable, returnType)
       if (
-        lhsType == rhsType || rhsType == Some(Null()) || lhsType == Some(Null())
+        lhsType == rhsType || rhsType == Some(Null()(position.pos)) || lhsType == Some(Null()(position.pos))
       ) {
-        Some(BoolTypeNode())
+        Some(BoolTypeNode()(position.pos))
       } else {
         throw new SemanticError(
           s"Type mismatch: Equals expected two of the same type, got ${lhsType} and ${rhsType}"
@@ -442,9 +442,9 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       val lhsType = check(lhs, symbolTable, returnType)
       val rhsType = check(rhs, symbolTable, returnType)
       if (
-        lhsType == rhsType || rhsType == Some(Null()) || lhsType == Some(Null())
+        lhsType == rhsType || rhsType == Some(Null()(position.pos)) || lhsType == Some(Null()(position.pos))
       ) {
-        Some(BoolTypeNode())
+        Some(BoolTypeNode()(position.pos))
       } else {
         throw new SemanticError(
           s"Type mismatch: Equals expected two of the same type, got ${lhsType} and ${rhsType}"
@@ -512,15 +512,16 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
           )
       }
     case Brackets(expr) => check(expr, symbolTable, returnType)
-    case Null()         => Some(Null())
+    case Null()         => Some(Null()(position.pos))
     case Skip()         => None
     case x =>
       throw new SemanticError(s"Type checking not implemented for $x")
   }
 
   def compatiblePairTypes(
-      pair1: Node,
-      pair2: Node
+      pair1: Position,
+      pair2: Position,
+      position: Position
   ): Boolean = {
     pair1 match {
       case PairTypeNode(x, y) =>
@@ -534,7 +535,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
                 true
               }
               case (PairTypeNode(a, b), PairTypeNode(c, d)) =>
-                compatiblePairTypes(PairTypeNode(a, b), PairTypeNode(c, d))
+                compatiblePairTypes(PairTypeNode(a, b)(position.pos), PairTypeNode(c, d)(position.pos), position)
               case (a, b) => a == b
 
               case _ => false
@@ -547,7 +548,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
                 true
               }
               case (PairTypeNode(a, b), PairTypeNode(c, d)) =>
-                compatiblePairTypes(PairTypeNode(a, b), PairTypeNode(c, d))
+                compatiblePairTypes(PairTypeNode(a, b)(position.pos), PairTypeNode(c, d)(position.pos), position)
               case (a, b) => a == b
               case _      => false
             }
@@ -611,13 +612,13 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
 
     if (lhsType == rhsType) {
       if (
-        (lhsType == Some(IntTypeNode()) || lhsType == Some(
-          CharTypeNode()
-        )) && (rhsType == Some(IntTypeNode()) || rhsType == Some(
-          CharTypeNode()
+        (lhsType == Some(IntTypeNode()(position.pos)) || lhsType == Some(
+          CharTypeNode()(position.pos)
+        )) && (rhsType == Some(IntTypeNode()(position.pos)) || rhsType == Some(
+          CharTypeNode()(position.pos)
         ))
       ) {
-        return Some(BoolTypeNode())
+        return Some(BoolTypeNode()(position.pos))
       } else {
         throw new SemanticError(
           s"Type mismatch: Binary comparison operator expected two integers or two chars, got ${lhsType

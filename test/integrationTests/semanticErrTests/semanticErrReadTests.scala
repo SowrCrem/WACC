@@ -12,7 +12,7 @@ class SemanticErrReadTests extends AnyFlatSpec {
 
   "semanticErr - read tests: readIntoBadFst.wacc" should "return exit code 200" in {
 
-    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/read/readIntoBadFst.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/read/readIntoBadFst.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -27,7 +27,7 @@ class SemanticErrReadTests extends AnyFlatSpec {
 
   "semanticErr - read tests: readIntoBadSnd.wacc" should "return exit code 200" in {
 
-    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/read/readIntoBadSnd.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/read/readIntoBadSnd.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -42,7 +42,7 @@ class SemanticErrReadTests extends AnyFlatSpec {
 
   "semanticErr - read tests: readTypeErr01.wacc" should "return exit code 200" in {
 
-    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/read/readTypeErr01.wacc")
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/read/readTypeErr01.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 

@@ -22,7 +22,7 @@ create_test_entries () {
             echo -e "  ${test_name} should ${return_stmt} in {
     pending
 
-    val path : Array[String] = Array(\"../$src_test_path\")
+    val path : Array[String] = Array(\"$src_test_path\")
     val exitCode = Main.compile(path)
     println(\"Exit Code: \" + exitCode)
 

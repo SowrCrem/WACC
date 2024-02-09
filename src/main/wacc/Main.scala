@@ -1,6 +1,7 @@
 package wacc
 
 import parsley.{Success, Failure}
+import sys.process._
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -17,7 +18,7 @@ object Main {
     100
   }
 
-  def semanticCheck(node: Node): Int = {
+  def semanticCheck(node: Position): Int = {
     semanticChecker.check(node) match {
       case Right(exitCode) => {
         println("exit code: " + exitCode)
@@ -31,7 +32,9 @@ object Main {
   }
 
   def compile(args: Array[String]): Int = args.headOption match {
-      case Some(filename) => parser.parse(filename) match {
+    case Some(filename) => {
+      val fileContent = ("cat " + filename).!!
+      parser.parse(fileContent) match {
         case Success(node) => node match {
           case Program(funcList, _) => parser.validFunctions(funcList) match {
             case true  => semanticCheck(node)
@@ -41,9 +44,10 @@ object Main {
         }
         case Failure(msg) => syntaxError(msg)
       }
-      case None => {
-        println("please enter an expression")
-        -1
-      }
+    }
+    case None => {
+      println("please enter a file name")
+      -1
     }
   }
+}

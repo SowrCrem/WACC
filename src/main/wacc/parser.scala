@@ -54,12 +54,6 @@ object parser {
   // -- Pair Parser ----------------------------------------------- //
 
   lazy val newpairParser: Parsley[Expr] = NewPair("newpair" ~> "(" ~> exprParser, "," ~> exprParser <~ ")")
-    
-  //   {
-  //   val newpair =
-  //     "newpair" ~> ("(" ~> exprParser <~ ",") <~> (exprParser <~ ")")
-  //   newpair.map(x => NewPair(x._1, x._2))
-  // }
 
   lazy val pairLitParser: Parsley[Expr] = "fst" ~> FstNode(identifierParser) | "snd" ~> SndNode(identifierParser) | newpairParser | (Null <# "null")
 
@@ -117,7 +111,7 @@ object parser {
   // }
 
   lazy val pairElemTypeParser: Parsley[PairElemTypeNode] =
-    atomic(arrayTypeParser) | baseType | ("pair" as Null()).debug("literally where")
+    atomic(arrayTypeParser) | baseType
 
   lazy val pairType: Parsley[PairTypeNode] = PairTypeNode("pair" ~> "(" ~> pairElemTypeParser <~ ",", pairElemTypeParser <~ ")")
 
@@ -148,13 +142,6 @@ object parser {
   val printlnParser: Parsley[Stat] = Println("println" ~> exprParser)
 
   val callParser: Parsley[Stat] = Call("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
-  //    {
-  //   val call = "call" ~> ident.map(x => Ident(x)) <~ "(" <~> sepBy(
-  //     exprParser,
-  //     ","
-  //   ) <~ ")"
-  //   call.map(x => Call(x._1, ArgList(x._2)))
-  // }
 
   val assignRhs = {
     val assignRhs = exprParser | pairLitParser | callParser

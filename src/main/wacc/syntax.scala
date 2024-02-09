@@ -261,20 +261,12 @@ case class ArrayTypeNode(elementType: TypeNode)(val pos: (Int, Int)) extends Pai
 }
 object ArrayTypeNode extends ParserBridgePos1[TypeNode, ArrayTypeNode]
 
-
-case class FuncTypeNode(returnType: TypeNode) extends TypeNode {
-  override def toString: String = s"function returning $returnType"
-}
-
 sealed trait PairElemTypeNode extends TypeNode 
 
-case class ErasedPairTypeNode() extends PairElemTypeNode {
-  override def toString: String = "pair"
-}
 
 case class ErrorTypeNode()(val pos: (Int, Int)) extends TypeNode with PairElemTypeNode 
 object ErrorTypeNode extends ParserBridgePos0[ErrorTypeNode]
 
 
-case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode)(val pos: (Int, Int)) extends TypeNode with LValue
+case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode)(val pos: (Int, Int)) extends TypeNode with LValue with PairElemTypeNode
 object PairTypeNode extends ParserBridgePos2[PairElemTypeNode, PairElemTypeNode, PairTypeNode]

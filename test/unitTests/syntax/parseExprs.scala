@@ -1,3 +1,4 @@
+package unitTests.syntax
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
@@ -125,6 +126,8 @@ class parseExprs extends AnyFlatSpec {
   }
 
 
+  // Jeet: I feel like parsing wise all of these are completely fine - because they are valid expressions
+
   //TODO: operation is not associative, so it should fail
   it should "parse greater than or equal" in {
     parseSucceeds("1 >= 2", GreaterThanEq(IntLiter(1), IntLiter(2)))
@@ -162,6 +165,17 @@ class parseExprs extends AnyFlatSpec {
 
   it should "parse or" in {
     parseSucceeds("true || false", Or(BoolLiter(true), BoolLiter(false)))
+  }
+
+  it should "reject non-associative operator chains" in {
+    val errorBuilder = new StringBuilder()
+    errorBuilder.append("(line 1, column 18):\n")
+    errorBuilder.append("  unexpected \"<\"\n")
+    errorBuilder.append("  expected arithmetic operator or comparison operator\n")
+    errorBuilder.append("  non-associative operators cannot be chained together\n")
+    errorBuilder.append("  >begin exit 1 < 2 < 3 end\n")
+    errorBuilder.append("                    ^")
+    parseFails("1 < 2 < 3", errorBuilder.toString())
   }
 
   // Tests for ArrayElem ----------------------------------------------------------------------------------------

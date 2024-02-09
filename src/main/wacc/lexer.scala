@@ -12,17 +12,27 @@ import parsley.combinator._
 import parsley.syntax._
 import parsley.token.descriptions.text.TextDesc
 import parsley.token.descriptions.text.EscapeDesc
-
+import parsley.errors.Token
+import parsley.errors.tokenextractors._
+import parsley.token.predicate.Unicode
 
 object lexer {
 
-  val escLiterals = Set('0', '\\', '"', 'b', 't', 'n', 'f', 'r', '\'')
+  private val escapeLiterals = Set('\\', '"', '\'')
 
   private val errorConfig = new ErrorConfig {
     override def labelSymbol = Map(
       ")" -> LabelAndReason(
         reason="unclosed braces", 
         label="closing braces"
+      ),
+      "]" -> LabelAndReason(
+        reason="unclosed braces", 
+        label="closing braces"
+      ),
+      "[" -> LabelAndReason(
+        reason="unclosed braces", 
+        label="expected start of array"
       ),
       ">=" -> Label(
         label="comparison operator"
@@ -74,7 +84,55 @@ object lexer {
       ),
       "len" -> Label(
         label="unary operator"
-      )
+      ),
+      "false" -> Label(
+        label="boolean"
+      ),
+      "true" -> Label(
+        label="boolean"
+      ),
+      ";" -> Label(
+        label="semicolon"
+      ),
+      "int" -> Label(
+        label="type"
+      ),
+      "bool" -> Label(
+        label="type"
+      ),
+      "char" -> Label(
+        label="type"
+      ),
+      "string" -> Label(
+        label="type"
+      ),
+      "pair" -> Label(
+        label="type"
+      ),
+      "skip" -> Label(
+        label="statement"
+      ),
+      "read" -> Label(
+        label="statement"
+      ),
+      "free" -> Label(
+        label="statement"
+      ),
+      "return" -> Label(
+        label="statement"
+      ),
+      "exit" -> Label(
+        label="statement"
+      ),
+      "print" -> Label(
+        label="statement"
+      ),
+      "println" -> Label(
+        label="statement"
+      ),
+      "while" -> Label(
+        label="while loopS"
+      ),
     )
   }
 
@@ -92,18 +150,19 @@ object lexer {
     textDesc = TextDesc.plain.copy(
       escapeSequences = EscapeDesc.plain.copy(
         escBegin = '\\',
-        literals = escLiterals
-        // mapping = Map("0" -> '\u0000')
-        // mapping = Map("0" -> '\u0000',
-        //               "b" -> '\b',
-        //               "t" -> '\t',
-        //               "n" -> '\n',
-        //               "f" -> '\f',
-        //               "r" -> '\r',
-        //               "\"" -> '\"',
-        //               "'" -> '\'',
-        //               "\\" -> '\\')
-      )
+        literals = Set('\\', '"', '\''),
+        mapping = Map(
+          "0" -> 0x00,
+          "b" -> 0x08,
+          "t" -> 0x09,
+          "n" -> 0x0A,
+          "f" -> 0x0C,
+          "r" -> 0x0D
+        )
+      ),
+      graphicCharacter = Unicode(c => c >= ' '.toInt && !escapeLiterals.contains(c.toChar)),
+      characterLiteralEnd = '\'',
+      stringEnds = Set(("\"", "\""))
     ),
     symbolDesc = SymbolDesc.plain.copy(
       hardKeywords = Set(
@@ -154,9 +213,20 @@ object lexer {
         "!=",
         "&&",
         "||"
-      )
+      ),
+      caseSensitive = true
     )
   )
+
+val builder = new WaccErrorBuilder with LexToken {
+    def tokens = Seq(
+        lexer.nonlexeme.integer.decimal.map(n => s"integer $n"),
+        lexer.nonlexeme.names.identifier.map(v => s"identifier $v")
+    ) ++ desc.symbolDesc.hardKeywords.map { k =>
+        lexer.nonlexeme.symbol(k).as(s"keyword $k")
+    }
+}
+
   private val lexer = new Lexer(desc, errorConfig)
   val integer = lexer.lexeme.integer.number32
   val implicits = lexer.lexeme.symbol.implicits

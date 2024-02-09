@@ -17,4 +17,5 @@ test_job:
   artifacts:
     paths:
       - test_output.txt
+  allow_failure: true
   

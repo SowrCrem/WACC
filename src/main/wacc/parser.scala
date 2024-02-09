@@ -19,6 +19,7 @@ import lexer.{integer, fully, char, implicits, ident, string}
 import parsley.Parsley.notFollowedBy
 import parsley.debug._
 import parsley.Parsley.lookAhead
+import parsley.character.noneOf
 
 object parser {
 
@@ -92,7 +93,7 @@ object parser {
     atoms | pairLitParser | arrayLiteralParser
   )(
     Ops(Prefix)(Not from "!"),
-    Ops(Prefix)(Neg from "-" <~ notFollowedBy("-")),
+    Ops(Prefix)(Neg from "-"),
     Ops(Prefix)(Len from "len"),
     Ops(Prefix)(Ord from "ord"),
     Ops(Prefix)(Chr from "chr"),
@@ -188,7 +189,7 @@ object parser {
   val assignRhs = {
     val assignRhs = exprParser | pairLitParser | callParser
     assignRhs
-  }.debug("assignRhs")
+  }
 
   val identAsgnParser: Parsley[IdentAsgn] = {
     val identAsgn = typeParser <~> atomic(
@@ -200,14 +201,14 @@ object parser {
   val assignLhs = {
     val assignLhs = atomic(arrayelemParser) | identifierParser | pairLitParser
     assignLhs
-  }.debug("assignLhs")
+  }
 
   val readParser: Parsley[Stat] = "read" ~> Read(assignLhs)
 
   val asgnEqParser: Parsley[Stat] = {
     val asgnEq = assignLhs <~ "=" <~> assignRhs
     asgnEq.map(x => AsgnEq(x._1, x._2))
-  }.debug("asgnEqParser")
+  }
 
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser | asgnEqParser |

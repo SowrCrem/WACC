@@ -1,3 +1,4 @@
+package unitTests.syntax
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
@@ -142,4 +143,40 @@ class parseFunctions extends AnyFlatSpec {
     parser.parse(input) shouldBe expected
   }
 
+
+  // TODO: Functions can only be exited via return or exit, with no trailing code
+  //       after the LAST return or exit 
+  it should "parse function that are exited with a return" in {
+    val input = 
+      "begin int f(int x) is return 5 end int y = call f(5) end"
+    val expected = Success(
+      Program(
+        List(
+          Func(
+            IntTypeNode(),
+            Ident("f"),
+            ParamList(List(Param(IntTypeNode(), Ident("x")))),
+            Return(IntLiter(5))
+          )
+        ),
+        IdentAsgn(IntTypeNode(), Ident("y"), Call(Ident("f"), (ArgList(List(IntLiter(5)))))
+        )
+      )
+    )
+
+    parser.parse(input) shouldBe expected
+  }
+
+  it should "reject functions that are exited with a statement after the return" in {
+    val input = 
+      "begin int f(int x) is return 5 int z = 3 end int y = call f(5) end"
+    val errorBuilder = new StringBuilder()
+    errorBuilder.append("(line 1, column 32):\n")
+    errorBuilder.append("  unexpected int\n")
+    errorBuilder.append("  expected end\n")
+    errorBuilder.append("  >begin int f(int x) is return 5 int z = 3 end int y = call f(5) end\n")
+    errorBuilder.append("                                  ^^^")
+
+    parser.parse(input) shouldBe Failure(errorBuilder.toString())
+  }
 }

@@ -1,3 +1,5 @@
+package unitTests.syntax
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
@@ -27,6 +29,7 @@ import wacc.lexer._
 import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
 import wacc.TypeNode
+import java.lang.StringBuilder
 
 
 class parseAtoms extends AnyFlatSpec {
@@ -60,10 +63,36 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("-123", Neg(IntLiter(123)))
   }
 
-  it should "reject doubly signed int literals" in {
-    // TODO: Jeet start here to add expected error messages
-    parseFails("++123", "Example Error Message (Please change Jeet)")
-    parseFails("--123")
+  it should "reject int literals outside of the range of a 32-bit signed int" in {
+    val errBuilder = new StringBuilder()
+    errBuilder.append("(line 1, column 12):\n")
+    errBuilder.append("  literal is not within the range -2147483648 to 2147483647\n")
+    errBuilder.append("  >begin exit 2147483648 end\n")
+    errBuilder.append("              ^^^^^^^^^^")
+    parseFails("2147483648", errBuilder.toString())
+
+    val errBuilder2 = new StringBuilder()
+    errBuilder2.append("(line 1, column 13):\n")
+    errBuilder2.append("  literal is not within the range -2147483648 to 2147483647\n")
+    errBuilder2.append("  >begin exit -2147483649 end\n")
+    errBuilder2.append("               ^^^^^^^^^^")
+    parseFails("-2147483649", errBuilder2.toString())
+  }
+
+  it should "reject doubly positively signed int literals" in {
+    val errorBuilder = new StringBuilder()
+    errorBuilder.append("(line 1, column 13):\n")
+    errorBuilder.append("  unexpected \"+\"\n")
+    errorBuilder.append("  expected digit\n")
+    errorBuilder.append("  >begin exit ++123 end\n")
+    errorBuilder.append("               ^")
+    parseFails("++123", errorBuilder.toString())
+  }
+
+  it should "parse many negative int literals" in {
+    parseSucceeds("--123", Neg(Neg(IntLiter(123))))
+    parseSucceeds("---123", Neg(Neg(Neg(IntLiter(123)))))
+    parseSucceeds("----123", Neg(Neg(Neg(Neg(IntLiter(123))))))
   }
 
   // Tests for BoolLiter ----------------------------------------------------------------------------------------------
@@ -80,7 +109,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\'a\'", CharLiter('a'))
   }
 
-  it should "parse escaped char literals" ignore {
+  it should "parse escaped char literals" in {
     parseSucceeds("\'\\0\'" , CharLiter('\u0000'))
     parseSucceeds("\'\\b\'" , CharLiter('\b'))
     parseSucceeds("\'\\n\'" , CharLiter('\n'))
@@ -90,23 +119,24 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\'\\\'\'", CharLiter('\''))
   }
 
-  it should "reject invalid escaped char literals" ignore {
+  it should "reject invalid escaped char literals" in {
     parseFails("\'\\a\'")
     parseFails("\'\\z\'")
     parseFails("\'\\ \'")
-    parseFails("\'\\\"\'")
     parseFails("\'\\x\'")
     parseFails("\'\\u\'")
     parseFails("\'\\U\'")
   }
 
-  it should "reject invalid char literals" ignore {
+  it should "reject invalid char literals" in {
     
     // TODO: Should we include empty char? If not, write a test making sure its not rejected
     parseFails("\'\'") // Empty char
-    parseFails("\'\\\'") // Backslash
+    parseFails("\'\\\'") // Parsing " '\' " should fail
     parseFails("\'\"\'") // Double quote
+    parseSucceeds("\'\\\"\'", CharLiter('\"'))
     parseFails("\'\'\'") // Single quote
+    parseSucceeds("\'\\\'\'", CharLiter('\''))
   }
 
   // Tests for StringLiter --------------------------------------------------------------------------------------------
@@ -120,7 +150,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\"hello world\"", StringLiter("hello world"))
   }
 
-  it should "parse escaped string literals" ignore {
+  it should "parse escaped string literals" in {
     
     parseSucceeds("\"\\0\"", StringLiter("\u0000"))
     parseSucceeds("\"\\b\"", StringLiter("\b"))
@@ -128,22 +158,22 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\"\\f\"", StringLiter("\f"))
     parseSucceeds("\"\\r\"", StringLiter("\r"))
     parseSucceeds("\"\\t\"", StringLiter("\t"))
+    parseSucceeds("\"\"", StringLiter("")) // Empty char
+    parseSucceeds("\"\\\'\"", StringLiter("\'")) // Single quote
   }
 
-  it should "reject invalid string literals" ignore {
-    
-    parseFails("\"\""  ) // Empty char
+  it should "reject invalid string literals" in {
     parseFails("\"\\\"") // Backslash
     parseFails("\"\"\"") // Double quote
     parseFails("\"\'\"") // Single quote
   }
 
-  it should "reject invalid escaped string literals" ignore {
+  it should "reject invalid escaped string literals" in {
     
     parseFails("\"\\a\"" )
     parseFails("\"\\z\"" )
-    parseFails("\"\\\'\"")
-    parseFails("\"\\\"\"")
+    // parseFails("\"\\\'\"")
+    // parseFails("\"\\\"\"")
     parseFails("\"\\x\"" )
     parseFails("\"\\u\"" )
     parseFails("\"\\U\"" )

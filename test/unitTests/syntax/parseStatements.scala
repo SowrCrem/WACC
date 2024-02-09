@@ -206,15 +206,15 @@ class parseStatements extends AnyFlatSpec {
     // Both have the exact same error message
   }
 
-  // it should "reject statement closing parenthesis" in {
-  //   val errorBuilder = new StringBuilder()
-  //   errorBuilder.append("(line 1, column 13):\n")
-  //   errorBuilder.append("  unexpected closing parenthesis\n")
-  //   errorBuilder.append("  expected end\n")
-  //   errorBuilder.append("  >begin skip) end\n")
-  //   errorBuilder.append("             ^")
-  //   parseFails("return 5)", errorBuilder.toString())
-  // }
+  it should "reject statement closing parenthesis" in {
+    val errorBuilder = new StringBuilder()
+    errorBuilder.append("(line 1, column 13):\n")
+    errorBuilder.append("  unexpected closing parenthesis\n")
+    errorBuilder.append("  expected end\n")
+    errorBuilder.append("  >begin skip) end\n")
+    errorBuilder.append("             ^")
+    parseFails("return 5)", errorBuilder.toString())
+  }
   
   it should "reject statement parenthesisation" in {
     val errorBuilder = new StringBuilder()

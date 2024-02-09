@@ -19,16 +19,34 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
   ): Option[TypeNode] = node match {
     case Program(funcList, stat) =>
       println(Program(funcList, stat))
-      funcList.foreach(func => check(func, symbolTable, None))
+      funcList.foreach {
+        case func @ Func(typeNode, ident, paramList, stat) => {
+          (symbolTable.lookupAll(ident.value + "_f", Some(symbolTable))) match {
+            case (Some(_)) => {
+              throw new SemanticError(
+                s"Function ${ident.value} already defined"
+              )
+            }
+            case _ => {
+              symbolTable.add(
+                ident.value + "_f",
+                Func(typeNode, ident, paramList, stat)
+              )
+            }
+          }
+        }
+      }
+
+      funcList.foreach {
+        func => {
+          check(func, symbolTable, None)
+        }
+      }
       check(stat, symbolTable, None)
       None // Program has no type
     case Func(typeNode, ident, paramList, stat) =>
-      (symbolTable.lookupAll(ident.value, Some(symbolTable))) match {
+      (symbolTable.lookupAll(ident.value+"_f", Some(symbolTable))) match {
         case Some(_) =>
-          throw new SemanticError(
-            s"Function ${ident.value} already defined"
-          )
-        case _ => {
           val newSymbolTable = symbolTable.enterScope()
           paramList.paramList.foreach(param => {
             if (
@@ -41,9 +59,13 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
             }
             newSymbolTable.add(param.ident.value, param.typeNode)
           })
-          check(stat, newSymbolTable, Some(typeNode))
           symbolTable.add(ident.value, Func(typeNode, ident, paramList, stat))
+          check(stat, newSymbolTable, Some(typeNode))
           Some(typeNode)
+        case _ => {
+          throw new SemanticError(
+            s"Function ${ident.value} is not defined, SHOULD NOT REACH"
+          )
         }
       }
     case IdentAsgn(typeNode, ident, expr) =>
@@ -51,9 +73,14 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
 
       symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
         case Some(t) =>
-          throw new SemanticError(
-            s"Identifier ${ident.value} already defined"
-          )
+          t match {
+            case Func(_, _, _, _) =>
+              symbolTable.add(ident.value, typeNode)
+            case _ =>
+              throw new SemanticError(
+                s"Identifier ${ident.value} already defined"
+              )
+          }
         case None => {
           symbolTable.add(ident.value, typeNode)
         }
@@ -105,8 +132,8 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
         }
         case _ =>
           if (
-            (typeNode == StringTypeNode() && exprType == Some(ArrayTypeNode(
-              CharTypeNode())
+            (typeNode == StringTypeNode() && exprType == Some(
+              ArrayTypeNode(CharTypeNode())
             ))
           ) {
             symbolTable.add(ident.value, symbol)
@@ -265,11 +292,14 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
           )
         }
         val argTypes = argList.map(arg => check(arg, symbolTable, returnType))
+        println(argTypes)
+
         argTypes.zip(expected).forall { case (argType, expectedType) =>
           argType == Some(expectedType) || argType == Some(Null())
         }
+
       }
-      symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
+      symbolTable.lookupAll(ident.value+"_f", Some(symbolTable)) match {
         case Some(Func(typeNode, _, paramList, _)) =>
           if (checkArgList(args.argList, paramList.paramList.map(_.typeNode))) {
             Some(typeNode)
@@ -281,7 +311,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
           }
         case _ =>
           throw new SemanticError(
-            s"Function ${ident.value} not found or arg count doesnt match"
+            s"Function ${ident.value + "_f"} not found or arg count doesnt match"
           )
       }
     case ArrayLiter(exprList) =>
@@ -305,7 +335,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case FstNode(expr) =>
       check(expr, symbolTable, returnType) match {
-        case Some(PairTypeNode(fst, _)) => None
+        case Some(PairTypeNode(fst, _)) => Some(fst)
         case _ =>
           throw new SemanticError(
             s"Type mismatch: fst expected a pair, got ${check(expr, symbolTable, returnType).getOrElse("None").toString()}"
@@ -313,7 +343,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case SndNode(expr) =>
       check(expr, symbolTable, returnType) match {
-        case Some(PairTypeNode(_, snd)) => None
+        case Some(PairTypeNode(_, snd)) => Some(snd)
         case _ =>
           throw new SemanticError(
             s"Type mismatch: SndNode expected a pair, got ${check(expr, symbolTable, returnType)}"

@@ -11,7 +11,7 @@ begin
   pair(int, int) getPair() is
     pair(int, int) p = newpair(10,15);
     return p
-  end
+  end 
 
   pair(int, int) p = call getPair();
   int x = fst p;

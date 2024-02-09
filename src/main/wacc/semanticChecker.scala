@@ -7,7 +7,7 @@ object semanticChecker {
   var typeChecker: TypeChecker = new TypeChecker(symbolTable)
 
 
-  def check(node: Node): Either[String, Int] = synchronized {
+  def check(node: Node): Either[String, Int] =  {
     // Check that no exception is thrown for a valid type check
     try {
       typeChecker.check(node)

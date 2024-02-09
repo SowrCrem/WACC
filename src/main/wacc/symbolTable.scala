@@ -4,20 +4,20 @@ import scala.annotation.tailrec
 
 class SymbolTable(val parent: Option[SymbolTable]) {
 
-  val dictionary: Map[String, Node] = Map()
+  val dictionary: Map[String, Position] = Map()
 
-  def add(identName: String, node: Node): Unit = {
-    dictionary.addOne(identName, node)
+  def add(identName: String, position: Position): Unit = {
+    dictionary.addOne(identName, position)
   }
 
-  // Look up name in symbol table and maybe return node
-  def lookup(name: String): Option[Node] = {
+  // Look up name in symbol table and maybe return position
+  def lookup(name: String): Option[Position] = {
     dictionary.get(name)
   }
 
 
   @tailrec
-  final def lookupAll(name: String, symbolTable: Option[SymbolTable]) : Option[Node] = {
+  final def lookupAll(name: String, symbolTable: Option[SymbolTable]) : Option[Position] = {
     symbolTable match {
       case None => None 
       case Some(st) => 
@@ -39,12 +39,12 @@ class SymbolTable(val parent: Option[SymbolTable]) {
 
 
 
-  // could map string to AST type node itself
+  // could map string to AST type position itself
   // private val dictionary: Map[String, TypeNode] = Map()
 
 
 
-  // // Look up name in all enclosing symbol tables and maybe return node
+  // // Look up name in all enclosing symbol tables and maybe return position
   // def lookupAll(name: String): Option[TypeNode] = {
   //   lookup(name) match {
   //     case None => {
@@ -73,8 +73,8 @@ class SymbolTable(val parent: Option[SymbolTable]) {
   // }
 
   // // TODO: Finish cases for semantic checker
-  // def semanticCheck(node: Node): Either[String, Int] = {
-  //   node match {
+  // def semanticCheck(position: Position): Either[String, Int] = {
+  //   position match {
   //     case Program(funcList, stat) => {
   //       // for (func@Func(typeNode, ident, _, stat) <- funcList) {
   //       //   // For each function

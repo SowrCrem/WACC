@@ -19,7 +19,7 @@ import wacc.{
   ArrayLiter,
   Null, 
   Error,
-  Node,
+  Position,
   Exit
 }
 import parsley.{Failure, Result, Success}
@@ -34,7 +34,7 @@ import wacc.ArrayTypeNode
 class parseAsgns extends AnyFlatSpec {
   
   // Testing Functions -------------------------------------------------------------------------------------------------
-  def getType(expected: Node): (String, TypeNode) = expected match {
+  def getType(expected: Position): (String, TypeNode) = expected match {
     case IntLiter(_)    => ("int"   , IntTypeNode())
     case Neg(_)         => ("int"   , IntTypeNode())
     case BoolLiter(_)   => ("bool"  , BoolTypeNode())

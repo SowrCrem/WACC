@@ -21,9 +21,9 @@ object Main {
         // }
         val fileContent = ("cat " + filename).!!
         parser.parser.parse(fileContent) match {
-          case Success(node) => {
+          case Success(position) => {
             // TODO: Perform semantic analysis
-            semanticChecker.check(node) match { // Use the semanticChecker object
+            semanticChecker.check(position) match { // Use the semanticChecker object
               case Right(exitCode) => {
                 println("exit code: " + exitCode)
                 0

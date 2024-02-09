@@ -7,10 +7,10 @@ object semanticChecker {
   var typeChecker: TypeChecker = new TypeChecker(symbolTable)
 
 
-  def check(node: Node): Either[String, Int] = {
+  def check(position: Position): Either[String, Int] = {
     // Check that no exception is thrown for a valid type check
     try {
-      typeChecker.check(node)
+      typeChecker.check(position)
       return Right(0)
     } catch {
       case e: Throwable => return Left(e.getMessage)
@@ -21,8 +21,8 @@ object semanticChecker {
   // private val topLevelST: SymbolTable = new SymbolTable(None) 
 
   // // Should ideallly input a program node - fix parser output? s
-  // // TODO: Should parse always return a program node?
-  // def check(program: Node): Either[String, Int] = {
+  // // TODO: Should parse always return a program position?
+  // def check(program: Position): Either[String, Int] = {
   //   // Initialise topLevelST with global scope
   //   initialiseTopLevelST()
 

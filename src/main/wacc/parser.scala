@@ -145,9 +145,9 @@ object parser {
 
   val exitParser: Parsley[Stat] = Exit("exit" ~> exprParser)
 
-  val printParser: Parsley[Stat] = Print("print" ~> notFollowedBy(pairElemParser) ~> exprParser)
+  val printParser: Parsley[Stat] = Print("print" ~> notFollowedBy(pairElemParser | arrayLiteralParser) ~> exprParser)
 
-  val printlnParser: Parsley[Stat] = Println("println" ~> notFollowedBy(pairElemParser) ~> exprParser)
+  val printlnParser: Parsley[Stat] = Println("println" ~> notFollowedBy(pairElemParser | arrayLiteralParser) ~> exprParser)
 
   val callParser: Parsley[Stat] = Call("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
 

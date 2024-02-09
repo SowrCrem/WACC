@@ -25,21 +25,6 @@ class ValidPairsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - pairs tests: createPair.wacc" should "return exit code 0" in {
-
-    val path : Array[String] = Array("test/wacc/valid/pairs/createPair.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validPairsTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - pairs tests: createPair.wacc" should "return exit code 0" in {/s/"valid - pairs tests: createPair.wacc" should "return exit code 0" in {/"valid - pairs tests: createPair.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
   "valid - pairs tests: createPair02.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/pairs/createPair02.wacc")
@@ -64,6 +49,21 @@ class ValidPairsTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validPairsTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - pairs tests: createPair03.wacc" should "return exit code 0" in {/s/"valid - pairs tests: createPair03.wacc" should "return exit code 0" in {/"valid - pairs tests: createPair03.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - pairs tests: createPair.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("test/wacc/valid/pairs/createPair.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validPairsTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - pairs tests: createPair.wacc" should "return exit code 0" in {/s/"valid - pairs tests: createPair.wacc" should "return exit code 0" in {/"valid - pairs tests: createPair.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -115,21 +115,6 @@ class ValidPairsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - pairs tests: nestedPair.wacc" should "return exit code 0" ignore {
-
-    val path : Array[String] = Array("test/wacc/valid/pairs/nestedPair.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validPairsTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - pairs tests: nestedPair.wacc" should "return exit code 0" in {/s/"valid - pairs tests: nestedPair.wacc" should "return exit code 0" in {/"valid - pairs tests: nestedPair.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
   "valid - pairs tests: nestedPairLeftAssign.wacc" should "return exit code 0" ignore {
 
     val path : Array[String] = Array("test/wacc/valid/pairs/nestedPairLeftAssign.wacc")
@@ -160,6 +145,21 @@ class ValidPairsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
+  "valid - pairs tests: nestedPair.wacc" should "return exit code 0" ignore {
+
+    val path : Array[String] = Array("test/wacc/valid/pairs/nestedPair.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validPairsTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - pairs tests: nestedPair.wacc" should "return exit code 0" in {/s/"valid - pairs tests: nestedPair.wacc" should "return exit code 0" in {/"valid - pairs tests: nestedPair.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
   "valid - pairs tests: null.wacc" should "return exit code 0" ignore {
 
     val path : Array[String] = Array("test/wacc/valid/pairs/null.wacc")
@@ -169,21 +169,6 @@ class ValidPairsTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validPairsTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - pairs tests: null.wacc" should "return exit code 0" in {/s/"valid - pairs tests: null.wacc" should "return exit code 0" in {/"valid - pairs tests: null.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
-  "valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" ignore {
-
-    val path : Array[String] = Array("test/wacc/valid/pairs/pairExchangeArrayOk.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validPairsTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" in {/s/"valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" in {/"valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -205,15 +190,15 @@ class ValidPairsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - pairs tests: printNull.wacc" should "return exit code 0" ignore {
+  "valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" ignore {
 
-    val path : Array[String] = Array("test/wacc/valid/pairs/printNull.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/pairExchangeArrayOk.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validPairsTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - pairs tests: printNull.wacc" should "return exit code 0" in {/s/"valid - pairs tests: printNull.wacc" should "return exit code 0" in {/"valid - pairs tests: printNull.wacc" should "return exit code 0" ignore {/' $filePath"""
+      val sedCommand = s"""sed -i '0,/"valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" in {/s/"valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" in {/"valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -235,15 +220,15 @@ class ValidPairsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - pairs tests: printPair.wacc" should "return exit code 0" ignore {
+  "valid - pairs tests: printNull.wacc" should "return exit code 0" ignore {
 
-    val path : Array[String] = Array("test/wacc/valid/pairs/printPair.wacc")
+    val path : Array[String] = Array("test/wacc/valid/pairs/printNull.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validPairsTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - pairs tests: printPair.wacc" should "return exit code 0" in {/s/"valid - pairs tests: printPair.wacc" should "return exit code 0" in {/"valid - pairs tests: printPair.wacc" should "return exit code 0" ignore {/' $filePath"""
+      val sedCommand = s"""sed -i '0,/"valid - pairs tests: printNull.wacc" should "return exit code 0" in {/s/"valid - pairs tests: printNull.wacc" should "return exit code 0" in {/"valid - pairs tests: printNull.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -259,6 +244,21 @@ class ValidPairsTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validPairsTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - pairs tests: printPairOfNulls.wacc" should "return exit code 0" in {/s/"valid - pairs tests: printPairOfNulls.wacc" should "return exit code 0" in {/"valid - pairs tests: printPairOfNulls.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - pairs tests: printPair.wacc" should "return exit code 0" ignore {
+
+    val path : Array[String] = Array("test/wacc/valid/pairs/printPair.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validPairsTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - pairs tests: printPair.wacc" should "return exit code 0" in {/s/"valid - pairs tests: printPair.wacc" should "return exit code 0" in {/"valid - pairs tests: printPair.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

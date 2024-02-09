@@ -100,21 +100,6 @@ class ValidWhileTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {
-
-    val path : Array[String] = Array("test/wacc/valid/while/rmStyleAdd.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validWhileTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {/s/"valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {/"valid - while tests: rmStyleAdd.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
   "valid - while tests: rmStyleAddIO.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/while/rmStyleAddIO.wacc")
@@ -124,6 +109,21 @@ class ValidWhileTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validWhileTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - while tests: rmStyleAddIO.wacc" should "return exit code 0" in {/s/"valid - while tests: rmStyleAddIO.wacc" should "return exit code 0" in {/"valid - while tests: rmStyleAddIO.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("test/wacc/valid/while/rmStyleAdd.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validWhileTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {/s/"valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {/"valid - while tests: rmStyleAdd.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

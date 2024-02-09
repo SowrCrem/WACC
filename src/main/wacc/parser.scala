@@ -19,6 +19,7 @@ import lexer.{integer, fully, char, implicits, ident, string}
 import parsley.Parsley.notFollowedBy
 import parsley.debug._
 import parsley.Parsley.lookAhead
+import parsley.character.noneOf
 
 object parser {
 

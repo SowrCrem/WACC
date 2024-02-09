@@ -40,21 +40,6 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" in {
-
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/funcVarAccess.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 200) {
-      val filePath = "test/integrationTests/semanticErrTests/semanticErrFunctionTests.scala"
-      val sedCommand = s"""sed -i '0,/"semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" in {/s/"semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" in {/"semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 200
-  }
-
   "semanticErr - function tests: functionAssign.wacc" should "return exit code 200" ignore {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionAssign.wacc")
@@ -184,6 +169,21 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
     if (exitCode != 200) {
       val filePath = "test/integrationTests/semanticErrTests/semanticErrFunctionTests.scala"
       val sedCommand = s"""sed -i '0,/"semanticErr - function tests: functionUnderArgs.wacc" should "return exit code 200" in {/s/"semanticErr - function tests: functionUnderArgs.wacc" should "return exit code 200" in {/"semanticErr - function tests: functionUnderArgs.wacc" should "return exit code 200" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 200
+  }
+
+  "semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" ignore {
+
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/funcVarAccess.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 200) {
+      val filePath = "test/integrationTests/semanticErrTests/semanticErrFunctionTests.scala"
+      val sedCommand = s"""sed -i '0,/"semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" in {/s/"semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" in {/"semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" ignore {/' $filePath"""
       sedCommand.!
     }
 

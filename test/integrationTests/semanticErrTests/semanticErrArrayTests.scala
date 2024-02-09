@@ -115,21 +115,6 @@ class SemanticErrArrayTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {
-
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/noStringIndex.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 200) {
-      val filePath = "test/integrationTests/semanticErrTests/semanticErrArrayTests.scala"
-      val sedCommand = s"""sed -i '0,/"semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {/s/"semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {/"semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 200
-  }
-
   "semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/nonMatchingArrays.wacc")
@@ -139,6 +124,21 @@ class SemanticErrArrayTests extends AnyFlatSpec {
     if (exitCode != 200) {
       val filePath = "test/integrationTests/semanticErrTests/semanticErrArrayTests.scala"
       val sedCommand = s"""sed -i '0,/"semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" in {/s/"semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" in {/"semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 200
+  }
+
+  "semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {
+
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/noStringIndex.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 200) {
+      val filePath = "test/integrationTests/semanticErrTests/semanticErrArrayTests.scala"
+      val sedCommand = s"""sed -i '0,/"semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {/s/"semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {/"semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" ignore {/' $filePath"""
       sedCommand.!
     }
 

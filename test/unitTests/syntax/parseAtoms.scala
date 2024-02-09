@@ -1,3 +1,5 @@
+package unitTests.syntax
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
@@ -121,7 +123,6 @@ class parseAtoms extends AnyFlatSpec {
     parseFails("\'\\a\'")
     parseFails("\'\\z\'")
     parseFails("\'\\ \'")
-    parseFails("\'\\\"\'")
     parseFails("\'\\x\'")
     parseFails("\'\\u\'")
     parseFails("\'\\U\'")
@@ -131,9 +132,11 @@ class parseAtoms extends AnyFlatSpec {
     
     // TODO: Should we include empty char? If not, write a test making sure its not rejected
     parseFails("\'\'") // Empty char
-    parseFails("\'\\\'") // Backslash
+    parseFails("\'\\\'") // Parsing " '\' " should fail
     parseFails("\'\"\'") // Double quote
+    parseSucceeds("\'\\\"\'", CharLiter('\"'))
     parseFails("\'\'\'") // Single quote
+    parseSucceeds("\'\\\'\'", CharLiter('\''))
   }
 
   // Tests for StringLiter --------------------------------------------------------------------------------------------
@@ -155,11 +158,11 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\"\\f\"", StringLiter("\f"))
     parseSucceeds("\"\\r\"", StringLiter("\r"))
     parseSucceeds("\"\\t\"", StringLiter("\t"))
+    parseSucceeds("\"\"", StringLiter("")) // Empty char
+    parseSucceeds("\"\\\'\"", StringLiter("\'")) // Single quote
   }
 
   it should "reject invalid string literals" in {
-    
-    parseFails("\"\""  ) // Empty char
     parseFails("\"\\\"") // Backslash
     parseFails("\"\"\"") // Double quote
     parseFails("\"\'\"") // Single quote
@@ -169,8 +172,8 @@ class parseAtoms extends AnyFlatSpec {
     
     parseFails("\"\\a\"" )
     parseFails("\"\\z\"" )
-    parseFails("\"\\\'\"")
-    parseFails("\"\\\"\"")
+    // parseFails("\"\\\'\"")
+    // parseFails("\"\\\"\"")
     parseFails("\"\\x\"" )
     parseFails("\"\\u\"" )
     parseFails("\"\\U\"" )

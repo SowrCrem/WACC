@@ -18,7 +18,6 @@ import parsley.errors.tokenextractors._
 
 object lexer {
 
-  val escLiterals = Set('0', '\\', '"', 'b', 't', 'n', 'f', 'r', '\'')
 
   private val errorConfig = new ErrorConfig {
     override def labelSymbol = Map(
@@ -150,17 +149,16 @@ object lexer {
     textDesc = TextDesc.plain.copy(
       escapeSequences = EscapeDesc.plain.copy(
         escBegin = '\\',
-        literals = escLiterals
-        // mapping = Map("0" -> '\u0000')
-        // mapping = Map("0" -> '\u0000',
-        //               "b" -> '\b',
-        //               "t" -> '\t',
-        //               "n" -> '\n',
-        //               "f" -> '\f',
-        //               "r" -> '\r',
-        //               "\"" -> '\"',
-        //               "'" -> '\'',
-        //               "\\" -> '\\')
+        literals = Set('\\', '"', '\''),
+        mapping = Map(
+          "0" -> 0x00,
+          "b" -> 0x08,
+          "t" -> 0x09,
+          "n" -> 0x0A,
+          "f" -> 0x0C,
+          "r" -> 0x0D
+        )
+        
       )
     ),
     symbolDesc = SymbolDesc.plain.copy(

@@ -91,7 +91,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\'a\'", CharLiter('a'))
   }
 
-  it should "parse escaped char literals" ignore {
+  it should "parse escaped char literals" in {
     parseSucceeds("\'\\0\'" , CharLiter('\u0000'))
     parseSucceeds("\'\\b\'" , CharLiter('\b'))
     parseSucceeds("\'\\n\'" , CharLiter('\n'))

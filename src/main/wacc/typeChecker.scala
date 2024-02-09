@@ -8,15 +8,15 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
 
   val errors: List[SemanticError] = List()
 
-  def check(node: Node): Option[TypeNode] = {
-    check(node, initialSymbolTable, None)
+  def check(position: Position): Option[TypeNode] = {
+    check(position, initialSymbolTable, None)
   }
 
   def check(
-      node: Node,
+      position: Position,
       symbolTable: SymbolTable,
       returnType: Option[TypeNode]
-  ): Option[TypeNode] = node match {
+  ): Option[TypeNode] = position match {
     case Program(funcList, stat) =>
       println(Program(funcList, stat))
       funcList.foreach {
@@ -256,7 +256,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case If(cond, ifStat, elseStat) =>
       val condType = check(cond, symbolTable, returnType)
-      if (condType != Some(BoolTypeNode())) {
+      if (condType != Some(BoolTypeNode()(position.pos))) {
         throw new SemanticError(
           s"Type mismatch: If condition must be boolean, got ${condType}"
         )
@@ -266,7 +266,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       None
     case While(cond, stat) =>
       val condType = check(cond, symbolTable, returnType)
-      if (condType != Some(BoolTypeNode())) {
+      if (condType != Some(BoolTypeNode()(position.pos))) {
         throw new SemanticError(
           s"Type mismatch: While loop condition must be a boolean, got ${condType}"
         )
@@ -285,7 +285,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       val sndType = check(snd, symbolTable, returnType)
       (fstType, sndType) match {
         case (Some(fst: PairElemTypeNode), Some(snd: PairElemTypeNode)) =>
-          Some(PairTypeNode(fst, snd))
+          Some(PairTypeNode(fst, snd)(position.pos))
         case _ =>
           throw new SemanticError(
             s"Type mismatch: NewPair expected pair elements, got ${fstType
@@ -313,12 +313,12 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
       symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
         case Some(Func(typeNode, _, paramList, _)) =>
-          if (checkArgList(args.argList, paramList.paramList.map(_.typeNode))) {
+          if (checkArgList(args, paramList.paramList.map(_.typeNode))) {
             Some(typeNode)
           } else {
             throw new SemanticError(
               s"Type mismatch: Call expected ${paramList.paramList
-                  .map(_.typeNode)}, got ${args.argList.map(arg => check(arg, symbolTable, returnType))}"
+                  .map(_.typeNode)}, got ${args.map(arg => check(arg, symbolTable, returnType))}"
             )
           }
         case _ =>
@@ -363,12 +363,12 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case ArrayElem(ident, eList) =>
       symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
-        case Some(node) =>
-          node match {
+        case Some(positionl) =>
+          positionl match {
             case ArrayTypeNode(elementType) =>
               // Check if all indices are integers
               val allIndicesAreInt = eList.forall(expr =>
-                check(expr, symbolTable, returnType) == Some(IntTypeNode())
+                check(expr, symbolTable, returnType) == Some(IntTypeNode()(position.pos))
               )
               if (!allIndicesAreInt) {
                 throw new SemanticError(
@@ -408,21 +408,21 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
           throw new SemanticError(s"Identifier ${ident.value} not found")
       }
     case Mul(lhs, rhs) =>
-      checkArithmBinOp(lhs, rhs, symbolTable, returnType)
+      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
     case Div(lhs, rhs) =>
-      checkArithmBinOp(lhs, rhs, symbolTable, returnType)
+      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
     case Mod(lhs, rhs) =>
-      checkArithmBinOp(lhs, rhs, symbolTable, returnType)
+      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
     case Plus(lhs, rhs) =>
-      checkArithmBinOp(lhs, rhs, symbolTable, returnType)
+      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
     case Minus(lhs, rhs) =>
-      checkArithmBinOp(lhs, rhs, symbolTable, returnType)
+      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
     case GreaterThan(lhs, rhs) =>
-      checkCompBinOp(lhs, rhs, symbolTable, returnType)
+      checkCompBinOp(position, lhs, rhs, symbolTable, returnType)
     case GreaterThanEq(lhs, rhs) =>
-      checkCompBinOp(lhs, rhs, symbolTable, returnType)
+      checkCompBinOp(position, lhs, rhs, symbolTable, returnType)
     case LessThan(lhs, rhs) =>
-      checkCompBinOp(lhs, rhs, symbolTable, returnType)
+      checkCompBinOp(position, lhs, rhs, symbolTable, returnType)
     case LessThanEq(lhs, rhs) =>
       checkCompBinOp(lhs, rhs, symbolTable, returnType)
     case Equals(lhs, rhs) => {
@@ -452,12 +452,12 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     }
     case And(lhs, rhs) =>
-      checkBoolBinOp(lhs, rhs, symbolTable, returnType)
+      checkBoolBinOp(position, lhs, rhs, symbolTable, returnType)
     case Or(lhs, rhs) =>
-      checkBoolBinOp(lhs, rhs, symbolTable, returnType)
+      checkBoolBinOp(position, lhs, rhs, symbolTable, returnType)
     case Not(expr) =>
       check(expr, symbolTable, returnType) match {
-        case Some(BoolTypeNode()) => Some(BoolTypeNode())
+        case Some(BoolTypeNode()) => Some(BoolTypeNode()(position.pos))
         case _ =>
           throw new SemanticError(
             s"Type mismatch: Not expected a boolean, got ${check(expr, symbolTable, returnType)}"
@@ -465,7 +465,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case Neg(expr) =>
       check(expr, symbolTable, returnType) match {
-        case Some(IntTypeNode()) => Some(IntTypeNode())
+        case Some(IntTypeNode()) => Some(IntTypeNode()(position.pos))
         case _ =>
           throw new SemanticError(
             s"Type mismatch: Neg expected an integer, got ${check(expr, symbolTable, returnType)}"
@@ -473,7 +473,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case Len(expr) =>
       check(expr, symbolTable, returnType) match {
-        case Some(ArrayTypeNode(_)) => Some(IntTypeNode())
+        case Some(ArrayTypeNode(_)) => Some(IntTypeNode()(position.pos))
         case _ =>
           throw new SemanticError(
             s"Type mismatch: Len expected an array, got ${check(expr, symbolTable, returnType)}"
@@ -481,7 +481,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case Ord(expr) =>
       check(expr, symbolTable, returnType) match {
-        case Some(CharTypeNode()) => Some(IntTypeNode())
+        case Some(CharTypeNode()) => Some(IntTypeNode()(position.pos))
         case _ =>
           throw new SemanticError(
             s"Type mismatch: Ord expected a char, got ${check(expr, symbolTable, returnType)}"
@@ -489,16 +489,16 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case Chr(expr) =>
       check(expr, symbolTable, returnType) match {
-        case Some(IntTypeNode()) => Some(CharTypeNode())
+        case Some(IntTypeNode()) => Some(CharTypeNode()(position.pos))
         case _ =>
           throw new SemanticError(
             s"Type mismatch: Chr expected an int, got ${check(expr, symbolTable, returnType)}"
           )
       }
-    case IntLiter(_)    => Some(IntTypeNode())
-    case CharLiter(_)   => Some(CharTypeNode())
-    case BoolLiter(_)   => Some(BoolTypeNode())
-    case StringLiter(_) => Some(StringTypeNode())
+    case IntLiter(_)    => Some(IntTypeNode()(position.pos))
+    case CharLiter(_)   => Some(CharTypeNode()(position.pos))
+    case BoolLiter(_)   => Some(BoolTypeNode()(position.pos))
+    case StringLiter(_) => Some(StringTypeNode()(position.pos))
     case Ident(value) =>
       symbolTable.lookupAll(value, Some(symbolTable)) match {
         case Some(t) =>
@@ -560,6 +560,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
   }
 
   def checkBoolBinOp(
+      position: Position,
       lhs: Expr,
       rhs: Expr,
       symbolTable: SymbolTable,
@@ -567,8 +568,8 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
   ): Option[BoolTypeNode] = {
     val lhsType = check(lhs, symbolTable, returnType)
     val rhsType = check(rhs, symbolTable, returnType)
-    if (lhsType == Some(BoolTypeNode()) && rhsType == Some(BoolTypeNode())) {
-      Some(BoolTypeNode())
+    if (lhsType == Some(BoolTypeNode()(position.pos)) && rhsType == Some(BoolTypeNode()(position.pos))) {
+      Some(BoolTypeNode()(position.pos))
     } else {
       throw new SemanticError(
         s"Type mismatch: Binary bool operator expected two booleans, got ${lhsType
@@ -579,6 +580,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
   }
 
   def checkArithmBinOp(
+      position: Position,
       lhs: Expr,
       rhs: Expr,
       symbolTable: SymbolTable,
@@ -586,8 +588,8 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
   ): Option[IntTypeNode] = {
     val lhsType = check(lhs, symbolTable, returnType)
     val rhsType = check(rhs, symbolTable, returnType)
-    if (lhsType == Some(IntTypeNode()) && rhsType == Some(IntTypeNode())) {
-      Some(IntTypeNode())
+    if (lhsType == Some(IntTypeNode()(position.pos)) && rhsType == Some(IntTypeNode()(position.pos))) {
+      Some(IntTypeNode()(position.pos))
     } else {
       throw new SemanticError(
         s"Type mismatch: Binary arithmetic operator expected two integers, got ${lhsType
@@ -598,6 +600,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
   }
 
   def checkCompBinOp(
+      position: Position,
       lhs: Expr,
       rhs: Expr,
       symbolTable: SymbolTable,

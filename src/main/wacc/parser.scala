@@ -33,12 +33,13 @@ object parser {
     case None    => lexer.integer.map(n => n)
   }
 
-  lazy val intParser: Parsley[Expr] = signedInteger.map(n => {
-    IntLiter(n.toInt)
-  })
+  lazy val intParser: Parsley[Expr] = IntLiter(lexer.integer)
+    
+  //   signedInteger.map(n => {
+  //   if (n.isValidInt) IntLiter(n.toInt) else Error("Integer too large")
+  // })
 
-  lazy val boolParser: Parsley[Expr] =
-    ("true" as BoolLiter(true)) | ("false" as BoolLiter(false))
+  lazy val boolParser: Parsley[Expr] = BoolLiter(lexer.bool)
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
   lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string)
   lazy val identifierParser: Parsley[Ident] = Ident(lexer.ident)
@@ -52,153 +53,115 @@ object parser {
 
   // -- Pair Parser ----------------------------------------------- //
 
-  lazy val newpairParser: Parsley[Expr] = {
-    val newpair =
-      "newpair" ~> ("(" ~> exprParser <~ ",") <~> (exprParser <~ ")")
-    newpair.map(x => NewPair(x._1, x._2))
-  }
-
-  //   lazy val arrayTypeParser: Parsley[ArrayTypeNode] = {
-  //   lazy val arrayType: Parsley[(TypeNode, List[Unit])] =
-  //     (baseType | pairType) <~> some("[]")
-
-  //   arrayType.map { 
-  //     case (btype, bracketsList) =>
-  //       val node = bracketsList.foldLeft(btype)((acc, _) => ArrayTypeNode(acc))
-  //       node.asInstanceOf[ArrayTypeNode]  
-  //   }
+  lazy val newpairParser: Parsley[Expr] = NewPair("newpair" ~> "(" ~> exprParser, "," ~> exprParser <~ ")")
+    
+  //   {
+  //   val newpair =
+  //     "newpair" ~> ("(" ~> exprParser <~ ",") <~> (exprParser <~ ")")
+  //   newpair.map(x => NewPair(x._1, x._2))
   // }
 
-  val fstParser: Parsley[Expr] = {
-    val fstElems : Parsley[(List[Unit], Expr)]= some("fst") <~> exprParser
-    fstElems.map {
-      case (fstList, ident) =>
-        val node : Expr = fstList.foldLeft(ident)((acc, _) => FstNode(acc))
-        node
-    }
-  }
-
-  val sndParser: Parsley[Expr] = {
-    val sndElems : Parsley[(List[Unit], Expr)] = some("snd") <~> exprParser
-    sndElems.map {
-      case (sndList, ident) =>
-        val node : Expr = sndList.foldLeft(ident)((acc, _) => SndNode(acc))
-        node
-    }
-  }
-
-  lazy val pairLitParser: Parsley[Expr] = fstParser | sndParser | newpairParser | ("null" as Null())
+  lazy val pairLitParser: Parsley[Expr] = "fst" ~> FstNode(identifierParser) | "snd" ~> SndNode(identifierParser) | newpairParser | (Null <# "null")
 
   // -- Expression Parsers ----------------------------------------- //
 
   lazy val exprParser: Parsley[Expr] = precedence(
     atoms | pairLitParser | arrayLiteralParser
   )(
-    Ops(Prefix)(Not from "!"),
-    Ops(Prefix)(Neg from "-"),
-    Ops(Prefix)(Len from "len"),
-    Ops(Prefix)(Ord from "ord"),
-    Ops(Prefix)(Chr from "chr"),
-    Ops(InfixL)(Mul from "*"),
-    Ops(InfixL)(Div from "/"),
-    Ops(InfixL)(Mod from "%"),
-    Ops(InfixL)(Plus from "+"),
-    Ops(InfixL)(Minus from "-"),
-    Ops(InfixN)(GreaterThan from ">"),
-    Ops(InfixN)(GreaterThanEq from ">="),
-    Ops(InfixN)(LessThan from "<"),
-    Ops(InfixN)(LessThanEq from "<="),
-    Ops(InfixN)(Equals from "=="),
-    Ops(InfixN)(NotEquals from "!="),
-    Ops(InfixR)(And from "&&"),
-    Ops(InfixR)(Or from "||")
+    Ops(Prefix)(Not <# "!"),
+    Ops(Prefix)(Neg <# "-"),
+    Ops(Prefix)(Len <# "len"),
+    Ops(Prefix)(Ord <# "ord"),
+    Ops(Prefix)(Chr <# "chr"),
+    Ops(InfixL)(Mul <# "*"),
+    Ops(InfixL)(Div <# "/"),
+    Ops(InfixL)(Mod <# "%"),
+    Ops(InfixL)(Plus <# "+"),
+    Ops(InfixL)(Minus <# "-"),
+    Ops(InfixN)(GreaterThan <# ">"),
+    Ops(InfixN)(GreaterThanEq <# ">="),
+    Ops(InfixN)(LessThan <# "<"),
+    Ops(InfixN)(LessThanEq <# "<="),
+    Ops(InfixN)(Equals <# "=="),
+    Ops(InfixN)(NotEquals <# "!="),
+    Ops(InfixR)(And <# "&&"),
+    Ops(InfixR)(Or <# "||")
   )
 
   lazy val arrayLiteralParser: Parsley[Expr] = {
     val arrayLiteral = "[" ~> sepBy(exprParser, ",") <~ "]"
-    arrayLiteral.map(x => ArrayLiter(x))
+    ArrayLiter(arrayLiteral)
   }
 
   // -- Type Parsers ---------------------------------------------- //
 
-  lazy val intType: Parsley[BaseTypeNode] = "int" as IntTypeNode()
-  lazy val boolType: Parsley[BaseTypeNode] = "bool" as BoolTypeNode()
-  lazy val charType: Parsley[BaseTypeNode] = "char" as CharTypeNode()
-  lazy val stringType: Parsley[BaseTypeNode] = "string" as StringTypeNode()
+  // lazy val intType: Parsley[BaseTypeNode] = "int" <# IntTypeNode()
+  // lazy val boolType: Parsley[BaseTypeNode] = "bool" as BoolTypeNode()
+  // lazy val charType: Parsley[BaseTypeNode] = "char" as CharTypeNode()
+  // lazy val stringType: Parsley[BaseTypeNode] = "string" as StringTypeNode()
 
   lazy val baseType: Parsley[BaseTypeNode] =
-    intType | boolType | charType | stringType
+    IntTypeNode <# "int"| BoolTypeNode <# "bool" | CharTypeNode <# "char" | StringTypeNode <# "string"
 
-  lazy val arrayTypeParser: Parsley[ArrayTypeNode] = {
-    lazy val arrayType: Parsley[(TypeNode, List[Unit])] =
-      (baseType | pairType) <~> some("[]")
+  lazy val arrayTypeParser: Parsley[ArrayTypeNode] = chain.postfix1(baseType <|> pairType)(ArrayTypeNode <# ("[" <~> "]"))
+    
+  //   {
+  //   lazy val arrayType: Parsley[(TypeNode, List[Unit])] =
+  //     (baseType | pairType) <~> some("[]")
 
-    arrayType.map { 
-      case (btype, bracketsList) =>
-        val node = bracketsList.foldLeft(btype)((acc, _) => ArrayTypeNode(acc))
-        node.asInstanceOf[ArrayTypeNode]  
-    }
-  }
+  //   arrayType.map { 
+  //     case (btype, bracketsList) =>
+  //       val position = bracketsList.foldLeft(btype)((acc, _) => ArrayTypeNode(acc))
+  //       position.asInstanceOf[ArrayTypeNode]  
+  //   }
+  // }
 
   lazy val pairElemTypeParser: Parsley[PairElemTypeNode] =
     atomic(arrayTypeParser) | baseType | ("pair" as Null()).debug("literally where")
 
-  lazy val pairType: Parsley[PairTypeNode] = {
-    val pairType =
-      "pair" ~> ("(" ~> pairElemTypeParser <~ ",") <~> (pairElemTypeParser <~ ")")
-    pairType.map(x => PairTypeNode(x._1, x._2))
-  }
+  lazy val pairType: Parsley[PairTypeNode] = PairTypeNode("pair" ~> "(" ~> pairElemTypeParser <~ ",", pairElemTypeParser <~ ")")
 
   lazy val typeParser: Parsley[TypeNode] =
     atomic(arrayTypeParser) | baseType | pairType
 
   // -- Statement Parsers ----------------------------------------- //
 
-  val ifParser: Parsley[Stat] = {
-    val ifStmt =
-      "if" ~> exprParser <~ "then" <~> (stmtParser <~> "else" ~> stmtParser <~ "fi")
-    ifStmt.map(x => If(x._1, x._2._1, x._2._2))
-  }
+  val ifParser: Parsley[Stat] = If("if" ~> exprParser, "then" ~> stmtParser, "else" ~> stmtParser <~ "fi")
+    // ifStmt.map(x => If(x._1, x._2._1, x._2._2))
+  
 
-  val whileParser: Parsley[Stat] = {
-    val whileStmt = "while" ~> exprParser <~ "do" <~> (stmtParser <~ "done")
-    whileStmt.map(x => While(x._1, x._2))
-  }
+  val whileParser: Parsley[Stat] = While("while" ~> exprParser, "do" ~> stmtParser <~ "done")
+    
 
-  val skipParser: Parsley[Stat] = "skip" as Skip()
+  val skipParser: Parsley[Stat] = Skip <# "skip"
 
-  val freeParser: Parsley[Stat] = "free" ~> exprParser.map(x => Free(x))
+  val freeParser: Parsley[Stat] = Free("free" ~> exprParser)
 
   val beginParser: Parsley[Stat] = "begin" ~> BeginEnd(stmtParser) <~ "end"
 
-  val returnParser: Parsley[Stat] = "return" ~> exprParser.map(x => Return(x))
+  val returnParser: Parsley[Stat] = Return("return" ~> exprParser)
 
-  val exitParser: Parsley[Stat] = "exit" ~> exprParser.map(x => Exit(x))
+  val exitParser: Parsley[Stat] = Exit("exit" ~> exprParser)
 
-  val printParser: Parsley[Stat] = "print" ~> exprParser.map(x => Print(x))
+  val printParser: Parsley[Stat] = Print("print" ~> exprParser)
 
-  val printlnParser: Parsley[Stat] =
-    "println" ~> exprParser.map(x => Println(x))
+  val printlnParser: Parsley[Stat] = Println("println" ~> exprParser)
 
-  val callParser: Parsley[Stat] = {
-    val call = "call" ~> ident.map(x => Ident(x)) <~ "(" <~> sepBy(
-      exprParser,
-      ","
-    ) <~ ")"
-    call.map(x => Call(x._1, ArgList(x._2)))
-  }
+  val callParser: Parsley[Stat] = Call("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
+  //    {
+  //   val call = "call" ~> ident.map(x => Ident(x)) <~ "(" <~> sepBy(
+  //     exprParser,
+  //     ","
+  //   ) <~ ")"
+  //   call.map(x => Call(x._1, ArgList(x._2)))
+  // }
 
   val assignRhs = {
     val assignRhs = exprParser | pairLitParser | callParser
     assignRhs
   }
 
-  val identAsgnParser: Parsley[IdentAsgn] = {
-    val identAsgn = typeParser <~> atomic(
-      identifierParser
-    ) <~ "=" <~> assignRhs
-    identAsgn.map(x => IdentAsgn(x._1._1, x._1._2, x._2))
-  }
+  val identAsgnParser: Parsley[IdentAsgn] = IdentAsgn(typeParser, atomic(identifierParser), "=" ~> assignRhs)
 
   val assignLhs = {
     val assignLhs = atomic(arrayelemParser) | identifierParser | pairLitParser
@@ -208,8 +171,8 @@ object parser {
   val readParser: Parsley[Stat] = "read" ~> Read(assignLhs)
 
   val asgnEqParser: Parsley[Stat] = {
-    val asgnEq = assignLhs <~ "=" <~> assignRhs
-    asgnEq.map(x => AsgnEq(x._1, x._2))
+    AsgnEq(assignLhs, "=" ~> assignRhs)
+    // asgnEq.map(x => AsgnEq(x._1, x._2))
   }
 
   val statAtoms: Parsley[Stat] = {
@@ -252,22 +215,14 @@ object parser {
 
   // -- Param Parser ----------------------------------------------- //
 
-  val paramParser: Parsley[Param] = {
-    val param = typeParser <~> ident.map(x => Ident(x))
-    param.map(x => Param(x._1, x._2))
-  }
+  val paramParser: Parsley[Param] = Param(typeParser, atomic(identifierParser))
 
   val paramListParser: Parsley[ParamList] =
     ParamList(sepBy(paramParser, ","))
 
   // -- Function Parser -------------------------------------------- //
 
-  val funcParser: Parsley[Func] = Func(
-    typeParser,
-    ident.map(x => Ident(x)),
-    "(" ~> paramListParser <~ ")",
-    "is" ~> stmtParser <~ "end"
-  )
+  val funcParser: Parsley[Func] = Func(typeParser, identifierParser,"(" ~> paramListParser <~ ")", "is" ~> stmtParser <~ "end")
 
   def validFunction(func: Func): Boolean = {
     validEndingStatement(func.stat)
@@ -278,14 +233,11 @@ object parser {
   }
 
   // -- Program Parser --------------------------------------------- //
-  val program: Parsley[Node] =
-    Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
+  val program: Parsley[Program] = Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
 
   // -- Parser ---------------------------------------------------- //
   val parser = fully(program)
 
-  def parse(filename: String): Result[String, Node] = {
-    val fileContent = ("cat " + filename).!!
-    parser.parse(fileContent)
-  }
+  def parse(input: String): Result[String, Program] = parser.parse(input)
+
 }

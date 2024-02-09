@@ -2,7 +2,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
 import wacc.{
-  Node,
+  Position,
   IntLiter,
   CharLiter,
   StringLiter,

@@ -2,7 +2,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
 import wacc.{
-  Node,
+  Position,
   IntLiter,
   CharLiter,
   StringLiter,
@@ -66,11 +66,11 @@ class checkFunctions extends AnyFlatSpec with BeforeAndAfterEach {
     typeChecker = new TypeChecker(symbolTable)
   }
 
-  def checkSucceeds(node: Node): Assertion = noException should be thrownBy typeChecker.check(node)
+  def checkSucceeds(position: Position): Assertion = noException should be thrownBy typeChecker.check(position)
 
-  def checkFails(node: Node, errorMessage: String): Assertion = {
+  def checkFails(position: Position, errorMessage: String): Assertion = {
     val e = intercept[Exception] {
-      typeChecker.check(node)
+      typeChecker.check(position)
     }
     e.getMessage shouldBe errorMessage.toString()
   }
@@ -78,7 +78,7 @@ class checkFunctions extends AnyFlatSpec with BeforeAndAfterEach {
   // Tests for Functions ------------------------------------------------------------------------------------------------
   
   "The type checker" should "accept function calls" in {
-    val node = Program(
+    val position = Program(
       List(
         Func(
           IntTypeNode(),
@@ -89,7 +89,7 @@ class checkFunctions extends AnyFlatSpec with BeforeAndAfterEach {
       ),
       IdentAsgn(IntTypeNode(), Ident("x"), Call(Ident("f"), ArgList(List(IntLiter(1)))))
     )
-    checkSucceeds(node)
+    checkSucceeds(position)
   }
 
   

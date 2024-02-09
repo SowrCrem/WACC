@@ -20,7 +20,7 @@ import wacc.{
   Brackets,
   Null, 
   Error,
-  Node,
+  Position,
   Exit
 }
 import parsley.{Failure, Result, Success}

@@ -19,7 +19,7 @@ import wacc.{
   Brackets,
   Null,
   Error,
-  Node,
+  Position,
   Expr,
   Exit,
   Not,

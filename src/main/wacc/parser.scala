@@ -221,13 +221,12 @@ object parser {
 
   def validEndingStatement(stmts: List[Stat]): Boolean = {
     stmts.last match {
-      case (Return(_)) => true
-      case (Exit(_))   => true
-      case If(_, s1, s2) => 
-        validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
-      case While(_, s) => validEndingStatement(List(s))
-      case BeginEnd(stat) => validEndingStatement(stat)
-      case _           => false
+      case If(_, s1, s2)      => validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
+      case While(_, s)        => validEndingStatement(List(s))
+      case BeginEnd(stat)     => validEndingStatement(stat)
+      case StatJoin(stats)    => validEndingStatement(stats)
+      case Skip()             => false
+      case _                  => true
     } 
   }
 

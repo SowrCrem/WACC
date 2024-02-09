@@ -20,6 +20,8 @@ import parsley.Parsley.notFollowedBy
 import parsley.debug._
 import parsley.Parsley.lookAhead
 import parsley.character.noneOf
+import parsley.{Success, Failure}
+import scala.sys.process._
 
 object parser {
 
@@ -27,7 +29,7 @@ object parser {
     ArrayElem(Ident(lexer.ident), some("[" ~> exprParser <~ "]"))
 
   lazy val signedInteger: Parsley[BigInt] = option("-").flatMap {
-    case Some(_) => lexer.integer.map(n => -n)
+    case Some(_) => lexer.integer.map(n => n)
     case None    => lexer.integer.map(n => n)
   }
 
@@ -115,7 +117,7 @@ object parser {
   // }
 
   lazy val pairElemTypeParser: Parsley[PairElemTypeNode] =
-    atomic(arrayTypeParser) | baseType
+    atomic(arrayTypeParser) | baseType | ("pair" as Null()).debug("literally where")
 
   lazy val pairType: Parsley[PairTypeNode] = PairTypeNode("pair" ~> "(" ~> pairElemTypeParser <~ ",", pairElemTypeParser <~ ")")
 
@@ -135,7 +137,7 @@ object parser {
 
   val freeParser: Parsley[Stat] = Free("free" ~> exprParser)
 
-  val beginParser: Parsley[Stat] = "begin" ~> notFollowedBy("(") ~> stmtParser <~ "end"
+  val beginParser: Parsley[Stat] = "begin" ~> BeginEnd(stmtParser) <~ "end"
 
   val returnParser: Parsley[Stat] = Return("return" ~> exprParser)
 
@@ -178,19 +180,22 @@ object parser {
       readParser | freeParser | returnParser |
       exitParser | printParser | printlnParser |
       ifParser | whileParser | beginParser
-
   }
 
-  // Check if functions last statment is a valid ending statement
   def validEndingStatement(stmts: List[Stat]): Boolean = {
     stmts.last match {
-      case (Return(_)) => true
-      case (Exit(_))   => true
-      case If(_, s1, s2) => 
-        validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
-      case While(_, s) => validEndingStatement(List(s))
-      case _           => false
+      case If(_, s1, s2)      => validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
+      case While(_, s)        => validEndingStatement(List(s))
+      case BeginEnd(stat)     => validEndingStatement(stat)
+      case StatJoin(stats)    => validEndingStatement(stats)
+      case Skip()             => false
+      case _                  => true
     } 
+  }
+
+  def validEndingStatement(stmt: Stat): Boolean = stmt match {
+    case (StatJoin(stmts)) => validEndingStatement(stmts)
+    case stmt              => validEndingStatement(List(stmt))
   }
 
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
@@ -218,6 +223,14 @@ object parser {
   // -- Function Parser -------------------------------------------- //
 
   val funcParser: Parsley[Func] = Func(typeParser, identifierParser,"(" ~> paramListParser <~ ")", "is" ~> stmtParser <~ "end")
+
+  def validFunction(func: Func): Boolean = {
+    validEndingStatement(func.stat)
+  }
+
+  def validFunctions(funcs: List[Func]): Boolean = {
+    funcs.forall(func => validFunction(func))
+  }
 
   // -- Program Parser --------------------------------------------- //
   val program: Parsley[Program] = Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")

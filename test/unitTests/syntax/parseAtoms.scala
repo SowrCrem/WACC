@@ -63,6 +63,14 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("-123", Neg(IntLiter(123)))
   }
 
+  it should "parse maximum signed int literals" in {
+    parseSucceeds("2147483647", IntLiter(2147483647))
+  }
+
+  it should "parse minimum signed int literals" in {
+    parseSucceeds("-2147483648", IntLiter(-2147483648))
+  }
+
   it should "reject int literals outside of the range of a 32-bit signed int" in {
     val errBuilder = new StringBuilder()
     errBuilder.append("(line 1, column 12):\n")

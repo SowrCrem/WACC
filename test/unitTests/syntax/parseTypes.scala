@@ -1,4 +1,5 @@
 package unitTests.syntax
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
@@ -201,7 +202,7 @@ class parseTypes extends AnyFlatSpec {
     )
   }
 
-  it should "parse pair types with pair array types" ignore {
+  it should "parse pair types with pair array types" in {
     parseSucceeds(
       "pair(int, pair(bool, char)[]) x = newpair(1, newpair(true, 'a')[])",
       IdentAsgn(

@@ -19,6 +19,7 @@ import lexer.{integer, fully, char, implicits, ident, string}
 import parsley.Parsley.notFollowedBy
 import parsley.debug._
 import parsley.Parsley.lookAhead
+import parsley.character.noneOf
 
 object parser {
 
@@ -65,7 +66,7 @@ object parser {
     atoms | pairLitParser | arrayLiteralParser
   )(
     Ops(Prefix)(Not from "!"),
-    Ops(Prefix)(Neg from "-" <~ notFollowedBy("-")),
+    Ops(Prefix)(Neg from "-"),
     Ops(Prefix)(Len from "len"),
     Ops(Prefix)(Ord from "ord"),
     Ops(Prefix)(Chr from "chr"),

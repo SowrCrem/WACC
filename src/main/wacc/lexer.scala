@@ -14,10 +14,11 @@ import parsley.token.descriptions.text.TextDesc
 import parsley.token.descriptions.text.EscapeDesc
 import parsley.errors.Token
 import parsley.errors.tokenextractors._
-
+import parsley.token.predicate.Unicode
 
 object lexer {
 
+  private val escapeLiterals = Set('\\', '"', '\'')
 
   private val errorConfig = new ErrorConfig {
     override def labelSymbol = Map(
@@ -158,8 +159,10 @@ object lexer {
           "f" -> 0x0C,
           "r" -> 0x0D
         )
-        
-      )
+      ),
+      graphicCharacter = Unicode(c => c >= ' '.toInt && !escapeLiterals.contains(c.toChar)),
+      characterLiteralEnd = '\'',
+      stringEnds = Set(("\"", "\""))
     ),
     symbolDesc = SymbolDesc.plain.copy(
       hardKeywords = Set(
@@ -210,7 +213,8 @@ object lexer {
         "!=",
         "&&",
         "||"
-      )
+      ),
+      caseSensitive = true
     )
   )
 

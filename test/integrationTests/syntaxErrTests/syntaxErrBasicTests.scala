@@ -130,7 +130,7 @@ class SyntaxErrBasicTests extends AnyFlatSpec {
     exitCode shouldBe 100
   }
 
-  "syntaxErr - basic tests: unescapedChar.wacc" should "return exit code 100" ignore {
+  "syntaxErr - basic tests: unescapedChar.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/basic/unescapedChar.wacc")
     val exitCode = Main.compile(path)

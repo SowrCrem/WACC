@@ -29,11 +29,11 @@ object parser {
     ArrayElem(Ident(lexer.ident), some("[" ~> exprParser <~ "]"))
 
   lazy val signedInteger: Parsley[BigInt] = option("-").flatMap {
-    case Some(_) => lexer.integer.map(n => n)
+    case Some(_) => lexer.integer.map(n => -n)
     case None    => lexer.integer.map(n => n)
   }
 
-  lazy val intParser: Parsley[Expr] = IntLiter(lexer.integer)
+  lazy val intParser: Parsley[Expr] = IntLiter(signedInteger)
     
   //   signedInteger.map(n => {
   //   if (n.isValidInt) IntLiter(n.toInt) else Error("Integer too large")

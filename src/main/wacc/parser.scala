@@ -231,6 +231,15 @@ object parser {
     } 
   }
 
+  def validEndingStatement(stmt: Stat): Boolean = stmt match {
+    case (StatJoin(stmts)) => validEndingStatement(stmts)
+    case stmt              => validEndingStatement(List(stmt))
+  }
+
+  def validFunction(func: Func): Boolean = {
+    validEndingStatement(func.stat)
+  }
+
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
 
   val stmtParser: Parsley[Stat] =

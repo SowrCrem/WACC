@@ -13,7 +13,7 @@ object semanticChecker {
       typeChecker.check(position)
       return Right(0)
     } catch {
-      case e: Throwable => return Left(e.getMessage)
+      case e: Throwable => return Left(e.getMessage())
     }
   }
 

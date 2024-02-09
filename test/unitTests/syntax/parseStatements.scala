@@ -223,6 +223,10 @@ class parseStatements extends AnyFlatSpec {
     errorBuilder.append("  expected \"\"\", \"\'\", \"(\", \"+\", \"-\", arithmetic operator, boolean, digit, expected start of array, fst, identifier, logical operator, newpair, null, snd, or unary operator\n")
     errorBuilder.append("  >begin (return 5) end\n")
     errorBuilder.append("         ^")
-    parseFails("(return 5)", errorBuilder.toString())
+
+    val program = "begin (return 5) end"
+    parser.parse(program) shouldBe Failure(errorBuilder.toString())
+
+    // parseFails("(return 5)", errorBuilder.toString())
   }
 }

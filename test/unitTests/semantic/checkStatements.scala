@@ -1,8 +1,8 @@
-package unitTests.syntax
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import wacc.Main
 import wacc.{
+  Node,
   IntLiter,
   CharLiter,
   StringLiter,
@@ -17,176 +17,198 @@ import wacc.{
   Div,
   Not,
   Len,
-  Program,
-  Expr,
-  Stat,
   Skip,
   Read,
+  If,
+  While,
   Free,
   Return,
   Exit,
   Print,
   Println,
-  If,
-  While,
-  BeginEnd,
   StatJoin,
   IdentAsgn,
-  AsgnEq,
-  LValue,
-  RValue,
-  Call,
-  NewPair,
   IntTypeNode,
-  BoolTypeNode,
-  CharTypeNode,
-  StringTypeNode,
   PairTypeNode,
   PairElemTypeNode,
   ArrayTypeNode,
+  BoolTypeNode,
+  CharTypeNode,
+  StringTypeNode,
   Func,
   ParamList,
-  FstNode,
-  SndNode,
+  Param,
+  Program,
+  TypeNode,
+  Call,
+  Expr,
+  NewPair,
+  ArgList,
+  SemanticError,
   ArrayLiter,
-  ArgList
+  Neg,
+  Ord,
+  Chr,
+  Mod,
+  Minus,
+  GreaterThan,
+  GreaterThanEq,
+  LessThan,
+  LessThanEq,
+  Equals,
+  NotEquals,
+  And,
+  Or,
+  Stat,
+  AsgnEq,
+  FstNode,
+  SndNode
 }
 import parsley.{Failure, Result, Success}
 import wacc.parser._
 import wacc.lexer._
 import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
-import org.scalactic.Fail
+import wacc.SymbolTable
+import org.scalatest.BeforeAndAfterEach
+import wacc.TypeChecker
 
-class checkStatements extends AnyFlatSpec {
+class checkStatements extends AnyFlatSpec with BeforeAndAfterEach {
 
-  // Testing Functions ---------------------------------------------------------------------------------------------------
+  var symbolTable: SymbolTable = _
+  var typeChecker: TypeChecker = _
 
-  def parseSucceeds[T](statement: String, expected: Stat): Assertion = {
-    parser.parse("begin " + statement + " end") shouldBe Success(Program(List(), expected))
-  }                                        
+  // Testing Functions -------------------------------------------------------------------------------------------------
 
-  def parseFails(statement: String): Assertion = {
-    parser.parse("begin " + statement + " end") should matchPattern {
-      case Failure(_) => // Match on any Failure
+  override def beforeEach(): Unit = {
+    symbolTable = new SymbolTable(None)
+    typeChecker = new TypeChecker(symbolTable)
+  }
+
+  def checkSucceeds(node: Node): Assertion = noException should be thrownBy typeChecker.check(node)
+
+  def checkFails(node: Node, errorMessage: String): Assertion = {
+    val e = intercept[Exception] {
+      typeChecker.check(node)
     }
+    e.getMessage shouldBe errorMessage.toString()
   }
 
   // Tests for skip ------------------------------------------------------------------------------------------------------
 
   "The parser" should "parse skip" in {
-    parseSucceeds("skip", Skip())
+    checkSucceeds(Skip())
   }
   
   // Tests for assignment ------------------------------------------------------------------------------------------------
 
   it should "parse LHS new identifier assignments" in {
-    parseSucceeds("int x = 1", IdentAsgn(IntTypeNode(), Ident("x"), IntLiter(1)))
+    checkSucceeds(IdentAsgn(IntTypeNode(), Ident("x"), IntLiter(1)))
   }
 
   it should "parse LHS existing identifier assignments" in{
-    asgnEqParser.parse("x = 3") shouldBe Success(AsgnEq(Ident("x"), IntLiter(3)))
-    asgnEqParser.parse("x[2] = 2") shouldBe Success(AsgnEq(ArrayElem(Ident("x"), List(IntLiter(2))), IntLiter(2)))
+    checkSucceeds(AsgnEq(Ident("x"), IntLiter(3)))
+    checkSucceeds(AsgnEq(ArrayElem(Ident("x"), List(IntLiter(2))), IntLiter(2)))
   }
 
   it should "parse LHS array elem assignments" in {
-    parseSucceeds("x[1] = 3", AsgnEq(ArrayElem(Ident("x"), List(IntLiter(1))), IntLiter(3)))
+    checkSucceeds(AsgnEq(ArrayElem(Ident("x"), List(IntLiter(1))), IntLiter(3)))
   }
 
   it should "parse LHS pair elem assignments" in {
-    parseSucceeds("fst p = 3", AsgnEq(FstNode(Ident("p")), IntLiter(3)))
-    parseSucceeds("snd p = 3", AsgnEq(SndNode(Ident("p")), IntLiter(3)))
+    checkSucceeds(AsgnEq(FstNode(Ident("p")), IntLiter(3)))
+    checkSucceeds(AsgnEq(SndNode(Ident("p")), IntLiter(3)))
   }
 
   it should "parse RHS expression assignments" in {
-    parseSucceeds("x = 1 + 2", AsgnEq(Ident("x"), Plus(IntLiter(1), IntLiter(2))))
-    parseSucceeds("x = 1 * 2", AsgnEq(Ident("x"), Mul(IntLiter(1), IntLiter(2))))
-    parseSucceeds("x = 1 / 2", AsgnEq(Ident("x"), Div(IntLiter(1), IntLiter(2))))
-    parseSucceeds("x = !true", AsgnEq(Ident("x"), Not(BoolLiter(true))))
-    parseSucceeds("x = len \"hello\"", AsgnEq(Ident("x"), Len(StringLiter("hello"))))
+    checkSucceeds(AsgnEq(Ident("x"), Plus(IntLiter(1), IntLiter(2))))
+    checkSucceeds(AsgnEq(Ident("x"), Mul(IntLiter(1), IntLiter(2))))
+    checkSucceeds(AsgnEq(Ident("x"), Div(IntLiter(1), IntLiter(2))))
+    checkSucceeds(AsgnEq(Ident("x"), Not(BoolLiter(true))))
+    checkSucceeds(AsgnEq(Ident("x"), Len(StringLiter("hello"))))
   }
 
   it should "parse RHS array literal assignments" in {
-    parseSucceeds("x = []", AsgnEq(Ident("x"), ArrayLiter(List())))
-    parseSucceeds("x = [1]", AsgnEq(Ident("x"), ArrayLiter(List(IntLiter(1)))))
-    parseSucceeds("x = [1, 2, 3]", AsgnEq(Ident("x"), ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3)))))
+    checkSucceeds(AsgnEq(Ident("x"), ArrayLiter(List())))
+    checkSucceeds(AsgnEq(Ident("x"), ArrayLiter(List(IntLiter(1)))))
+    checkSucceeds(AsgnEq(Ident("x"), ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3)))))
   }
 
   it should "parse RHS new pair assignments" in {
-    parseSucceeds("x = newpair(1, 2)", AsgnEq(Ident("x"), NewPair(IntLiter(1), IntLiter(2))))
+    checkSucceeds(AsgnEq(Ident("x"), NewPair(IntLiter(1), IntLiter(2))))
   }
 
   it should "parse RHS pair elem assignments" in {
-    parseSucceeds("x = fst p", AsgnEq(Ident("x"), FstNode(Ident("p"))))
-    parseSucceeds("x = snd p", AsgnEq(Ident("x"), SndNode(Ident("p"))))
+    checkSucceeds(AsgnEq(Ident("x"), FstNode(Ident("p"))))
+    checkSucceeds(AsgnEq(Ident("x"), SndNode(Ident("p"))))
   }
 
   it should "parse RHS call assignments" in {
-    parseSucceeds("x = call f()", AsgnEq(Ident("x"), Call(Ident("f"), ArgList(List()))))
-    parseSucceeds("x = call f(1, 2, 3)", AsgnEq(Ident("x"), Call(Ident("f"), ArgList( List(IntLiter(1), IntLiter(2), IntLiter(3)) ) )))
+    checkSucceeds(AsgnEq(Ident("x"), Call(Ident("f"), ArgList(List()))))
+    checkSucceeds(AsgnEq(Ident("x"), Call(Ident("f"), ArgList( List(IntLiter(1), IntLiter(2), IntLiter(3)) ) )))
   }
 
   // Tests for read ------------------------------------------------------------------------------------------------------
 
   it should "parse read with identifier" in {
-    parseSucceeds("read x", Read(Ident("x")))
+    checkSucceeds(Read(Ident("x")))
   }
 
   it should "parse read with array elem" in {
-    parseSucceeds("read x[1]", Read(ArrayElem(Ident("x"), List(IntLiter(1)))))
+    checkSucceeds(Read(ArrayElem(Ident("x"), List(IntLiter(1)))))
   }
 
   it should "parse read with pair elem" in {
-    parseSucceeds("read fst p", Read(FstNode(Ident("p"))))
-    parseSucceeds("read snd p", Read(SndNode(Ident("p"))))
+    checkSucceeds(Read(FstNode(Ident("p"))))
+    checkSucceeds(Read(SndNode(Ident("p"))))
   }
 
   // Tests for free ------------------------------------------------------------------------------------------------------
 
   it should "parse free" in {
-    parseSucceeds("free x", Free(Ident("x")))
+    checkSucceeds(Free(Ident("x")))
   }
 
   // Tests for return ----------------------------------------------------------------------------------------------------
 
   it should "parse return" in {
-    parseSucceeds("return 1", Return(IntLiter(1)))
+    checkSucceeds(Return(IntLiter(1)))
   }
 
   // Tests for exit ------------------------------------------------------------------------------------------------------
 
   it should "parse exit" in {
-    parseSucceeds("exit 1", Exit(IntLiter(1)))
+    checkSucceeds(Exit(IntLiter(1)))
   }
 
   // Tests for print -----------------------------------------------------------------------------------------------------
 
   it should "parse print" in {
-    parseSucceeds("print 1", Print(IntLiter(1)))
+    checkSucceeds(Print(IntLiter(1)))
   }
 
   // Tests for println ---------------------------------------------------------------------------------------------------
 
   it should "parse println" in {
-    parseSucceeds("println 1", Println(IntLiter(1)))
+    checkSucceeds(Println(IntLiter(1)))
   }
 
   // Tests for if --------------------------------------------------------------------------------------------------------
 
   it should "parse if" in {
-    parseSucceeds("if true then skip else skip fi", If(BoolLiter(true), Skip(), Skip()))
+    checkSucceeds(If(BoolLiter(true), Skip(), Skip()))
   }
 
   // Tests for while -----------------------------------------------------------------------------------------------------
 
   it should "parse while" in {
-    parseSucceeds("while true do skip done", While(BoolLiter(true), Skip()))
+    checkSucceeds(While(BoolLiter(true), Skip()))
   }
 
   // Tests for semicolon -------------------------------------------------------------------------------------------------
 
   it should "parse multiple statements" in {
-    parseSucceeds("skip; skip", StatJoin(List(Skip(), Skip())))
+    checkSucceeds(StatJoin(List(Skip(), Skip())))
 
   }
 }

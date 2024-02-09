@@ -26,6 +26,18 @@ object lexer {
         reason="unclosed braces", 
         label="closing braces"
       ),
+      "(" -> Label(
+        label="opening braces"
+      ),
+      "[" -> Label(
+        label="opening braces"
+      ),
+      "\"" -> Label(
+        label="quotation marks"
+      ),
+      "'" -> Label(
+        label="quotation marks"
+      ),
       "]" -> LabelAndReason(
         reason="unclosed braces", 
         label="closing braces"
@@ -132,6 +144,27 @@ object lexer {
       ),
       "while" -> Label(
         label="while loopS"
+      ),
+      "fst" -> Label(
+        label="pair operator"
+      ),
+      "snd" -> Label(
+        label="pair operator"
+      ),
+      "newpair" -> Label(
+        label="pair operator"
+      ),
+      "call" -> Label(
+        label="function call"
+      ),
+      "begin" -> Label(
+        label="begin"
+      ),
+      "end" -> Label(
+        label="end"
+      ),
+      "null" -> Label(
+        label="null"
       ),
     )
   }

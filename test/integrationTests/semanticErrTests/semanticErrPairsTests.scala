@@ -70,21 +70,6 @@ class SemanticErrPairsTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" in {
-
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/nonMatchingPairs.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 200) {
-      val filePath = "test/integrationTests/semanticErrTests/semanticErrPairsTests.scala"
-      val sedCommand = s"""sed -i '0,/"semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" in {/s/"semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" in {/"semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 200
-  }
-
   "semanticErr - pairs tests: noPairCovariance.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/noPairCovariance.wacc")
@@ -94,6 +79,21 @@ class SemanticErrPairsTests extends AnyFlatSpec {
     if (exitCode != 200) {
       val filePath = "test/integrationTests/semanticErrTests/semanticErrPairsTests.scala"
       val sedCommand = s"""sed -i '0,/"semanticErr - pairs tests: noPairCovariance.wacc" should "return exit code 200" in {/s/"semanticErr - pairs tests: noPairCovariance.wacc" should "return exit code 200" in {/"semanticErr - pairs tests: noPairCovariance.wacc" should "return exit code 200" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 200
+  }
+
+  "semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" in {
+
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/nonMatchingPairs.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 200) {
+      val filePath = "test/integrationTests/semanticErrTests/semanticErrPairsTests.scala"
+      val sedCommand = s"""sed -i '0,/"semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" in {/s/"semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" in {/"semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -115,7 +115,7 @@ class SemanticErrPairsTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - pairs tests: wrongTypeInParameterlessPair.wacc" should "return exit code 200" ignore {
+  "semanticErr - pairs tests: wrongTypeInParameterlessPair.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/wrongTypeInParameterlessPair.wacc")
     val exitCode = Main.compile(path)

@@ -209,6 +209,10 @@ case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode {
 
 sealed trait PairElemTypeNode extends TypeNode
 
+case class ErasedPairTypeNode() extends PairElemTypeNode {
+  override def toString: String = "pair"
+}
+
 case class ErrorTypeNode() extends TypeNode with PairElemTypeNode 
 
 

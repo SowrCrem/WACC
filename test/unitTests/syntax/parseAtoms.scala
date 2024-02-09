@@ -61,6 +61,22 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("-123", Neg(IntLiter(123)))
   }
 
+  it should "reject int literals outside of the range of a 32-bit signed int" in {
+    val errBuilder = new StringBuilder()
+    errBuilder.append("(line 1, column 12):\n")
+    errBuilder.append("  literal is not within the range -2147483648 to 2147483647\n")
+    errBuilder.append("  >begin exit 2147483648 end\n")
+    errBuilder.append("              ^^^^^^^^^^")
+    parseFails("2147483648", errBuilder.toString())
+
+    val errBuilder2 = new StringBuilder()
+    errBuilder2.append("(line 1, column 13):\n")
+    errBuilder2.append("  literal is not within the range -2147483648 to 2147483647\n")
+    errBuilder2.append("  >begin exit -2147483649 end\n")
+    errBuilder2.append("               ^^^^^^^^^^")
+    parseFails("-2147483649", errBuilder2.toString())
+  }
+
   it should "reject doubly positively signed int literals" in {
     val errorBuilder = new StringBuilder()
     errorBuilder.append("(line 1, column 13):\n")

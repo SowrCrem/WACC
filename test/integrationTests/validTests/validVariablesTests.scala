@@ -12,13 +12,13 @@ class ValidVariablesTests extends AnyFlatSpec {
 
   "valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" ignore {
 
-    val path : Array[String] = Array("test/wacc/valid/variables/boolDeclaration2.wacc")
+    val path : Array[String] = Array("test/wacc/valid/variables/_VarNames.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validVariablesTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" in {/s/"valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" in {/"valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" ignore {/' $filePath"""
+      val sedCommand = s"""sed -i '0,/"valid - variables tests: _VarNames.wacc" should "return exit code 0" in {/s/"valid - variables tests: _VarNames.wacc" should "return exit code 0" in {/"valid - variables tests: _VarNames.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

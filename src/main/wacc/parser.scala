@@ -218,10 +218,32 @@ object parser {
 
   }
 
+  // Check if functions last statment is a valid ending statement
+  def validEndingStatement(stmts: List[Stat]): Boolean = {
+    stmts.last match {
+      case (Return(_)) => true
+      case (Exit(_))   => true
+      case If(_, s1, s2) => 
+        validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
+      case While(_, s) => validEndingStatement(List(s))
+      case _           => false
+    } 
+  }
+
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
 
   val stmtParser: Parsley[Stat] =
     atomic(statAtoms <~ notFollowedBy(";")) | statJoinParser
+
+  // val stmtParser: Parsley[Stat] = {
+  //   (atomic(statAtoms <~ notFollowedBy(";")) | statJoinParser).flatMap { stmt =>
+  //     if (validEndingStatement(List(stmt))) {
+  //       success(stmt)
+  //     } else {
+  //       Error("Invalid ending statement")
+  //     }
+  //   }
+  // }
 
   // -- Param Parser ----------------------------------------------- //
 

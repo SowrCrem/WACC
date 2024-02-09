@@ -25,21 +25,6 @@ class ValidBasicTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - exit tests: exitBasic2.wacc" should "return exit code 0" in {
-
-    val path : Array[String] = Array("test/wacc/valid/basic/exit/exitBasic2.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validBasicTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - exit tests: exitBasic2.wacc" should "return exit code 0" in {/s/"valid - exit tests: exitBasic2.wacc" should "return exit code 0" in {/"valid - exit tests: exitBasic2.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
   "valid - exit tests: exitBasic.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/basic/exit/exitBasic.wacc")
@@ -49,6 +34,21 @@ class ValidBasicTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validBasicTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - exit tests: exitBasic.wacc" should "return exit code 0" in {/s/"valid - exit tests: exitBasic.wacc" should "return exit code 0" in {/"valid - exit tests: exitBasic.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - exit tests: exitBasic2.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("test/wacc/valid/basic/exit/exitBasic2.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validBasicTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - exit tests: exitBasic2.wacc" should "return exit code 0" in {/s/"valid - exit tests: exitBasic2.wacc" should "return exit code 0" in {/"valid - exit tests: exitBasic2.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

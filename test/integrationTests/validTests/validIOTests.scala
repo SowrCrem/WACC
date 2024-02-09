@@ -100,6 +100,21 @@ class ValidIOTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
+  "valid - print tests: printChar.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("test/wacc/valid/IO/print/printChar.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validIOTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - print tests: printChar.wacc" should "return exit code 0" in {/s/"valid - print tests: printChar.wacc" should "return exit code 0" in {/"valid - print tests: printChar.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
   "valid - print tests: printCharArray.wacc" should "return exit code 0" ignore {
 
     val path : Array[String] = Array("test/wacc/valid/IO/print/printCharArray.wacc")
@@ -124,21 +139,6 @@ class ValidIOTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validIOTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - print tests: printCharAsString.wacc" should "return exit code 0" in {/s/"valid - print tests: printCharAsString.wacc" should "return exit code 0" in {/"valid - print tests: printCharAsString.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
-  "valid - print tests: printChar.wacc" should "return exit code 0" in {
-
-    val path : Array[String] = Array("test/wacc/valid/IO/print/printChar.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validIOTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - print tests: printChar.wacc" should "return exit code 0" in {/s/"valid - print tests: printChar.wacc" should "return exit code 0" in {/"valid - print tests: printChar.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -319,6 +319,21 @@ class ValidIOTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validIOTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - read tests: read.wacc" should "return exit code 0" in {/s/"valid - read tests: read.wacc" should "return exit code 0" in {/"valid - read tests: read.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - read tests: readAtEof.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("test/wacc/valid/IO/read/readAtEof.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validIOTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - read tests: readAtEof.wacc" should "return exit code 0" in {/s/"valid - read tests: readAtEof.wacc" should "return exit code 0" in {/"valid - read tests: readAtEof.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

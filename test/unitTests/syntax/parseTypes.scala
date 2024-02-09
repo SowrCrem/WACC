@@ -75,28 +75,28 @@ class parseTypes extends AnyFlatSpec {
 
   // Tests for base-type --------------------------------------------------------------------------------------------------
 
-  "The parser" should "parse an int type" in {
+  "The parser" should "parse int types" in {
     parseSucceeds(
       "int x = 5",
       IdentAsgn(IntTypeNode(), Ident("x"), IntLiter(5))
     )
   }
 
-  it should "parse a bool type" in {
+  it should "parse bool types" in {
     parseSucceeds(
       "bool x = true",
       IdentAsgn(BoolTypeNode(), Ident("x"), BoolLiter(true))
     )
   }
 
-  it should "parse a char type" in {
+  it should "parse char types" in {
     parseSucceeds(
       "char x = 'a'",
       IdentAsgn(CharTypeNode(), Ident("x"), CharLiter('a'))
     )
   }
 
-  it should "parse a string type" in {
+  it should "parse string types" in {
     parseSucceeds(
       "string x = \"hello\"",
       IdentAsgn(StringTypeNode(), Ident("x"), StringLiter("hello"))
@@ -105,7 +105,7 @@ class parseTypes extends AnyFlatSpec {
 
   // Tests for array-type -------------------------------------------------------------------------------------------------
 
-  it should "parse an int array type" in {
+  it should "parse int array types" in {
     parseSucceeds(
       "int[] x = [1, 2, 3]",
       IdentAsgn(
@@ -116,7 +116,7 @@ class parseTypes extends AnyFlatSpec {
     )
   }
 
-  it should "parse a bool array type" in {
+  it should "parse bool array types" in {
     parseSucceeds(
       "bool[] x = [true, false]",
       IdentAsgn(
@@ -127,7 +127,7 @@ class parseTypes extends AnyFlatSpec {
     )
   }
 
-  it should "parse a char array type" in {
+  it should "parse char array types" in {
     parseSucceeds(
       "char[] x = ['a', 'b', 'c']",
       IdentAsgn(
@@ -138,7 +138,7 @@ class parseTypes extends AnyFlatSpec {
     )
   }
 
-  it should "parse a string array type" in {
+  it should "parse string array types" in {
     parseSucceeds(
       "string[] x = [\"hello\", \"world\"]",
       IdentAsgn(

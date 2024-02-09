@@ -10,7 +10,7 @@ import scala.sys.process._
 
 class SyntaxErrPairsTests extends AnyFlatSpec {
 
-  "syntaxErr - pairs tests: badLookup01.wacc" should "return exit code 100" ignore {
+  "syntaxErr - pairs tests: badLookup01.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/pairs/badLookup01.wacc")
     val exitCode = Main.compile(path)
@@ -25,7 +25,7 @@ class SyntaxErrPairsTests extends AnyFlatSpec {
     exitCode shouldBe 100
   }
 
-  "syntaxErr - pairs tests: badLookup02.wacc" should "return exit code 100" ignore {
+  "syntaxErr - pairs tests: badLookup02.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/pairs/badLookup02.wacc")
     val exitCode = Main.compile(path)

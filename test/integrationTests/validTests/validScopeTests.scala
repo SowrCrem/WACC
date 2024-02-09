@@ -10,7 +10,7 @@ import scala.sys.process._
 
 class ValidScopeTests extends AnyFlatSpec {
 
-  "valid - scope tests: ifNested1.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: ifNested1.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/ifNested1.wacc")
     val exitCode = Main.compile(path)
@@ -25,7 +25,7 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - scope tests: ifNested2.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: ifNested2.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/ifNested2.wacc")
     val exitCode = Main.compile(path)
@@ -70,7 +70,7 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - scope tests: printAllTypes.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: printAllTypes.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/printAllTypes.wacc")
     val exitCode = Main.compile(path)
@@ -100,7 +100,7 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - scope tests: scopeIfRedefine.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: scopeIfRedefine.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeIfRedefine.wacc")
     val exitCode = Main.compile(path)
@@ -115,7 +115,7 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - scope tests: scopeRedefine.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: scopeRedefine.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeRedefine.wacc")
     val exitCode = Main.compile(path)
@@ -130,7 +130,7 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - scope tests: scopeSimpleRedefine.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: scopeSimpleRedefine.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeSimpleRedefine.wacc")
     val exitCode = Main.compile(path)
@@ -145,7 +145,7 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - scope tests: scopeVars.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: scopeVars.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeVars.wacc")
     val exitCode = Main.compile(path)
@@ -175,7 +175,7 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - scope tests: scopeWhileNested.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: scopeWhileNested.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeWhileNested.wacc")
     val exitCode = Main.compile(path)
@@ -190,7 +190,7 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - scope tests: scopeWhileRedefine.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: scopeWhileRedefine.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/scopeWhileRedefine.wacc")
     val exitCode = Main.compile(path)
@@ -205,7 +205,7 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - scope tests: splitScope.wacc" should "return exit code 0" ignore {
+  "valid - scope tests: splitScope.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/scope/splitScope.wacc")
     val exitCode = Main.compile(path)

@@ -25,7 +25,7 @@ class SemanticErrPairsTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - pairs tests: badPairExchange.wacc" should "return exit code 200" ignore {
+  "semanticErr - pairs tests: badPairExchange.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/badPairExchange.wacc")
     val exitCode = Main.compile(path)
@@ -100,7 +100,7 @@ class SemanticErrPairsTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - pairs tests: readUnknown.wacc" should "return exit code 200" ignore {
+  "semanticErr - pairs tests: readUnknown.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/readUnknown.wacc")
     val exitCode = Main.compile(path)
@@ -115,7 +115,7 @@ class SemanticErrPairsTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - pairs tests: wrongTypeInParameterlessPair.wacc" should "return exit code 200" ignore {
+  "semanticErr - pairs tests: wrongTypeInParameterlessPair.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/pairs/wrongTypeInParameterlessPair.wacc")
     val exitCode = Main.compile(path)

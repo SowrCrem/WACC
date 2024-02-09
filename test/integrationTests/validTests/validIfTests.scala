@@ -10,7 +10,7 @@ import scala.sys.process._
 
 class ValidIfTests extends AnyFlatSpec {
 
-  "valid - if tests: if1.wacc" should "return exit code 0" ignore {
+  "valid - if tests: if1.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/if/if1.wacc")
     val exitCode = Main.compile(path)
@@ -25,7 +25,7 @@ class ValidIfTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - if tests: if2.wacc" should "return exit code 0" ignore {
+  "valid - if tests: if2.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/if/if2.wacc")
     val exitCode = Main.compile(path)
@@ -40,7 +40,7 @@ class ValidIfTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - if tests: if3.wacc" should "return exit code 0" ignore {
+  "valid - if tests: if3.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/if/if3.wacc")
     val exitCode = Main.compile(path)
@@ -55,7 +55,7 @@ class ValidIfTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - if tests: if4.wacc" should "return exit code 0" ignore {
+  "valid - if tests: if4.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/if/if4.wacc")
     val exitCode = Main.compile(path)
@@ -70,7 +70,7 @@ class ValidIfTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - if tests: if5.wacc" should "return exit code 0" ignore {
+  "valid - if tests: if5.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/if/if5.wacc")
     val exitCode = Main.compile(path)
@@ -85,7 +85,7 @@ class ValidIfTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - if tests: if6.wacc" should "return exit code 0" ignore {
+  "valid - if tests: if6.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/if/if6.wacc")
     val exitCode = Main.compile(path)
@@ -145,7 +145,7 @@ class ValidIfTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - if tests: whitespace.wacc" should "return exit code 0" ignore {
+  "valid - if tests: whitespace.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/if/whitespace.wacc")
     val exitCode = Main.compile(path)

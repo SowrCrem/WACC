@@ -10,7 +10,7 @@ import scala.sys.process._
 
 class ValidExpressionsTests extends AnyFlatSpec {
 
-  "valid - expressions tests: andExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: andExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/andExpr.wacc")
     val exitCode = Main.compile(path)
@@ -25,7 +25,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: andOverOrExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: andOverOrExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/andOverOrExpr.wacc")
     val exitCode = Main.compile(path)
@@ -55,7 +55,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: boolExpr1.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: boolExpr1.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/boolExpr1.wacc")
     val exitCode = Main.compile(path)
@@ -85,7 +85,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: divExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: divExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/divExpr.wacc")
     val exitCode = Main.compile(path)
@@ -100,7 +100,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: equalsExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: equalsExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/equalsExpr.wacc")
     val exitCode = Main.compile(path)
@@ -115,7 +115,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: equalsOverAnd.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: equalsOverAnd.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/equalsOverAnd.wacc")
     val exitCode = Main.compile(path)
@@ -130,7 +130,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: equalsOverBool.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: equalsOverBool.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/equalsOverBool.wacc")
     val exitCode = Main.compile(path)
@@ -145,7 +145,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: equalsOverOr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: equalsOverOr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/equalsOverOr.wacc")
     val exitCode = Main.compile(path)
@@ -160,7 +160,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: greaterEqExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: greaterEqExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/greaterEqExpr.wacc")
     val exitCode = Main.compile(path)
@@ -175,7 +175,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: greaterExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: greaterExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/greaterExpr.wacc")
     val exitCode = Main.compile(path)
@@ -190,7 +190,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: intCalc.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: intCalc.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/intCalc.wacc")
     val exitCode = Main.compile(path)
@@ -205,7 +205,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: intExpr1.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: intExpr1.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/intExpr1.wacc")
     val exitCode = Main.compile(path)
@@ -220,7 +220,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: lessCharExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: lessCharExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/lessCharExpr.wacc")
     val exitCode = Main.compile(path)
@@ -235,7 +235,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: lessEqExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: lessEqExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/lessEqExpr.wacc")
     val exitCode = Main.compile(path)
@@ -250,7 +250,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: lessExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: lessExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/lessExpr.wacc")
     val exitCode = Main.compile(path)
@@ -265,7 +265,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: longExpr2.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: longExpr2.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longExpr2.wacc")
     val exitCode = Main.compile(path)
@@ -280,7 +280,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: longExpr3.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: longExpr3.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longExpr3.wacc")
     val exitCode = Main.compile(path)
@@ -295,7 +295,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: longExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longExpr.wacc")
     val exitCode = Main.compile(path)
@@ -310,7 +310,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: longSplitExpr2.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: longSplitExpr2.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longSplitExpr2.wacc")
     val exitCode = Main.compile(path)
@@ -325,7 +325,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/longSplitExpr.wacc")
     val exitCode = Main.compile(path)
@@ -340,7 +340,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: minusExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: minusExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/minusExpr.wacc")
     val exitCode = Main.compile(path)
@@ -400,7 +400,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: modExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: modExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/modExpr.wacc")
     val exitCode = Main.compile(path)
@@ -415,7 +415,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: multExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: multExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/multExpr.wacc")
     val exitCode = Main.compile(path)
@@ -445,7 +445,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: negBothDiv.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: negBothDiv.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negBothDiv.wacc")
     val exitCode = Main.compile(path)
@@ -460,7 +460,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: negBothMod.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: negBothMod.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negBothMod.wacc")
     val exitCode = Main.compile(path)
@@ -475,7 +475,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: negDividendDiv.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: negDividendDiv.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negDividendDiv.wacc")
     val exitCode = Main.compile(path)
@@ -490,7 +490,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: negDividendMod.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: negDividendMod.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negDividendMod.wacc")
     val exitCode = Main.compile(path)
@@ -505,7 +505,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: negDivisorDiv.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: negDivisorDiv.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negDivisorDiv.wacc")
     val exitCode = Main.compile(path)
@@ -520,7 +520,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: negDivisorMod.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: negDivisorMod.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negDivisorMod.wacc")
     val exitCode = Main.compile(path)
@@ -535,7 +535,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: negExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: negExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/negExpr.wacc")
     val exitCode = Main.compile(path)
@@ -550,7 +550,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/notequalsExpr.wacc")
     val exitCode = Main.compile(path)
@@ -565,7 +565,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: notExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: notExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/notExpr.wacc")
     val exitCode = Main.compile(path)
@@ -580,7 +580,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/ordAndchrExpr.wacc")
     val exitCode = Main.compile(path)
@@ -595,7 +595,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: orExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: orExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/orExpr.wacc")
     val exitCode = Main.compile(path)
@@ -610,7 +610,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: plusExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: plusExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/plusExpr.wacc")
     val exitCode = Main.compile(path)
@@ -670,7 +670,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: sequentialCount.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: sequentialCount.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/sequentialCount.wacc")
     val exitCode = Main.compile(path)
@@ -685,7 +685,7 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: stringEqualsExpr.wacc" should "return exit code 0" ignore {
+  "valid - expressions tests: stringEqualsExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/expressions/stringEqualsExpr.wacc")
     val exitCode = Main.compile(path)

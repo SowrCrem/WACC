@@ -85,7 +85,7 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
     exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionEndingNotReturn.wacc" should "return exit code 100" ignore {
+  "syntaxErr - function tests: functionEndingNotReturn.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionEndingNotReturn.wacc")
     val exitCode = Main.compile(path)
@@ -175,7 +175,7 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
     exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionNoReturn.wacc" should "return exit code 100" ignore {
+  "syntaxErr - function tests: functionNoReturn.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/functionNoReturn.wacc")
     val exitCode = Main.compile(path)
@@ -220,7 +220,7 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
     exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: mutualRecursionNoReturn.wacc" should "return exit code 100" ignore {
+  "syntaxErr - function tests: mutualRecursionNoReturn.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("test/wacc/invalid/syntaxErr/function/mutualRecursionNoReturn.wacc")
     val exitCode = Main.compile(path)

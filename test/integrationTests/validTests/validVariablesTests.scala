@@ -10,7 +10,7 @@ import scala.sys.process._
 
 class ValidVariablesTests extends AnyFlatSpec {
 
-  "valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/boolDeclaration2.wacc")
     val exitCode = Main.compile(path)
@@ -25,7 +25,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: boolDeclaration.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: boolDeclaration.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/boolDeclaration.wacc")
     val exitCode = Main.compile(path)
@@ -40,7 +40,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: capCharDeclaration.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: capCharDeclaration.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/capCharDeclaration.wacc")
     val exitCode = Main.compile(path)
@@ -55,7 +55,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: charDeclaration2.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: charDeclaration2.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/charDeclaration2.wacc")
     val exitCode = Main.compile(path)
@@ -70,7 +70,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: charDeclaration.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: charDeclaration.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/charDeclaration.wacc")
     val exitCode = Main.compile(path)
@@ -85,7 +85,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: emptyStringDeclaration.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: emptyStringDeclaration.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/emptyStringDeclaration.wacc")
     val exitCode = Main.compile(path)
@@ -100,7 +100,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: intDeclaration.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: intDeclaration.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/intDeclaration.wacc")
     val exitCode = Main.compile(path)
@@ -145,7 +145,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: negIntDeclaration.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: negIntDeclaration.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/negIntDeclaration.wacc")
     val exitCode = Main.compile(path)
@@ -160,7 +160,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: puncCharDeclaration.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: puncCharDeclaration.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/puncCharDeclaration.wacc")
     val exitCode = Main.compile(path)
@@ -175,7 +175,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: stringCarriageReturn.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: stringCarriageReturn.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/stringCarriageReturn.wacc")
     val exitCode = Main.compile(path)
@@ -190,7 +190,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: stringDeclaration.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: stringDeclaration.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/stringDeclaration.wacc")
     val exitCode = Main.compile(path)
@@ -220,7 +220,7 @@ class ValidVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - variables tests: zeroIntDeclaration.wacc" should "return exit code 0" ignore {
+  "valid - variables tests: zeroIntDeclaration.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/variables/zeroIntDeclaration.wacc")
     val exitCode = Main.compile(path)

@@ -145,7 +145,7 @@ class SemanticErrFunctionTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - function tests: functionRedefine.wacc" should "return exit code 200" ignore {
+  "semanticErr - function tests: functionRedefine.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/function/functionRedefine.wacc")
     val exitCode = Main.compile(path)

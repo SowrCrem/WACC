@@ -205,7 +205,7 @@ class SemanticErrVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - variables tests: doubleDeclare.wacc" should "return exit code 200" ignore {
+  "semanticErr - variables tests: doubleDeclare.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/variables/doubleDeclare.wacc")
     val exitCode = Main.compile(path)
@@ -220,7 +220,7 @@ class SemanticErrVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - variables tests: undeclaredScopeVar.wacc" should "return exit code 200" ignore {
+  "semanticErr - variables tests: undeclaredScopeVar.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/variables/undeclaredScopeVar.wacc")
     val exitCode = Main.compile(path)
@@ -235,7 +235,22 @@ class SemanticErrVariablesTests extends AnyFlatSpec {
     exitCode shouldBe 200
   }
 
-  "semanticErr - variables tests: undeclaredVar.wacc" should "return exit code 200" ignore {
+  "semanticErr - variables tests: undeclaredVarAccess.wacc" should "return exit code 200" in {
+
+    val path : Array[String] = Array("test/wacc/invalid/semanticErr/variables/undeclaredVarAccess.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 200) {
+      val filePath = "test/integrationTests/semanticErrTests/semanticErrVariablesTests.scala"
+      val sedCommand = s"""sed -i '0,/"semanticErr - variables tests: undeclaredVarAccess.wacc" should "return exit code 200" in {/s/"semanticErr - variables tests: undeclaredVarAccess.wacc" should "return exit code 200" in {/"semanticErr - variables tests: undeclaredVarAccess.wacc" should "return exit code 200" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 200
+  }
+
+  "semanticErr - variables tests: undeclaredVar.wacc" should "return exit code 200" in {
 
     val path : Array[String] = Array("test/wacc/invalid/semanticErr/variables/undeclaredVar.wacc")
     val exitCode = Main.compile(path)

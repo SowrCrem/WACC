@@ -86,10 +86,14 @@ object Call extends generic.ParserBridge2[Ident, ArgList, Stat]
 case class ArrayLiter(exprList: List[Expr]) extends Expr  
 object ArrayLiter extends generic.ParserBridge1[List[Expr], Expr]
 
-case class FstNode(expr: Expr) extends Expr with LValue
+case class FstNode(expr: Expr) extends Expr with LValue {
+  override def toString: String = s"fst $expr"
+}
 object FstNode extends generic.ParserBridge1[Expr, Expr]
 
-case class SndNode(expr: Expr) extends Expr with LValue
+case class SndNode(expr: Expr) extends Expr with LValue {
+  override def toString: String = s"snd $expr"
+}
 object SndNode extends generic.ParserBridge1[Expr, Expr]
 
 
@@ -177,7 +181,7 @@ object StringLiter extends generic.ParserBridge1[String, Atom]
 
 case class Brackets(expr: Expr) extends Atom
 object Brackets extends generic.ParserBridge1[Expr, Atom]
-case class Null() extends Atom with LValue with PairElemTypeNode
+case class Null() extends Atom with LValue with PairElemTypeNode 
 case class Ident(value: String) extends Atom with LValue
 object Ident extends generic.ParserBridge1[String, Ident]
 case class Error(value: String) extends Atom 
@@ -214,7 +218,7 @@ sealed trait PairElemTypeNode extends TypeNode
 case class ErrorTypeNode() extends TypeNode with PairElemTypeNode 
 
 
-case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode) extends TypeNode with LValue {
+case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode) extends TypeNode with LValue with PairElemTypeNode{
   override def toString: String = s"pair of $fst and $snd"
 }
 object PairTypeNode extends generic.ParserBridge2[PairElemTypeNode, PairElemTypeNode, TypeNode] 

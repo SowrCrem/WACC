@@ -17,7 +17,7 @@ import wacc.{
   Ident,
   Brackets,
   ArrayLiter,
-  Null, 
+  Null,
   Error,
   Node,
   Exit
@@ -30,36 +30,48 @@ import org.scalatest.compatible.Assertion
 import wacc.TypeNode
 import wacc.ArrayTypeNode
 
-
 class parseAsgns extends AnyFlatSpec {
-  
+
   // Testing Functions -------------------------------------------------------------------------------------------------
   def getType(expected: Node): (String, TypeNode) = expected match {
-    case IntLiter(_)    => ("int"   , IntTypeNode())
-    case Neg(_)         => ("int"   , IntTypeNode())
-    case BoolLiter(_)   => ("bool"  , BoolTypeNode())
-    case CharLiter(_)   => ("char"  , CharTypeNode())
+    case IntLiter(_)    => ("int", IntTypeNode())
+    case Neg(_)         => ("int", IntTypeNode())
+    case BoolLiter(_)   => ("bool", BoolTypeNode())
+    case CharLiter(_)   => ("char", CharTypeNode())
     case StringLiter(_) => ("string", StringTypeNode())
     case Brackets(expr) => getType(expr)
-    case _              => ("int"   , IntTypeNode())
+    case _              => ("int", IntTypeNode())
   }
 
-  def parseSucceeds[T](input: String, expected: Expr, identifier: String = "input", comment: String = ""): Assertion = {
+  def parseSucceeds[T](
+      input: String,
+      expected: Expr,
+      identifier: String = "input",
+      comment: String = ""
+  ): Assertion = {
     val (literalType, typeNode) = getType(expected)
     val assignment = IdentAsgn(IntTypeNode(), Ident(identifier), expected)
-    parser.parse("begin int " + identifier + " = " + input + " " + comment + " end") shouldBe Success(Program(List(), assignment))
+    parser.parse(
+      "begin int " + identifier + " = " + input + " " + comment + " end"
+    ) shouldBe Success(Program(List(), assignment))
   }
 
-  def parseFails(input: String, errorMessage: String = "", identifier: String = "input"): Assertion = {
-    parser.parse("begin int " + identifier + " = " + input + " end") should matchPattern {
-      case Failure(_) => // Match on any Failure
+  def parseFails(
+      input: String,
+      errorMessage: String = "",
+      identifier: String = "input"
+  ): Assertion = {
+    parser.parse(
+      "begin int " + identifier + " = " + input + " end"
+    ) should matchPattern { case Failure(_) => // Match on any Failure
     }
   }
 
-  def parseWithIdentifier(name:String, success:Boolean): Assertion = {
-    if (success) parseSucceeds("1", IntLiter(1), name) else parseFails("1", "int", name)
+  def parseWithIdentifier(name: String, success: Boolean): Assertion = {
+    if (success) parseSucceeds("1", IntLiter(1), name)
+    else parseFails("1", "int", name)
   }
-  
+
   def commentIgnored(comment: String) = {
     parseSucceeds("1", IntLiter(1), "input", comment)
   }
@@ -70,7 +82,7 @@ class parseAsgns extends AnyFlatSpec {
   }
 
   it should "parse identifiers with underscores" in {
-    
+
     parseWithIdentifier("hello_world", true)
   }
 
@@ -94,24 +106,42 @@ class parseAsgns extends AnyFlatSpec {
     parseWithIdentifier("(hello)", false)
   }
 
-  
   // Tests for Arrays --------------------------------------------------------------------------------------------------
 
   it should "parse arrays" in {
-    parseSucceeds("[1,2,3]", ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3))))
+    parseSucceeds(
+      "[1,2,3]",
+      ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3)))
+    )
   }
 
   // We need to parse assignments of the format "int[][] ident = expr". Dont use the functions above for this
   it should "parse arrays of arrays" in {
-    val expected = IdentAsgn(ArrayTypeNode(ArrayTypeNode(IntTypeNode())), Ident("input"), ArrayLiter(List(ArrayLiter(List(IntLiter(1), IntLiter(2))), ArrayLiter(List(IntLiter(3), IntLiter(4))))))
-    parser.parse("begin int[][] input = [[1,2],[3,4]] end") shouldBe Success(Program(List(), expected))
+    val expected = IdentAsgn(
+      ArrayTypeNode(ArrayTypeNode(IntTypeNode())),
+      Ident("input"),
+      ArrayLiter(
+        List(
+          ArrayLiter(List(IntLiter(1), IntLiter(2))),
+          ArrayLiter(List(IntLiter(3), IntLiter(4)))
+        )
+      )
+    )
+    parser.parse("begin int[][] input = [[1,2],[3,4]] end") shouldBe Success(
+      Program(List(), expected)
+    )
   }
 
   it should "Parse empty array assignments" in {
-    val expected = IdentAsgn(ArrayTypeNode(IntTypeNode()), Ident("input"), ArrayLiter(List()))
-    parser.parse("begin int[] input = [] end") shouldBe Success(Program(List(), expected))
+    val expected = IdentAsgn(
+      ArrayTypeNode(IntTypeNode()),
+      Ident("input"),
+      ArrayLiter(List())
+    )
+    parser.parse("begin int[] input = [] end") shouldBe Success(
+      Program(List(), expected)
+    )
   }
-
 
   // Tests for Comment ------------------------------------------------------------------------------------------
   it should "ignore comments" in {
@@ -122,5 +152,6 @@ class parseAsgns extends AnyFlatSpec {
   it should "reject comments without EOL" in {
     parseFails("# This is a comment")
   }
+
 
 }

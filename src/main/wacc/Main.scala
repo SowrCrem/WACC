@@ -25,7 +25,7 @@ object Main {
         0
       }
       case Left(msg) => {
-        println("Semantic Analysis reported an Error: " + msg)
+        println("Semantic Analysis reported an Error: \n" + msg)
         200
       }
     }

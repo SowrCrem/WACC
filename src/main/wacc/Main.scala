@@ -25,7 +25,7 @@ object Main {
             // Go through each function in the node's function list and check if parser.validFunction(func) is true
             // If it is, then continue, else return an error with code 100 (syntax)
             case Program(funcList, stat) => {
-              funcList.foreach(func => parser.validFunction(func))
+              
               // if any are false, we need to return 100. Otherwise, we can do semantic analysis
               if (funcList.exists(func => !parser.validFunction(func))) {
                 println("Syntax Analysis reported an Error: Non-terminating branches found")

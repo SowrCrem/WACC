@@ -10,6 +10,21 @@ import scala.sys.process._
 
 class ValidArrayTests extends AnyFlatSpec {
 
+  "valid - array tests: array.wacc" should "return exit code 0" ignore {
+
+    val path : Array[String] = Array("test/wacc/valid/array/array.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validArrayTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - array tests: array.wacc" should "return exit code 0" in {/s/"valid - array tests: array.wacc" should "return exit code 0" in {/"valid - array tests: array.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
   "valid - array tests: arrayBasic.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("test/wacc/valid/array/arrayBasic.wacc")
@@ -139,21 +154,6 @@ class ValidArrayTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validArrayTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - array tests: arraySimple.wacc" should "return exit code 0" in {/s/"valid - array tests: arraySimple.wacc" should "return exit code 0" in {/"valid - array tests: arraySimple.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
-  "valid - array tests: array.wacc" should "return exit code 0" ignore {
-
-    val path : Array[String] = Array("test/wacc/valid/array/array.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validArrayTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - array tests: array.wacc" should "return exit code 0" in {/s/"valid - array tests: array.wacc" should "return exit code 0" in {/"valid - array tests: array.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

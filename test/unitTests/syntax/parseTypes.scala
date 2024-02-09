@@ -201,7 +201,7 @@ class parseTypes extends AnyFlatSpec {
     )
   }
 
-  it should "parse pair types with pair array types" ignore {
+  it should "parse pair types with pair array types" in {
     parseSucceeds(
       "pair(int, pair(bool, char)[]) x = newpair(1, newpair(true, 'a')[])",
       IdentAsgn(

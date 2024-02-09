@@ -396,8 +396,19 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
         )
       }
     }
-    case NotEquals(lhs, rhs) =>
-      checkCompBinOp(lhs, rhs, symbolTable, returnType)
+    case NotEquals(lhs, rhs) => {
+      val lhsType = check(lhs, symbolTable, returnType)
+      val rhsType = check(rhs, symbolTable, returnType)
+      if (
+        lhsType == rhsType || rhsType == Some(Null()) || lhsType == Some(Null())
+      ) {
+        Some(BoolTypeNode())
+      } else {
+        throw new SemanticError(
+          s"Type mismatch: Equals expected two of the same type, got ${lhsType} and ${rhsType}"
+        )
+      }
+    }
     case And(lhs, rhs) =>
       checkBoolBinOp(lhs, rhs, symbolTable, returnType)
     case Or(lhs, rhs) =>

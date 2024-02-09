@@ -43,7 +43,8 @@ import wacc.{
   Call,
   Expr,
   NewPair,
-  ArgList
+  ArgList,
+  SemanticError
 }
 import parsley.{Failure, Result, Success}
 import wacc.parser._
@@ -68,8 +69,8 @@ class checkTypes extends AnyFlatSpec with BeforeAndAfterEach {
 
   def checkSucceeds(node: Node): Assertion = noException should be thrownBy typeChecker.check(node)
 
-  def checkFails(node: Expr, errorMessage: String): Assertion = {
-    val e = intercept[Exception] {
+  def checkFails(node: Node, errorMessage: String): Assertion = {
+    val e = intercept[SemanticError] {
       typeChecker.check(node)
     }
     e.getMessage shouldBe errorMessage
@@ -79,6 +80,10 @@ class checkTypes extends AnyFlatSpec with BeforeAndAfterEach {
 
   "The type checker" should "accept integer literals" in {
     checkSucceeds(IntLiter(1))
+  }
+
+  it should "reject non-integer assignments to an integer variable" in {
+    checkFails(IdentAsgn(IntTypeNode(), Ident("x"), CharLiter('a')), "Type mismatch: expected integer, got Some(char)")
   }
 
   it should "accept character literals" in {

@@ -55,7 +55,7 @@ object parser {
 
   lazy val newpairParser: Parsley[Expr] = NewPair("newpair" ~> "(" ~> exprParser, "," ~> exprParser <~ ")")
 
-  lazy val pairLitParser: Parsley[Expr] = "fst" ~> FstNode(identifierParser) | "snd" ~> SndNode(identifierParser) | newpairParser | (Null <# "null")
+  lazy val pairLitParser: Parsley[Expr] = "fst" ~> FstNode(identifierParser) | "snd" ~> SndNode(identifierParser) | newpairParser | Null <# "null"
 
   // -- Expression Parsers ----------------------------------------- //
 
@@ -111,7 +111,7 @@ object parser {
   // }
 
   lazy val pairElemTypeParser: Parsley[PairElemTypeNode] =
-    atomic(arrayTypeParser) | baseType
+    atomic(arrayTypeParser) | baseType | Null <# "pair"
 
   lazy val pairType: Parsley[PairTypeNode] = PairTypeNode("pair" ~> "(" ~> pairElemTypeParser <~ ",", pairElemTypeParser <~ ")")
 

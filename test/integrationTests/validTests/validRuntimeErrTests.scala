@@ -12,7 +12,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - arrayOutOfBounds tests: arrayNegBounds.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/arrayOutOfBounds/arrayNegBounds.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/arrayOutOfBounds/arrayNegBounds.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -27,7 +27,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - arrayOutOfBounds tests: arrayOutOfBounds.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/arrayOutOfBounds/arrayOutOfBounds.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/arrayOutOfBounds/arrayOutOfBounds.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -42,7 +42,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - arrayOutOfBounds tests: arrayOutOfBoundsWrite.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/arrayOutOfBounds/arrayOutOfBoundsWrite.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/arrayOutOfBounds/arrayOutOfBoundsWrite.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -57,7 +57,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - badChar tests: negativeChr.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/badChar/negativeChr.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/badChar/negativeChr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -72,7 +72,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - badChar tests: tooBigChr.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/badChar/tooBigChr.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/badChar/tooBigChr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -87,7 +87,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero/divideByZero.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/divideByZero/divideByZero.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -102,7 +102,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - divideByZero tests: divZero.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero/divZero.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/divideByZero/divZero.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -117,7 +117,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - divideByZero tests: modByZero.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero/modByZero.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/divideByZero/modByZero.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -132,7 +132,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intJustOverflow.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intJustOverflow.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/integerOverflow/intJustOverflow.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -147,7 +147,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intmultOverflow.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intmultOverflow.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/integerOverflow/intmultOverflow.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -162,7 +162,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intnegateOverflow2.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow2.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -177,7 +177,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intnegateOverflow3.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow3.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow3.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -192,7 +192,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intnegateOverflow4.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow4.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow4.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -207,7 +207,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -222,7 +222,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intUnderflow.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/integerOverflow/intUnderflow.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -237,7 +237,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intWayOverflow.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/integerOverflow/intWayOverflow.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -252,7 +252,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - nullDereference tests: freeNull.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/freeNull.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/nullDereference/freeNull.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -267,7 +267,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - nullDereference tests: readNull1.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/readNull1.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/nullDereference/readNull1.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -282,7 +282,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - nullDereference tests: readNull2.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/readNull2.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/nullDereference/readNull2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -297,7 +297,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - nullDereference tests: setNull1.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/setNull1.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/nullDereference/setNull1.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -312,7 +312,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - nullDereference tests: setNull2.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/setNull2.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/nullDereference/setNull2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -327,7 +327,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - nullDereference tests: useNull1.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/useNull1.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/nullDereference/useNull1.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
@@ -342,7 +342,7 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
 
   "valid - nullDereference tests: useNull2.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/nullDereference/useNull2.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/runtimeErr/nullDereference/useNull2.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 

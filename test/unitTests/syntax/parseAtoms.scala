@@ -30,6 +30,7 @@ import org.scalactic.Bool
 import org.scalatest.compatible.Assertion
 import wacc.TypeNode
 import java.lang.StringBuilder
+import org.scalactic.Fail
 
 
 class parseAtoms extends AnyFlatSpec {
@@ -56,6 +57,7 @@ class parseAtoms extends AnyFlatSpec {
   "the parser" should "parse unsigned int literals" in {
     parseSucceeds("123", IntLiter(123)(pos))
   }
+
 
   // it should "parse signed positive int literals" in {
   //   parseSucceeds("+123", IntLiter(123))

@@ -99,7 +99,7 @@ class ValidPairsTests extends AnyFlatSpec {
 
     exitCode shouldBe 0
   }
-
+ 
   "valid - pairs tests: linkedList.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("../test/wacc/valid/pairs/linkedList.wacc")

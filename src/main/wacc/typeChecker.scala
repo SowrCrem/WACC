@@ -77,6 +77,8 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
           t match {
             case Func(_, _, _, _) =>
               symbolTable.add(ident.value, typeNode)
+            case x if x != typeNode =>
+              symbolTable.add(ident.value, typeNode)
             case _  => {
               throw new ScopeError(position.pos, 
                 s"Identifier ${ident.value} already defined"

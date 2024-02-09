@@ -40,21 +40,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
     exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {
-
-    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/function/funcExpr2.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 100) {
-      val filePath = "test/integrationTests/syntaxErrTests/syntaxErrFunctionTests.scala"
-      val sedCommand = s"""sed -i '0,/"syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {/s/"syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {/"syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 100
-  }
-
   "syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/function/funcExpr.wacc")
@@ -64,6 +49,21 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
     if (exitCode != 100) {
       val filePath = "test/integrationTests/syntaxErrTests/syntaxErrFunctionTests.scala"
       val sedCommand = s"""sed -i '0,/"syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" in {/s/"syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" in {/"syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 100
+  }
+
+  "syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {
+
+    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/function/funcExpr2.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 100) {
+      val filePath = "test/integrationTests/syntaxErrTests/syntaxErrFunctionTests.scala"
+      val sedCommand = s"""sed -i '0,/"syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {/s/"syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {/"syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -130,21 +130,6 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
     exitCode shouldBe 100
   }
 
-  "syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {
-
-    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/function/functionMissingParam.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 100) {
-      val filePath = "test/integrationTests/syntaxErrTests/syntaxErrFunctionTests.scala"
-      val sedCommand = s"""sed -i '0,/"syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {/s/"syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {/"syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 100
-  }
-
   "syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/function/functionMissingPType.wacc")
@@ -154,6 +139,21 @@ class SyntaxErrFunctionTests extends AnyFlatSpec {
     if (exitCode != 100) {
       val filePath = "test/integrationTests/syntaxErrTests/syntaxErrFunctionTests.scala"
       val sedCommand = s"""sed -i '0,/"syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" in {/s/"syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" in {/"syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 100
+  }
+
+  "syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {
+
+    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/function/functionMissingParam.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 100) {
+      val filePath = "test/integrationTests/syntaxErrTests/syntaxErrFunctionTests.scala"
+      val sedCommand = s"""sed -i '0,/"syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {/s/"syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {/"syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" ignore {/' $filePath"""
       sedCommand.!
     }
 

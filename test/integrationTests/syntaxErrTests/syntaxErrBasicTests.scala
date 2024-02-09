@@ -10,21 +10,6 @@ import scala.sys.process._
 
 class SyntaxErrBasicTests extends AnyFlatSpec {
 
-  "syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {
-
-    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/basic/badComment2.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 100) {
-      val filePath = "test/integrationTests/syntaxErrTests/syntaxErrBasicTests.scala"
-      val sedCommand = s"""sed -i '0,/"syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {/s/"syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {/"syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 100
-  }
-
   "syntaxErr - basic tests: badComment.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/basic/badComment.wacc")
@@ -34,6 +19,21 @@ class SyntaxErrBasicTests extends AnyFlatSpec {
     if (exitCode != 100) {
       val filePath = "test/integrationTests/syntaxErrTests/syntaxErrBasicTests.scala"
       val sedCommand = s"""sed -i '0,/"syntaxErr - basic tests: badComment.wacc" should "return exit code 100" in {/s/"syntaxErr - basic tests: badComment.wacc" should "return exit code 100" in {/"syntaxErr - basic tests: badComment.wacc" should "return exit code 100" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 100
+  }
+
+  "syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {
+
+    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/basic/badComment2.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 100) {
+      val filePath = "test/integrationTests/syntaxErrTests/syntaxErrBasicTests.scala"
+      val sedCommand = s"""sed -i '0,/"syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {/s/"syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {/"syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" ignore {/' $filePath"""
       sedCommand.!
     }
 

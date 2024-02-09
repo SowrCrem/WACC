@@ -267,14 +267,13 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       check(elseStat, newSymbolTableFalse, returnType)
       None
     case While(cond, stat) =>
-      val newSymbolTable = symbolTable.enterScope()
       val condType = check(cond, symbolTable, returnType)
       if (condType != Some(BoolTypeNode()(position.pos))) {
         throw new SemanticError(
           s"Type mismatch: While loop condition must be a boolean, got ${condType}"
         )
       }
-      check(stat, newSymbolTable, returnType)
+      check(stat, symbolTable, returnType)
       None
     case BeginEnd(stat) =>
       val newSymbolTable = symbolTable.enterScope()

@@ -85,6 +85,21 @@ class ValidScopeTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
+  "valid - scope tests: scope.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("../test/wacc/valid/scope/scope.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validScopeTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - scope tests: scope.wacc" should "return exit code 0" in {/s/"valid - scope tests: scope.wacc" should "return exit code 0" in {/"valid - scope tests: scope.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
   "valid - scope tests: scopeBasic.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("../test/wacc/valid/scope/scopeBasic.wacc")
@@ -154,21 +169,6 @@ class ValidScopeTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validScopeTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - scope tests: scopeVars.wacc" should "return exit code 0" in {/s/"valid - scope tests: scopeVars.wacc" should "return exit code 0" in {/"valid - scope tests: scopeVars.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
-  "valid - scope tests: scope.wacc" should "return exit code 0" in {
-
-    val path : Array[String] = Array("../test/wacc/valid/scope/scope.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validScopeTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - scope tests: scope.wacc" should "return exit code 0" in {/s/"valid - scope tests: scope.wacc" should "return exit code 0" in {/"valid - scope tests: scope.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

@@ -250,21 +250,6 @@ class ValidFunctionTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" in {
-
-    val path : Array[String] = Array("../test/wacc/valid/function/simple_functions/functionSimpleLoop.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validFunctionTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" in {/s/"valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" in {/"valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
   "valid - simple_functions tests: functionSimple.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("../test/wacc/valid/function/simple_functions/functionSimple.wacc")
@@ -274,6 +259,21 @@ class ValidFunctionTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validFunctionTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - simple_functions tests: functionSimple.wacc" should "return exit code 0" in {/s/"valid - simple_functions tests: functionSimple.wacc" should "return exit code 0" in {/"valid - simple_functions tests: functionSimple.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("../test/wacc/valid/function/simple_functions/functionSimpleLoop.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validFunctionTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" in {/s/"valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" in {/"valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -385,21 +385,6 @@ class ValidFunctionTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" in {
-
-    val path : Array[String] = Array("../test/wacc/valid/function/simple_functions/sameArgName2.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validFunctionTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" in {/s/"valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" in {/"valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
   "valid - simple_functions tests: sameArgName.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("../test/wacc/valid/function/simple_functions/sameArgName.wacc")
@@ -409,6 +394,21 @@ class ValidFunctionTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validFunctionTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - simple_functions tests: sameArgName.wacc" should "return exit code 0" in {/s/"valid - simple_functions tests: sameArgName.wacc" should "return exit code 0" in {/"valid - simple_functions tests: sameArgName.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("../test/wacc/valid/function/simple_functions/sameArgName2.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validFunctionTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" in {/s/"valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" in {/"valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

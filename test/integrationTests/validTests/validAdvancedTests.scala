@@ -10,7 +10,7 @@ class ValidAdvancedTests extends AnyFlatSpec {
 
   "valid - advanced tests: binarySortTree.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("test/wacc/valid/advanced/binarySortTree.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/advanced/binarySortTree.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

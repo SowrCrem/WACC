@@ -9,18 +9,16 @@ import org.scalatest.Pending
 class ValidExpressionsTests extends AnyFlatSpec {
 
   "valid - expressions tests: andExpr.wacc" should "return exit code 0" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/valid/expressions/andExpr.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/expressions/andExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0
   }
 
   "valid - expressions tests: andOverOrExpr.wacc" should "return exit code 0" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/valid/expressions/andOverOrExpr.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/expressions/andOverOrExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 0

@@ -166,7 +166,7 @@ object parser {
 
   val freeParser: Parsley[Stat] = "free" ~> exprParser.map(x => Free(x))
 
-  val beginParser: Parsley[Stat] = "begin" ~> stmtParser <~ "end"
+  val beginParser: Parsley[Stat] = "begin" ~> BeginEnd(stmtParser) <~ "end"
 
   val returnParser: Parsley[Stat] = "return" ~> exprParser.map(x => Return(x))
 

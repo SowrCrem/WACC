@@ -49,6 +49,16 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
     case IdentAsgn(typeNode, ident, expr) =>
       val exprType = check(expr, symbolTable, returnType)
 
+      symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
+        case Some(t) =>
+          throw new SemanticError(
+            s"Identifier ${ident.value} already defined"
+          )
+        case None => {
+          symbolTable.add(ident.value, typeNode)
+        }
+      }
+
       var symbol: TypeNode = typeNode
       (exprType) match {
         case Some(t) if t == typeNode => {
@@ -94,22 +104,29 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
           }
         }
         case _ =>
-          if (expr != ArrayLiter(List())) {
-            throw new SemanticError(
-              s"Type mismatch: expected $typeNode, got ${exprType.getOrElse("None").toString()}"
-            )
-          } else {
+          if (
+            (typeNode == StringTypeNode() && exprType == Some(ArrayTypeNode(
+              CharTypeNode())
+            ))
+          ) {
             symbolTable.add(ident.value, symbol)
             None
+          } else {
+            if (expr != ArrayLiter(List())) {
+              throw new SemanticError(
+                s"Type mismatch: expected $typeNode, got ${exprType.getOrElse("None").toString()}"
+              )
+            } else {
+              symbolTable.add(ident.value, symbol)
+              None
+            }
           }
-      }
 
-      println(symbol)
+      }
       None
     case AsgnEq(lhs, rhs) =>
       val lhsType = check(lhs, symbolTable, returnType)
       val rhsType = check(rhs, symbolTable, returnType)
-
       if (lhsType != rhsType) {
 
         throw new SemanticError(
@@ -124,7 +141,8 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
               throw new SemanticError(
                 s"Type mismatch: cannot assign to function"
               )
-            case _ => None
+            case _ =>
+              None
           }
         }
         case _ => None
@@ -154,7 +172,13 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
       val exprType = check(expr, symbolTable, returnType)
 
-      if (exprType != returnType) {
+      if (
+        exprType != returnType && !(compatiblePairTypes(
+          exprType.getOrElse(IntLiter(0)),
+          returnType.getOrElse(IntLiter(0))
+        ))
+      ) {
+
         throw new SemanticError(
           s"Type mismatch: Function expected to return ${returnType
               .getOrElse("None")
@@ -242,7 +266,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
         }
         val argTypes = argList.map(arg => check(arg, symbolTable, returnType))
         argTypes.zip(expected).forall { case (argType, expectedType) =>
-          argType == Some(expectedType)
+          argType == Some(expectedType) || argType == Some(Null())
         }
       }
       symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
@@ -267,9 +291,17 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       } else if (exprType.distinct.length == 0) {
         None
       } else {
-        throw new SemanticError(
-          s"Type mismatch: ArrayLiter expected all elements to be of the same type"
-        )
+        // need to allow weakening of char[] into string
+        if (
+          exprType.distinct.length == 2 && exprType.contains(
+            Some(ArrayTypeNode(CharTypeNode()))
+          ) && exprType.contains(Some(StringTypeNode()))
+        ) {
+          Some(ArrayTypeNode(StringTypeNode()))
+        } else
+          throw new SemanticError(
+            s"Type mismatch: ArrayLiter expected all elements to be of the same type"
+          )
       }
     case FstNode(expr) =>
       check(expr, symbolTable, returnType) match {
@@ -303,23 +335,27 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
               } else {
                 // For a single-dimensional array accessed once, return the element type.
                 // For multi-dimensional arrays or deeper accesses, we need to peel off the array layers accordingly.
-                val arrType = eList.foldLeft(elementType)((acc, _) =>
-                  acc match {
-                    case ArrayTypeNode(t) => t
-                    case t                => t
-                  }
-                )
-                val node = eList.foldLeft(elementType)((acc, _) =>
-                  acc match {
-                    case ArrayTypeNode(t) if t != arrType => t
-                    case ArrayTypeNode(t)                 => ArrayTypeNode(t)
-                    case t =>
-                      throw new SemanticError(
-                        s"Array access too deep"
-                      )
-                  }
-                )
-                Some(node)
+                if (eList.length == 1) {
+                  Some(elementType)
+                } else {
+                  val arrType = eList.foldLeft(elementType)((acc, _) =>
+                    acc match {
+                      case ArrayTypeNode(t) => t
+                      case t                => t
+                    }
+                  )
+                  val node = eList.foldLeft(elementType)((acc, _) =>
+                    acc match {
+                      case ArrayTypeNode(t) if t != arrType => t
+                      case ArrayTypeNode(t)                 => ArrayTypeNode(t)
+                      case t =>
+                        throw new SemanticError(
+                          s"Array access too deep"
+                        )
+                    }
+                  )
+                  Some(node)
+                }
               }
             case _ =>
               throw new SemanticError(
@@ -347,8 +383,19 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       checkCompBinOp(lhs, rhs, symbolTable, returnType)
     case LessThanEq(lhs, rhs) =>
       checkCompBinOp(lhs, rhs, symbolTable, returnType)
-    case Equals(lhs, rhs) =>
-      checkCompBinOp(lhs, rhs, symbolTable, returnType)
+    case Equals(lhs, rhs) => {
+      val lhsType = check(lhs, symbolTable, returnType)
+      val rhsType = check(rhs, symbolTable, returnType)
+      if (
+        lhsType == rhsType || rhsType == Some(Null()) || lhsType == Some(Null())
+      ) {
+        Some(BoolTypeNode())
+      } else {
+        throw new SemanticError(
+          s"Type mismatch: Equals expected two of the same type, got ${lhsType} and ${rhsType}"
+        )
+      }
+    }
     case NotEquals(lhs, rhs) =>
       checkCompBinOp(lhs, rhs, symbolTable, returnType)
     case And(lhs, rhs) =>
@@ -413,8 +460,45 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
     case Brackets(expr) => check(expr, symbolTable, returnType)
     case Null()         => Some(Null())
+    case Skip()         => None
     case x =>
       throw new SemanticError(s"Type checking not implemented for $x")
+  }
+
+  def compatiblePairTypes(
+      pair1: Node,
+      pair2: Node
+  ): Boolean = {
+    pair1 match {
+      case PairTypeNode(x, y) =>
+        pair2 match {
+          case PairTypeNode(expectedX, expectedY) => {
+            val xCompat = (x, expectedX) match {
+              case (Null(), PairTypeNode(a, b)) => {
+                true
+              }
+              case (PairTypeNode(a, b), Null()) => {
+                true
+              }
+              case (a, b) => a == b
+              case _      => false
+            }
+            val yCompat = (y, expectedY) match {
+              case (Null(), PairTypeNode(a, b)) => {
+                true
+              }
+              case (PairTypeNode(_, _), Null()) => {
+                true
+              }
+              case (a, b) => a == b
+              case _      => false
+            }
+            xCompat && yCompat
+          }
+          case _ => false
+        }
+      case _ => false
+    }
   }
 
   def checkBoolBinOp(

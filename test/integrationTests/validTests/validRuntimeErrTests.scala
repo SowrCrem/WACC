@@ -85,21 +85,6 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" ignore {
-
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero/divideByZero.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" in {/s/"valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" in {/"valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
   "valid - divideByZero tests: divZero.wacc" should "return exit code 0" ignore {
 
     val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero/divZero.wacc")
@@ -109,6 +94,21 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - divideByZero tests: divZero.wacc" should "return exit code 0" in {/s/"valid - divideByZero tests: divZero.wacc" should "return exit code 0" in {/"valid - divideByZero tests: divZero.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" ignore {
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/divideByZero/divideByZero.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" in {/s/"valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" in {/"valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -139,6 +139,36 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - integerOverflow tests: intJustOverflow.wacc" should "return exit code 0" in {/s/"valid - integerOverflow tests: intJustOverflow.wacc" should "return exit code 0" in {/"valid - integerOverflow tests: intJustOverflow.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" ignore {
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intUnderflow.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {/s/"valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {/"valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" ignore {
+
+    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intWayOverflow.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {/s/"valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {/"valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -214,51 +244,6 @@ class ValidRuntimeErrTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - integerOverflow tests: intnegateOverflow4.wacc" should "return exit code 0" in {/s/"valid - integerOverflow tests: intnegateOverflow4.wacc" should "return exit code 0" in {/"valid - integerOverflow tests: intnegateOverflow4.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
-  "valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" ignore {
-
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intnegateOverflow.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {/s/"valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {/"valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
-  "valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" ignore {
-
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intUnderflow.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {/s/"valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {/"valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
-  "valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" ignore {
-
-    val path : Array[String] = Array("test/wacc/valid/runtimeErr/integerOverflow/intWayOverflow.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validRuntimeErrTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {/s/"valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {/"valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

@@ -66,9 +66,14 @@ class parseStatements extends AnyFlatSpec {
     parser.parse("begin " + statement + " end") shouldBe Success(Program(List(), expected))
   }
 
-  def parseFails(statement: String): Assertion = {
-    parser.parse("begin " + statement + " end") should matchPattern {
+  def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
+    case "" => parser.parse("begin exit " + input + " end") should matchPattern {
       case Failure(_) => // Match on any Failure
+    }
+    // Match on a Failure with the specific error message
+    case _ => parser.parse("begin exit " + input + " end") match {
+      case Failure (msg) => msg shouldBe errorMessage
+      case _ => fail("Wrong Error Message")
     }
   }
 
@@ -187,6 +192,37 @@ class parseStatements extends AnyFlatSpec {
 
   it should "parse multiple statements" in {
     parseSucceeds("skip; skip", StatJoin(List(Skip(), Skip())))
+  }
 
+  it should "reject trailing semicolon" in {
+    val errorBuilder = new StringBuilder()
+    errorBuilder.append("(line 1, column 13):\n")
+    errorBuilder.append("  unexpected keyword end\n")
+    errorBuilder.append("  expected statement\n")
+    errorBuilder.append("  >begin skip; end\n")
+    errorBuilder.append("               ^^^")
+    parseFails("skip;", errorBuilder.toString())
+    parseFails("skip;;", "EROR")
+    // Both have the exact same error message
+  }
+
+  // it should "reject statement closing parenthesis" in {
+  //   val errorBuilder = new StringBuilder()
+  //   errorBuilder.append("(line 1, column 13):\n")
+  //   errorBuilder.append("  unexpected closing parenthesis\n")
+  //   errorBuilder.append("  expected end\n")
+  //   errorBuilder.append("  >begin skip) end\n")
+  //   errorBuilder.append("             ^")
+  //   parseFails("return 5)", errorBuilder.toString())
+  // }
+  
+  it should "reject statement parenthesisation" in {
+    val errorBuilder = new StringBuilder()
+    errorBuilder.append("(line 1, column 13):\n")
+    errorBuilder.append("  unexpected opening parenthesis\n")
+    errorBuilder.append("  expected \"\"\", \"\'\", \"(\", \"+\", \"-\", arithmetic operator, boolean, digit, expected start of array, fst, identifier, logical operator, newpair, null, snd, or unary operator\n")
+    errorBuilder.append("  >begin (return 5) end\n")
+    errorBuilder.append("         ^")
+    parseFails("(return 5)", errorBuilder.toString())
   }
 }

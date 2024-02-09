@@ -86,7 +86,6 @@ object parser {
     Ops(InfixR)(And <# "&&"),
     Ops(InfixR)(Or <# "||")
   )
-
   lazy val arrayLiteralParser: Parsley[Expr] = {
     val arrayLiteral = "[" ~> sepBy(exprParser, ",") <~ "]"
     ArrayLiter(arrayLiteral)

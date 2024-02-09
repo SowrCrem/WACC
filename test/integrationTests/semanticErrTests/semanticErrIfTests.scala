@@ -10,10 +10,10 @@ class SemanticErrIfTests extends AnyFlatSpec {
 
   "semanticErr - if tests: ifIntCondition.wacc" should "return exit code 200" in {
 
-    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/if/ifIntCondition.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-    exitCode shouldBe 200
-  }
+                val path : Array[String] = Array("test/wacc/invalid/semanticErr/if/ifIntCondition.wacc")
+                val exitCode = Main.compile(path)
+                println("Exit Code: " + exitCode)
+                exitCode shouldBe 200
+            }
 
 }

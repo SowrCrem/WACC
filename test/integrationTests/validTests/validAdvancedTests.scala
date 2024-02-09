@@ -10,28 +10,26 @@ class ValidAdvancedTests extends AnyFlatSpec {
 
   "valid - advanced tests: binarySortTree.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("../test/wacc/valid/advanced/binarySortTree.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-    exitCode shouldBe 0
-  }
+                val path : Array[String] = Array("test/wacc/valid/advanced/binarySortTree.wacc")
+                val exitCode = Main.compile(path)
+                println("Exit Code: " + exitCode)
+                exitCode shouldBe 0
+            }
 
   "valid - advanced tests: hashTable.wacc" should "return exit code 0" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/valid/advanced/hashTable.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-    exitCode shouldBe 0
-  }
+                val path : Array[String] = Array("test/wacc/valid/advanced/hashTable.wacc")
+                val exitCode = Main.compile(path)
+                println("Exit Code: " + exitCode)
+                exitCode shouldBe 0
+            }
 
   "valid - advanced tests: ticTacToe.wacc" should "return exit code 0" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/valid/advanced/ticTacToe.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-    exitCode shouldBe 0
-  }
+                val path : Array[String] = Array("test/wacc/valid/advanced/ticTacToe.wacc")
+                val exitCode = Main.compile(path)
+                println("Exit Code: " + exitCode)
+                exitCode shouldBe 0
+            }
 
 }

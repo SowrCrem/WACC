@@ -60,45 +60,38 @@ class SemanticErrArrayTests extends AnyFlatSpec {
   }
 
   "semanticErr - array tests: noArrayCovariance.wacc" should "return exit code 200" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/noArrayCovariance.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/noArrayCovariance.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
   }
 
   "semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/nonMatchingArrays.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/nonMatchingArrays.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
   }
 
   "semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {
-    pending
-
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/noStringIndex.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/noStringIndex.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
   }
 
   "semanticErr - array tests: wrongArrayDimension.wacc" should "return exit code 200" in {
-    pending
-
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/wrongArrayDimension.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/wrongArrayDimension.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200
   }
 
   "semanticErr - array tests: wrongArrayType.wacc" should "return exit code 200" in {
-    pending
 
-    val path : Array[String] = Array("test/wacc/invalid/semanticErr/array/wrongArrayType.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/semanticErr/array/wrongArrayType.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
     exitCode shouldBe 200

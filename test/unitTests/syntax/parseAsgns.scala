@@ -107,6 +107,11 @@ class parseAsgns extends AnyFlatSpec {
     parser.parse("begin int[][] input = [[1,2],[3,4]] end") shouldBe Success(Program(List(), expected))
   }
 
+  it should "Parse empty array assignments" in {
+    val expected = IdentAsgn(ArrayTypeNode(IntTypeNode()), Ident("input"), ArrayLiter(List()))
+    parser.parse("begin int[] input = [] end") shouldBe Success(Program(List(), expected))
+  }
+
 
   // Tests for Comment ------------------------------------------------------------------------------------------
   it should "ignore comments" in {

@@ -34,10 +34,12 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       (exprType) match {
         case Some(t) if t == typeNode => None
         case _ =>
-          throw new SemanticError(
-            s"Type mismatch: expected $typeNode, got $exprType"
-          )
-      } 
+          if (expr != ArrayLiter(List())) {
+            throw new SemanticError(
+              s"Type mismatch: expected $typeNode, got ${exprType.getOrElse("None").toString()}"
+            )
+          }
+      }
       symbolTable.add(ident.value, typeNode)
       Some(typeNode)
 
@@ -179,9 +181,11 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       val exprType = exprList.map(expr => check(expr, symbolTable, returnType))
       if (exprType.distinct.length == 1) {
         Some(ArrayTypeNode(exprType.head.get))
+      } else if (exprType.distinct.length == 0) {
+        None
       } else {
         throw new SemanticError(
-          s"Type mismatch: ArrayLiter expected all elements to be of the same type, got ${exprType}"
+          s"Type mismatch: ArrayLiter expected all elements to be of the same type"
         )
       }
     case FstNode(expr) =>
@@ -216,12 +220,23 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
               } else {
                 // For a single-dimensional array accessed once, return the element type.
                 // For multi-dimensional arrays or deeper accesses, we need to peel off the array layers accordingly.
-                eList.length match {
-                  case 1 => Some(elementType)
-                  case _ =>
-                    val node = eList.foldLeft(elementType)((acc, _) => ArrayTypeNode(acc))
-                    Some(node)
-                }
+                val arrType = eList.foldLeft(elementType)((acc, _) =>
+                  acc match {
+                    case ArrayTypeNode(t) => t
+                    case t                => t
+                  }
+                )
+                val node = eList.foldLeft(elementType)((acc, _) =>
+                  acc match {
+                    case ArrayTypeNode(t) if t != arrType => t
+                    case ArrayTypeNode(t)                 => ArrayTypeNode(t)
+                    case t =>
+                      throw new SemanticError(
+                        s"Array access too deep"
+                      )
+                  }
+                )
+                Some(node)
               }
             case _ =>
               throw new SemanticError(

@@ -218,7 +218,8 @@ object parser {
 
   }
 
-  // Check if functions last statment is a valid ending statement
+  // Usage: go through every function in our program and call this on it
+  // TODO: Check if functions last statment is a valid ending statement - only check last
   def validEndingStatement(stmts: List[Stat]): Boolean = {
     stmts.last match {
       case (Return(_)) => true
@@ -228,6 +229,15 @@ object parser {
       case While(_, s) => validEndingStatement(List(s))
       case _           => false
     } 
+  }
+
+  def validEndingStatement(stmt: Stat): Boolean = stmt match {
+    case (StatJoin(stmts)) => validEndingStatement(stmts)
+    case stmt              => validEndingStatement(List(stmt))
+  }
+
+  def validFunction(func: Func): Boolean = {
+    validEndingStatement(func.stat)
   }
 
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))

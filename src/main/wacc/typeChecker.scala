@@ -18,17 +18,32 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       returnType: Option[TypeNode]
   ): Option[TypeNode] = node match {
     case Program(funcList, stat) =>
+
+      println(Program(funcList, stat))
       funcList.foreach(func => check(func, symbolTable, None))
       check(stat, symbolTable, None)
       None // Program has no type
     case Func(typeNode, ident, paramList, stat) =>
-      val newSymbolTable = symbolTable.enterScope()
-      paramList.paramList.foreach(param =>
-        newSymbolTable.add(param.ident.value, param.typeNode)
-      )
-      check(stat, newSymbolTable, Some(typeNode))
-      symbolTable.add(ident.value, Func(typeNode, ident, paramList, stat))
-      Some(typeNode)
+      (symbolTable.lookupAll(ident.value, Some(symbolTable))) match {
+        case Some(_) =>
+          throw new SemanticError(
+            s"Function ${ident.value} already defined"
+          )
+        case _ => {
+          val newSymbolTable = symbolTable.enterScope()
+          paramList.paramList.foreach(param =>{
+            if (newSymbolTable.lookupAll(param.ident.value, Some(newSymbolTable)) != None) {
+              throw new SemanticError(
+                s"Parameter ${param.ident.value} already defined"
+              )
+            }
+            newSymbolTable.add(param.ident.value, param.typeNode)
+          })
+          check(stat, newSymbolTable, Some(typeNode))
+          symbolTable.add(ident.value, Func(typeNode, ident, paramList, stat))
+          Some(typeNode)
+        }
+      }
     case IdentAsgn(typeNode, ident, expr) =>
       val exprType = check(expr, symbolTable, returnType)
       (exprType) match {
@@ -46,12 +61,27 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
     case AsgnEq(lhs, rhs) =>
       val lhsType = check(lhs, symbolTable, returnType)
       val rhsType = check(rhs, symbolTable, returnType)
+
       if (lhsType != rhsType) {
+
         throw new SemanticError(
           s"Type mismatch: expected $lhsType, got $rhsType"
         )
       }
-      None
+
+      (lhs) match {
+        case Ident(value) => {
+          (symbolTable.lookupAll(value, Some(symbolTable))) match {
+            case Some(Func(_, _, _, _)) =>
+              throw new SemanticError(
+                s"Type mismatch: cannot assign to function"
+              )
+            case _ => None
+          }
+        }
+        case _ => None
+      }
+
     case Read(lhs) =>
       check(lhs, symbolTable, returnType) match {
         case Some(IntTypeNode()) | Some(CharTypeNode()) => None
@@ -78,7 +108,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
 
       if (exprType != returnType) {
         throw new SemanticError(
-          s"Type mismatch: expected $returnType, got $exprType"
+          s"Type mismatch: Function expected to return ${returnType.getOrElse("None").toString()}, got ${exprType.getOrElse("None").toString()}"
         )
       }
       None
@@ -325,9 +355,9 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
             case (Func(typeNode, _, _, _)) => Some(typeNode)
             case _                         => Some(t.asInstanceOf[TypeNode])
           }
-        case _ =>
+        case None =>
           throw new SemanticError(
-            s"Type mismatch: Ident expected a type, got ${symbolTable.lookup(value)}"
+            s"identifier does not exist: ${value}"
           )
       }
     case Brackets(expr) => check(expr, symbolTable, returnType)
@@ -381,9 +411,15 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
   ): Option[BoolTypeNode] = {
     val lhsType = check(lhs, symbolTable, returnType)
     val rhsType = check(rhs, symbolTable, returnType)
-  
+
     if (lhsType == rhsType) {
-      if ((lhsType == Some(IntTypeNode()) || lhsType == Some(CharTypeNode())) && (rhsType == Some(IntTypeNode()) || rhsType == Some(CharTypeNode()))){
+      if (
+        (lhsType == Some(IntTypeNode()) || lhsType == Some(
+          CharTypeNode()
+        )) && (rhsType == Some(IntTypeNode()) || rhsType == Some(
+          CharTypeNode()
+        ))
+      ) {
         return Some(BoolTypeNode())
       } else {
         throw new SemanticError(

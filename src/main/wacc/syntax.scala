@@ -205,6 +205,10 @@ case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode {
   override def toString: String = s"array of $elementType"
 }
 
+case class FuncTypeNode(returnType: TypeNode) extends TypeNode {
+  override def toString: String = s"function returning $returnType"
+}
+
 sealed trait PairElemTypeNode extends TypeNode 
 
 case class ErrorTypeNode() extends TypeNode with PairElemTypeNode 

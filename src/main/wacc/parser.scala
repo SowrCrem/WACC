@@ -20,6 +20,8 @@ import parsley.Parsley.notFollowedBy
 import parsley.debug._
 import parsley.Parsley.lookAhead
 import parsley.character.noneOf
+import parsley.{Success, Failure}
+import scala.sys.process._
 
 object parser {
 
@@ -215,11 +217,8 @@ object parser {
       readParser | freeParser | returnParser |
       exitParser | printParser | printlnParser |
       ifParser | whileParser | beginParser
-
   }
 
-  // Usage: go through every function in our program and call this on it
-  // TODO: Check if functions last statment is a valid ending statement - only check last
   def validEndingStatement(stmts: List[Stat]): Boolean = {
     stmts.last match {
       case (Return(_)) => true
@@ -235,10 +234,6 @@ object parser {
   def validEndingStatement(stmt: Stat): Boolean = stmt match {
     case (StatJoin(stmts)) => validEndingStatement(stmts)
     case stmt              => validEndingStatement(List(stmt))
-  }
-
-  def validFunction(func: Func): Boolean = {
-    validEndingStatement(func.stat)
   }
 
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
@@ -275,6 +270,14 @@ object parser {
     "is" ~> stmtParser <~ "end"
   )
 
+  def validFunction(func: Func): Boolean = {
+    validEndingStatement(func.stat)
+  }
+
+  def validFunctions(funcs: List[Func]): Boolean = {
+    funcs.forall(func => validFunction(func))
+  }
+
   // -- Program Parser --------------------------------------------- //
   val program: Parsley[Node] =
     Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
@@ -282,6 +285,8 @@ object parser {
   // -- Parser ---------------------------------------------------- //
   val parser = fully(program)
 
-  def parse(input: String): Result[String, Node] = parser.parse(input)
-
+  def parse(filename: String): Result[String, Node] = {
+    val fileContent = ("cat " + filename).!!
+    parser.parse(fileContent)
+  }
 }

@@ -69,7 +69,13 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
           )
       }
     case Return(expr) =>
+      if (returnType == None) {
+        throw new SemanticError(
+          s"Return statement outside of function is not allowed"
+        )
+      }
       val exprType = check(expr, symbolTable, returnType)
+
       if (exprType != returnType) {
         throw new SemanticError(
           s"Type mismatch: expected $returnType, got $exprType"
@@ -82,31 +88,27 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
         case Some(IntTypeNode()) => None
         case _ =>
           throw new SemanticError(
-            s"Exit statement requires an int expression, got ${exprType}"
+            s"Exit statement requires an int expression, got ${exprType.getOrElse(None).toString()}"
           )
       }
     case Print(expr) =>
       val exprType = check(expr, symbolTable, returnType)
       exprType match {
-        case Some(IntTypeNode()) | Some(CharTypeNode()) | Some(
-              StringTypeNode()
-            ) =>
+        case Some(t) =>
           None
         case _ =>
           throw new SemanticError(
-            s"Type mismatch: Print expected int, char or string, got ${exprType}"
+            s"Type mismatch: Print expected a value got ${exprType.getOrElse(None).toString()}"
           )
       }
     case Println(expr) =>
       val exprType = check(expr, symbolTable, returnType)
       exprType match {
-        case Some(IntTypeNode()) | Some(CharTypeNode()) | Some(
-              StringTypeNode()
-            ) =>
+        case Some(t) =>
           None
         case _ =>
           throw new SemanticError(
-            s"Type mismatch: Println expected int, char or string, got ${exprType}"
+            s"Type mismatch: Println a value, got ${exprType.getOrElse(None).toString()}"
           )
       }
     case If(cond, ifStat, elseStat) =>
@@ -345,7 +347,9 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       Some(BoolTypeNode())
     } else {
       throw new SemanticError(
-        s"Type mismatch: expected two booleans, got ${lhsType} and ${rhsType}"
+        s"Type mismatch: Binary bool operator expected two booleans, got ${lhsType
+            .getOrElse("None")
+            .toString()} and ${rhsType.getOrElse("None").toString()}"
       )
     }
   }
@@ -377,8 +381,17 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
   ): Option[BoolTypeNode] = {
     val lhsType = check(lhs, symbolTable, returnType)
     val rhsType = check(rhs, symbolTable, returnType)
+  
     if (lhsType == rhsType) {
-      Some(BoolTypeNode())
+      if ((lhsType == Some(IntTypeNode()) || lhsType == Some(CharTypeNode())) && (rhsType == Some(IntTypeNode()) || rhsType == Some(CharTypeNode()))){
+        return Some(BoolTypeNode())
+      } else {
+        throw new SemanticError(
+          s"Type mismatch: Binary comparison operator expected two integers or two chars, got ${lhsType
+              .getOrElse("None")
+              .toString()} and ${rhsType.getOrElse("None").toString()}"
+        )
+      }
     } else {
       throw new SemanticError(
         s"Type mismatch: expected two of the same type, got ${lhsType} and ${rhsType}"

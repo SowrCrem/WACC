@@ -205,10 +205,12 @@ case class ArrayTypeNode(elementType: TypeNode) extends PairElemTypeNode {
   override def toString: String = s"array of $elementType"
 }
 
-sealed trait PairElemTypeNode extends TypeNode
+sealed trait PairElemTypeNode extends TypeNode 
 
 case class ErrorTypeNode() extends TypeNode with PairElemTypeNode 
 
 
-case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode) extends TypeNode with LValue
-object PairTypeNode extends generic.ParserBridge2[PairElemTypeNode, PairElemTypeNode, TypeNode]
+case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode) extends TypeNode with LValue {
+  override def toString: String = s"pair of $fst and $snd"
+}
+object PairTypeNode extends generic.ParserBridge2[PairElemTypeNode, PairElemTypeNode, TypeNode] 

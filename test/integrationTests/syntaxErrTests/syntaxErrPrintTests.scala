@@ -10,9 +10,9 @@ import scala.sys.process._
 
 class SyntaxErrPrintTests extends AnyFlatSpec {
 
-  "syntaxErr - print tests: printlnCharArry.wacc" should "return exit code 100" ignore {
+  "syntaxErr - print tests: printlnCharArry.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("test/wacc/invalid/syntaxErr/print/printlnCharArry.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/print/printlnCharArry.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 

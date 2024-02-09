@@ -112,7 +112,7 @@ object parser {
   }
 
   lazy val pairElemTypeParser: Parsley[PairElemTypeNode] =
-    atomic(arrayTypeParser) | baseType
+    atomic(arrayTypeParser) | atomic(baseType) | "pair".as(ErasedPairTypeNode())
 
   lazy val pairType: Parsley[PairTypeNode] = {
     val pairType =

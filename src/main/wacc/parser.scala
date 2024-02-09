@@ -191,7 +191,8 @@ object parser {
 
   }
 
-  // Check if functions last statment is a valid ending statement
+  // Usage: go through every function in our program and call this on it
+  // TODO: Check if functions last statment is a valid ending statement - only check last
   def validEndingStatement(stmts: List[Stat]): Boolean = {
     stmts.last match {
       case (Return(_)) => true

@@ -134,7 +134,9 @@ object Call extends ParserBridgePos2[Ident, List[Expr], Call]
 case class ArrayLiter(exprList: List[Expr])(val pos: (Int, Int)) extends Expr  
 object ArrayLiter extends ParserBridgePos1[List[Expr], ArrayLiter]
 
-case class FstNode(expr: Expr)(val pos: (Int, Int)) extends Expr with LValue
+case class FstNode(expr: Expr)(val pos: (Int, Int)) extends Expr with LValue {
+  override def toString: String = s"first element of $expr"
+}
 object FstNode extends ParserBridgePos1[Expr, FstNode]
 
 case class SndNode(expr: Expr)(val pos: (Int, Int)) extends Expr with LValue

@@ -55,7 +55,12 @@ object parser {
 
   lazy val newpairParser: Parsley[Expr] = NewPair("newpair" ~> "(" ~> exprParser, "," ~> exprParser <~ ")")
 
-  lazy val pairLitParser: Parsley[Expr] = "fst" ~> FstNode(identifierParser) | "snd" ~> SndNode(identifierParser) | newpairParser | Null <# "null"
+  val fstParser: Parsley[Expr] = some("fst") ~> FstNode(exprParser)
+
+  val sndParser: Parsley[Expr] = some("snd") ~> SndNode(exprParser)
+
+
+  lazy val pairLitParser: Parsley[Expr] = fstParser | sndParser | newpairParser | Null <# "null"
 
   // -- Expression Parsers ----------------------------------------- //
 

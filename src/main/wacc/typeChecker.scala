@@ -255,14 +255,16 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
           )
       }
     case If(cond, ifStat, elseStat) =>
+      val newSymbolTableTrue = symbolTable.enterScope()
+      val newSymbolTableFalse = symbolTable.enterScope()
       val condType = check(cond, symbolTable, returnType)
       if (condType != Some(BoolTypeNode()(position.pos))) {
         throw new SemanticError(
           s"Type mismatch: If condition must be boolean, got ${condType}"
         )
       }
-      check(ifStat, symbolTable, returnType)
-      check(elseStat, symbolTable, returnType)
+      check(ifStat, newSymbolTableTrue, returnType)
+      check(elseStat, newSymbolTableFalse, returnType)
       None
     case While(cond, stat) =>
       val condType = check(cond, symbolTable, returnType)

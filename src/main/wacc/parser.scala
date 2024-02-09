@@ -65,7 +65,7 @@ object parser {
     atoms | pairLitParser | arrayLiteralParser
   )(
     Ops(Prefix)(Not from "!"),
-    Ops(Prefix)(Neg from "-" <~ notFollowedBy("-")),
+    Ops(Prefix)(Neg from "-"),
     Ops(Prefix)(Len from "len"),
     Ops(Prefix)(Ord from "ord"),
     Ops(Prefix)(Chr from "chr"),

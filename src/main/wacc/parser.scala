@@ -60,6 +60,9 @@ object parser {
   val sndParser: Parsley[Expr] = some("snd") ~> SndNode(exprParser)
 
 
+  lazy val pairElemParser: Parsley[Expr] = fstParser | sndParser
+
+
   lazy val pairLitParser: Parsley[Expr] = fstParser | sndParser | newpairParser | Null <# "null"
 
   // -- Expression Parsers ----------------------------------------- //
@@ -119,6 +122,7 @@ object parser {
 
   lazy val pairType: Parsley[PairTypeNode] = PairTypeNode("pair" ~> "(" ~> pairElemTypeParser <~ ",", pairElemTypeParser <~ ")")
 
+
   lazy val typeParser: Parsley[TypeNode] =
     atomic(arrayTypeParser) | baseType | pairType
 
@@ -141,9 +145,9 @@ object parser {
 
   val exitParser: Parsley[Stat] = Exit("exit" ~> exprParser)
 
-  val printParser: Parsley[Stat] = Print("print" ~> exprParser)
+  val printParser: Parsley[Stat] = Print("print" ~> notFollowedBy(pairElemParser) ~> exprParser)
 
-  val printlnParser: Parsley[Stat] = Println("println" ~> exprParser)
+  val printlnParser: Parsley[Stat] = Println("println" ~> notFollowedBy(pairElemParser) ~> exprParser)
 
   val callParser: Parsley[Stat] = Call("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
 

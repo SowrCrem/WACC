@@ -265,6 +265,21 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
+  "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("../test/wacc/valid/expressions/longExpr.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validExpressionsTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - expressions tests: longExpr.wacc" should "return exit code 0" in {/s/"valid - expressions tests: longExpr.wacc" should "return exit code 0" in {/"valid - expressions tests: longExpr.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
   "valid - expressions tests: longExpr2.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("../test/wacc/valid/expressions/longExpr2.wacc")
@@ -295,15 +310,15 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
+  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("../test/wacc/valid/expressions/longExpr.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/expressions/longSplitExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validExpressionsTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - expressions tests: longExpr.wacc" should "return exit code 0" in {/s/"valid - expressions tests: longExpr.wacc" should "return exit code 0" in {/"valid - expressions tests: longExpr.wacc" should "return exit code 0" ignore {/' $filePath"""
+      val sedCommand = s"""sed -i '0,/"valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {/s/"valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {/"valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -319,21 +334,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validExpressionsTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - expressions tests: longSplitExpr2.wacc" should "return exit code 0" in {/s/"valid - expressions tests: longSplitExpr2.wacc" should "return exit code 0" in {/"valid - expressions tests: longSplitExpr2.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
-  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
-
-    val path : Array[String] = Array("../test/wacc/valid/expressions/longSplitExpr.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validExpressionsTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {/s/"valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {/"valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -550,21 +550,6 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {
-
-    val path : Array[String] = Array("../test/wacc/valid/expressions/notequalsExpr.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 0) {
-      val filePath = "test/integrationTests/validTests/validExpressionsTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {/s/"valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {/"valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 0
-  }
-
   "valid - expressions tests: notExpr.wacc" should "return exit code 0" in {
 
     val path : Array[String] = Array("../test/wacc/valid/expressions/notExpr.wacc")
@@ -580,15 +565,15 @@ class ValidExpressionsTests extends AnyFlatSpec {
     exitCode shouldBe 0
   }
 
-  "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {
+  "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {
 
-    val path : Array[String] = Array("../test/wacc/valid/expressions/ordAndchrExpr.wacc")
+    val path : Array[String] = Array("../test/wacc/valid/expressions/notequalsExpr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validExpressionsTests.scala"
-      val sedCommand = s"""sed -i '0,/"valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {/s/"valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {/"valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" ignore {/' $filePath"""
+      val sedCommand = s"""sed -i '0,/"valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {/s/"valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {/"valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -604,6 +589,21 @@ class ValidExpressionsTests extends AnyFlatSpec {
     if (exitCode != 0) {
       val filePath = "test/integrationTests/validTests/validExpressionsTests.scala"
       val sedCommand = s"""sed -i '0,/"valid - expressions tests: orExpr.wacc" should "return exit code 0" in {/s/"valid - expressions tests: orExpr.wacc" should "return exit code 0" in {/"valid - expressions tests: orExpr.wacc" should "return exit code 0" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 0
+  }
+
+  "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {
+
+    val path : Array[String] = Array("../test/wacc/valid/expressions/ordAndchrExpr.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 0) {
+      val filePath = "test/integrationTests/validTests/validExpressionsTests.scala"
+      val sedCommand = s"""sed -i '0,/"valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {/s/"valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {/"valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" ignore {/' $filePath"""
       sedCommand.!
     }
 

@@ -173,22 +173,6 @@ object parser {
       ifParser | whileParser | beginParser
   }
 
-  def validEndingStatement(stmts: List[Stat]): Boolean = {
-    stmts.last match {
-      case If(_, s1, s2)      => validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
-      case While(_, s)        => validEndingStatement(List(s))
-      case BeginEnd(stat)     => validEndingStatement(stat)
-      case StatJoin(stats)    => validEndingStatement(stats)
-      case Skip()             => false
-      case _                  => true
-    } 
-  }
-
-  def validEndingStatement(stmt: Stat): Boolean = stmt match {
-    case (StatJoin(stmts)) => validEndingStatement(stmts)
-    case stmt              => validEndingStatement(List(stmt))
-  }
-
   val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
 
   val stmtParser: Parsley[Stat] =
@@ -215,13 +199,6 @@ object parser {
 
   val funcParser: Parsley[Func] = Func(typeParser, identifierParser,"(" ~> paramListParser <~ ")", "is" ~> stmtParser <~ "end")
 
-  def validFunction(func: Func): Boolean = {
-    validEndingStatement(func.stat)
-  }
-
-  def validFunctions(funcs: List[Func]): Boolean = {
-    funcs.forall(func => validFunction(func))
-  }
 
   // -- Program Parser --------------------------------------------- //
   val program: Parsley[Program] = Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
@@ -231,4 +208,18 @@ object parser {
 
   def parse(input: String): Result[String, Program] = parser.parse(input)
 
+
+  // -- AST Validation -------------------------------------------- //
+  def validEndingStatement(stmt: Stat): Boolean = stmt match {
+    case Return(_) | Exit(_) => true
+    case If(_, s1, s2) => validEndingStatement(s1) && validEndingStatement(s2)
+    case While(_, s) => validEndingStatement(s)
+    case BeginEnd(s) => validEndingStatement(s)
+    case StatJoin(stats) => stats.forall(validEndingStatement)
+    case _ => false
+  }
+
+  def validFunction(func: Func): Boolean = validEndingStatement(func.stat)
+
+  def validFunctions(funcs: List[Func]): Boolean = funcs.forall(validFunction)
 }

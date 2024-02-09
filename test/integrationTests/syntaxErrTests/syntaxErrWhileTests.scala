@@ -40,15 +40,15 @@ class SyntaxErrWhileTests extends AnyFlatSpec {
     exitCode shouldBe 100
   }
 
-  "syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {
+  "syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/while/whileNodone.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/while/whilErr.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
     if (exitCode != 100) {
       val filePath = "test/integrationTests/syntaxErrTests/syntaxErrWhileTests.scala"
-      val sedCommand = s"""sed -i '0,/"syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {/s/"syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {/"syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" ignore {/' $filePath"""
+      val sedCommand = s"""sed -i '0,/"syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {/s/"syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {/"syntaxErr - while tests: whilErr.wacc" should "return exit code 100" ignore {/' $filePath"""
       sedCommand.!
     }
 
@@ -70,15 +70,15 @@ class SyntaxErrWhileTests extends AnyFlatSpec {
     exitCode shouldBe 100
   }
 
-  "syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {
+  "syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {
 
-    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/while/whilErr.wacc")
+    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/while/whileNodone.wacc")
     val exitCode = Main.compile(path)
     println("Exit Code: " + exitCode)
 
     if (exitCode != 100) {
       val filePath = "test/integrationTests/syntaxErrTests/syntaxErrWhileTests.scala"
-      val sedCommand = s"""sed -i '0,/"syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {/s/"syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {/"syntaxErr - while tests: whilErr.wacc" should "return exit code 100" ignore {/' $filePath"""
+      val sedCommand = s"""sed -i '0,/"syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {/s/"syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {/"syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" ignore {/' $filePath"""
       sedCommand.!
     }
 

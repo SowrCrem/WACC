@@ -10,21 +10,6 @@ import scala.sys.process._
 
 class SyntaxErrIfTests extends AnyFlatSpec {
 
-  "syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {
-
-    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/if/ifiErr.wacc")
-    val exitCode = Main.compile(path)
-    println("Exit Code: " + exitCode)
-
-    if (exitCode != 100) {
-      val filePath = "test/integrationTests/syntaxErrTests/syntaxErrIfTests.scala"
-      val sedCommand = s"""sed -i '0,/"syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {/s/"syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {/"syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" ignore {/' $filePath"""
-      sedCommand.!
-    }
-
-    exitCode shouldBe 100
-  }
-
   "syntaxErr - if tests: ifNoelse.wacc" should "return exit code 100" in {
 
     val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/if/ifNoelse.wacc")
@@ -64,6 +49,21 @@ class SyntaxErrIfTests extends AnyFlatSpec {
     if (exitCode != 100) {
       val filePath = "test/integrationTests/syntaxErrTests/syntaxErrIfTests.scala"
       val sedCommand = s"""sed -i '0,/"syntaxErr - if tests: ifNothen.wacc" should "return exit code 100" in {/s/"syntaxErr - if tests: ifNothen.wacc" should "return exit code 100" in {/"syntaxErr - if tests: ifNothen.wacc" should "return exit code 100" ignore {/' $filePath"""
+      sedCommand.!
+    }
+
+    exitCode shouldBe 100
+  }
+
+  "syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {
+
+    val path : Array[String] = Array("../test/wacc/invalid/syntaxErr/if/ifiErr.wacc")
+    val exitCode = Main.compile(path)
+    println("Exit Code: " + exitCode)
+
+    if (exitCode != 100) {
+      val filePath = "test/integrationTests/syntaxErrTests/syntaxErrIfTests.scala"
+      val sedCommand = s"""sed -i '0,/"syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {/s/"syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {/"syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" ignore {/' $filePath"""
       sedCommand.!
     }
 

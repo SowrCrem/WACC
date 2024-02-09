@@ -61,7 +61,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("-123", Neg(IntLiter(123)))
   }
 
-  it should "reject doubly signed int literals" in {
+  it should "reject doubly positively signed int literals" in {
     val errorBuilder = new StringBuilder()
     errorBuilder.append("(line 1, column 13):\n")
     errorBuilder.append("  unexpected \"+\"\n")
@@ -69,12 +69,12 @@ class parseAtoms extends AnyFlatSpec {
     errorBuilder.append("  >begin exit ++123 end\n")
     errorBuilder.append("               ^")
     parseFails("++123", errorBuilder.toString())
-    val errorBuilder2 = new StringBuilder()
-    errorBuilder2.append("(line 1, column 13):\n");
-    errorBuilder2.append("  unexpected \"-\"\n");
-    errorBuilder2.append("  >begin exit --123 end\n");
-    errorBuilder2.append("               ^");
-    parseFails("--123", errorBuilder2.toString())
+  }
+
+  it should "parse many negative int literals" in {
+    parseSucceeds("--123", Neg(Neg(IntLiter(123))))
+    parseSucceeds("---123", Neg(Neg(Neg(IntLiter(123)))))
+    parseSucceeds("----123", Neg(Neg(Neg(Neg(IntLiter(123))))))
   }
 
   // Tests for BoolLiter ----------------------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\'\\\'\'", CharLiter('\''))
   }
 
-  it should "reject invalid escaped char literals" ignore {
+  it should "reject invalid escaped char literals" in {
     parseFails("\'\\a\'")
     parseFails("\'\\z\'")
     parseFails("\'\\ \'")
@@ -111,7 +111,7 @@ class parseAtoms extends AnyFlatSpec {
     parseFails("\'\\U\'")
   }
 
-  it should "reject invalid char literals" ignore {
+  it should "reject invalid char literals" in {
     
     // TODO: Should we include empty char? If not, write a test making sure its not rejected
     parseFails("\'\'") // Empty char
@@ -131,7 +131,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\"hello world\"", StringLiter("hello world"))
   }
 
-  it should "parse escaped string literals" ignore {
+  it should "parse escaped string literals" in {
     
     parseSucceeds("\"\\0\"", StringLiter("\u0000"))
     parseSucceeds("\"\\b\"", StringLiter("\b"))
@@ -141,7 +141,7 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("\"\\t\"", StringLiter("\t"))
   }
 
-  it should "reject invalid string literals" ignore {
+  it should "reject invalid string literals" in {
     
     parseFails("\"\""  ) // Empty char
     parseFails("\"\\\"") // Backslash
@@ -149,7 +149,7 @@ class parseAtoms extends AnyFlatSpec {
     parseFails("\"\'\"") // Single quote
   }
 
-  it should "reject invalid escaped string literals" ignore {
+  it should "reject invalid escaped string literals" in {
     
     parseFails("\"\\a\"" )
     parseFails("\"\\z\"" )

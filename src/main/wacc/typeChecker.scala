@@ -71,13 +71,19 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
     case IdentAsgn(typeNode, ident, expr) =>
       val exprType = check(expr, symbolTable, returnType)
 
+      println(ident.value)
+      println(expr)
+      println(symbolTable.lookup(ident.value))
       symbolTable.lookup(ident.value) match {
         case Some(t) =>
           t match {
             case Func(_, _, _, _) =>
               symbolTable.add(ident.value, typeNode)
-            case _ =>
-              symbolTable.add(ident.value, typeNode)
+            case _  => {
+              throw new SemanticError(
+                s"Identifier ${ident.value} already defined"
+              )
+            }
           }
         case None => {
           symbolTable.add(ident.value, typeNode)

@@ -17,7 +17,7 @@ build-job:
 
 test-frontend-unit-job:
   stage: test-frontend-unit
-  image: wacc_image
+  image: $wacc_image
   script:
     - scala-cli --power test .
   artifacts:
@@ -26,7 +26,7 @@ test-frontend-unit-job:
   
 test-frontend-integration-job:
   stage: test-frontend-integration
-  image: wacc_image
+  image: $wacc_image
   script:
     - scala-cli --power test .
   artifacts:
@@ -35,7 +35,7 @@ test-frontend-integration-job:
 
 test-backend-unit-job:
   stage: test-backend-unit
-  image: wacc_image
+  image: $wacc_image
   script:
     - scala-cli --power test .
   artifacts:
@@ -44,7 +44,7 @@ test-backend-unit-job:
 
 test-backend-integration-job:
   stage: test-backend-integration
-  image: wacc_image
+  image: $wacc_image
   script:
     - scala-cli --power test .
   artifacts:

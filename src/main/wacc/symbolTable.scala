@@ -10,7 +10,8 @@ import scala.annotation.tailrec
 
 class SymbolTable(val parent: Option[SymbolTable]) {
 
-  val dictionary: Map[String, Position] = Map()
+  var dictionary: Map[String, Position] = Map()
+  var children: List[SymbolTable] = List()
 
   // Add identity and position node into dictionary
   def add(identName: String, position: Position): Unit = {
@@ -22,23 +23,28 @@ class SymbolTable(val parent: Option[SymbolTable]) {
     dictionary.get(name)
   }
 
+  // TODO: Make this global (non-dependent on its class)
   @tailrec
-  final def lookupAll(name: String, symbolTable: Option[SymbolTable]) : Option[Position] = {
-    symbolTable match {
-      case None => None 
-      case Some(st) =>
-        val inferred = st.lookup(name)
-        inferred match {
-          case None => lookupAll(name, st.parent)
-          case Some(value) => Some(value)
-        }
+  final def lookupAll(name: String, symbolTable: Option[SymbolTable]) : Option[Position] = symbolTable match {
+    case None => None 
+    case Some(st) => st.lookup(name) match {
+      case None        => lookupAll(name, st.parent)
+      case Some(value) => Some(value)
     }
   }
 
-  def enterScope(): SymbolTable = {
-    new SymbolTable(Some(this))
+  // Add child to symbol table children list
+  private def addChild(child: SymbolTable): SymbolTable = {
+    children = children :+ child
+    child
   }
 
+  // Return a new symbol table with this as its parent
+  def enterScope(): SymbolTable = {
+    addChild(new SymbolTable(Some(this)))
+  }
+
+  // Return to parent symbol table
   def exitScope(): Option[SymbolTable] = {
     this.parent
   }

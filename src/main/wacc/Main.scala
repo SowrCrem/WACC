@@ -39,10 +39,11 @@ object Main {
       val fileContent = ("cat " + filename).!!
       parser.parse(fileContent) match {
         case Success(node) => node match {
-          case Program(funcList, _) => parser.validFunctions(funcList) match {
-            case true  => semanticCheck(node)
-            case false => syntaxError("Non-terminating branches found")
-          }
+          // case Program(funcList, _) => parser.validFunctions(funcList) match {
+          //   case true  => semanticCheck(node)
+          //   case false => syntaxError("Non-terminating branches found")
+          // }
+          case Program(_, _) => 0
           case _ => syntaxError("Program is not Well-Formed")
         }
         case Failure(msg) => syntaxError(msg)

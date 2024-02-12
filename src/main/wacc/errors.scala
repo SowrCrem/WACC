@@ -1,78 +1,38 @@
 package wacc
 
+import wacc.Errors._
+
 object Errors {
 
-    case class SemanticError(position: Position, val message: String) extends Throwable with Error {
-        override def getPos() = position
-        override def getErrMessage() = ("Semantic Error", Seq(message))
-        def formatError(fileName: String): String = {
-            val (errType, details) = getErrMessage()
-            val (line, col) = (getPos()._1, getPos()._2)
-            val sb = new StringBuilder()
-            sb.append("    " + errType + " at (line " + line +", col " + col + ")"  + ":\n")
-            for (detail <- details) {
-                sb.append("        " + detail + "\n")
-            }
-            sb.toString()
-        }
-        override def generateError() : String = formatError()
-        override def getMessage(): String = generateError()
-    }
+  case class AlreadyDefinedError(position: Position, val message: String) extends ScopeError(position, message) {
+    override def getErrMessage() = ("Already Defined Error", Seq(message))
+  }
 
-    case class TypeError (position: Position, val message: String) extends Throwable with Error {
-        override def getPos() = position
-        override def getErrMessage() = ("Type Error", Seq(message))
-        def formatError(fileName: String): String = {
-            val (errType, details) = getErrMessage()
-            val (line, col) = (getPos()._1, getPos()._2)
-            val sb = new StringBuilder()
-            sb.append("    " + errType + " at (line " + line +", col " + col + ")"  + ":\n")
-            for (detail <- details) {
-                sb.append("        " + detail + "\n")
-            }
-            sb.toString()
-        }
-        
-        override def generateError() : String = formatError()
-        override def getMessage(): String = generateError()
-    }
+  class TypeError(position: Position, val message: String) extends SemanticError(position, message) {
+    override def getErrMessage() = ("Type Error", Seq(message))
+  }
 
-    case class ScopeError (position: Position, val message: String) extends Throwable with Error {
-        override def getPos() = position
-        override def getErrMessage() = ("Scope Error", Seq(message))
-        def formatError(fileName: String): String = {
-            val (errType, details) = getErrMessage()
-            val (line, col) = (getPos()._1, getPos()._2)
-            val sb = new StringBuilder()
-            sb.append("    " + errType + " at (line " + line +", col " + col + ")"  + ":\n")
-            for (detail <- details) {
-                sb.append("        " + detail + "\n")
-            }
-            sb.toString()
-        }
-        
-        override def generateError() : String = formatError()
-        override def getMessage(): String = generateError()
-    }
+  class ScopeError(position: Position, val message: String) extends SemanticError(position, message) {
+    override def getErrMessage() = ("Scope Error", Seq(message))
+  }
 
-    type ErrorInfoLines = Seq[String]
-    type Position = (Int, Int)
-
-    trait Error {
-        def getPos(): Position
-        def getErrMessage(): (String, Seq[String])
-        def formatError(): String = {
-            val (errType, details) = getErrMessage()
-            val (line, col) = (getPos()._1, getPos()._2)
-            val sb = new StringBuilder()
-            sb.append(errType + " at (line " + line +", col " + col + ")"  + ":\n")
-            for (detail <- details) {
-                sb.append(detail + "\n")
-            }
-            sb.toString()
-        }
-        def generateError() : String = formatError()
+  abstract class SemanticError(val position: Position, val message: String) extends Throwable {
+    def getPos(): Position = position
+    def getErrMessage(): (String, Seq[String]) = ("Semantic Error", Seq(message))
+    def formatError(): String = {
+      val (errType, details) = getErrMessage()
+      val (line, col) = (getPos()._1, getPos()._2)
+      val sb = new StringBuilder()
+      sb.append("    " + errType + " at (line " + line + ", col " + col + ")" + ":\n")
+      for (detail <- details) {
+        sb.append("        " + detail + "\n")
+      }
+      sb.toString()
     }
+    override def generateError(): String = formatError()
+    override def getMessage(): String = generateError()
+  }
+
+  // type ErrorInfoLines = Seq[String]
+  // type Position = (Int, Int)
 }
-
-

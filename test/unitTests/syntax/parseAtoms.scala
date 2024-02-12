@@ -41,7 +41,7 @@ class parseAtoms extends AnyFlatSpec {
 
   def parseSucceeds(input: String, expected: Expr): Assertion =
     parser.parse("begin exit " + input + " end") shouldBe 
-      Success(Program(List(), Exit(expected)(pos))(pos))
+      Success(Program(List(), List(Exit(expected)(pos)))(pos))
 
   def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
     case "" => parser.parse("begin exit " + input + " end") should matchPattern {

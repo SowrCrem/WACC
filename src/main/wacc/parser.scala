@@ -31,7 +31,7 @@ import parsley.character.oneOf
    [ ] Remove StatJoin and refactor Program AST to take List[Stat] instead of Stat
     [ ] Refactor AST validation to iterate through last statement in functions more easily
 
-   [ ] Reduce use of atomics (why?? - someone explain on the gc)
+   [ ] Reduce use of atomics
 
    */
 
@@ -127,7 +127,8 @@ object parser {
   val ifParser: Parsley[Stat] = 
     If("if" ~> exprParser, "then" ~> stmtParser, "else" ~> stmtParser <~ "fi")
 
-  val whileParser: Parsley[Stat] = While("while" ~> exprParser, "do" ~> stmtParser <~ "done")
+  val whileParser: Parsley[Stat] = 
+    While("while" ~> exprParser, "do" ~> stmtParser <~ "done")
     
   val skipParser: Parsley[Stat] = Skip <# "skip"
 
@@ -174,10 +175,9 @@ object parser {
       ifParser | whileParser | beginParser
   }
 
-  val statJoinParser: Parsley[Stat] = StatJoin(sepBy1(statAtoms, ";"))
 
-  val stmtParser: Parsley[Stat] =
-    atomic(statAtoms <~ notFollowedBy(";")) | statJoinParser
+  val stmtParser: Parsley[List[Stat]] = sepBy1(statAtoms, ";")
+    // atomic(statAtoms <~ notFollowedBy(";")) | statJoinParser
 
   // -- Param Parser ----------------------------------------------- //
 
@@ -200,28 +200,28 @@ object parser {
   def parse(input: String): Result[String, Program] = parser.parse(input)
 
   // -- AST Validation -------------------------------------------- //
-  def validEndingStatement(stmts: List[Stat]): Boolean = {
-    stmts.last match {
-      case Return(_)          => true
-      case Exit(_)            => true
-      case If(_, s1, s2)      => validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
-      case While(_, s)        => validEndingStatement(List(s))
-      case BeginEnd(s)        => validEndingStatement(List(s))
-      case StatJoin(stats)    => validEndingStatement(stats)
-      case _                  => false
-    } 
-  }
+  // def validEndingStatement(stmts: List[Stat]): Boolean = {
+  //   stmts.last match {
+  //     case Return(_)          => true
+  //     case Exit(_)            => true
+  //     case If(_, s1, s2)      => validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
+  //     case While(_, s)        => validEndingStatement(List(s))
+  //     case BeginEnd(s)        => validEndingStatement(List(s))
+  //     case StatJoin(stats)    => validEndingStatement(stats)
+  //     case _                  => false
+  //   } 
+  // }
 
-  def validEndingStatement(stmt: Stat): Boolean = stmt match {
-    case (StatJoin(stmts)) => validEndingStatement(stmts)
-    case stmt              => validEndingStatement(List(stmt))
-  }
+  // def validEndingStatement(stmt: Stat): Boolean = stmt match {
+  //   case (StatJoin(stmts)) => validEndingStatement(stmts)
+  //   case stmt              => validEndingStatement(List(stmt))
+  // }
   
-  def validFunction(func: Func): Boolean = {
-    validEndingStatement(func.stat)
-  }
+  // def validFunction(func: Func): Boolean = {
+  //   validEndingStatement(func.stat)
+  // }
 
-  def validFunctions(funcs: List[Func]): Boolean = {
-    funcs.forall(func => validFunction(func))
-  }
+  // def validFunctions(funcs: List[Func]): Boolean = {
+  //   funcs.forall(func => validFunction(func))
+  // }
 }

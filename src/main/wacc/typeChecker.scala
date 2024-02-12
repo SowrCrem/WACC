@@ -1,8 +1,6 @@
 package wacc
 
-import wacc.Errors.SemanticError
-import wacc.Errors.TypeError
-import wacc.Errors.ScopeError
+import wacc.Errors._
 
 /* TODOs:
    [ ] Add semantic information to AST nodes, or enrich symbol table entry
@@ -16,12 +14,72 @@ import wacc.Errors.ScopeError
    
    */
 
-class TypeChecker(initialSymbolTable: SymbolTable) {
+class TypeChecker(var initialSymbolTable: SymbolTable) {
 
-  val errors: List[SemanticError] = List()
+  var errors: List[SemanticError] = List()
 
-  def check(position: Position): Option[TypeNode] = {
-    check(position, initialSymbolTable, None)
+  def check(position: Position): Either[List[SemanticError], SymbolTable] = {
+    check(position, initialSymbolTable, None) match {
+      case Some(_) => Right(initialSymbolTable)
+      case None    => Left(errors)
+    }
+  }
+
+  def checkProgram(
+    symbolTable: SymbolTable = initialSymbolTable,
+    position: Position,
+    funcList: List[Func],
+    statList: List[Stat],
+  ): SymbolTable = {
+    errors.:::(checkFunctions(symbolTable, position, funcList))
+    errors.:::(checkStatements(symbolTable, position, statList))
+    
+    // Return symbol table after adding all the child symbol tables
+    symbolTable
+  }
+
+  def checkFunction(
+    symbolTable: SymbolTable,
+    position: Position,
+    typeNode: TypeNode,
+    ident: Ident,
+    paramList: ParamList,
+    statList: List[Stat]
+  ): List[SemanticError] = {
+    var errs = List[SemanticError]()
+
+    symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
+      case (Some(_)) => 
+        errs = errs.::(new AlreadyDefinedError(position, ident.value))
+      case _ =>
+        symbolTable.add(
+          ident.value + "_f",
+          Func(typeNode, ident, paramList, statList)(position.pos)
+        )
+        
+    }
+
+    errs
+  }
+
+  def checkFunctions(
+    prevSymbolTable: SymbolTable,
+    position: Position,
+    funcList: List[Func]
+  ): List[SemanticError] = {
+    funcList.flatMap(func => func match {
+      case Func(typeNode, ident, paramList, stat) => 
+        checkFunction(prevSymbolTable, position, typeNode, ident, paramList, stat)
+    })
+  }
+
+  def checkStatements(
+    prevSymbolTable: SymbolTable,
+    position: Position,
+    statList: List[Stat]
+  ): List[SemanticError] = {
+    // TODO
+    return List()
   }
 
   def check(
@@ -29,7 +87,9 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       symbolTable: SymbolTable,
       returnType: Option[TypeNode]
   ): Option[TypeNode] = position match {
-    case Program(funcList, stat) =>
+    // PROGRAMS
+    case Program(funcList, stat) => //checkProgram(position, funcList, stat)
+      
       println(Program(funcList, stat)(position.pos))
       funcList.foreach {
         case func @ Func(typeNode, ident, paramList, stat) => {
@@ -54,6 +114,8 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
       }
       check(stat, symbolTable, None)
       None // Program has no type
+    
+    // FUNCTIONS
     case Func(typeNode, ident, paramList, stat) =>
       (symbolTable.lookupAll(ident.value + "_f", Some(symbolTable))) match {
         case Some(_) =>

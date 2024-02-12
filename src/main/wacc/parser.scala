@@ -1,4 +1,5 @@
 package wacc
+
 import parsley.{Parsley, Result}
 import parsley.expr.{
   chain,
@@ -24,6 +25,8 @@ import parsley.{Success, Failure}
 import scala.sys.process._
 
 /* TODOs (tied to syntax.scala):
+   [ ] Fix negate underflow error !!!
+
    [ ] Remove StatJoin and refactor Program AST to take List[Stat] instead of Stat
     [ ] Refactor AST validation to iterate through last statement in functions more easily
 

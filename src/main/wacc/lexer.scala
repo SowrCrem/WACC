@@ -1,4 +1,5 @@
 package wacc
+
 import parsley.Parsley
 import parsley.token.{Lexer, predicate}
 import parsley.token.descriptions._
@@ -261,12 +262,9 @@ val builder = new WaccErrorBuilder with LexToken {
 }
 
   private val lexer = new Lexer(desc, errorConfig)
-  val integer = lexer.lexeme.integer.number32
+  val integer = lexer.lexeme.integer.decimal32
   val implicits = lexer.lexeme.symbol.implicits
 
-
-
-  
   private val escapeChar: Parsley[Char] = {
     implicits.implicitSymbol("0").as('\u0000') |  
     implicits.implicitSymbol("\\").as('\\')

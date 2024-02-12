@@ -10,7 +10,7 @@ stages:
 
 build-job:
   stage: build
-  image: gumjoe/wacc-ci-scala:slim
+  image: $wacc_image
   script: 
     - ls
     - scala-cli --power package . --server=false --jvm system --force

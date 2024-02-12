@@ -12,12 +12,16 @@ object semanticChecker {
 
   def check(position: Position): Either[String, Int] =  {
     // Check that no exception is thrown for a valid type check
-    try {
-      typeChecker.check(position)
 
+    try {
+
+      typeChecker.check(position)
       return Right(0)
+
     } catch {
+
       case e: Throwable => return Left(e.getMessage())
+      
     }
   }
 

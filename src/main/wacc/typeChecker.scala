@@ -420,9 +420,9 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
         case None =>
           throw new ScopeError(position.pos, s"Identifier ${ident.value} not found")
       }
-    case Mul(lhs, rhs) =>
+    case MulNode(lhs, rhs) =>
       checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
-    case Div(lhs, rhs) =>
+    case DivNode(lhs, rhs) =>
       checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
     case Mod(lhs, rhs) =>
       checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
@@ -464,7 +464,7 @@ class TypeChecker(initialSymbolTable: SymbolTable) {
         )
       }
     }
-    case And(lhs, rhs) =>
+    case AndNode(lhs, rhs) =>
       checkBoolBinOp(position, lhs, rhs, symbolTable, returnType)
     case Or(lhs, rhs) =>
       checkBoolBinOp(position, lhs, rhs, symbolTable, returnType)

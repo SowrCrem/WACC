@@ -1,4 +1,4 @@
-constants:
+variables:
   wacc_image: gumjoe/wacc-ci-scala:slim
 
 stages:

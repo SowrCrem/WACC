@@ -23,6 +23,14 @@ import parsley.character.noneOf
 import parsley.{Success, Failure}
 import scala.sys.process._
 
+/* TODOs (tied to syntax.scala):
+   [ ] Remove StatJoin and refactor Program AST to take List[Stat] instead of Stat
+    [ ] Refactor AST validation to iterate through last statement in functions more easily
+
+   [ ] Reduce use of atomics (why?? - someone explain on the gc)
+
+   */
+
 object parser {
 
   lazy val arrayelemParser: Parsley[Expr] =
@@ -34,10 +42,6 @@ object parser {
   }
 
   lazy val intParser: Parsley[Expr] = IntLiter(signedInteger)
-    
-  //   signedInteger.map(n => {
-  //   if (n.isValidInt) IntLiter(n.toInt) else Error("Integer too large")
-  // })
 
   lazy val boolParser: Parsley[Expr] = BoolLiter(lexer.bool)
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
@@ -59,9 +63,7 @@ object parser {
 
   val sndParser: Parsley[Expr] = some("snd") ~> notFollowedBy("null") ~> SndNode(assignLhs)
 
-
   lazy val pairElemParser: Parsley[Expr] = fstParser | sndParser
-
 
   lazy val pairLitParser: Parsley[Expr] = fstParser | sndParser | newpairParser | Null <# "null"
 
@@ -96,32 +98,15 @@ object parser {
 
   // -- Type Parsers ---------------------------------------------- //
 
-  // lazy val intType: Parsley[BaseTypeNode] = "int" <# IntTypeNode()
-  // lazy val boolType: Parsley[BaseTypeNode] = "bool" as BoolTypeNode()
-  // lazy val charType: Parsley[BaseTypeNode] = "char" as CharTypeNode()
-  // lazy val stringType: Parsley[BaseTypeNode] = "string" as StringTypeNode()
-
   lazy val baseType: Parsley[BaseTypeNode] =
     IntTypeNode <# "int"| BoolTypeNode <# "bool" | CharTypeNode <# "char" | StringTypeNode <# "string"
 
   lazy val arrayTypeParser: Parsley[ArrayTypeNode] = chain.postfix1(baseType <|> pairType)(ArrayTypeNode <# ("[" <~> "]"))
-    
-  //   {
-  //   lazy val arrayType: Parsley[(TypeNode, List[Unit])] =
-  //     (baseType | pairType) <~> some("[]")
-
-  //   arrayType.map { 
-  //     case (btype, bracketsList) =>
-  //       val position = bracketsList.foldLeft(btype)((acc, _) => ArrayTypeNode(acc))
-  //       position.asInstanceOf[ArrayTypeNode]  
-  //   }
-  // }
 
   lazy val pairElemTypeParser: Parsley[PairElemTypeNode] =
     atomic(arrayTypeParser) | baseType | Null <# "pair"
 
   lazy val pairType: Parsley[PairTypeNode] = PairTypeNode("pair" ~> "(" ~> pairElemTypeParser <~ ",", pairElemTypeParser <~ ")")
-
 
   lazy val typeParser: Parsley[TypeNode] =
     atomic(arrayTypeParser) | baseType | pairType
@@ -129,12 +114,9 @@ object parser {
   // -- Statement Parsers ----------------------------------------- //
 
   val ifParser: Parsley[Stat] = If("if" ~> exprParser, "then" ~> stmtParser, "else" ~> stmtParser <~ "fi")
-    // ifStmt.map(x => If(x._1, x._2._1, x._2._2))
-  
 
   val whileParser: Parsley[Stat] = While("while" ~> exprParser, "do" ~> stmtParser <~ "done")
     
-
   val skipParser: Parsley[Stat] = Skip <# "skip"
 
   val freeParser: Parsley[Stat] = Free("free" ~> exprParser)
@@ -167,7 +149,6 @@ object parser {
 
   val asgnEqParser: Parsley[Stat] = {
     AsgnEq(assignLhs, "=" ~> assignRhs)
-    // asgnEq.map(x => AsgnEq(x._1, x._2))
   }
 
   val statAtoms: Parsley[Stat] = {
@@ -182,16 +163,6 @@ object parser {
   val stmtParser: Parsley[Stat] =
     atomic(statAtoms <~ notFollowedBy(";")) | statJoinParser
 
-  // val stmtParser: Parsley[Stat] = {
-  //   (atomic(statAtoms <~ notFollowedBy(";")) | statJoinParser).flatMap { stmt =>
-  //     if (validEndingStatement(List(stmt))) {
-  //       success(stmt)
-  //     } else {
-  //       Error("Invalid ending statement")
-  //     }
-  //   }
-  // }
-
   // -- Param Parser ----------------------------------------------- //
 
   val paramParser: Parsley[Param] = Param(typeParser, atomic(identifierParser))
@@ -203,7 +174,6 @@ object parser {
 
   val funcParser: Parsley[Func] = Func(typeParser, identifierParser,"(" ~> paramListParser <~ ")", "is" ~> stmtParser <~ "end")
 
-
   // -- Program Parser --------------------------------------------- //
   val program: Parsley[Program] = Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
 
@@ -211,7 +181,6 @@ object parser {
   val parser = fully(program)
 
   def parse(input: String): Result[String, Program] = parser.parse(input)
-
 
   // -- AST Validation -------------------------------------------- //
   def validEndingStatement(stmts: List[Stat]): Boolean = {

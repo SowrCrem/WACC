@@ -4,6 +4,18 @@ import wacc.Errors.SemanticError
 import wacc.Errors.TypeError
 import wacc.Errors.ScopeError
 
+/* TODOs:
+   [ ] Add semantic information to AST nodes, or enrich symbol table entry
+   
+   [ ] For array checking, use more efficient type checking to match on the outer dimensions and move inwards rather than iterative through entire structure
+
+   [ ] Add all errors to list instead of throwing first error
+    
+   [ ] Encapsulate errors out of branches
+   [ ] Refactor check (not necessary); add comments
+   
+   */
+
 class TypeChecker(initialSymbolTable: SymbolTable) {
 
   val errors: List[SemanticError] = List()

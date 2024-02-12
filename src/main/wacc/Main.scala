@@ -3,13 +3,16 @@ package wacc
 import parsley.{Success, Failure}
 import sys.process._
 
+/* TODOs:
+   [ ] Use Scala built-in file management instead of shell command
+   [ ] Add common error printer; and extract to I/O file, NOT main
+   [ ] Remove magic numbers   
+
+   */
+
 object Main {
   def main(args: Array[String]): Unit = {
-    // println("hello WACC!")
-    // args.foreach { println(_) }
-    // println("Num Args= " + args.length)
     val exitCode = compile(args)
-    // println("Exit Code: " + exitCode)
     sys.exit(exitCode)
   }
 

@@ -212,8 +212,8 @@ object Len extends ParserBridgePos1[Expr, UnaryOp]
 // Atoms (Extending Expr)
 sealed trait Atom extends Expr
 
-case class IntLiter(value: BigInt)(val pos: (Int, Int)) extends Atom
-object IntLiter extends ParserBridgePos1[BigInt, IntLiter]
+case class IntLiter(value: Int)(val pos: (Int, Int)) extends Atom
+object IntLiter extends ParserBridgePos1[Int, IntLiter]
 case class BoolLiter(value: Boolean)(val pos: (Int, Int)) extends Atom
 object BoolLiter extends ParserBridgePos1[Boolean, BoolLiter] {
   override def labels: List[String] = List("boolean")

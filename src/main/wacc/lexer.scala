@@ -176,7 +176,8 @@ object lexer {
       identifierLetter = predicate.Basic(c => c.isLetterOrDigit || c == '_')
     ),
     numericDesc = NumericDesc.plain.copy(
-      positiveSign = PlusSignPresence.Optional
+      positiveSign = PlusSignPresence.Optional,
+      leadingZerosAllowed = false
     ),
     spaceDesc = SpaceDesc.plain.copy(
       lineCommentStart = "#"
@@ -262,7 +263,7 @@ val builder = new WaccErrorBuilder with LexToken {
 }
 
   private val lexer = new Lexer(desc, errorConfig)
-  val integer = lexer.lexeme.integer.decimal32
+  val integer: Parsley[Int] = lexer.lexeme.signed.decimal32
   val implicits = lexer.lexeme.symbol.implicits
 
   private val escapeChar: Parsley[Char] = {
@@ -273,7 +274,9 @@ val builder = new WaccErrorBuilder with LexToken {
   val char: Parsley[Char] = lexer.lexeme.character.ascii
   val string: Parsley[String] = lexer.lexeme.string.ascii
   val ident: Parsley[String] = lexer.lexeme.names.identifier
-  val bool: Parsley[Boolean] = lexer.lexeme.symbol("true").as(true) | lexer.lexeme.symbol("false").as(false)
+  val bool: Parsley[Boolean] = 
+    lexer.lexeme.symbol("true").as(true) | 
+    lexer.lexeme.symbol("false").as(false)
 
   def fully[A](p: Parsley[A]): Parsley[A] = lexer.fully(p)
 }

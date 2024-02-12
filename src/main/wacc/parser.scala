@@ -23,6 +23,7 @@ import parsley.Parsley.lookAhead
 import parsley.character.noneOf
 import parsley.{Success, Failure}
 import scala.sys.process._
+import parsley.character.oneOf
 
 /* TODOs (tied to syntax.scala):
    [ ] Fix negate underflow error !!!
@@ -45,6 +46,7 @@ object parser {
   // }
 
   lazy val intParser: Parsley[Expr] = IntLiter(lexer.integer)
+  lazy val digit = oneOf('0' to '9')
 
   lazy val boolParser: Parsley[Expr] = BoolLiter(lexer.bool)
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
@@ -79,7 +81,7 @@ object parser {
     atoms | pairLitParser | arrayLiteralParser
   )(
     Ops(Prefix)(Not <# "!"),
-    Ops(Prefix)(Neg <# "-"),
+    Ops(Prefix)(Neg <# atomic("-" <~ notFollowedBy(digit))),
     Ops(Prefix)(Len <# "len"),
     Ops(Prefix)(Ord <# "ord"),
     Ops(Prefix)(Chr <# "chr"),

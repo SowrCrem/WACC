@@ -17,18 +17,17 @@ object Main {
   }
 
   def syntaxError(msg: String = ""): Int = {
-    println("Syntax Analysis reported an Error: " + msg)
+    println("Syntax analysis output: " + msg)
     100
   }
 
   def semanticCheck(node: Position): Int = {
     semanticChecker.check(node) match {
       case Right(exitCode) => {
-        println("exit code: " + exitCode)
         0
       }
       case Left(msg) => {
-        println("Semantic Analysis reported an Error: \n" + msg)
+        println("Semantic analysis output: \n" + msg)
         200
       }
     }

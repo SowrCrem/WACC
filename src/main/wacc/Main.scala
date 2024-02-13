@@ -17,18 +17,17 @@ object Main {
   }
 
   def syntaxError(msg: String = ""): Int = {
-    println("Syntax Analysis reported an Error: " + msg)
+    println("Syntax analysis output: " + msg)
     100
   }
 
   def semanticCheck(node: Position): Int = {
     semanticChecker.check(node) match {
       case Right(exitCode) => {
-        println("exit code: " + exitCode)
         0
       }
       case Left(msg) => {
-        println("Semantic Analysis reported an Error: \n" + msg)
+        println("Semantic analysis output: \n" + msg)
         200
       }
     }
@@ -39,11 +38,10 @@ object Main {
       val fileContent = ("cat " + filename).!!
       parser.parse(fileContent) match {
         case Success(node) => node match {
-          // case Program(funcList, _) => parser.validFunctions(funcList) match {
-          //   case true  => semanticCheck(node)
-          //   case false => syntaxError("Non-terminating branches found")
-          // }
-          case Program(_, _) => 0
+          case Program(funcList, _) => parser.validFunctions(funcList) match {
+            case true  => semanticCheck(node)
+            case false => syntaxError("Non-terminating branches found")
+          }
           case _ => syntaxError("Program is not Well-Formed")
         }
         case Failure(msg) => syntaxError(msg)

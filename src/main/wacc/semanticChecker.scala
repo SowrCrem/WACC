@@ -13,10 +13,15 @@ object semanticChecker {
   def check(position: Position): Either[String, Int] =  {
     // Check that no exception is thrown for a valid type check
     try {
-      typeChecker.check(position)
-
-      return Right(0)
+      typeChecker.check(position) match {
+        case Left(errorList) => {
+          // Hardiv: Print each error in errorList
+          Left("Semantic Error found")
+        }
+        case Right(_)   => return Right(0)
+      }
     } catch {
+      // Should not reach this case after refactoring
       case e: Throwable => return Left(e.getMessage())
     }
   }

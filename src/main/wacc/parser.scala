@@ -190,28 +190,22 @@ object parser {
   def parse(input: String): Result[String, Program] = parser.parse(input)
 
   // -- AST Validation -------------------------------------------- //
-  // def validEndingStatement(stmts: List[Stat]): Boolean = {
-  //   stmts.last match {
-  //     case Return(_)          => true
-  //     case Exit(_)            => true
-  //     case If(_, s1, s2)      => validEndingStatement(List(s1)) && validEndingStatement(List(s2)) 
-  //     case While(_, s)        => validEndingStatement(List(s))
-  //     case BeginEnd(s)        => validEndingStatement(List(s))
-  //     case StatJoin(stats)    => validEndingStatement(stats)
-  //     case _                  => false
-  //   } 
-  // }
+  def validEndingStatement(stmts: List[Stat]): Boolean = {
+    stmts.last match {
+      case Return(_)          => true
+      case Exit(_)            => true
+      case If(_, s1, s2)      => validEndingStatement(s1) && validEndingStatement(s2) 
+      case While(_, s)        => validEndingStatement(s)
+      case BeginEnd(s)        => validEndingStatement(s)
+      case _                  => false
+    } 
+  }
 
-  // def validEndingStatement(stmt: Stat): Boolean = stmt match {
-  //   case (StatJoin(stmts)) => validEndingStatement(stmts)
-  //   case stmt              => validEndingStatement(List(stmt))
-  // }
-  
-  // def validFunction(func: Func): Boolean = {
-  //   validEndingStatement(func.stat)
-  // }
-
-  // def validFunctions(funcs: List[Func]): Boolean = {
-  //   funcs.forall(func => validFunction(func))
-  // }
+  def validFunctions(funcs: List[Func]): Boolean = {
+    funcs.forall(func => 
+      func match {
+        case Func(_, _, _, stmts) => validEndingStatement(stmts)
+      }
+    )
+  }
 }

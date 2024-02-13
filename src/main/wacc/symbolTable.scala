@@ -25,7 +25,10 @@ class SymbolTable(val parent: Option[SymbolTable]) {
 
   // TODO: Make this global (non-dependent on its class)
   @tailrec
-  final def lookupAll(name: String, symbolTable: Option[SymbolTable]) : Option[Position] = symbolTable match {
+  final def lookupAll(
+    name: String, 
+    symbolTable: Option[SymbolTable]
+  ) : Option[Position] = symbolTable match {
     case None => None 
     case Some(st) => st.lookup(name) match {
       case None        => lookupAll(name, st.parent)

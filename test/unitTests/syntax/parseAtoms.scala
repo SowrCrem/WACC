@@ -64,7 +64,7 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   it should "parse signed negative int literals" in {
-    parseSucceeds("-123", Neg(IntLiter(123)(pos))(pos))
+    parseSucceeds("-123", IntLiter(-123)(pos))
   }
 
   it should "parse maximum signed int literals" in {
@@ -84,10 +84,10 @@ class parseAtoms extends AnyFlatSpec {
     parseFails("2147483648", errBuilder.toString())
 
     val errBuilder2 = new StringBuilder()
-    errBuilder2.append("(line 1, column 13):\n")
+    errBuilder2.append("(line 1, column 12):\n")
     errBuilder2.append("  literal is not within the range -2147483648 to 2147483647\n")
     errBuilder2.append("  >begin exit -2147483649 end\n")
-    errBuilder2.append("               ^^^^^^^^^^")
+    errBuilder2.append("              ^^^^^^^^^^^")
     parseFails("-2147483649", errBuilder2.toString())
   }
 
@@ -102,9 +102,9 @@ class parseAtoms extends AnyFlatSpec {
   }
 
   it should "parse many negative int literals" in {
-    parseSucceeds("--123", Neg(Neg(IntLiter(123)(pos))(pos))(pos))
-    parseSucceeds("---123", Neg(Neg(Neg(IntLiter(123)(pos))(pos))(pos))(pos))
-    parseSucceeds("----123", Neg(Neg(Neg(Neg(IntLiter(123)(pos))(pos))(pos))(pos))(pos))
+    parseSucceeds("--123", Neg(IntLiter(-123)(pos))(pos))
+    parseSucceeds("---123", Neg(Neg(IntLiter(-123)(pos))(pos))(pos))
+    parseSucceeds("----123", Neg(Neg(Neg(IntLiter(-123)(pos))(pos))(pos))(pos))
   }
 
   // Tests for BoolLiter ----------------------------------------------------------------------------------------------

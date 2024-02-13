@@ -58,7 +58,7 @@ trait ParserBridgePos4[-A, -B, -C, -D, +E] extends ParserSingletonBridgePos[(A, 
 case class Program(funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) extends Position
 object Program extends ParserBridgePos2[List[Func], List[Stat], Program]
 
-case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, stats: List[Stat])(val pos: (Int, Int)) extends Position
+case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, statList: List[Stat])(val pos: (Int, Int)) extends Position
 object Func extends ParserBridgePos4[TypeNode, Ident, ParamList, List[Stat], Func]
 
 // Param-List (Extending Position)
@@ -76,7 +76,7 @@ sealed trait Stat extends Position
 
 case class Skip()(val pos: (Int, Int)) extends Stat
 object Skip extends ParserBridgePos0[Stat]
-case class IdentAsgn (typeNode: TypeNode, ident: Ident, expr: Position)(val pos: (Int, Int)) extends Stat
+case class IdentAsgn (typeNode: TypeNode, ident: Ident, rvalue: Position)(val pos: (Int, Int)) extends Stat
 object IdentAsgn extends ParserBridgePos3[TypeNode, Ident, Position, IdentAsgn]
 case class AsgnEq(lhs: Position, rhs: Position)(val pos: (Int, Int)) extends Stat
 object AsgnEq extends ParserBridgePos2[Position, Position, AsgnEq]
@@ -118,10 +118,6 @@ sealed trait Expr extends Position with RValue
 
 case class NewPair(fst: Expr, snd: Expr)(val pos: (Int, Int)) extends Expr
 object NewPair extends ParserBridgePos2[Expr, Expr, NewPair]
-
-case class ArgList (argList: List[Expr])(val pos: (Int, Int)) extends Position
-object ArgList extends ParserBridgePos1[List[Expr], ArgList]
-
 case class Call(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat
 object Call extends ParserBridgePos2[Ident, List[Expr], Call]
 

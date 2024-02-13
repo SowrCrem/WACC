@@ -1,146 +1,148 @@
 package wacc
 
 import wacc.Errors._
+import scala.collection.mutable.ListBuffer
 
 /* TODO:
    [ ] Add semantic information to AST nodes, or enrich symbol table entry
    
    [ ] For array checking, use more efficient type checking to match on the outer dimensions and move inwards rather than iterative through entire structure
 
-   [ ] Add all errors to list instead of throwing first error
-    
-   [ ] Encapsulate errors out of branches
    [ ] Refactor check (not necessary); add comments
    
    */
 
 class TypeChecker(var initialSymbolTable: SymbolTable) {
 
-  var errors: List[SemanticError] = List()
+  var errors: ListBuffer[SemanticError] = ListBuffer()
 
-  def check(position: Position): Either[List[SemanticError], SymbolTable] = {
-    check(position, initialSymbolTable, None) match {
-      case Some(_) => Right(initialSymbolTable)
-      case None    => Left(errors)
+  def check(position: Position): Either[ListBuffer[SemanticError], SymbolTable] = {
+    check(position, initialSymbolTable, None)
+
+    if (errors.isEmpty) {
+      Right(initialSymbolTable)
+    } else {
+      Left(errors)
     }
+
+    // check(position, initialSymbolTable, None) match {
+    //   case Some(_) => Right(initialSymbolTable)
+    //   case None    => Left(errors)
+    // }
+  
   }
 
-  def checkProgram(
-    symbolTable: SymbolTable = initialSymbolTable,
-    position: Position,
-    funcList: List[Func],
-    statList: List[Stat],
-  ): SymbolTable = {
-    errors.:::(checkFunctions(symbolTable, position, funcList))
-    errors.:::(checkStatements(symbolTable, position, statList))
+  // def checkProgram(
+  //   symbolTable: SymbolTable = initialSymbolTable,
+  //   position: Position,
+  //   funcList: List[Func],
+  //   statList: List[Stat],
+  // ): SymbolTable = {
+  //   errors.:::(checkFunctions(symbolTable, position, funcList))
+  //   errors.:::(checkStatements(symbolTable, position, statList))
     
-    // Return symbol table after adding all the child symbol tables
-    symbolTable
-  }
+  //   // Return symbol table after adding all the child symbol tables
+  //   symbolTable
+  // }
 
-  def checkFunction(
-    symbolTable: SymbolTable,
-    position: Position,
-    typeNode: TypeNode,
-    ident: Ident,
-    paramList: ParamList,
-    statList: List[Stat]
-  ): List[SemanticError] = {
-    var errs = List[SemanticError]()
-    symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
-      case (Some(_)) => errs.::(new AlreadyDefinedError(position, ident.value))
-      case _         => symbolTable.add(
-          ident.value + "_f",
-          Func(typeNode, ident, paramList, statList)(position.pos)
-      )
-    }
-    return errs
-  }
+  // def checkFunction(
+  //   symbolTable: SymbolTable,
+  //   position: Position,
+  //   typeNode: TypeNode,
+  //   ident: Ident,
+  //   paramList: ParamList,
+  //   statList: List[Stat]
+  // ): List[SemanticError] = {
+  //   var errs = List[SemanticError]()
+  //   symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
+  //     case (Some(_)) => errs.::(new AlreadyDefinedError(position, ident.value))
+  //     case _         => symbolTable.add(
+  //         ident.value + "_f",
+  //         Func(typeNode, ident, paramList, statList)(position.pos)
+  //     )
+  //   }
+  //   return errs
+  // }
 
-  def checkFunctions(
-    prevSymbolTable: SymbolTable,
-    position: Position,
-    funcList: List[Func]
-  ): List[SemanticError] = {
-    funcList.flatMap(func => func match {
-      case Func(typeNode, ident, paramList, stat) => 
-        checkFunction(prevSymbolTable, position, typeNode, ident, paramList, stat)
-    })
-  }
+  // def checkFunctions(
+  //   prevSymbolTable: SymbolTable,
+  //   position: Position,
+  //   funcList: List[Func]
+  // ): List[SemanticError] = {
+  //   funcList.flatMap(func => func match {
+  //     case Func(typeNode, ident, paramList, stat) => 
+  //       checkFunction(prevSymbolTable, position, typeNode, ident, paramList, stat)
+  //   })
+  // }
 
-  def checkStatements(
-    prevSymbolTable: SymbolTable,
-    position: Position,
-    statList: List[Stat]
-  ): List[SemanticError] = {
-    // TODO:
-    return List()
-  }
+  // def checkStatements(
+  //   prevSymbolTable: SymbolTable,
+  //   position: Position,
+  //   statList: List[Stat]
+  // ): List[SemanticError] = {
+  //   // TODO:
+  //   return List()
+  // }
 
+
+
+  // Refactor check return type
   def check(
       position: Position,
       symbolTable: SymbolTable,
       returnType: Option[TypeNode]
   ): Option[TypeNode] = position match {
     // PROGRAMS
-    case Program(funcList, stat) => //checkProgram(position, funcList, stat)
-      
-      println(Program(funcList, stat)(position.pos))
-      funcList.foreach {
-        case func @ Func(typeNode, ident, paramList, stat) => {
-          (symbolTable.lookupAll(ident.value + "_f", Some(symbolTable))) match {
-            case (Some(_)) => {
-              throw new AlreadyDefinedError(position, s"Function ${ident.value} already defined")
-            }
-            case _ => {
-              symbolTable.add(
-                ident.value + "_f",
-                Func(typeNode, ident, paramList, stat)(position.pos)
-              )
+    case Program(funcList, statList) => //checkProgram(position, funcList, stat)
+      {
+        funcList.foreach {
+          case func@Func(typeNode, ident, paramList, statList) => {
+            symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
+              case Some(_) => {
+                errors += new AlreadyDefinedError(position, ident.value)
+              }
+              case None => symbolTable.add(ident.value + "_f", func)
             }
           }
         }
-      }
 
-      funcList.foreach { func =>
-        {
-          check(func, symbolTable, None)
-        }
+        // Check functions
+        funcList.foreach(func => check(func, symbolTable, None))
+        // Check statements
+        statList.foreach(stat => check(stat, symbolTable, None))
+        None // Program has no type
       }
-      check(stat, symbolTable, None)
-      None // Program has no type
     
     // FUNCTIONS
-    case Func(typeNode, ident, paramList, stat) =>
-      (symbolTable.lookupAll(ident.value + "_f", Some(symbolTable))) match {
+    case func@Func(typeNode, ident, paramList, statList) =>
+      {
+        symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
         case Some(_) =>
           val newSymbolTable = symbolTable.enterScope()
           paramList.paramList.foreach(param => {
-            if (
-              newSymbolTable
-                .lookupAll(param.ident.value, Some(newSymbolTable)) != None
-            ) {
-              throw new SemanticError(position.pos, 
-                s"Parameter ${param.ident.value} already defined"
-              )
+            newSymbolTable.lookupAll(param.ident.value, Some(newSymbolTable)) match {
+              case Some(_) =>
+                errors += new AlreadyDefinedError(position, param.ident.value)
+              case None =>
+                newSymbolTable.add(param.ident.value, param.typeNode)
             }
-            newSymbolTable.add(param.ident.value, param.typeNode)
           })
-          symbolTable.add(ident.value, Func(typeNode, ident, paramList, stat)(position.pos))
-          check(stat, newSymbolTable, Some(typeNode))
-          Some(typeNode)
-        case _ => {
-          throw new SemanticError(position.pos, 
-            s"Function ${ident.value} is not defined, SHOULD NOT REACH"
-          )
-        }
-      }
-    case IdentAsgn(typeNode, ident, expr) =>
-      val exprType = check(expr, symbolTable, returnType)
+          symbolTable.add(ident.value, func)
 
-      println(ident.value)
-      println(expr)
-      println(symbolTable.lookup(ident.value))
+          // Check statements
+          statList.foreach(stat => check(stat, newSymbolTable, Some(typeNode)))
+          Some(typeNode)
+        case None => errors += new NotDefinedError(position, ident.value)
+          None
+      }
+    }
+
+    // VARIABLE DECLARATIONS
+    case IdentAsgn(typeNode, ident, rvalue) => {
+      
+      // Check rvalue (expr)
+      val exprType = check(rvalue, symbolTable, returnType)
+
       symbolTable.lookup(ident.value) match {
         case Some(t) =>
           t match {
@@ -148,11 +150,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
               symbolTable.add(ident.value, typeNode)
             case x if x != typeNode =>
               symbolTable.add(ident.value, typeNode)
-            case _  => {
-              throw new ScopeError(position.pos, 
-                s"Identifier ${ident.value} already defined"
-              )
-            }
+            case _  => errors += new AlreadyDefinedError(position, ident.value)
           }
         case None => {
           symbolTable.add(ident.value, typeNode)
@@ -160,12 +158,13 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       }
 
       var symbol: TypeNode = typeNode
-      (exprType) match {
+      exprType match {
+        // See if the type of the expression matches the type of the variable
         case Some(t) if t == typeNode => {
           symbolTable.add(ident.value, symbol)
           None
         }
-        case Some(PairTypeNode(x, y)) => {
+        case Some(PairTypeNode(x, y)) =>
           typeNode match {
             case PairTypeNode(expectedX, expectedY) => {
               val xCompat = (x, expectedX) match {
@@ -196,13 +195,13 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                 symbolTable.add(ident.value, symbol)
                 None
               } else {
-                throw new TypeError(position.pos, 
-                  s"Type mismatch: Pair elements do not match expected types: expected $typeNode, got ${exprType.getOrElse("None").toString()}"
-                )
+                errors += new TypeMismatchError(
+                  position, 
+                  typeNode.toString(), exprType.getOrElse("none").toString())
               }
             }
           }
-        }
+        
         case _ =>
           if (
             (typeNode == StringTypeNode()(position.pos) && exprType == Some(
@@ -212,43 +211,44 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             symbolTable.add(ident.value, symbol)
             None
           } else {
-            if (expr != ArrayLiter(List())(position.pos) && expr != Null()(position.pos) && exprType.getOrElse(None) != Null()(position.pos)) {
-              throw new TypeError(position.pos, 
-                s"Type mismatch: expected $typeNode, got ${exprType.getOrElse("None").toString()}"
-              )
+            if (rvalue != ArrayLiter(List())(position.pos) && 
+              rvalue != Null()(position.pos) && 
+              exprType.getOrElse(None) != Null()(position.pos)) {
+              errors += new TypeMismatchError(position, 
+                typeNode.toString(), exprType.getOrElse("none").toString())
             } else {
               symbolTable.add(ident.value, symbol)
               None
             }
           }
-
+        
       }
       None
+    }
+
+    // EQUALITY ASSIGNMENTS
     case AsgnEq(lhs, rhs) =>
       val lhsType = check(lhs, symbolTable, returnType)
       val rhsType = check(rhs, symbolTable, returnType)
       if (
         lhsType != rhsType && !compatiblePairTypes(
           lhsType.getOrElse(IntLiter(0)(position.pos)),
-          rhsType.getOrElse(IntLiter(0)(position.pos))
-        , position) && (rhs != Null()(position.pos))
+          rhsType.getOrElse(IntLiter(0)(position.pos)), 
+          position) && (rhs != Null()(position.pos))
       ) {
-        println(lhs, rhs)
         if (rhsType.getOrElse(None) != None) {
-          throw new TypeError(position.pos, 
-            s"Type mismatch: expected ${lhsType.getOrElse("None").toString()}, got ${rhsType.getOrElse("None").toString()}"
-          )
+          errors += new TypeMismatchError(position, 
+            lhsType.getOrElse("none").toString(), rhsType.getOrElse("none").toString())
         }
-
       }
 
-      (lhs) match {
+      // We might not need this anymore - test variables asgneq with same name as function
+      lhs match {
         case Ident(value) => {
           (symbolTable.lookupAll(value, Some(symbolTable))) match {
             case Some(Func(_, _, _, _)) =>
-              throw new TypeError(position.pos, 
-                s"Type mismatch: cannot assign to function"
-              )
+              errors += new FunctionAssignError(position, value)
+              None
             case _ =>
               None
           }
@@ -256,27 +256,28 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         case _ => None
       }
 
-    case Read(lhs) =>
-      check(lhs, symbolTable, returnType) match {
-        case Some(IntTypeNode()) | Some(CharTypeNode()) => None
-        case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: expected int or char, got ${check(lhs, symbolTable, returnType)}"
-          )
-      }
+    // READ STATEMENTS
+    // case Read(lhs) =>
+    //   check(lhs, symbolTable, returnType) match {
+    //     case Some(IntTypeNode()) | Some(CharTypeNode()) => None
+    //     case x =>
+    //       errors += new ReadError(position, x.getOrElse("none").toString())
+    //       None
+    //   }
+
+    // FREE STATEMENTS
     case Free(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(PairTypeNode(_, _)) | Some(ArrayTypeNode(_)) => None
-        case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: Free expected pair or array, got ${check(expr, symbolTable, returnType).getOrElse("None").toString()}"
-          )
+        case x =>
+          errors += new FreeError(position, x.getOrElse("none").toString())
+          None
       }
+
+    // RETURN STATEMENTS
     case Return(expr) =>
       if (returnType == None) {
-        throw new SemanticError(position.pos, 
-          s"Return statement outside of function is not allowed"
-        )
+        errors += new ReturnError(position)
       }
       val exprType = check(expr, symbolTable, returnType)
 
@@ -287,69 +288,84 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         , position))
       ) {
 
-        throw new TypeError(position.pos, 
-          s"Type mismatch: Function expected to return ${returnType
-              .getOrElse("None")
-              .toString()}, got ${exprType.getOrElse("None").toString()}"
-        )
+        errors += new ReturnTypeMismatchError(position, 
+          returnType.getOrElse("none").toString(), exprType.getOrElse("none").toString())
       }
       None
+
+    // EXIT STATEMENTS
     case Exit(expr) =>
       val exprType = check(expr, symbolTable, returnType)
       exprType match {
-        case Some(IntTypeNode()) => None
+        case Some(IntTypeNode()) => Some(IntTypeNode()(position.pos))
         case _ =>
-          throw new SemanticError(position.pos, 
-            s"Exit statement requires an int expression, got ${exprType.getOrElse(None).toString()}"
-          )
-      }
-    case Print(expr) =>
-      val exprType = check(expr, symbolTable, returnType)
-      exprType match {
-        case Some(t) =>
+          errors += new ExitError(position, exprType.getOrElse("none").toString())
           None
-        case _ =>
-          throw new TypeError(position.pos, s"Type mismatch: Print expected a value got ${exprType.getOrElse(None).toString()}")
       }
-    case Println(expr) =>
-      val exprType = check(expr, symbolTable, returnType)
-      exprType match {
-        case Some(t) =>
-          None
-        case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: Println a value, got ${exprType.getOrElse(None).toString()}"
-          )
-      }
-    case If(cond, ifStat, elseStat) =>
+
+    // PRINT STATEMENTS
+    // case Print(expr) =>
+    //   val exprType = check(expr, symbolTable, returnType)
+    //   println("Print tried to print " + exprType.getOrElse("none").toString())
+    //   exprType match {
+    //     case Some(t) =>
+    //       None
+    //     case None =>
+    //       errors += new PrintError(position, exprType.getOrElse("none").toString()) 
+    //       None
+    //   }
+
+    // // PRINTLN STATEMENTS
+    // case Println(expr) =>
+    //   val exprType = check(expr, symbolTable, returnType)
+    //   exprType match {
+    //     case Some(t) =>
+    //       None
+    //     case _ =>
+    //       errors += new PrintError(position, exprType.getOrElse("none").toString())
+    //       None
+    //   }
+
+
+    // IF STATEMENTS
+    case If(cond, ifStats, elseStats) =>
       val newSymbolTableTrue = symbolTable.enterScope()
       val newSymbolTableFalse = symbolTable.enterScope()
       val condType = check(cond, symbolTable, returnType)
       if (condType != Some(BoolTypeNode()(position.pos))) {
-        throw new TypeError(position.pos,
-          s"Type mismatch: If condition must be boolean, got ${condType}"
-        )
+        errors += new TypeMismatchError(position, "bool", condType.getOrElse("none").toString())
       }
-      check(ifStat, newSymbolTableTrue, returnType)
-      check(elseStat, newSymbolTableFalse, returnType)
+
+      ifStats.foreach(stat => check(stat, newSymbolTableTrue, returnType))
+      elseStats.foreach(stat => check(stat, newSymbolTableFalse, returnType))
       None
-    case While(cond, stat) =>
+
+    // WHILE STATEMENTS
+    case While(cond, stats) =>
       val newSymbolTable = symbolTable.enterScope()
       val condType = check(cond, symbolTable, returnType)
       if (condType != Some(BoolTypeNode()(position.pos))) {
-        throw new TypeError(position.pos,
-          s"Type mismatch: While loop condition must be a boolean, got ${condType}"
-        )
+        errors += new TypeMismatchError(position, "bool", condType.getOrElse("none").toString())
       }
-      check(stat, newSymbolTable, returnType)
+
+      stats.foreach(stat => check(stat, newSymbolTable, returnType))
+      // check(stat, newSymbolTable, returnType)
       None
-    case BeginEnd(stat) =>
+
+    // BEGIN-END STATEMENTS
+    case BeginEnd(stats) =>
       val newSymbolTable = symbolTable.enterScope()
-      val result = check(stat, newSymbolTable, returnType)
-      result
-    case StatJoin(statList) =>
-      statList.foreach(stat => check(stat, symbolTable, returnType))
+      stats.foreach(stat => check(stat, newSymbolTable, returnType))
       None
+      // val result = check(stat, newSymbolTable, returnType)
+      // result
+
+    // case StatJoin(statList) =>
+    //   statList.foreach(stat => check(stat, symbolTable, returnType))
+    //   None
+
+
+    // NEWPAIR STATEMENTS
     case NewPair(fst, snd) =>
       val fstType = check(fst, symbolTable, returnType)
       val sndType = check(snd, symbolTable, returnType)
@@ -357,47 +373,58 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         case (Some(fst: PairElemTypeNode), Some(snd: PairElemTypeNode)) =>
           Some(PairTypeNode(fst, snd)(position.pos))
         case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: NewPair expected pair elements, got ${fstType
-                .getOrElse("None")
-                .toString()} and ${sndType.getOrElse("None").toString()}"
+          errors += new TypeMatchError(position, 
+            fstType.getOrElse("none").toString(),
+            sndType.getOrElse("none").toString()
           )
+          None
       }
+    
+    // FUNCTION CALLS
     case Call(ident, args) =>
       def checkArgList(
           argList: List[Expr],
           expected: List[TypeNode]
       ): Boolean = {
+        // Check if the number of arguments matches the number of parameters
         if (argList.length != expected.length) {
-          throw new SemanticError(position.pos, 
-            s"Expected ${expected.length} arguments, got ${argList.length}"
-          )
+          errors += new ArgNumError(position, expected.length, argList.length)
+          false
         }
+        
         val argTypes = argList.map(arg => check(arg, symbolTable, returnType))
-        println(argTypes)
 
-        argTypes.zip(expected).forall { case (argType, expectedType) =>
-          argType == Some(expectedType) || argType == Some(Null()(position.pos))
+        argTypes.zip(expected).forall { 
+          case (argType, expectedType) => 
+            argType == Some(expectedType) || argType == Some(Null()(position.pos))
         }
-
       }
+
       symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
         case Some(Func(typeNode, _, paramList, _)) =>
-          if (checkArgList(args, paramList.paramList.map(_.typeNode))) {
+          val expectedTypes = paramList.paramList.map(_.typeNode)
+          if (checkArgList(args, expectedTypes)) {
             Some(typeNode)
           } else {
-            throw new TypeError(position.pos, 
-              s"Type mismatch: Call expected ${paramList.paramList
-                  .map(_.typeNode)}, got ${args.map(arg => check(arg, symbolTable, returnType))}"
+            // Expected types do not match actual types
+            var argTypes = args.map(arg => check(arg, symbolTable, returnType))
+            errors += new ArgTypeError(position, 
+              expectedTypes.map(_.toString()).mkString(", "), 
+              argTypes.map(_.getOrElse("none").toString()).mkString(", ")
             )
+            None
           }
         case _ =>
-          throw new SemanticError(position.pos, 
-            s"Function ${ident.value + "_f"} not found or arg count doesnt match"
-          )
+          // Function identifier not found
+          errors += new NotDefinedError(position, ident.value)
+          None
       }
+    
+    // ARRAY LITERAL
     case ArrayLiter(exprList) =>
+      // Check if all elements are of the same type
       val exprType = exprList.map(expr => check(expr, symbolTable, returnType))
+
       if (exprType.distinct.length == 1) {
         Some(ArrayTypeNode(exprType.head.get)(position.pos))
       } else if (exprType.distinct.length == 0) {
@@ -411,26 +438,31 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         ) {
           Some(ArrayTypeNode(StringTypeNode()(position.pos))(position.pos))
         } else
-          throw new TypeError(position.pos, 
-            s"Type mismatch: ArrayLiter expected all elements to be of the same type"
+          errors += new ArrayElemTypeError(position, 
+            List(exprType.map(_.getOrElse("none").toString()).mkString(", "))
           )
+          None
       }
+
+    // FIRST PAIR ELEMENT from NEWPAIR
     case FstNode(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(PairTypeNode(fst, _)) => Some(fst)
-        case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: fst expected a pair, got ${check(expr, symbolTable, returnType).getOrElse("None").toString()}"
-          )
+        case x =>
+          errors += new TypeMismatchError(position, "pair type", x.getOrElse("none").toString())
+          None
       }
+
+    // SECOND PAIR ELEMENT from NEWPAIR
     case SndNode(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(PairTypeNode(_, snd)) => Some(snd)
-        case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: SndNode expected a pair, got ${check(expr, symbolTable, returnType)}"
-          )
+        case x =>
+          errors += new TypeMismatchError(position, "pair type", x.getOrElse("none").toString())
+          None
       }
+
+    // ARRAY ELEMENT
     case ArrayElem(ident, eList) =>
       symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
         case Some(positionl) =>
@@ -441,9 +473,11 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                 check(expr, symbolTable, returnType) == Some(IntTypeNode()(position.pos))
               )
               if (!allIndicesAreInt) {
-                throw new TypeError(position.pos, 
-                  "Type mismatch: ArrayElem expected all indices to be integers"
+                // Expected all array indices to be integers
+                errors += new ArrayIndexError(position, 
+                  eList.map(expr => check(expr, symbolTable, returnType).getOrElse("none")).mkString(", ")
                 )
+                None
               } else {
                 // For a single-dimensional array accessed once, return the element type.
                 // For multi-dimensional arrays or deeper accesses, we need to peel off the array layers accordingly.
@@ -460,23 +494,25 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                     acc match {
                       case ArrayTypeNode(t) if t != arrType => t
                       case ArrayTypeNode(t)                 => ArrayTypeNode(t)(position.pos)
-                      case t =>
-                        throw new SemanticError(position.pos, 
-                          s"Array access too deep"
-                        )
+                      case t => errors += new ArrayDepthError(position, t.toString())
+                        t
                     }
                   )
                   Some(node)
                 }
               }
             case _ =>
-              throw new TypeError(position.pos, 
-                s"Type mismatch: ${ident.value} is not an array"
-              )
+              // Expected an array
+              errors += new TypeMismatchError(position, "array", positionl.toString())
+              None
           }
         case None =>
-          throw new ScopeError(position.pos, s"Identifier ${ident.value} not found")
+          // Identifier not found#
+          errors += new ScopeError(position, ident.value)
+          None
       }
+
+    // BINARY OPERATIONS
     case Mul(lhs, rhs) =>
       checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
     case Div(lhs, rhs) =>
@@ -503,9 +539,10 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       ) {
         Some(BoolTypeNode()(position.pos))
       } else {
-        throw new TypeError(position.pos, 
-          s"Type mismatch: Equals expected two of the same type, got ${lhsType} and ${rhsType}"
-        )
+        // Expected same type
+        errors += new TypeMatchError(position, 
+          lhsType.getOrElse("none").toString(), rhsType.getOrElse("none").toString())
+        None
       }
     }
     case NotEquals(lhs, rhs) => {
@@ -516,9 +553,10 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       ) {
         Some(BoolTypeNode()(position.pos))
       } else {
-        throw new TypeError(position.pos, 
-          s"Type mismatch: Equals expected two of the same type, got ${lhsType} and ${rhsType}"
-        )
+        // Expected same type
+        errors += new TypeMatchError(position, 
+          lhsType.getOrElse("none").toString(), rhsType.getOrElse("none").toString())
+        None
       }
     }
     case And(lhs, rhs) =>
@@ -529,41 +567,46 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       check(expr, symbolTable, returnType) match {
         case Some(BoolTypeNode()) => Some(BoolTypeNode()(position.pos))
         case _ =>
-          throw new TypeError(position.pos,
-            s"Type mismatch: Not expected a boolean, got ${check(expr, symbolTable, returnType)}"
-          )
+          // Expected boolean
+          errors += new TypeMismatchError(position, 
+            "bool", check(expr, symbolTable, returnType).getOrElse("none").toString())
+          None
       }
     case Neg(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(IntTypeNode()) => Some(IntTypeNode()(position.pos))
         case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: Neg expected an integer, got ${check(expr, symbolTable, returnType)}"
-          )
+          // Expected integer
+          errors += new TypeMismatchError(position, 
+            "int", check(expr, symbolTable, returnType).getOrElse("none").toString())
+          None
       }
     case Len(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(ArrayTypeNode(_)) => Some(IntTypeNode()(position.pos))
         case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: Len expected an array, got ${check(expr, symbolTable, returnType)}"
-          )
+          // Expected array
+          errors += new TypeMismatchError(position, 
+            "array", check(expr, symbolTable, returnType).getOrElse("none").toString())
+          None
       }
     case Ord(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(CharTypeNode()) => Some(IntTypeNode()(position.pos))
         case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: Ord expected a char, got ${check(expr, symbolTable, returnType)}"
-          )
+          // Expected char
+          errors += new TypeMismatchError(position, 
+            "char", check(expr, symbolTable, returnType).getOrElse("none").toString())
+          None
       }
     case Chr(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(IntTypeNode()) => Some(CharTypeNode()(position.pos))
         case _ =>
-          throw new TypeError(position.pos, 
-            s"Type mismatch: Chr expected an int, got ${check(expr, symbolTable, returnType)}"
-          )
+          // Expected int
+          errors += new TypeMismatchError(position, 
+            "int", check(expr, symbolTable, returnType).getOrElse("none").toString())
+          None
       }
     case IntLiter(_)    => Some(IntTypeNode()(position.pos))
     case CharLiter(_)   => Some(CharTypeNode()(position.pos))
@@ -577,15 +620,17 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             case _                         => Some(t.asInstanceOf[TypeNode])
           }
         case None =>
-          throw new ScopeError(position.pos, 
-            s"identifier does not exist: ${value}"
-          )
+          // Identifier not found
+          errors += new NotDefinedError(position, value)
+          None
       }
     case Brackets(expr) => check(expr, symbolTable, returnType)
     case Null()         => Some(Null()(position.pos))
     case Skip()         => None
-    case x =>
-      throw new SemanticError(position.pos, s"Type checking not implemented for $x")
+    case _ =>
+      println("Type checking not implemented for " + position)
+      None
+      // throw new SemanticError(position.pos, s"Type checking not implemented for $x")
   }
 
   def compatiblePairTypes(
@@ -642,11 +687,16 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     if (lhsType == Some(BoolTypeNode()(position.pos)) && rhsType == Some(BoolTypeNode()(position.pos))) {
       Some(BoolTypeNode()(position.pos))
     } else {
-      throw new TypeError(position.pos, 
-        s"Type mismatch: Binary bool operator expected two booleans, got ${lhsType
-            .getOrElse("None")
-            .toString()} and ${rhsType.getOrElse("None").toString()}"
-      )
+      errors += new TypeMatchError(position, 
+                                   lhsType.getOrElse("none").toString(), 
+                                   rhsType.getOrElse("none").toString())
+      
+      None
+      // throw new TypeError(position.pos, 
+      //   s"Type mismatch: Binary bool operator expected two booleans, got ${lhsType
+      //       .getOrElse("none")
+      //       .toString()} and ${rhsType.getOrElse("none").toString()}"
+      // )
     }
   }
 
@@ -662,11 +712,11 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     if (lhsType == Some(IntTypeNode()(position.pos)) && rhsType == Some(IntTypeNode()(position.pos))) {
       Some(IntTypeNode()(position.pos))
     } else {
-      throw new TypeError(position.pos, 
-        s"Type mismatch: Binary arithmetic operator expected two integers, got ${lhsType
-            .getOrElse("None")
-            .toString()} and ${rhsType.getOrElse("None").toString()}"
-      )
+      errors += new TypeMatchError(position, 
+                                   lhsType.getOrElse("none").toString(), 
+                                   rhsType.getOrElse("none").toString())
+      
+      None
     }
   }
 
@@ -680,27 +730,20 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     val lhsType = check(lhs, symbolTable, returnType)
     val rhsType = check(rhs, symbolTable, returnType)
 
-    if (lhsType == rhsType) {
-      if (
+    if ((lhsType == rhsType) &&
         (lhsType == Some(IntTypeNode()(position.pos)) || lhsType == Some(
           CharTypeNode()(position.pos)
         )) && (rhsType == Some(IntTypeNode()(position.pos)) || rhsType == Some(
           CharTypeNode()(position.pos)
         ))
-      ) {
-        return Some(BoolTypeNode()(position.pos))
-      } else {
-        throw new TypeError(position.pos, 
-          s"Type mismatch: Binary comparison operator expected two integers or two chars, got ${lhsType
-              .getOrElse("None")
-              .toString()} and ${rhsType.getOrElse("None").toString()}"
-        )
-      }
+    ) {
+      return Some(BoolTypeNode()(position.pos))
     } else {
-      throw new TypeError(position.pos, 
-        s"Type mismatch: expected two of the same type, got ${lhsType} and ${rhsType}"
-      )
+      errors += new TypeMatchError(position, 
+                                    lhsType.getOrElse("none").toString(), 
+                                    rhsType.getOrElse("none").toString())
+      
+      None
     }
   }
-
 }

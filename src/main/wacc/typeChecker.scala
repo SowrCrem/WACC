@@ -23,68 +23,9 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       Right(initialSymbolTable)
     } else {
       Left(errors)
-    }
-
-    // check(position, initialSymbolTable, None) match {
-    //   case Some(_) => Right(initialSymbolTable)
-    //   case None    => Left(errors)
-    // }
+    } 
   
   }
-
-  // def checkProgram(
-  //   symbolTable: SymbolTable = initialSymbolTable,
-  //   position: Position,
-  //   funcList: List[Func],
-  //   statList: List[Stat],
-  // ): SymbolTable = {
-  //   errors.:::(checkFunctions(symbolTable, position, funcList))
-  //   errors.:::(checkStatements(symbolTable, position, statList))
-    
-  //   // Return symbol table after adding all the child symbol tables
-  //   symbolTable
-  // }
-
-  // def checkFunction(
-  //   symbolTable: SymbolTable,
-  //   position: Position,
-  //   typeNode: TypeNode,
-  //   ident: Ident,
-  //   paramList: ParamList,
-  //   statList: List[Stat]
-  // ): List[SemanticError] = {
-  //   var errs = List[SemanticError]()
-  //   symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
-  //     case (Some(_)) => errs.::(new AlreadyDefinedError(position, ident.value))
-  //     case _         => symbolTable.add(
-  //         ident.value + "_f",
-  //         Func(typeNode, ident, paramList, statList)(position.pos)
-  //     )
-  //   }
-  //   return errs
-  // }
-
-  // def checkFunctions(
-  //   prevSymbolTable: SymbolTable,
-  //   position: Position,
-  //   funcList: List[Func]
-  // ): List[SemanticError] = {
-  //   funcList.flatMap(func => func match {
-  //     case Func(typeNode, ident, paramList, stat) => 
-  //       checkFunction(prevSymbolTable, position, typeNode, ident, paramList, stat)
-  //   })
-  // }
-
-  // def checkStatements(
-  //   prevSymbolTable: SymbolTable,
-  //   position: Position,
-  //   statList: List[Stat]
-  // ): List[SemanticError] = {
-  //   // TODO:
-  //   return List()
-  // }
-
-
 
   // Refactor check return type
   def check(
@@ -257,13 +198,13 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       }
 
     // READ STATEMENTS
-    // case Read(lhs) =>
-    //   check(lhs, symbolTable, returnType) match {
-    //     case Some(IntTypeNode()) | Some(CharTypeNode()) => None
-    //     case x =>
-    //       errors += new ReadError(position, x.getOrElse("none").toString())
-    //       None
-    //   }
+    case Read(lhs) =>
+      check(lhs, symbolTable, returnType) match {
+        case Some(IntTypeNode()) | Some(CharTypeNode()) => None
+        case x =>
+          errors += new ReadError(position, x.getOrElse("none").toString())
+          None
+      }
 
     // FREE STATEMENTS
     case Free(expr) =>
@@ -304,27 +245,27 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       }
 
     // PRINT STATEMENTS
-    // case Print(expr) =>
-    //   val exprType = check(expr, symbolTable, returnType)
-    //   println("Print tried to print " + exprType.getOrElse("none").toString())
-    //   exprType match {
-    //     case Some(t) =>
-    //       None
-    //     case None =>
-    //       errors += new PrintError(position, exprType.getOrElse("none").toString()) 
-    //       None
-    //   }
+    case Print(expr) =>
+      val exprType = check(expr, symbolTable, returnType)
+      println("Print tried to print " + exprType.getOrElse("none").toString())
+      exprType match {
+        case Some(t) =>
+          None
+        case None =>
+          errors += new PrintError(position, exprType.getOrElse("none").toString()) 
+          None
+      }
 
-    // // PRINTLN STATEMENTS
-    // case Println(expr) =>
-    //   val exprType = check(expr, symbolTable, returnType)
-    //   exprType match {
-    //     case Some(t) =>
-    //       None
-    //     case _ =>
-    //       errors += new PrintError(position, exprType.getOrElse("none").toString())
-    //       None
-    //   }
+    // PRINTLN STATEMENTS
+    case Println(expr) =>
+      val exprType = check(expr, symbolTable, returnType)
+      exprType match {
+        case Some(t) =>
+          None
+        case _ =>
+          errors += new PrintError(position, exprType.getOrElse("none").toString())
+          None
+      }
 
 
     // IF STATEMENTS
@@ -349,7 +290,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       }
 
       stats.foreach(stat => check(stat, newSymbolTable, returnType))
-      // check(stat, newSymbolTable, returnType)
       None
 
     // BEGIN-END STATEMENTS
@@ -357,12 +297,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       val newSymbolTable = symbolTable.enterScope()
       stats.foreach(stat => check(stat, newSymbolTable, returnType))
       None
-      // val result = check(stat, newSymbolTable, returnType)
-      // result
-
-    // case StatJoin(statList) =>
-    //   statList.foreach(stat => check(stat, symbolTable, returnType))
-    //   None
 
 
     // NEWPAIR STATEMENTS
@@ -630,7 +564,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     case _ =>
       println("Type checking not implemented for " + position)
       None
-      // throw new SemanticError(position.pos, s"Type checking not implemented for $x")
   }
 
   def compatiblePairTypes(
@@ -692,11 +625,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                                    rhsType.getOrElse("none").toString())
       
       None
-      // throw new TypeError(position.pos, 
-      //   s"Type mismatch: Binary bool operator expected two booleans, got ${lhsType
-      //       .getOrElse("none")
-      //       .toString()} and ${rhsType.getOrElse("none").toString()}"
-      // )
     }
   }
 

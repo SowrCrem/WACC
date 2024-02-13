@@ -15,8 +15,9 @@ object semanticChecker {
     try {
       typeChecker.check(position) match {
         case Left(errorList) => {
-          // Hardiv: Print each error in errorList
-          Left("Semantic Error found")
+          // Print all the errors
+          errorList.foreach(error => println(error.getErrMessage()))
+          Left("Semantic error(s) found")
         }
         case Right(_)   => return Right(0)
       }

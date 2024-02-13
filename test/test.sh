@@ -50,11 +50,12 @@ run_tests() {
   fi
   echo "-----------------------------------"
   echo "Running $name tests"
-  scala-cli test . --test-only "test.$milestone.$type$part*" || true
+  scala-cli test . --test-only "test.$milestone.$type$part*"
   local result=$?
   if [ $result -ne 0 ]; then
     echo "-----------------------------------"
-    echo "$name tests failed"
+    # TODO: Add this to a list and print all warnings at end
+    echo "WARNING: $name Tests Failed"
     exit_code=1
   fi
 }

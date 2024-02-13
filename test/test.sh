@@ -1,23 +1,50 @@
 #!/bin/bash
 
-# Add the grandparent directory to the PATH
-export PATH="$(dirname "$(dirname "$PWD")"):$PATH"
+# Arguments
+milestone=$1
+type=$2
 
+# Add the grandparent directory to the PATH and go to the parent directory
+export PATH="$(dirname "$(dirname "$PWD")"):$PATH"
 cd ..
 
-# Collect the outputs of scala-cli test into a file without printing them to console
-scala-cli test . > test/testResults.txt
+# Check if the milestone and type are valid
+if [[ "$milestone" != "frontend" && "$milestone" != "backend" && "$milestone" != "extension" ]]; then
+  echo "Invalid milestone"
+  exit 1
+fi
 
-# examine each line of the file and check if it contains "FAILED" or "pending". if so, print the line and line before it to console
-# prevline=$(read -r line)
-while IFS= read -r line
-do
-  # if [[ $line == *"FAILED"* ]] || [[ $line == *"pending"* ] || [ $line == *"IGNORED"* ]]; then
-  if [[ $line == *"FAILED"* ]] || [[ $line == *"pending"* ]]; then
-    echo $prevLine
-    echo $line
+if [[ "$type" != "unit" && "$type" != "integration" ]]; then
+  echo "Invalid type"
+  exit 1
+fi
+
+# Run the tests
+run_tests() {
+  local name=$1
+  local part=""
+  if [ ! -z name ]; then
+    part=".$(echo $name | tr '[:upper:]' '[:lower:]')"
   fi
-  prevLine=$line
-done < "test/testResults.txt"
+  echo "-----------------------------------"
+  echo "Running $name tests"
+  scala-cli test . --test-only "$milestone.$type$part*"
+  scala-cli test . --test-only "$milestone.$type$part*" >> test/results.txt 2>&1
+  local result=$?
+  if [ $result -ne 0 ]; then
+    echo "-----------------------------------"
+    echo "tests failed"
+    exit 1
+  fi
+}
 
+if [ "$milestone" == "frontend" ]; then
+  run_tests "Syntax"
+  run_tests "Semantic"
+else
+  run_tests ""
+fi
+
+echo "-----------------------------------"
 echo "all tests run"
+exit 0

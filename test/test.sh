@@ -2,6 +2,8 @@
 
 VERBOSE=true
 
+# TODOs: Refactor, use verbosity, add verbosity to rm_pendings (make a write(msg, file) function that echos msg if verbose is true, and writes msg to a file if not)
+
 # Functions -------------------------------------------------------------------
 get_args() {
   if [ $# -eq 0 ]; then

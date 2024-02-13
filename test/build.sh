@@ -103,7 +103,7 @@ echo "(build.sh) Build file is out-of-date - Please update to match new filestru
 # done
 
 # echo "Scala files created for each subdirectory."
-# echo "Add removePending statements as required to this script"
-# sh ../removePendings.sh -d syntaxErrTests/
-# sh ../removePendings.sh -d semanticErrTests/
-# sh ../removePendings.sh -d validTests/
+# echo "Add rm_pending statements as required to this script"
+# sh ../rm_pendings.sh -d syntaxErrTests/
+# sh ../rm_pendings.sh -d semanticErrTests/
+# sh ../rm_pendings.sh -d validTests/

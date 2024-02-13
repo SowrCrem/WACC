@@ -19,7 +19,8 @@ test-frontend-unit-job:
   stage: test-frontend-unit
   image: $wacc_image
   script:
-    - scala-cli --power test .
+    - cd test
+    - ./test.sh frontend unit
   artifacts:
     paths:
       - test/frontend/unit/results.txt
@@ -28,7 +29,8 @@ test-frontend-integration-job:
   stage: test-frontend-integration
   image: $wacc_image
   script:
-    - scala-cli --power test .
+    - cd test
+    - ./test.sh frontend integration
   artifacts:
     paths:
       - test/frontend/integration/results.txt
@@ -37,7 +39,8 @@ test-backend-unit-job:
   stage: test-backend-unit
   image: $wacc_image
   script:
-    - scala-cli --power test .
+    - cd test
+    - ./test.sh backend unit
   artifacts:
     paths:
       - test/backend/unit/results.txt
@@ -46,7 +49,8 @@ test-backend-integration-job:
   stage: test-backend-integration
   image: $wacc_image
   script:
-    - scala-cli --power test .
+    - cd test
+    - ./test.sh backend integration
   artifacts:
     paths:
       - test/backend/integration/results.txt

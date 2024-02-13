@@ -19,7 +19,7 @@ run_tests() {
   echo "-----------------------------------"
   echo "Running $name tests"
   scala-cli test . --test-only "$milestone.$type$part*"
-  scala-cli test . --test-only "$milestone.$type$part*" >> test/results.txt 2>&1
+  scala-cli test . --test-only "$milestone.$type$part*" > test/$milestone/$type/results.txt 2>&1
   local result=$?
   if [ $result -ne 0 ]; then
     echo "-----------------------------------"
@@ -31,7 +31,7 @@ run_tests() {
 # Script ----------------------------------------------------------------------
 
 # Arguments
-check_args
+check_args $@
 milestone=$1
 type=$2
 

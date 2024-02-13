@@ -41,12 +41,12 @@ cd ..
 
 # Check if the milestone and type are valid
 if [[ "$milestone" != "frontend" && "$milestone" != "backend" && "$milestone" != "extension" ]]; then
-  echo "Invalid milestone:"
+  echo "Invalid milestone: $milestone should be one of frontend, backend, extension"
   exit 1
 fi
 
 if [[ "$type" != "unit" && "$type" != "integration" ]]; then
-  echo "Invalid type"
+  echo "Invalid type: $type should be one of unit, integration"
   exit 1
 fi
 

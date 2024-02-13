@@ -20,6 +20,7 @@ run_tests() {
   fi
   echo "-----------------------------------"
   echo "Running $name tests"
+  # TODO: Make the following line not terminate after one run
   scala-cli test . --test-only "test.$milestone.$type$part*"
   # scala-cli test . --test-only "test.$milestone.$type$part*" > test/$milestone/$type/results.txt 2>&1
   local result=$?

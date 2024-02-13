@@ -1,4 +1,4 @@
-package test.frontend.unit.syntax
+package test.frontend.unit.semantic
 
 import wacc.Main
 import test.Utils._

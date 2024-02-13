@@ -125,7 +125,7 @@ fi
 fi
 
 echo "-----------------------------------"
-echo "All Tests Run"
+echo "All tests ran with overall exit code $exit_code."
 
 # Exit with the stored exit code
 exit $exit_code

@@ -1,10 +1,37 @@
 package test
 
 import wacc.Main
+import wacc.parser._
+import wacc.{
+  Position,
+  Program,
+  Expr,
+  Stat,
+  Exit}
+import parsley.{Failure, Result, Success}
 import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
 
 object Utils {
+
+  val pos = (0, 0)
+
+    def parseSucceeds(input: String, expected: Stat): Assertion =
+    parser.parse("begin " + input + " end") shouldBe Success(Program(List(), expected)(pos))
+
+  def parseSucceeds(input: String, expected: Expr): Assertion =
+    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)(pos))(pos))
+
+  def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
+    case "" => parser.parse("begin exit " + input + " end") should matchPattern {
+      case Failure(_) => // Match on any Failure
+    }
+    // Match on a Failure with the specific error message
+    case _ => parser.parse("begin exit " + input + " end") match {
+      case Failure (msg) => msg shouldBe errorMessage
+      case _ => fail("Wrong Error Message")
+    }
+  }
 
   def throwsSemanticError(path: String): Assertion = {
     exitsWithCode(path, 200)

@@ -1,221 +1,220 @@
-// package unitTests.syntax
+package test.frontend.unit.syntax
 
-// import org.scalatest.flatspec.AnyFlatSpec
-// import org.scalatest.matchers.should.Matchers._
-// import wacc.Main
-// import wacc.{
-//   IntLiter,
-//   CharLiter,
-//   StringLiter,
-//   BoolLiter,
-//   Ident,
-//   Brackets,
-//   Null,
-//   Error,
-//   ArrayElem,
-//   Plus,
-//   Mul,
-//   Div,
-//   Not,
-//   Len,
-//   Program,
-//   Expr,
-//   Stat,
-//   Skip,
-//   Read,
-//   Free,
-//   Return,
-//   Exit,
-//   Print,
-//   Println,
-//   If,
-//   While,
-//   BeginEnd,
-//   StatJoin,
-//   IdentAsgn,
-//   AsgnEq,
-//   LValue,
-//   RValue,
-//   Call,
-//   NewPair,
-//   IntTypeNode,
-//   PairTypeNode,
-//   PairElemTypeNode,
-//   ArrayTypeNode,
-//   BoolTypeNode,
-//   CharTypeNode,
-//   StringTypeNode,
-//   Func,
-//   ParamList,
-//   FstNode,
-//   SndNode,
-//   ArrayLiter,
-//   ArgList
-// }
-// import parsley.{Failure, Result, Success}
-// import wacc.parser._
-// import wacc.lexer._
-// import org.scalatest.compatible.Assertion
+import wacc.Main
+import test.Utils._
+import wacc.lexer._
+import wacc.parser._
+import wacc.{
+  Program,
+  Func,
+  Expr,
+  Neg,
+  Not,
+  Len,
+  Ord,
+  Chr,
+  Mul,
+  Div,
+  Mod,
+  Skip,
+  Plus,
+  Minus,
+  GreaterThan,
+  GreaterThanEq,
+  LessThan,
+  LessThanEq,
+  Equals,
+  NotEquals,
+  And,
+  Or,
+  Call,
+  Null,
+  Exit,
+  Error,
+  Ident,
+  Param,
+  Return,
+  Stat,
+  Read,
+  Free,
+  Print,
+  Println,
+  If,
+  While,
+  StatJoin,
+  ParamList,
+  TypeNode,
+  Position,
+  Brackets,
+  IdentAsgn,
+  AsgnEq,
+  IntLiter,
+  BoolLiter,
+  CharLiter,
+  StringLiter,
+  ArrayLiter,
+  IntTypeNode,
+  BoolTypeNode,
+  CharTypeNode,
+  StringTypeNode,
+  PairTypeNode,
+  NewPair,
+  FstNode,
+  SndNode,
+  ArrayTypeNode,
+  ArrayElem,
+}
+import java.lang.StringBuilder
+import parsley.{Failure, Result, Success}
+import org.scalactic.{Fail, Bool}
+import org.scalatest.compatible.Assertion
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers._
 
-// class parseTypes extends AnyFlatSpec {
+class parseTypes extends AnyFlatSpec {
 
-//   // Testing Functions ---------------------------------------------------------------------------------------------------
+  // Tests for base-type --------------------------------------------------------------------------------------------------
 
-//   def parseSucceeds[T](statement: String, expected: Stat): Assertion = {
-//     parser.parse("begin " + statement + " end") shouldBe Success(
-//       Program(List(), expected)
-//     )
-//   }
+  "The parser" should "parse int types" in {
+    parseSucceeds("int x = 5",
+      IdentAsgn(IntTypeNode()(pos), Ident("x")(pos), IntLiter(5)(pos))(pos)
+    )
+  }
 
-//   def parseFails(statement: String): Assertion = {
-//     parser.parse("begin " + statement + " end") should matchPattern {
-//       case Failure(_) => // Match on any Failure
-//     }
-//   }
+  it should "parse bool types" in {
+    parseSucceeds("bool x = true",
+      IdentAsgn(BoolTypeNode()(pos), Ident("x")(pos), BoolLiter(true)(pos))(pos)
+    )
+  }
 
-//   // Tests for base-type --------------------------------------------------------------------------------------------------
+  it should "parse char types" in {
+    parseSucceeds(
+      "char x = 'a'",
+      IdentAsgn(CharTypeNode()(pos), Ident("x")(pos), CharLiter('a')(pos))(pos)
+    )
+  }
 
-//   "The parser" should "parse int types" in {
-//     parseSucceeds(
-//       "int x = 5",
-//       IdentAsgn(IntTypeNode(), Ident("x"), IntLiter(5))
-//     )
-//   }
+  it should "parse string types" in {
+    parseSucceeds(
+      "string x = \"hello\"",
+      IdentAsgn(StringTypeNode()(pos), Ident("x")(pos), StringLiter("hello")(pos))(pos)
+    )
+  }
 
-//   it should "parse bool types" in {
-//     parseSucceeds(
-//       "bool x = true",
-//       IdentAsgn(BoolTypeNode(), Ident("x"), BoolLiter(true))
-//     )
-//   }
+  // Tests for array-type -------------------------------------------------------------------------------------------------
 
-//   it should "parse char types" in {
-//     parseSucceeds(
-//       "char x = 'a'",
-//       IdentAsgn(CharTypeNode(), Ident("x"), CharLiter('a'))
-//     )
-//   }
+  it should "parse int array types" in {
+    parseSucceeds(
+      "int[] x = [1, 2, 3]",
+      IdentAsgn(
+        ArrayTypeNode(IntTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(IntLiter(1)(pos), IntLiter(2)(pos), IntLiter(3)(pos)))(pos)
+      )(pos)
+    )
+  }
 
-//   it should "parse string types" in {
-//     parseSucceeds(
-//       "string x = \"hello\"",
-//       IdentAsgn(StringTypeNode(), Ident("x"), StringLiter("hello"))
-//     )
-//   }
+  it should "parse bool array types" in {
+    parseSucceeds(
+      "bool[] x = [true, false]",
+      IdentAsgn(
+        ArrayTypeNode(BoolTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(BoolLiter(true)(pos), BoolLiter(false)(pos)))(pos)
+      )(pos)
+    )
+  }
 
-//   // Tests for array-type -------------------------------------------------------------------------------------------------
+  it should "parse char array types" in {
+    parseSucceeds(
+      "char[] x = ['a', 'b', 'c']",
+      IdentAsgn(
+        ArrayTypeNode(CharTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(CharLiter('a')(pos), CharLiter('b')(pos), CharLiter('c')(pos)))(pos)
+      )(pos)
+    )
+  }
 
-//   it should "parse int array types" in {
-//     parseSucceeds(
-//       "int[] x = [1, 2, 3]",
-//       IdentAsgn(
-//         ArrayTypeNode(IntTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3)))
-//       )
-//     )
-//   }
+  it should "parse string array types" in {
+    parseSucceeds(
+      "string[] x = [\"hello\", \"world\"]",
+      IdentAsgn(
+        ArrayTypeNode(StringTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(StringLiter("hello")(pos), StringLiter("world")(pos)))(pos)
+      )(pos)
+    )
+  }
 
-//   it should "parse bool array types" in {
-//     parseSucceeds(
-//       "bool[] x = [true, false]",
-//       IdentAsgn(
-//         ArrayTypeNode(BoolTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(BoolLiter(true), BoolLiter(false)))
-//       )
-//     )
-//   }
+  // Tests for pair-type --------------------------------------------------------------------------------------------------
 
-//   it should "parse char array types" in {
-//     parseSucceeds(
-//       "char[] x = ['a', 'b', 'c']",
-//       IdentAsgn(
-//         ArrayTypeNode(CharTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(CharLiter('a'), CharLiter('b'), CharLiter('c')))
-//       )
-//     )
-//   }
+  it should "parse pair types" in {
+    parseSucceeds(
+      "pair(int, bool) x = newpair(1, true)",
+      IdentAsgn(
+        PairTypeNode(IntTypeNode()(pos), BoolTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        NewPair(IntLiter(1)(pos), BoolLiter(true)(pos))(pos)
+      )(pos)
+    )
+  }
 
-//   it should "parse string array types" in {
-//     parseSucceeds(
-//       "string[] x = [\"hello\", \"world\"]",
-//       IdentAsgn(
-//         ArrayTypeNode(StringTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(StringLiter("hello"), StringLiter("world")))
-//       )
-//     )
-//   }
+  it should "parse pair types with array types" in {
+    parser.parse(
+      "begin int[] a = [1,2,3,4]; bool[] b = [true, false]; pair(int[], bool[]) x = newpair(a, b) end"
+    ) shouldBe Success(
+      Program(
+        List(),
+        StatJoin(
+          List(
+            IdentAsgn(
+              ArrayTypeNode(IntTypeNode()(pos))(pos),
+              Ident("a")(pos),
+              ArrayLiter(
+                List(IntLiter(1)(pos), IntLiter(2)(pos), IntLiter(3)(pos), IntLiter(4)(pos))
+              )(pos)
+            )(pos),
+            IdentAsgn(
+              ArrayTypeNode(BoolTypeNode()(pos))(pos),
+              Ident("b")(pos),
+              ArrayLiter(List(BoolLiter(true)(pos), BoolLiter(false)(pos)))(pos)
+            )(pos),
+            IdentAsgn(
+              PairTypeNode(
+                ArrayTypeNode(IntTypeNode()(pos))(pos),
+                ArrayTypeNode(BoolTypeNode()(pos))(pos)
+              )(pos),
+              Ident("x")(pos),
+              NewPair(Ident("a")(pos), Ident("b")(pos))(pos)
+            )(pos)
+          )
+        )(pos)
+      )(pos)
+    )
+  }
 
-//   // Tests for pair-type --------------------------------------------------------------------------------------------------
 
-//   it should "parse pair types" in {
-//     parseSucceeds(
-//       "pair(int, bool) x = newpair(1, true)",
-//       IdentAsgn(
-//         PairTypeNode(IntTypeNode(), BoolTypeNode()),
-//         Ident("x"),
-//         NewPair(IntLiter(1), BoolLiter(true))
-//       )
-//     )
-//   }
+  it should "reject pair types with pair types" in {
+    parseFails(
+      "pair(pair(int, bool), pair(bool, char)) x = newpair(newpair(1, true), newpair(true, 'a'))"
+    )
+  }
 
-//   it should "parse pair types with array types" in {
-//     parser.parse(
-//       "begin int[] a = [1,2,3,4]; bool[] b = [true, false]; pair(int[], bool[]) x = newpair(a, b) end"
-//     ) shouldBe Success(
-//       Program(
-//         List(),
-//         StatJoin(
-//           List(
-//             IdentAsgn(
-//               ArrayTypeNode(IntTypeNode()),
-//               Ident("a"),
-//               ArrayLiter(
-//                 List(IntLiter(1), IntLiter(2), IntLiter(3), IntLiter(4))
-//               )
-//             ),
-//             IdentAsgn(
-//               ArrayTypeNode(BoolTypeNode()),
-//               Ident("b"),
-//               ArrayLiter(List(BoolLiter(true), BoolLiter(false)))
-//             ),
-//             IdentAsgn(
-//               PairTypeNode(
-//                 ArrayTypeNode(IntTypeNode()),
-//                 ArrayTypeNode(BoolTypeNode())
-//               ),
-//               Ident("x"),
-//               NewPair(Ident("a"), Ident("b"))
-//             )
-//           )
-//         )
-//       )
-//     )
-//   }
-
-//   it should "reject pair types with pair types" in {
-//     parseFails(
-//       "pair(pair(int, bool), pair(bool, char)) x = newpair(newpair(1, true), newpair(true, 'a'))"
-//     )
-//   }
-
-//   it should "parse pair types with pair array types" in {
-//     parseSucceeds(
-//       "pair(int, pair(bool, char)[]) x = newpair(1, newpair(true, 'a')[])",
-//       IdentAsgn(
-//         PairTypeNode(
-//           IntTypeNode(),
-//           ArrayTypeNode(PairTypeNode(BoolTypeNode(), CharTypeNode()))
-//         ),
-//         Ident("x"),
-//         NewPair(
-//           IntLiter(1),
-//           ArrayLiter(List(NewPair(BoolLiter(true), CharLiter('a'))))
-//         )
-//       )
-//     )
-//   }
-// }
+  it should "parse pair types with pair array types" ignore {
+    parseSucceeds(
+      "pair(int, pair(bool, char)[]) x = newpair(1, newpair(true, 'a')[])",
+      IdentAsgn(
+        PairTypeNode(
+          IntTypeNode()(pos),
+          ArrayTypeNode(PairTypeNode(BoolTypeNode()(pos), CharTypeNode()(pos))(pos))(pos)
+        )(pos),
+        Ident("x")(pos),
+        NewPair(
+          IntLiter(1)(pos),
+          ArrayLiter(List(NewPair(BoolLiter(true)(pos), CharLiter('a')(pos))(pos)))(pos)
+        )(pos)
+      )(pos)
+    )
+  }
+}

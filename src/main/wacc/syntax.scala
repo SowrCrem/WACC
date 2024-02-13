@@ -125,8 +125,8 @@ sealed trait Expr extends Position with RValue
 case class NewPair(fst: Expr, snd: Expr)(val pos: (Int, Int)) extends Expr
 object NewPair extends ParserBridgePos2[Expr, Expr, NewPair]
 
-case class ArgList (argList: List[Expr])(val pos: (Int, Int)) extends Position
-object ArgList extends ParserBridgePos1[List[Expr], ArgList]
+// case class ArgList (argList: List[Expr])(val pos: (Int, Int)) extends Position
+// object ArgList extends ParserBridgePos1[List[Expr], ArgList]
 
 case class Call(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat
 object Call extends ParserBridgePos2[Ident, List[Expr], Call]

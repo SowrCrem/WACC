@@ -1,17 +1,47 @@
 #!/bin/bash
 
+VERBOSE=true
+
 # Functions -------------------------------------------------------------------
-check_args() {
-  if [ $# -ne 2 ]; then
-    echo "Usage: test.sh <milestone> <type>"
-    echo "milestone: frontend, backend, extension"
-    echo "type: unit, integration"
+get_args() {
+  if [ $# -eq 0 ]; then
+    echo "-----------------------------------"
+    echo "Running All Tests"
+    scala-cli test .
+    local result=$?
+    if [ $result -ne 0 ]; then
+      exit 1
+    fi
+    exit 0 
+  else if [ $# -eq 1 ]; then
+    milestone=$1
+  else if [ $# -eq 2 ]; then
+    milestone=$1
+    type=$2
+  else if [ $# -eq 3 ]; then
+    milestone=$1
+    type=$2
+    feature=$3
+  else if [ $# -eq 4 ]; then
+    milestone=$1
+    type=$2
+    feature=$3
+    if [ $4 == "false" ]; then
+      VERBOSE=false
+    fi
+  else
+    echo "Invalid number of arguments"
     exit 1
+  fi
+  fi
+  fi
+  fi
   fi
 }
 
-# TODO: Add a verbose param? If true then print the output of the tests and if not then store it in the file
-# Verbose default is false
+# If VERBOSE is true then print the output of the tests and if not then store it in a singular file - test/milestone/type/feature/results.txt
+# if any of milestone, type,feature are empty then omit them from the path i.e test/milestone if type is empty or test/milestone/type if feature is empty
+# Verbose default is true
 run_tests() {
   local name=$1
   local part=""
@@ -20,23 +50,24 @@ run_tests() {
   fi
   echo "-----------------------------------"
   echo "Running $name tests"
-  # TODO: Make the following line not terminate after one run
-  scala-cli test . --test-only "test.$milestone.$type$part*"
-  # scala-cli test . --test-only "test.$milestone.$type$part*" > test/$milestone/$type/results.txt 2>&1
+  scala-cli test . --test-only "test.$milestone.$type$part*" || true
   local result=$?
   if [ $result -ne 0 ]; then
     echo "-----------------------------------"
-    echo "tests failed"
-    exit 1
+    echo "$name tests failed"
+    exit_code=1
   fi
 }
 
 # Script ----------------------------------------------------------------------
 
+# Global Variables
+exit_code=0
+
 # Arguments
-check_args $@
-milestone=$1
-type=$2
+milestone=""
+type=""
+feature=""
 chmod +x build.sh
 ./build.sh
 
@@ -44,26 +75,57 @@ chmod +x build.sh
 export PATH="$(dirname "$(dirname "$PWD")"):$PATH"
 cd ..
 scala-cli clean . 
-scala-cli compile . 
+scala-cli compile .
 
-# Check if the milestone and type are valid
+get_args $@
+
+# Check if the milestone is valid
 if [[ "$milestone" != "frontend" && "$milestone" != "backend" && "$milestone" != "extension" ]]; then
   echo "Invalid milestone: $milestone should be one of frontend, backend, extension"
   exit 1
 fi
 
-if [[ "$type" != "unit" && "$type" != "integration" ]]; then
+if [[ "$type" == "" ]]; then
+  # run_tests with with all possible types
+  echo ""
+  echo "-----------------------------------"
+  echo "Running Unit Tests"
+  type="unit"
+  run_tests "Syntax"
+  run_tests "Semantic"
+  echo ""
+  echo "-----------------------------------"
+  echo "Running Integration Tests"
+  type="integration"
+  run_tests "Syntax"
+  run_tests "Semantic"
+  run_tests "Valid"
+else if [[ "$type" != "unit" && "$type" != "integration" && "$type" != "" ]]; then
   echo "Invalid type: $type should be one of unit, integration"
   exit 1
 fi
+fi
 
 if [ "$milestone" == "frontend" ]; then
-  run_tests "Syntax"
-  run_tests "Semantic"
-else
-  run_tests ""
+  if [ "$feature" == "" ]; then
+    run_tests "Syntax"
+    run_tests "Semantic"
+    if [ "$type" == "integration" ]; then
+      run_tests "Valid"
+    fi
+  else
+    run_tests "$feature"
+  fi
+else if [ "$milestone" == "backend" ]; then
+  echo "No tests for backend"
+else if [ "$milestone" == "extension" ]; then
+  echo "No tests for extension"
+fi
+fi
 fi
 
 echo "-----------------------------------"
-echo "all tests run"
-exit 0
+echo "All Tests Run"
+
+# Exit with the stored exit code
+exit $exit_code

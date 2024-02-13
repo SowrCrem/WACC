@@ -1,7 +1,7 @@
-package frontend.integration.semantic
+package test.frontend.integration.semantic
 
-import Utils._
 import wacc.Main
+import test.Utils._
 import wacc.parser._
 import scala.sys.process._
 import parsley.{Failure, Result, Success}

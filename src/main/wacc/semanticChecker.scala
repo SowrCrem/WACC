@@ -16,7 +16,7 @@ object semanticChecker {
       typeChecker.check(position) match {
         case Left(errorList) => {
           // Print all the errors
-          errorList.foreach(error => println(error.getErrMessage()))
+          errorList.foreach(error => println(error.getMessage()))
           Left("Semantic error(s) found")
         }
         case Right(_)   => return Right(0)

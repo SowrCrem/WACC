@@ -28,8 +28,8 @@ object Errors {
     val actualType: String
   ) extends SemanticError(position, Seq(expectedType ++ actualType)) {
     override def getErrMessage() = 
-      (s"Type mismatch: expected type ${expectedType} " +
-       s"but found type ${actualType}", Seq(expectedType ++ actualType))
+      (s"Type mismatch: expected type $expectedType " +
+       s"but found type $actualType", Seq(expectedType ++ actualType))
   }
 
   // Array elements should all be of the same type, given the List[String]
@@ -47,7 +47,7 @@ object Errors {
     position: Position, 
     val msg: String
   ) extends SemanticError(position, Seq(msg)) {
-    override def getErrMessage() = (s"Type mismatch: expected int, got ${msg}", Seq(msg))
+    override def getErrMessage() = (s"Type mismatch: expected int, got $msg", Seq(msg))
   }
 
   // Array access too deep
@@ -72,7 +72,7 @@ object Errors {
     position: Position, 
     val msg: String
   ) extends SemanticError(position, Seq(msg)) {
-    override def getErrMessage() = (s"Type mismatch: expected int or char, got ${msg}", Seq(msg))
+    override def getErrMessage() = (s"Type mismatch: expected int or char, got $msg", Seq(msg))
   }
 
   // Type mismatch for free statements, expectede pair or array
@@ -80,7 +80,7 @@ object Errors {
     position: Position, 
     val msg: String
   ) extends SemanticError(position, Seq(msg)) {
-    override def getErrMessage() = (s"Type mismatch: expected pair or array, got ${msg}", Seq(msg))
+    override def getErrMessage() = (s"Type mismatch: expected pair or array, got $msg", Seq(msg))
   }
 
   // Return outside of function not permitted
@@ -98,8 +98,8 @@ object Errors {
     val actualType: String
   ) extends SemanticError(position, Seq(expectedType ++ actualType)) {
     override def getErrMessage() = 
-      (s"Type mismatch: function return expected type ${expectedType} " +
-       s"but found type ${actualType}", Seq(expectedType ++ actualType))
+      (s"Type mismatch: function return expected type $expectedType " +
+       s"but found type $actualType", Seq(expectedType ++ actualType))
   }
 
   // Expected two of the same type but found two different types
@@ -109,7 +109,7 @@ object Errors {
     val type2: String
   ) extends SemanticError(position, Seq(type1 ++ type2)) {
     override def getErrMessage() = 
-      (s"Type mismatch: expected two of the same type, got ${type1} and ${type2}", 
+      (s"Type mismatch: expected two of the same type, got $type1 and $type2", 
        Seq(type1 ++ type2))
   }
 
@@ -118,7 +118,7 @@ object Errors {
     position: Position, 
     val msg: String
   ) extends SemanticError(position, Seq(msg)) {
-    override def getErrMessage() = (s"Type mismatch: expected int, got ${msg}", Seq(msg))
+    override def getErrMessage() = (s"Type mismatch: expected int, got $msg", Seq(msg))
   }
 
   // Print statement expected a type but found another
@@ -126,7 +126,8 @@ object Errors {
     position: Position, 
     val msg: String
   ) extends SemanticError(position, Seq(msg)) {
-    override def getErrMessage() = (s"Type mismatch: expected int, bool, char, or string, got ${msg}", Seq(msg))
+    override def getErrMessage() = 
+      (s"Type mismatch: expected int, bool, char, or string, got $msg", Seq(msg))
   }
 
   // Expected number of arguments for function but found another
@@ -136,7 +137,7 @@ object Errors {
     val actual: Int
   ) extends SemanticError(position, Seq(expected.toString ++ actual.toString)) {
     override def getErrMessage() = 
-      (s"Argument number mismatch: expected ${expected} arguments, got ${actual}", 
+      (s"Argument number mismatch: expected $expected arguments, got $actual", 
        Seq(expected.toString ++ actual.toString))
   }
 
@@ -147,7 +148,7 @@ object Errors {
     val actual: String
   ) extends SemanticError(position, Seq(expected ++ actual)) {
     override def getErrMessage() = 
-      (s"Argument type mismatch: expected ${expected} but got ${actual}", 
+      (s"Argument type mismatch: expected $expected but got $actual", 
        Seq(expected ++ actual))
   }
 

@@ -248,7 +248,7 @@ object StringTypeNode extends ParserBridgePos0[BaseTypeNode]
 
 
 case class ArrayTypeNode(elementType: TypeNode)(val pos: (Int, Int)) extends PairElemTypeNode {
-  override def toString: String = s"array of $elementType"
+  override def toString: String = s"$elementType[]"
 }
 object ArrayTypeNode extends ParserBridgePos1[TypeNode, ArrayTypeNode]
 

@@ -36,11 +36,11 @@ class While extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - while tests: rmStyleAddIO.wacc" should "return exit code 0" in {
+  "valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {
+  "valid - while tests: rmStyleAddIO.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

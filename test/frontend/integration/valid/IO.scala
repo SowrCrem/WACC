@@ -32,7 +32,15 @@ class IO extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
+  "valid - print tests: print.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
   "valid - print tests: printBool.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
+  "valid - print tests: printChar.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -41,10 +49,6 @@ class IO extends AnyFlatSpec {
   }
 
   "valid - print tests: printCharAsString.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "valid - print tests: printChar.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -57,10 +61,6 @@ class IO extends AnyFlatSpec {
   }
 
   "valid - print tests: println.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "valid - print tests: print.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -88,11 +88,11 @@ class IO extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - read tests: readAtEof.wacc" should "return exit code 0" in {
+  "valid - read tests: read.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - read tests: read.wacc" should "return exit code 0" in {
+  "valid - read tests: readAtEof.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

@@ -32,11 +32,11 @@ class RuntimeErr extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" in {
+  "valid - divideByZero tests: divZero.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - divideByZero tests: divZero.wacc" should "return exit code 0" in {
+  "valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -48,7 +48,19 @@ class RuntimeErr extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
+  "valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
+  "valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
   "valid - integerOverflow tests: intmultOverflow.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
+  "valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -61,18 +73,6 @@ class RuntimeErr extends AnyFlatSpec {
   }
 
   "valid - integerOverflow tests: intnegateOverflow4.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

@@ -80,6 +80,10 @@ class Expressions extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
+  "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
   "valid - expressions tests: longExpr2.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
@@ -88,15 +92,11 @@ class Expressions extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
+  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
   "valid - expressions tests: longSplitExpr2.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -156,19 +156,19 @@ class Expressions extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
   "valid - expressions tests: notExpr.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {
+  "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
   "valid - expressions tests: orExpr.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
+  "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

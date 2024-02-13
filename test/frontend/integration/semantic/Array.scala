@@ -40,11 +40,11 @@ class Array extends AnyFlatSpec {
     throwsSemanticError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" in {
+  "semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {
     throwsSemanticError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {
+  "semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" in {
     throwsSemanticError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

@@ -72,11 +72,11 @@ class Variables extends AnyFlatSpec {
     throwsSemanticError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "semanticErr - variables tests: undeclaredVarAccess.wacc" should "return exit code 200" in {
+  "semanticErr - variables tests: undeclaredVar.wacc" should "return exit code 200" in {
     throwsSemanticError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "semanticErr - variables tests: undeclaredVar.wacc" should "return exit code 200" in {
+  "semanticErr - variables tests: undeclaredVarAccess.wacc" should "return exit code 200" in {
     throwsSemanticError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

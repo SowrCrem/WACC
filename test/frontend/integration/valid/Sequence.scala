@@ -12,11 +12,11 @@ import org.scalatest.matchers.should.Matchers._
 
 class Sequence extends AnyFlatSpec {
 
-  "valid - sequence tests: basicSeq2.wacc" should "return exit code 0" in {
+  "valid - sequence tests: basicSeq.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - sequence tests: basicSeq.wacc" should "return exit code 0" in {
+  "valid - sequence tests: basicSeq2.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

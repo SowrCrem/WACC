@@ -76,11 +76,11 @@ class Function extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" in {
+  "valid - simple_functions tests: functionSimple.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - simple_functions tests: functionSimple.wacc" should "return exit code 0" in {
+  "valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -112,11 +112,11 @@ class Function extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" in {
+  "valid - simple_functions tests: sameArgName.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - simple_functions tests: sameArgName.wacc" should "return exit code 0" in {
+  "valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

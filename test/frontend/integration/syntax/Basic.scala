@@ -12,11 +12,11 @@ import org.scalatest.matchers.should.Matchers._
 
 class Basic extends AnyFlatSpec {
 
-  "syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {
+  "syntaxErr - basic tests: badComment.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "syntaxErr - basic tests: badComment.wacc" should "return exit code 100" in {
+  "syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

@@ -20,11 +20,11 @@ class Function extends AnyFlatSpec {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {
+  "syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" in {
+  "syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -44,11 +44,11 @@ class Function extends AnyFlatSpec {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {
+  "syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" in {
+  "syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

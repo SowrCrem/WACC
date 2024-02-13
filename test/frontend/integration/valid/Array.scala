@@ -12,6 +12,10 @@ import org.scalatest.matchers.should.Matchers._
 
 class Array extends AnyFlatSpec {
 
+  "valid - array tests: array.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
   "valid - array tests: arrayBasic.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
@@ -45,10 +49,6 @@ class Array extends AnyFlatSpec {
   }
 
   "valid - array tests: arraySimple.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "valid - array tests: array.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

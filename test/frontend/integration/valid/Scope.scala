@@ -32,6 +32,10 @@ class Scope extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
+  "valid - scope tests: scope.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
   "valid - scope tests: scopeBasic.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
@@ -49,10 +53,6 @@ class Scope extends AnyFlatSpec {
   }
 
   "valid - scope tests: scopeVars.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "valid - scope tests: scope.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

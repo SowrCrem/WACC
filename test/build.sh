@@ -1,4 +1,4 @@
-!/bin/bash
+# !/bin/bash
 
 create_test_entries () {
     local subdirectory="$1"

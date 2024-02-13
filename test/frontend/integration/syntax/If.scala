@@ -12,10 +12,6 @@ import org.scalatest.matchers.should.Matchers._
 
 class If extends AnyFlatSpec {
 
-  "syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
   "syntaxErr - if tests: ifNoelse.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
@@ -25,6 +21,10 @@ class If extends AnyFlatSpec {
   }
 
   "syntaxErr - if tests: ifNothen.wacc" should "return exit code 100" in {
+    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
+  "syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

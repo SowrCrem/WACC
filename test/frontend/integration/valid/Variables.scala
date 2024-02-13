@@ -12,7 +12,7 @@ import org.scalatest.matchers.should.Matchers._
 
 class Variables extends AnyFlatSpec {
 
-  "valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" in {
+  "valid - variables tests: _VarNames.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -20,15 +20,19 @@ class Variables extends AnyFlatSpec {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
+  "valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" in {
+    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  }
+
   "valid - variables tests: capCharDeclaration.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - variables tests: charDeclaration2.wacc" should "return exit code 0" in {
+  "valid - variables tests: charDeclaration.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "valid - variables tests: charDeclaration.wacc" should "return exit code 0" in {
+  "valid - variables tests: charDeclaration2.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -61,10 +65,6 @@ class Variables extends AnyFlatSpec {
   }
 
   "valid - variables tests: stringDeclaration.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "valid - variables tests: _VarNames.wacc" should "return exit code 0" in {
     throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

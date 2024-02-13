@@ -2,21 +2,53 @@ package test
 
 import wacc.Main
 import wacc.parser._
+import wacc.Errors._
 import wacc.{
   Position,
   Program,
   Expr,
   Stat,
-  Exit}
+  Exit,
+  SymbolTable,
+  TypeChecker
+}
 import parsley.{Failure, Result, Success}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
 
 object Utils {
 
+  abstract class SemanticUnitTester extends AnyFlatSpec with BeforeAndAfterEach {
+    var symbolTable: SymbolTable = _
+    var typeChecker: TypeChecker = _
+
+    override def beforeEach(): Unit = {
+      symbolTable = new SymbolTable(None)
+      typeChecker = new TypeChecker(symbolTable)
+    }
+
+    def checkSucceeds(position: Position): Assertion = noException should be thrownBy typeChecker.check(position)
+
+    def checkFails(node: Position, errorMessage: String = ""): Assertion = errorMessage match {
+      case "" => {
+        a [SemanticError] shouldBe thrownBy {
+          typeChecker.check(node)
+        }
+      }
+      case msg => {
+        val e = intercept[SemanticError] {
+          typeChecker.check(node)
+        }
+        e.getMessage shouldBe msg
+      }
+    }
+  }
+
   val pos = (0, 0)
 
-    def parseSucceeds(input: String, expected: Stat): Assertion =
+  def parseSucceeds(input: String, expected: Stat): Assertion =
     parser.parse("begin " + input + " end") shouldBe Success(Program(List(), expected)(pos))
 
   def parseSucceeds(input: String, expected: Expr): Assertion =

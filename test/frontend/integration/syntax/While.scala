@@ -20,7 +20,7 @@ class While extends AnyFlatSpec {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {
+  "syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
@@ -28,7 +28,7 @@ class While extends AnyFlatSpec {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 
-  "syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {
+  "syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
   }
 

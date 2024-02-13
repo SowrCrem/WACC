@@ -1,240 +1,236 @@
-// import org.scalatest.flatspec.AnyFlatSpec
-// import org.scalatest.matchers.should.Matchers._
-// import wacc.Main
-// import wacc.{
-//   Position,
-//   IntLiter,
-//   CharLiter,
-//   StringLiter,
-//   BoolLiter,
-//   Ident,
-//   Brackets,
-//   Null,
-//   Error,
-//   ArrayElem,
-//   Plus,
-//   Mul,
-//   Div,
-//   Not,
-//   Len,
-//   Skip,
-//   Read,
-//   If,
-//   While,
-//   Free,
-//   Return,
-//   Exit,
-//   Print,
-//   Println,
-//   StatJoin,
-//   IdentAsgn,
-//   IntTypeNode,
-//   PairTypeNode,
-//   PairElemTypeNode,
-//   ArrayTypeNode,
-//   BoolTypeNode,
-//   CharTypeNode,
-//   StringTypeNode,
-//   Func,
-//   ParamList,
-//   Param,
-//   Program,
-//   TypeNode,
-//   Call,
-//   Expr,
-//   NewPair,
-//   ArgList,
-//   SemanticError,
-//   ArrayLiter
-// }
-// import parsley.{Failure, Result, Success}
-// import wacc.parser._
-// import wacc.lexer._
-// import org.scalactic.Bool
-// import org.scalatest.compatible.Assertion
-// import wacc.SymbolTable
-// import org.scalatest.BeforeAndAfterEach
-// import wacc.TypeChecker
+package test.frontend.unit.syntax
 
-// class checkTypes extends AnyFlatSpec with BeforeAndAfterEach {
+import wacc.Main
+import test.Utils._
+import wacc.lexer._
+import wacc.parser._
+import wacc.{
+  Program,
+  Func,
+  Expr,
+  Neg,
+  Not,
+  Len,
+  Ord,
+  Chr,
+  Mul,
+  Div,
+  Mod,
+  Skip,
+  Plus,
+  Minus,
+  GreaterThan,
+  GreaterThanEq,
+  LessThan,
+  LessThanEq,
+  Equals,
+  NotEquals,
+  And,
+  Or,
+  Call,
+  Null,
+  Exit,
+  Error,
+  Ident,
+  Param,
+  Return,
+  Stat,
+  Read,
+  Free,
+  Print,
+  Println,
+  If,
+  While,
+  StatJoin,
+  ParamList,
+  TypeNode,
+  Position,
+  Brackets,
+  IdentAsgn,
+  AsgnEq,
+  IntLiter,
+  BoolLiter,
+  CharLiter,
+  StringLiter,
+  ArrayLiter,
+  IntTypeNode,
+  BoolTypeNode,
+  CharTypeNode,
+  StringTypeNode,
+  PairTypeNode,
+  NewPair,
+  FstNode,
+  SndNode,
+  ArrayTypeNode,
+  ArrayElem,
+  SymbolTable,
+  TypeChecker,
+}
+import java.lang.StringBuilder
+import parsley.{Failure, Result, Success}
+import org.scalactic.{Fail, Bool}
+import org.scalatest.compatible.Assertion
+import org.scalatest.matchers.should.Matchers._
 
-//   var symbolTable: SymbolTable = _
-//   var typeChecker: TypeChecker = _
-
-//   // Testing Functions -------------------------------------------------------------------------------------------------
-
-//   override def beforeEach(): Unit = {
-//     symbolTable = new SymbolTable(None)
-//     typeChecker = new TypeChecker(symbolTable)
-//   }
-
-//   def checkSucceeds(position: Position): Assertion = noException should be thrownBy typeChecker.check(position)
-
-//   def checkFails(position: Position, errorMessage: String): Assertion = {
-//     val e = intercept[SemanticError] {
-//       typeChecker.check(position)
-//     }
-//     e.getMessage shouldBe errorMessage
-//   }
+class checkTypes extends SemanticUnitTester {
   
-//   // Tests for base-type --------------------------------------------------------------------------------------------------
+  // Tests for base-type --------------------------------------------------------------------------------------------------
 
-//   "The type checker" should "accept integer literals" in {
-//     checkSucceeds(IntLiter(1))
-//   }
+  "The type checker" should "accept integer literals" in {
+    checkSucceeds(IntLiter(1)(pos))
+  }
 
-//   it should "reject non-integer assignments to an integer variable" in {
-//     checkFails(IdentAsgn(IntTypeNode(), Ident("x"), CharLiter('a')), "Type mismatch: expected integer, got Some(char)")
-//   }
+  it should "reject non-integer assignments to an integer variable" in {
+    checkFails(IdentAsgn(IntTypeNode()(pos), Ident("x")(pos), CharLiter('a')(pos))(pos), "Type mismatch: expected integer, got Some(char)")
+  }
 
-//   it should "accept character literals" in {
-//     checkSucceeds(CharLiter('a'))
-//   }
+  it should "accept character literals" in {
+    checkSucceeds(CharLiter('a')(pos))
+  }
 
-//   it should "reject non-character assignments to a character variable" in {
-//     checkFails(IdentAsgn(CharTypeNode(), Ident("x"), IntLiter(1)), "Type mismatch: expected char, got Some(integer)")
-//   }
+  it should "reject non-character assignments to a character variable" in {
+    checkFails(IdentAsgn(CharTypeNode()(pos), Ident("x")(pos), IntLiter(1)(pos))(pos), "Type mismatch: expected char, got Some(integer)")
+  }
 
-//   it should "accept string literals" in {
-//     checkSucceeds(StringLiter("hello"))
-//   }
+  it should "accept string literals" in {
+    checkSucceeds(StringLiter("hello")(pos))
+  }
 
-//   it should "reject non-string assignments to a string variable" in {
-//     checkFails(IdentAsgn(StringTypeNode(), Ident("x"), CharLiter('a')), "Type mismatch: expected string, got Some(char)")
-//   }
+  it should "reject non-string assignments to a string variable" in {
+    checkFails(IdentAsgn(StringTypeNode()(pos), Ident("x")(pos), CharLiter('a')(pos))(pos), "Type mismatch: expected string, got Some(char)")
+  }
 
-//   it should "accept boolean literals" in {
-//     checkSucceeds(BoolLiter(true))
-//     checkSucceeds(BoolLiter(false))
-//   }
+  it should "accept boolean literals" in {
+    checkSucceeds(BoolLiter(true)(pos))
+    checkSucceeds(BoolLiter(false)(pos))
+  }
 
-//   it should "reject non-boolean assignments to a boolean variable" in {
-//     checkFails(IdentAsgn(BoolTypeNode(), Ident("x"), IntLiter(1)), "Type mismatch: expected bool, got Some(integer)")
-//   }
+  it should "reject non-boolean assignments to a boolean variable" in {
+    checkFails(IdentAsgn(BoolTypeNode()(pos), Ident("x")(pos), IntLiter(1)(pos))(pos), "Type mismatch: expected bool, got Some(integer)")
+  }
 
-//   it should "accept brackets" in {
-//     checkSucceeds(Brackets(IntLiter(1)))
-//   }
+  it should "accept brackets" in {
+    checkSucceeds(Brackets(IntLiter(1)(pos))(pos))
+  }
 
-//   // Tests for array-type -------------------------------------------------------------------------------------------------
+  // Tests for array-type -------------------------------------------------------------------------------------------------
 
-//   it should "accept int array types" in {
-//     checkSucceeds(
-//       IdentAsgn(
-//         ArrayTypeNode(IntTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3)))
-//       )
-//     )
-//   }
+  it should "accept int array types" in {
+    checkSucceeds(
+      IdentAsgn(
+        ArrayTypeNode(IntTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(IntLiter(1)(pos), IntLiter(2)(pos), IntLiter(3)(pos)))(pos)
+      )(pos)
+    )
+  }
 
-//   it should "reject non-int assignments to an int array variable" in {
-//     checkFails(
-//       IdentAsgn(
-//         ArrayTypeNode(IntTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(CharLiter('a'), CharLiter('b'), CharLiter('c')))
-//       ),
-//       "Type mismatch: expected array of integer, got Some(array of char)"
-//     )
-//   }
+  it should "reject non-int assignments to an int array variable" in {
+    checkFails(
+      IdentAsgn(
+        ArrayTypeNode(IntTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(CharLiter('a')(pos), CharLiter('b')(pos), CharLiter('c')(pos)))(pos)
+      )(pos),
+      "Type mismatch: expected array of integer, got Some(array of char)"
+    )
+  }
 
-//   it should "accept bool array types" in {
-//     checkSucceeds(
-//       IdentAsgn(
-//         ArrayTypeNode(BoolTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(BoolLiter(true), BoolLiter(false)))
-//       )
-//     )
-//   }
+  it should "accept bool array types" in {
+    checkSucceeds(
+      IdentAsgn(
+        ArrayTypeNode(BoolTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(BoolLiter(true)(pos), BoolLiter(false)(pos)))(pos)
+      )(pos)
+    )
+  }
 
-//   it should "reject non-bool assignments to a bool array variable" in {
-//     checkFails(
-//       IdentAsgn(
-//         ArrayTypeNode(BoolTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(CharLiter('a'), CharLiter('b'), CharLiter('c')))
-//       ),
-//       "Type mismatch: expected array of bool, got Some(array of char)"
-//     )
-//   }
+  it should "reject non-bool assignments to a bool array variable" in {
+    checkFails(
+      IdentAsgn(
+        ArrayTypeNode(BoolTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(CharLiter('a')(pos), CharLiter('b')(pos), CharLiter('c')(pos)))(pos)
+      )(pos),
+      "Type mismatch: expected array of bool, got Some(array of char)"
+    )
+  }
 
-//   it should "accept char array types" in {
-//     checkSucceeds(
-//       IdentAsgn(
-//         ArrayTypeNode(CharTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(CharLiter('a'), CharLiter('b'), CharLiter('c')))
-//       )
-//     )
-//   }
+  it should "accept char array types" in {
+    checkSucceeds(
+      IdentAsgn(
+        ArrayTypeNode(CharTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(CharLiter('a')(pos), CharLiter('b')(pos), CharLiter('c')(pos)))(pos)
+      )(pos)
+    )
+  }
 
-//   it should "reject non-char assignments to a char array variable" in {
-//     checkFails(
-//       IdentAsgn(
-//         ArrayTypeNode(CharTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(IntLiter(1), IntLiter(2), IntLiter(3)))
-//       ),
-//       "Type mismatch: expected array of char, got Some(array of integer)"
-//     )
-//   }
+  it should "reject non-char assignments to a char array variable" in {
+    checkFails(
+      IdentAsgn(
+        ArrayTypeNode(CharTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(IntLiter(1)(pos), IntLiter(2)(pos), IntLiter(3)(pos)))(pos)
+      )(pos),
+      "Type mismatch: expected array of char, got Some(array of integer)"
+    )
+  }
 
-//   it should "accept string array types" in {
-//     checkSucceeds(
-//       IdentAsgn(
-//         ArrayTypeNode(StringTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(StringLiter("hello"), StringLiter("world")))
-//       )
-//     )
-//   }
+  it should "accept string array types" in {
+    checkSucceeds(
+      IdentAsgn(
+        ArrayTypeNode(StringTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(StringLiter("hello")(pos), StringLiter("world")(pos)))(pos)
+      )(pos)
+    )
+  }
 
-//   it should "reject non-string assignments to a string array variable" in {
-//     checkFails(
-//       IdentAsgn(
-//         ArrayTypeNode(StringTypeNode()),
-//         Ident("x"),
-//         ArrayLiter(List(CharLiter('a'), CharLiter('b'), CharLiter('c')))
-//       ),
-//       "Type mismatch: expected array of string, got Some(array of char)"
-//     )
-//   }
+  it should "reject non-string assignments to a string array variable" in {
+    checkFails(
+      IdentAsgn(
+        ArrayTypeNode(StringTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        ArrayLiter(List(CharLiter('a')(pos), CharLiter('b')(pos), CharLiter('c')(pos)))(pos)
+      )(pos),
+      "Type mismatch: expected array of string, got Some(array of char)"
+    )
+  }
 
-//   // Tests for pair-type --------------------------------------------------------------------------------------------------
+  // Tests for pair-type --------------------------------------------------------------------------------------------------
 
-//   it should "accept pair types" in {
-//     checkSucceeds(
-//       IdentAsgn(
-//         PairTypeNode(IntTypeNode(), BoolTypeNode()),
-//         Ident("x"),
-//         NewPair(IntLiter(1), BoolLiter(true))
-//       )
-//     )
-//   }
+  it should "accept pair types" in {
+    checkSucceeds(
+      IdentAsgn(
+        PairTypeNode(IntTypeNode()(pos), BoolTypeNode()(pos))(pos),
+        Ident("x")(pos),
+        NewPair(IntLiter(1)(pos), BoolLiter(true)(pos))(pos)
+      )(pos)
+    )
+  }
 
-//   // Tests for Programs -------------------------------------------------------------------------------------------------
+  // Tests for Programs -------------------------------------------------------------------------------------------------
 
-//   it should "accept fully-formed programs" in {
-//     val position = Program(
-//       List(
-//         Func(
-//           IntTypeNode(),
-//           Ident("f"),
-//           ParamList(List(Param(IntTypeNode(), Ident("x")))),
-//           Return(IntLiter(1))
-//         ),
-//         Func(
-//           IntTypeNode(),
-//           Ident("g"),
-//           ParamList(List(Param(IntTypeNode(), Ident("x")))),
-//           Return(IntLiter(2))
-//         )
-//       ),
-//       IdentAsgn(IntTypeNode(), Ident("x"), IntLiter(1))
-//     )
-//     checkSucceeds(position)
-//   }
-
-// }
+  it should "accept fully-formed programs" in {
+    val position = Program(
+      List(
+        Func(
+          IntTypeNode()(pos),
+          Ident("f")(pos),
+          ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
+          Return(IntLiter(1)(pos))(pos)
+        )(pos),
+        Func(
+          IntTypeNode()(pos),
+          Ident("g")(pos),
+          ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
+          Return(IntLiter(2)(pos))(pos)
+        )(pos)
+      ),
+      IdentAsgn(IntTypeNode()(pos), Ident("x")(pos), IntLiter(1)(pos))(pos)
+    )(pos)
+    checkSucceeds(position)
+  }
+}

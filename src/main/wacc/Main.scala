@@ -35,7 +35,16 @@ object Main {
 
   def compile(args: Array[String]): Int = args.headOption match {
     case Some(filename) => {
-      val fileContent = ("cat " + filename).!!
+      // val fileContent = ("cat " + filename).!!
+      var fileContent = ""
+      try {
+        fileContent = scala.io.Source.fromFile(filename).mkString
+      } catch {
+        case e: java.io.FileNotFoundException => {
+          println("IO Error: File not found")
+          return -1
+        }
+      }
       parser.parse(fileContent) match {
         case Success(node) => node match {
           case Program(funcList, _) => parser.validFunctions(funcList) match {
@@ -48,7 +57,7 @@ object Main {
       }
     }
     case None => {
-      println("please enter a file name")
+      println("IO Error: No file path provided")
       -1
     }
   }

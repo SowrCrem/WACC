@@ -2,7 +2,7 @@ package wacc
 
 import wacc.Errors._
 
-/* TODOs:
+/* TODO:
    [ ] Add semantic information to AST nodes, or enrich symbol table entry
    
    [ ] For array checking, use more efficient type checking to match on the outer dimensions and move inwards rather than iterative through entire structure
@@ -47,19 +47,14 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     statList: List[Stat]
   ): List[SemanticError] = {
     var errs = List[SemanticError]()
-
     symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
-      case (Some(_)) => 
-        errs = errs.::(new AlreadyDefinedError(position, ident.value))
-      case _ =>
-        symbolTable.add(
+      case (Some(_)) => errs.::(new AlreadyDefinedError(position, ident.value))
+      case _         => symbolTable.add(
           ident.value + "_f",
           Func(typeNode, ident, paramList, statList)(position.pos)
-        )
-        
+      )
     }
-
-    errs
+    return errs
   }
 
   def checkFunctions(
@@ -78,7 +73,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     position: Position,
     statList: List[Stat]
   ): List[SemanticError] = {
-    // TODO
+    // TODO:
     return List()
   }
 
@@ -95,7 +90,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         case func @ Func(typeNode, ident, paramList, stat) => {
           (symbolTable.lookupAll(ident.value + "_f", Some(symbolTable))) match {
             case (Some(_)) => {
-              throw new SemanticError(position.pos, s"Function ${ident.value} already defined")
+              throw new AlreadyDefinedError(position, s"Function ${ident.value} already defined")
             }
             case _ => {
               symbolTable.add(

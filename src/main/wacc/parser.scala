@@ -26,10 +26,7 @@ import scala.sys.process._
 import parsley.character.oneOf
 
 /* TODOs (tied to syntax.scala):
-   [ ] Fix negate underflow error !!!
-
-   [ ] Remove StatJoin and refactor Program AST to take List[Stat] instead of Stat
-    [ ] Refactor AST validation to iterate through last statement in functions more easily
+   [ ] Refactor AST validation to iterate through last statement in functions more easily
 
    [ ] Reduce use of atomics
 
@@ -39,20 +36,13 @@ object parser {
 
   lazy val arrayelemParser: Parsley[Expr] =
     ArrayElem(Ident(lexer.ident), some("[" ~> exprParser <~ "]"))
-
-  // lazy val intParser: Parsley[Expr] = lexer.integer.map {
-  //   case (i, pos) if i < 0 => Neg(IntLiter(Math.abs(i))(pos))(pos)
-  //   case (i, pos) => IntLiter(i)(pos)
-  // }
-
   lazy val intParser: Parsley[Expr] = IntLiter(lexer.integer)
-  lazy val digit = oneOf('0' to '9')
-
   lazy val boolParser: Parsley[Expr] = BoolLiter(lexer.bool)
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
   lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string)
   lazy val identifierParser: Parsley[Ident] = Ident(lexer.ident)
   lazy val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
+  lazy val digit = oneOf('0' to '9')
 
   lazy val atoms =
     atomic(arrayelemParser) | 

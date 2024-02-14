@@ -75,8 +75,8 @@ object parser {
     Ops(Prefix)(Len <# "len"),
     Ops(Prefix)(Ord <# "ord"),
     Ops(Prefix)(Chr <# "chr"),
-    Ops(InfixL)(MulNode <# "*"),
-    Ops(InfixL)(DivNode <# "/"),
+    Ops(InfixL)(Mul <# "*"),
+    Ops(InfixL)(Div <# "/"),
     Ops(InfixL)(Mod <# "%"),
     Ops(InfixL)(Plus <# "+"),
     Ops(InfixL)(Minus <# "-"),
@@ -86,7 +86,7 @@ object parser {
     Ops(InfixN)(LessThanEq <# "<="),
     Ops(InfixN)(Equals <# "=="),
     Ops(InfixN)(NotEquals <# "!="),
-    Ops(InfixR)(AndNode <# "&&"),
+    Ops(InfixR)(And <# "&&"),
     Ops(InfixR)(Or <# "||")
   )
   lazy val arrayLiteralParser: Parsley[Expr] = {

@@ -147,14 +147,14 @@ sealed trait IntBinOp extends BinOp
 sealed trait CompBinOp extends BinOp
 sealed trait BoolBinOp extends BinOp
 
-case class MulNode(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp 
-object MulNode extends ParserBridgePos2[Expr, Expr, IntBinOp] {
-  def unapply(mul: MulNode): Option[(Expr, Expr)] = Some((mul.lhs, mul.rhs))
+case class Mul(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp 
+object Mul extends ParserBridgePos2[Expr, Expr, IntBinOp] {
+  def unapply(mul: Mul): Option[(Expr, Expr)] = Some((mul.lhs, mul.rhs))
 }
-case class DivNode(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp {
-  def unapply(div: DivNode): Option[(Expr, Expr)] = Some((div.lhs, div.rhs))
+case class Div(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp {
+  def unapply(div: Div): Option[(Expr, Expr)] = Some((div.lhs, div.rhs))
 }
-object DivNode extends ParserBridgePos2[Expr, Expr, IntBinOp]
+object Div extends ParserBridgePos2[Expr, Expr, IntBinOp]
 case class Mod(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
 object Mod extends ParserBridgePos2[Expr, Expr, IntBinOp]
 case class Plus(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
@@ -175,8 +175,8 @@ object Equals extends ParserBridgePos2[Expr, Expr, CompBinOp]
 case class NotEquals(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends CompBinOp
 object NotEquals extends ParserBridgePos2[Expr, Expr, CompBinOp]
 
-case class AndNode(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends BoolBinOp
-object AndNode extends ParserBridgePos2[Expr, Expr, BoolBinOp]
+case class And(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends BoolBinOp
+object And extends ParserBridgePos2[Expr, Expr, BoolBinOp]
 case class Or(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends BoolBinOp
 object Or extends ParserBridgePos2[Expr, Expr, BoolBinOp]
 

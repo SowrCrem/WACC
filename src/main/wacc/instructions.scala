@@ -17,16 +17,16 @@ sealed trait Condition
 case class AL() extends Condition
 
 
-case class Add(dest: Operand, src: Operand, operand: Operand)
+case class AddInstr(dest: Operand, src: Operand, operand: Operand)
     extends Instruction
-case class Sub(dest: Operand, src: Operand, operand: Operand)
+case class SubInstr(dest: Operand, src: Operand, operand: Operand)
     extends Instruction
-case class Mul(dest: Operand, src: Operand, operand: Operand)
+case class MulInstr(dest: Operand, src: Operand, operand: Operand)
     extends Instruction
-case class Div(dest: Operand, src: Operand, operand: Operand)
+case class DivInstr(dest: Operand, src: Operand, operand: Operand)
     extends Instruction
 
-case class And(dest: Operand, src: Operand, operand: Operand)
+case class AndInstr(dest: Operand, src: Operand, operand: Operand)
     extends Instruction
 case class Eor(dest: Operand, src: Operand, operand: Operand)
     extends Instruction
@@ -39,7 +39,7 @@ case class Lea(dest: Operand, src: Operand) extends Instruction
 
 case class Push(src: Operand) extends Instruction
 case class Pop(dest: Operand) extends Instruction
-case class PushRegisters(registers: ListBuffer[Register]) extends Instruction
-case class PopRegisters(registers: ListBuffer[Register]) extends Instruction
+case class PushRegisters(registers: List[Register]) extends Instruction
+case class PopRegisters(registers: List[Register]) extends Instruction
 case class Directive(val name: String) extends Instruction
 case class Label(val name: String) extends Instruction

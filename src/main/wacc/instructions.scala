@@ -6,11 +6,10 @@ sealed trait Operand
 
 sealed trait Register extends Operand
 
-case object FP extends Register
-case object SP extends Register
-object PC extends Register
-case class REG(n : Int) extends Register
-
+case object FP extends Register // Frame pointer
+case object SP extends Register // Stack pointer
+case object Dest extends Register // Destination register
+case class REG(n : Int) extends Register // All other registers
 
 case class Immediate(val value: Int) extends Operand
 

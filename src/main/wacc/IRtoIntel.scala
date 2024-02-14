@@ -22,26 +22,23 @@ object X86RegisterMapper {
         REG(14) -> "r15" // Callee Saved
     )
 
-    def transInstr(instruction: Instruction) : String = instruction match {
-        case Mov(dest, operand) => s"mov ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(operand)}"
-        case Add(dest, src, operand) => s"add ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}"
-        case Sub(dest, src, operand) => s"sub ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}"
-        case Mul(dest, src, operand) => s"mul ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}"
-        case Div(dest, src, operand) => s"div ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}"
-        case And(dest, src, operand) => s"and ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}"
-        case Eor(dest, src, operand) => s"eor ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}"
-        case Orr(dest, src, operand) => s"orr ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}"
-        case Cmp(src, operand) => s"cmp ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}"
-        case Ldr(dest, src) => s"ldr ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}"
-        case Push(src) => s"push {${translateOperand_Intel_X86(src)}}"
-        case Pop(dest) => s"pop {${translateOperand_Intel_X86(dest)}}"
-        case PushRegisters(registers) => s"push {${registers.map(translateOperand_Intel_X86).mkString(", ")}}"
-        case PopRegisters(registers) => s"pop {${registers.map(translateOperand_Intel_X86).mkString(", ")}}"
-        case LoadRegisterImmediate(register, value) => s"ldr ${translateOperand_Intel_X86(register)}, =${value}"
-        case BranchLink(label) => s"bl ${label}"
-        case BitClear(destination, source, mask) => s"bic ${translateOperand_Intel_X86(destination)}, ${translateOperand_Intel_X86(source)}, ${mask}"
-        case Directive(name) => s".$name"
-        case Label(name) => s"$name:"
+    def transInstr(instruction: Instruction) : ListBuffer[String] = instruction match {
+        case Mov(dest, operand) => ListBuffer(s"mov ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(operand)}")
+        case Add(dest, src, operand) => ListBuffer(s"add ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Sub(dest, src, operand) => ListBuffer(s"sub ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Mul(dest, src, operand) => ListBuffer(s"mul ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Div(dest, src, operand) => ListBuffer(s"div ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case And(dest, src, operand) => ListBuffer(s"and ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Eor(dest, src, operand) => ListBuffer(s"eor ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Orr(dest, src, operand) => ListBuffer(s"orr ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Cmp(src, operand) => ListBuffer(s"cmp ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Lea(dest, src) => ListBuffer(s"lea ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}")
+        case Push(src) => ListBuffer(s"push ${translateOperand_Intel_X86(src)}")
+        case Pop(dest) => ListBuffer(s"pop {${translateOperand_Intel_X86(dest)}}")
+        case PushRegisters(registers) => registers.foreach(register => s"push ${translateOperand_Intel_X86(register)}")
+        case PopRegisters(registers) => registers.foreach(register => s"pop ${translateOperand_Intel_X86(register)}")
+        case Directive(name) => ListBuffer(s".$name")
+        case Label(name) => ListBuffer(s"$name:")
     }
 
     /** 
@@ -69,6 +66,7 @@ object X86RegisterMapper {
                 throw new IllegalArgumentException(s"Unknown register: $rNum")
             }
         }
+
         case FP => "ebp"
         case SP => "esp"        
         /**

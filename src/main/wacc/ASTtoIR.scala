@@ -64,8 +64,7 @@ object IRGenerator {
     BranchLink("exit"), // Call to external exit function
     Mov(Register("sp"), Register("fp"), AL()),
     PopRegisters(
-      List(Register("fp"), Register("pc"))
-    ) // Restore frame pointer and return
+    List(Register("fp"), Register("pc"))) // Restore frame pointer and return
   )
 
 }

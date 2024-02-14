@@ -4,7 +4,14 @@ sealed trait Instruction
 
 sealed trait Operand
 
-case class Register(val name: String) extends Operand
+sealed trait Register extends Operand
+
+case object FP extends Register
+case object SP extends Register
+object PC extends Register
+case class REG(n : Int) extends Register
+
+
 case class Immediate(val value: Int) extends Operand
 
 sealed trait Condition

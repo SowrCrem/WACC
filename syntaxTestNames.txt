@@ -1,9 +1,0 @@
-./Dockerfile/*.wacc
-./Makefile/*.wacc
-./README.md/*.wacc
-./compile/*.wacc
-./project.scala/*.wacc
-./src/*.wacc
-./syntaxTestNames.txt/*.wacc
-./test/*.wacc
-./wacc-compiler/*.wacc

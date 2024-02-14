@@ -1,21 +1,56 @@
+variables:
+  wacc_image: gumjoe/wacc-ci-scala:slim
+
 stages:
   - build
-  - test
+  - test-frontend-unit
+  - test-frontend-integration
+  - test-backend-unit
+  - test-backend-integration
 
 build-job:
   stage: build
-  image: gumjoe/wacc-ci-scala:slim
+  image: $wacc_image
   script: 
     - ls
     - scala-cli --power package . --server=false --jvm system --force
 
-test_job:
-  stage: test
-  image: gumjoe/wacc-ci-scala:slim
+test-frontend-unit-job:
+  stage: test-frontend-unit
+  image: $wacc_image
   script:
-    - scala-cli --power test .
+    - cd test
+    - ./test.sh frontend unit
   artifacts:
     paths:
-      - test_output.txt
-  allow_failure: true
+      - test/frontend/unit/results.txt
   
+test-frontend-integration-job:
+  stage: test-frontend-integration
+  image: $wacc_image
+  script:
+    - cd test
+    - ./test.sh frontend integration
+  artifacts:
+    paths:
+      - test/frontend/integration/results.txt
+
+test-backend-unit-job:
+  stage: test-backend-unit
+  image: $wacc_image
+  script:
+    - cd test
+    - ./test.sh backend unit
+  artifacts:
+    paths:
+      - test/backend/unit/results.txt
+
+test-backend-integration-job:
+  stage: test-backend-integration
+  image: $wacc_image
+  script:
+    - cd test
+    - ./test.sh backend integration
+  artifacts:
+    paths:
+      - test/backend/integration/results.txt

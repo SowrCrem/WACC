@@ -1,8 +1,8 @@
-.bsp/
-.metals/
-.scala-build/
-.vscode/
-.idea/
-target/
-test/testResults.txt
+*.bsp/
+*.metals/
+*.scala-build/
+*.vscode/
+*.idea/
+*target/
+*.txt
 wacc-compiler

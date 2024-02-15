@@ -6,6 +6,7 @@ import wacc.Errors._
 import wacc.{
   Position,
   Program,
+  Func,
   Expr,
   Stat,
   Exit,
@@ -19,7 +20,6 @@ import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
 
 object Utils {
-
   abstract class SemanticUnitTester extends AnyFlatSpec with BeforeAndAfterEach {
     var symbolTable: SymbolTable = _
     var typeChecker: TypeChecker = _
@@ -29,16 +29,28 @@ object Utils {
       typeChecker = new TypeChecker(symbolTable)
     }
 
+    def checkSucceeds(func: Func): Assertion = checkSucceeds(List(func))
+
+    def checkSucceeds(stat: Stat): Assertion = checkSucceedsStats(List(stat))
+
+    def checkSucceeds(func:Func, stat:Stat): Assertion = checkSucceeds(List(func), List(stat))
+
+    def checkSucceeds(funcList: List[Func]): Assertion = checkSucceeds(funcList, List())
+
+    def checkSucceedsStats(statList: List[Stat]): Assertion = checkSucceeds(List(), statList)
+
+    def checkSucceeds(funcList: List[Func], statList: List[Stat]): Assertion = checkSucceeds(Program(funcList, statList)(pos))
+
     def checkSucceeds(position: Position): Assertion = noException should be thrownBy typeChecker.check(position)
 
     def checkFails(node: Position, errorMessage: String = ""): Assertion = errorMessage match {
       case "" => {
-        a [SemanticError] shouldBe thrownBy {
+        a [Throwable] shouldBe thrownBy {
           typeChecker.check(node)
         }
       }
       case msg => {
-        val e = intercept[SemanticError] {
+        val e = intercept[Throwable] {
           typeChecker.check(node)
         }
         e.getMessage shouldBe msg
@@ -48,11 +60,13 @@ object Utils {
 
   val pos = (0, 0)
 
-  def parseSucceeds(input: String, expected: Stat): Assertion =
+  def parseSucceeds(input: String, expected: Stat): Assertion = parseSucceeds(input, List(expected))
+
+  def parseSucceeds(input: String, expected: List[Stat]): Assertion =
     parser.parse("begin " + input + " end") shouldBe Success(Program(List(), expected)(pos))
 
   def parseSucceeds(input: String, expected: Expr): Assertion =
-    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), Exit(expected)(pos))(pos))
+    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), List(Exit(expected)(pos)))(pos))
 
   def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
     case "" => parser.parse("begin exit " + input + " end") should matchPattern {

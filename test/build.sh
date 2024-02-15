@@ -13,6 +13,7 @@ create_test_entries () {
 
 
     for file in "$subdirectory"/*; do 
+    (
         subdirectory_name=$(basename "$subdirectory")
         if [ -d "$file" ]; then
             create_test_entries "$file" "${path_var}/${subdirectory_name}" "$test_type" "$expected_exit_code" "$this_filename"
@@ -24,9 +25,10 @@ create_test_entries () {
 
             echo -e "  ${test_name} should ${return_stmt} in {
     pending
-    throws${test_type^}Error(\"invalid/semanticErr/array/arrayIndexComplexNotInt.wacc\")
+    throws${test_type^}Error(\"${src_test_path}\")
   }\n" >> "$this_filename"
         fi
+    )
     done
 }                       
 
@@ -82,7 +84,7 @@ for src in "${directories[@]}"; do
             touch "$this_filename"
 
 
-            echo -e "package test.frontend.integration.${test_type}
+            echo -e "package test.frontend.integration.${test_type}.${subdirectory_name^}
 
 import wacc.Main
 import test.Utils._

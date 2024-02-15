@@ -7,12 +7,21 @@ all:
 # the --power flag is needed as `package` is an experimental "power user" feature
 	make clean;
 	scala-cli --power package . --server=false --jvm system --force -o wacc-compiler;
-	cd test/integrationTests && bash buildIntegrationTests.sh && cd ../..
+	cd test && bash build.sh && cd ..
 
 clean:
-	scala-cli clean . && rm -f wacc-compiler && rm -rf test/integrationTests/*Tests/
+	scala-cli clean . && rm -f wacc-compiler
 
-integrationTests:
-	cd test/integrationTests && bash buildIntegrationTests.sh && cd ../..
+frontend-integration-tests:
+	cd test && bash build.sh frontend integration && cd ..
+
+frontend-unit-tests:
+	cd test && bash build.sh frontend unit && cd ..
+
+backend-integration-tests:
+	cd test && bash build.sh backend integration && cd ..
+
+backend-unit-tests:
+	cd test && bash build.sh backend unit && cd ..
 
 .PHONY: all clean

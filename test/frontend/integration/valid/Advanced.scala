@@ -1,4 +1,4 @@
-package test.frontend.integration.valid
+package test.frontend.integration.valid.Advanced
 
 import wacc.Main
 import test.Utils._
@@ -13,15 +13,15 @@ import org.scalatest.matchers.should.Matchers._
 class Advanced extends AnyFlatSpec {
 
   "valid - advanced tests: binarySortTree.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsNoError("valid/advanced/binarySortTree.wacc")
   }
 
   "valid - advanced tests: hashTable.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsNoError("valid/advanced/hashTable.wacc")
   }
 
   "valid - advanced tests: ticTacToe.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsNoError("valid/advanced/ticTacToe.wacc")
   }
 
 }

@@ -30,7 +30,6 @@ import wacc.{
   Call,
   Null,
   Exit,
-  Error,
   Ident,
   Param,
   Return,
@@ -41,7 +40,6 @@ import wacc.{
   Println,
   If,
   While,
-  StatJoin,
   ParamList,
   TypeNode,
   Position,
@@ -166,30 +164,28 @@ class parseTypes extends AnyFlatSpec {
     ) shouldBe Success(
       Program(
         List(),
-        StatJoin(
-          List(
-            IdentAsgn(
-              ArrayTypeNode(IntTypeNode()(pos))(pos),
-              Ident("a")(pos),
-              ArrayLiter(
-                List(IntLiter(1)(pos), IntLiter(2)(pos), IntLiter(3)(pos), IntLiter(4)(pos))
-              )(pos)
-            )(pos),
-            IdentAsgn(
-              ArrayTypeNode(BoolTypeNode()(pos))(pos),
-              Ident("b")(pos),
-              ArrayLiter(List(BoolLiter(true)(pos), BoolLiter(false)(pos)))(pos)
-            )(pos),
-            IdentAsgn(
-              PairTypeNode(
-                ArrayTypeNode(IntTypeNode()(pos))(pos),
-                ArrayTypeNode(BoolTypeNode()(pos))(pos)
-              )(pos),
-              Ident("x")(pos),
-              NewPair(Ident("a")(pos), Ident("b")(pos))(pos)
+        List(
+          IdentAsgn(
+            ArrayTypeNode(IntTypeNode()(pos))(pos),
+            Ident("a")(pos),
+            ArrayLiter(
+              List(IntLiter(1)(pos), IntLiter(2)(pos), IntLiter(3)(pos), IntLiter(4)(pos))
             )(pos)
-          )
-        )(pos)
+          )(pos),
+          IdentAsgn(
+            ArrayTypeNode(BoolTypeNode()(pos))(pos),
+            Ident("b")(pos),
+            ArrayLiter(List(BoolLiter(true)(pos), BoolLiter(false)(pos)))(pos)
+          )(pos),
+          IdentAsgn(
+            PairTypeNode(
+              ArrayTypeNode(IntTypeNode()(pos))(pos),
+              ArrayTypeNode(BoolTypeNode()(pos))(pos)
+            )(pos),
+            Ident("x")(pos),
+            NewPair(Ident("a")(pos), Ident("b")(pos))(pos)
+          )(pos)
+        )
       )(pos)
     )
   }

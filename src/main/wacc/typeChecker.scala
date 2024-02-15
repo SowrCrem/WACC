@@ -447,7 +447,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       }
 
     // BINARY OPERATIONS
-    case MulNode(lhs, rhs) =>
+    case Mul(lhs, rhs) =>
       checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
     case DivNode(lhs, rhs) =>
       checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)

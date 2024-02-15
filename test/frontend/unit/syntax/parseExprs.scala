@@ -27,7 +27,6 @@ import wacc.{
   Or,
   Null,
   Exit,
-  Error,
   Ident,
   TypeNode,
   Position,
@@ -66,8 +65,8 @@ class parseExprs extends AnyFlatSpec {
     parseSucceeds("!(false)", Not(Brackets(BoolLiter(false)(pos))(pos))(pos))
   }
 
-  it should "parse dashes" in {
-    parseSucceeds("-1", Neg(IntLiter(1)(pos))(pos))
+  it should "parse negative numbers" in {
+    parseSucceeds("-1", IntLiter(-1)(pos))
   }
 
   it should "parse len" in {

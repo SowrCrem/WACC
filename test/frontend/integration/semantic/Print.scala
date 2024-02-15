@@ -1,4 +1,4 @@
-package test.frontend.integration.semantic
+package test.frontend.integration.semantic.Print
 
 import wacc.Main
 import test.Utils._
@@ -13,7 +13,7 @@ import org.scalatest.matchers.should.Matchers._
 class Print extends AnyFlatSpec {
 
   "semanticErr - print tests: printTypeErr01.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSemanticError("invalid/semanticErr/print/printTypeErr01.wacc")
   }
 
 }

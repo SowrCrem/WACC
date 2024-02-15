@@ -30,7 +30,6 @@ import wacc.{
   Call,
   Null,
   Exit,
-  Error,
   Ident,
   Param,
   Return,
@@ -41,7 +40,6 @@ import wacc.{
   Println,
   If,
   While,
-  StatJoin,
   ParamList,
   TypeNode,
   Position,
@@ -220,16 +218,16 @@ class checkTypes extends SemanticUnitTester {
           IntTypeNode()(pos),
           Ident("f")(pos),
           ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
-          Return(IntLiter(1)(pos))(pos)
+          List(Return(IntLiter(1)(pos))(pos))
         )(pos),
         Func(
           IntTypeNode()(pos),
           Ident("g")(pos),
           ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
-          Return(IntLiter(2)(pos))(pos)
+          List(Return(IntLiter(2)(pos))(pos))
         )(pos)
       ),
-      IdentAsgn(IntTypeNode()(pos), Ident("x")(pos), IntLiter(1)(pos))(pos)
+      List(IdentAsgn(IntTypeNode()(pos), Ident("x")(pos), IntLiter(1)(pos))(pos))
     )(pos)
     checkSucceeds(position)
   }

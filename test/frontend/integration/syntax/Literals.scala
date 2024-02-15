@@ -1,4 +1,4 @@
-package test.frontend.integration.syntax
+package test.frontend.integration.syntax.Literals
 
 import wacc.Main
 import test.Utils._
@@ -13,15 +13,15 @@ import org.scalatest.matchers.should.Matchers._
 class Literals extends AnyFlatSpec {
 
   "syntaxErr - literals tests: charLiteralSingle.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSyntaxError("invalid/syntaxErr/literals/charLiteralSingle.wacc")
   }
 
   "syntaxErr - literals tests: stringLiteralNoNewlines.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSyntaxError("invalid/syntaxErr/literals/stringLiteralNoNewlines.wacc")
   }
 
   "syntaxErr - literals tests: stringLiteralOnlyAscii.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSyntaxError("invalid/syntaxErr/literals/stringLiteralOnlyAscii.wacc")
   }
 
 }

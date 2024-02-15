@@ -30,7 +30,6 @@ import wacc.{
   Call,
   Null,
   Exit,
-  Error,
   Ident,
   Param,
   Return,
@@ -41,7 +40,6 @@ import wacc.{
   Println,
   If,
   While,
-  StatJoin,
   ParamList,
   TypeNode,
   Position,
@@ -176,19 +174,19 @@ class parseStatements extends AnyFlatSpec {
 
   it should "parse if" in {
     // parseSucceeds("if true then skip else skip fi", If(BoolLiter(true), Skip(), Skip()))
-    parseSucceeds("if true then skip else skip fi", If(BoolLiter(true)(pos), Skip()(pos), Skip()(pos))(pos))
+    parseSucceeds("if true then skip else skip fi", If(BoolLiter(true)(pos), List(Skip()(pos)), List(Skip()(pos)))(pos))
   }
 
   // Tests for while -----------------------------------------------------------------------------------------------------
 
   it should "parse while" in {
-    parseSucceeds("while true do skip done", While(BoolLiter(true)(pos), Skip()(pos))(pos))
+    parseSucceeds("while true do skip done", While(BoolLiter(true)(pos), List(Skip()(pos)))(pos))
   }
 
   // Tests for semicolon -------------------------------------------------------------------------------------------------
 
   it should "parse multiple statements" in {
-    parseSucceeds("skip; skip", StatJoin(List(Skip()(pos), Skip()(pos)))(pos))
+    parseSucceeds("skip; skip", List(Skip()(pos), Skip()(pos)))
   }
 
   it should "reject trailing semicolon" ignore {

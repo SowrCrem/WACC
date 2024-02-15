@@ -22,23 +22,23 @@ object X86RegisterMapper {
         REG(14) -> "r15" // Callee Saved
     )
 
-    def transInstr(instruction: Instruction) : ListBuffer[String] = instruction match {
-        case Mov(dest, operand) => ListBuffer(s"mov ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(operand)}")
-        case Add(dest, src, operand) => ListBuffer(s"add ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Sub(dest, src, operand) => ListBuffer(s"sub ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Mul(dest, src, operand) => ListBuffer(s"mul ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Div(dest, src, operand) => ListBuffer(s"div ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case And(dest, src, operand) => ListBuffer(s"and ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Eor(dest, src, operand) => ListBuffer(s"eor ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Orr(dest, src, operand) => ListBuffer(s"orr ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Cmp(src, operand) => ListBuffer(s"cmp ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Lea(dest, src) => ListBuffer(s"lea ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}")
-        case Push(src) => ListBuffer(s"push ${translateOperand_Intel_X86(src)}")
-        case Pop(dest) => ListBuffer(s"pop {${translateOperand_Intel_X86(dest)}}")
+    def transInstr(instruction: Instruction) : List[String] = instruction match {
+        case Mov(dest, operand) => List(s"mov ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(operand)}")
+        case Add(dest, src, operand) => List(s"add ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Sub(dest, src, operand) => List(s"sub ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Mul(dest, src, operand) => List(s"mul ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Div(dest, src, operand) => List(s"div ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case And(dest, src, operand) => List(s"and ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Eor(dest, src, operand) => List(s"eor ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Orr(dest, src, operand) => List(s"orr ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Cmp(src, operand) => List(s"cmp ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Lea(dest, src) => List(s"lea ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}")
+        case Push(src) => List(s"push ${translateOperand_Intel_X86(src)}")
+        case Pop(dest) => List(s"pop {${translateOperand_Intel_X86(dest)}}")
         case PushRegisters(registers) => registers.foreach(register => s"push ${translateOperand_Intel_X86(register)}")
         case PopRegisters(registers) => registers.foreach(register => s"pop ${translateOperand_Intel_X86(register)}")
-        case Directive(name) => ListBuffer(s".$name")
-        case Label(name) => ListBuffer(s"$name:")
+        case Directive(name) => List(s".$name")
+        case Label(name) => List(s"$name:")
     }
 
     /** 

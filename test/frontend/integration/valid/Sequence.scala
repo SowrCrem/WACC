@@ -1,4 +1,4 @@
-package test.frontend.integration.valid
+package test.frontend.integration.valid.Sequence
 
 import wacc.Main
 import test.Utils._
@@ -12,36 +12,36 @@ import org.scalatest.matchers.should.Matchers._
 
 class Sequence extends AnyFlatSpec {
 
-  "valid - sequence tests: basicSeq.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  "valid - sequence tests: basicSeq2.wacc" should "return exit code 0" in {
+    throwsNoError("valid/sequence/basicSeq2.wacc")
   }
 
-  "valid - sequence tests: basicSeq2.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+  "valid - sequence tests: basicSeq.wacc" should "return exit code 0" in {
+    throwsNoError("valid/sequence/basicSeq.wacc")
   }
 
   "valid - sequence tests: boolAssignment.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsNoError("valid/sequence/boolAssignment.wacc")
   }
 
   "valid - sequence tests: charAssignment.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsNoError("valid/sequence/charAssignment.wacc")
   }
 
   "valid - sequence tests: exitSimple.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsNoError("valid/sequence/exitSimple.wacc")
   }
 
   "valid - sequence tests: intAssignment.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsNoError("valid/sequence/intAssignment.wacc")
   }
 
   "valid - sequence tests: intLeadingZeros.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsNoError("valid/sequence/intLeadingZeros.wacc")
   }
 
   "valid - sequence tests: stringAssignment.wacc" should "return exit code 0" in {
-    throwsNoError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsNoError("valid/sequence/stringAssignment.wacc")
   }
 
 }

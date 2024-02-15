@@ -66,7 +66,6 @@ object Func extends ParserBridgePos4[TypeNode, Ident, ParamList, List[Stat], Fun
 case class ParamList(paramList: List[Param])(val pos: (Int, Int)) extends Position
 object ParamList extends ParserBridgePos1[List[Param], ParamList]
 
-
 // Param (Extending Position)
 
 case class Param(typeNode: TypeNode, ident: Ident)(val pos: (Int, Int)) extends Position
@@ -216,9 +215,6 @@ case class Null()(val pos: (Int, Int)) extends Atom with LValue with PairElemTyp
 object Null extends ParserBridgePos0[Null]
 case class Ident(value: String)(val pos: (Int, Int)) extends Atom with LValue
 object Ident extends ParserBridgePos1[String, Ident]
-case class Error(value: String)(val pos: (Int, Int)) extends Atom 
-object Error extends ParserBridgePos1[String, Error]
-
 
 
 // Type nodes

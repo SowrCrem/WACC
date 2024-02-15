@@ -23,11 +23,9 @@ object Main {
 
   def semanticCheck(node: Position): Int = {
     semanticChecker.check(node) match {
-      case Right(exitCode) => {
-        0
-      }
-      case Left(_) => {
-        // println("Semantic analysis output: \n" + msg)
+      case Right(exitCode) => 0
+      case Left(msg) => {
+        println("Semantic analysis output: \n" + msg)
         200
       }
     }

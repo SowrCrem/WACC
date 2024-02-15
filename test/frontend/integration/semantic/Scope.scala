@@ -1,4 +1,4 @@
-package test.frontend.integration.semantic
+package test.frontend.integration.semantic.Scope
 
 import wacc.Main
 import test.Utils._
@@ -13,11 +13,11 @@ import org.scalatest.matchers.should.Matchers._
 class Scope extends AnyFlatSpec {
 
   "semanticErr - scope tests: badParentScope.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSemanticError("invalid/semanticErr/scope/badParentScope.wacc")
   }
 
   "semanticErr - scope tests: badScopeRedefine.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSemanticError("invalid/semanticErr/scope/badScopeRedefine.wacc")
   }
 
 }

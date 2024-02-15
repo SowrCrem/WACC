@@ -30,7 +30,6 @@ import wacc.{
   Call,
   Null,
   Exit,
-  Error,
   Ident,
   Param,
   Return,
@@ -70,10 +69,10 @@ class parseFunctions extends AnyFlatSpec {
             IntTypeNode()(pos),
             Ident("f")(pos),
             ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
-            Skip()(pos)
+            List(Skip()(pos))
           )(pos)
         ),
-        Skip()(pos)
+        List(Skip()(pos))
       )(pos)
     )
 
@@ -91,16 +90,16 @@ class parseFunctions extends AnyFlatSpec {
             IntTypeNode()(pos),
             Ident("f")(pos),
             ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
-            Skip()(pos)
+            List(Skip()(pos))
           )(pos),
           Func(
             IntTypeNode()(pos),
             Ident("g")(pos),
             ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
-            Skip()(pos)
+            List(Skip()(pos))
           )(pos)
         ),
-        Skip()(pos)
+        List(Skip()(pos))
       )(pos)
     )
 
@@ -120,16 +119,16 @@ class parseFunctions extends AnyFlatSpec {
             IntTypeNode()(pos),
             Ident("f")(pos),
             ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
-            Return(IntLiter(5)(pos))(pos)
+            List(Return(IntLiter(5)(pos))(pos))
           )(pos),
           Func(
             IntTypeNode()(pos),
             Ident("g")(pos),
             ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
-            Return(IntLiter(2)(pos))(pos)
+            List(Return(IntLiter(2)(pos))(pos))
           )(pos)
         ),
-        IdentAsgn(IntTypeNode()(pos), Ident("x")(pos), Call(Ident("f")(pos), (List(IntLiter(5)(pos))))(pos))(pos)
+        List(IdentAsgn(IntTypeNode()(pos), Ident("x")(pos), Call(Ident("f")(pos), (List(IntLiter(5)(pos))))(pos))(pos))
       )(pos)
       )
 
@@ -149,10 +148,10 @@ class parseFunctions extends AnyFlatSpec {
             IntTypeNode()(pos),
             Ident("f")(pos),
             ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
-            Return(IntLiter(5)(pos))(pos)
+            List(Return(IntLiter(5)(pos))(pos))
           )(pos)
         ),
-        IdentAsgn(IntTypeNode()(pos), Ident("y")(pos), Call(Ident("f")(pos), List(IntLiter(5)(pos)))(pos))(pos)
+        List(IdentAsgn(IntTypeNode()(pos), Ident("y")(pos), Call(Ident("f")(pos), List(IntLiter(5)(pos)))(pos))(pos))
         )(pos)
       )
 

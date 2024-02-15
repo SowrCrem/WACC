@@ -9,7 +9,6 @@ import wacc.{
   Neg,
   Null,
   Exit,
-  Error,
   Ident,
   TypeNode,
   Position,
@@ -57,7 +56,7 @@ class parseAsgns extends AnyFlatSpec {
     val assignment = IdentAsgn(IntTypeNode()(pos), Ident(identifier)(pos), expected)(pos)
     parser.parse(
       "begin int " + identifier + " = " + input + " " + comment + " end"
-    ) shouldBe Success(Program(List(), assignment)(pos))
+    ) shouldBe Success(Program(List(), List(assignment))(pos))
   }
 
   def parseFails(
@@ -131,7 +130,7 @@ class parseAsgns extends AnyFlatSpec {
       )(pos)
     )(pos)
     parser.parse("begin int[][] input = [[1,2],[3,4]] end") shouldBe Success(
-      Program(List(), expected)(pos)
+      Program(List(), List(expected))(pos)
     )
   }
 
@@ -142,7 +141,7 @@ class parseAsgns extends AnyFlatSpec {
       ArrayLiter(List())(pos)
     )(pos)
     parser.parse("begin int[] input = [] end") shouldBe Success(
-      Program(List(), expected)(pos)
+      Program(List(), List(expected))(pos)
     )
   }
 

@@ -1,6 +1,6 @@
 package wacc
 
-object X86RegisterMapper {
+object X86CodeGenerator {
 
     val MAX_REG_NUM = 14
 

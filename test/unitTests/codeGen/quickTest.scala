@@ -111,40 +111,37 @@ class quickTEst extends AnyFlatSpec with BeforeAndAfterEach {
       ReturnInstr()
     )
 
-    // IRGenerator.generateIR(node) should be(
-    //   instrs
-    // )
+    X86IRGenerator.generateIR(node) should be(
+      instrs
+    )
 
-    // Arm32CodeGenerator.transInstr(
-    //   Ldr(Register("r0"), Immediate(-1), AL())
-    // ) should be(
-    //   "ldr r0, =-1"
-    // )
-
-    // instrs.map(Arm32CodeGenerator.transInstr) should be(
-    //   ListBuffer(
-    //     ".data",
-    //     ".align 4",
-    //     ".text",
-    //     ".global main",
-    //     "main:",
-    //     "push {fp, lr}",
-    //     "push {r8, r10, r12}",
-    //     "mov fp, sp",
-    //     "ldr r0, =-1",
-    //     "bl _exit",
-    //     "_exit:",
-    //     "push {fp, r1}",
-    //     "mov fp, sp",
-    //     "bic sp, sp, 7",
-    //     "bl exit",
-    //     "mov sp, fp",
-    //     "pop {fp, pc}",
-    //     "mov r0, =0",
-    //     "pop {r8, r10, r12}",
-    //     "pop {fp, pc}"
-    //   )
-    // )
+    instrs.map(Arm32CodeGenerator.transInstr) should be(
+      ListBuffer(
+        ".intel_syntax noprefix",
+        ".globl main",
+        ".section .rodata",
+        ".text",
+        "main:",
+        "  push rbp",
+        "  push rbx",
+        "  mov rbp, rsp",
+        "  mov rax, -1",
+        "  mov rdi, rax",
+        "  call _exit",
+        "  mov rax, 0",
+        "  pop rbx",
+        "  pop rbp",
+        "  ret",
+        "_exit:",
+        "  push rbp",
+        "  mov rbp, rsp",
+        "  and rsp, -16",
+        "  call exit@plt",
+        "  mov rsp, rbp",
+        "  pop rbp",
+        "  ret",
+      )
+    )
 
   }
 }

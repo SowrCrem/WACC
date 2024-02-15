@@ -43,4 +43,5 @@ case class PopRegisters(registers: List[Register]) extends Instruction
 case class Directive(val name: String) extends Instruction
 case class Label(val name: String) extends Instruction
 case class CallInstr(val name: String) extends Instruction
+case class CallPLT(val name: String) extends Instruction
 case class ReturnInstr() extends Instruction

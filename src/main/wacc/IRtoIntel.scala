@@ -1,5 +1,7 @@
 package wacc
 
+import scala.collection.mutable.Buffer
+
 object X86CodeGenerator {
 
     val MAX_REG_NUM = 14
@@ -23,26 +25,28 @@ object X86CodeGenerator {
         15 -> "r15" // Callee Saved
     )
     
+    def makeAssemblyIntel(instrs: Buffer[Instruction]): String = instrs.map(transInstr).flatten.mkString("\n")
 
     def transInstr(instruction: Instruction) : List[String] = instruction match {
-        case Mov(dest, operand) => List(s"mov ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(operand)}")
-        case AddInstr(dest, src, operand) => List(s"add ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case SubInstr(dest, src, operand) => List(s"sub ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case MulInstr(dest, src, operand) => List(s"mul ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case DivInstr(dest, src, operand) => List(s"div ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case AndInstr(dest, src) => List(s"and ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}")
-        case Eor(dest, src, operand) => List(s"eor ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Orr(dest, src, operand) => List(s"orr ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Cmp(src, operand) => List(s"cmp ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case Lea(dest, src) => List(s"lea ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}")
-        case Push(src) => List(s"push ${translateOperand_Intel_X86(src)}")
-        case Pop(dest) => List(s"pop {${translateOperand_Intel_X86(dest)}}")
-        case PushRegisters(registers) => for (register <- registers) yield s"push ${translateOperand_Intel_X86(register)}"
-        case PopRegisters(registers) => for (register <- registers) yield s"pop ${translateOperand_Intel_X86(register)}"
+        case Mov(dest, operand) => List(s"  mov ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(operand)}")
+        case AddInstr(dest, src, operand) => List(s"  add ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case SubInstr(dest, src, operand) => List(s"  sub ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case MulInstr(dest, src, operand) => List(s"  mul ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case DivInstr(dest, src, operand) => List(s"  div ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case AndInstr(dest, src) => List(s"  and ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}")
+        case Eor(dest, src, operand) => List(s"  eor ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Orr(dest, src, operand) => List(s"  orr ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Cmp(src, operand) => List(s"  cmp ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case Lea(dest, src) => List(s"  lea ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}")
+        case Push(src) => List(s"  push ${translateOperand_Intel_X86(src)}")
+        case Pop(dest) => List(s"  pop ${translateOperand_Intel_X86(dest)}")
+        case PushRegisters(registers) => for (register <- registers) yield s"  push ${translateOperand_Intel_X86(register)}"
+        case PopRegisters(registers) => for (register <- registers) yield s"  pop ${translateOperand_Intel_X86(register)}"
         case Directive(name) => List(s".$name")
         case Label(name) => List(s"$name:")
-        case CallInstr(name) => List(s"call _$name")
-        case ReturnInstr() => List(s"ret\n")
+        case CallInstr(name) => List(s"  call _${name}")
+        case CallPLT(name) => List(s"  call ${name}@plt")
+        case ReturnInstr() => List(s"  ret\n")
         case _ => throw new IllegalArgumentException("Invalid instruction")
     }
 
@@ -73,7 +77,7 @@ object X86CodeGenerator {
           * (although this may already have been handled in the parser/lexer)
         **/
 
-        case Immediate(value) => s"#${value}" 
+        case Immediate(value) => s"${value}" 
         case _ => throw new IllegalArgumentException("Invalid operand: " + operand)
     }
 }

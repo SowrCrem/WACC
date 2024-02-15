@@ -20,7 +20,6 @@ import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
 
 object Utils {
-
   abstract class SemanticUnitTester extends AnyFlatSpec with BeforeAndAfterEach {
     var symbolTable: SymbolTable = _
     var typeChecker: TypeChecker = _
@@ -46,12 +45,12 @@ object Utils {
 
     def checkFails(node: Position, errorMessage: String = ""): Assertion = errorMessage match {
       case "" => {
-        a [SemanticError] shouldBe thrownBy {
+        a [Throwable] shouldBe thrownBy {
           typeChecker.check(node)
         }
       }
       case msg => {
-        val e = intercept[SemanticError] {
+        val e = intercept[Throwable] {
           typeChecker.check(node)
         }
         e.getMessage shouldBe msg

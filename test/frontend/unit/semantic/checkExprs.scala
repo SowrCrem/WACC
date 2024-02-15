@@ -41,7 +41,6 @@ import wacc.{
   Println,
   If,
   While,
-  StatJoin,
   ParamList,
   TypeNode,
   Position,

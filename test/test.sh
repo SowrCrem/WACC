@@ -130,5 +130,7 @@ fi
 echo "-----------------------------------"
 echo "All tests ran with overall exit code $exit_code."
 
+scala-cli clean . 
+
 # Exit with the stored exit code
 exit $exit_code

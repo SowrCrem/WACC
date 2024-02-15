@@ -41,7 +41,6 @@ import wacc.{
   Println,
   If,
   While,
-  StatJoin,
   ParamList,
   TypeNode,
   Position,
@@ -78,15 +77,13 @@ class checkFunctions extends SemanticUnitTester {
   
   "The type checker" should "accept function calls" in {
     val position = Program(
-      List(
-        Func(
+      List(Func(
           IntTypeNode()(pos),
           Ident("f")(pos),
           ParamList(List(Param(IntTypeNode()(pos), Ident("x")(pos))(pos)))(pos),
-          Return(IntLiter(1)(pos))(pos)
-        )(pos)
-      ),
-      IdentAsgn(IntTypeNode()(pos), Ident("x")(pos), Call(Ident("f")(pos), List(IntLiter(1)(pos)))(pos))(pos)
+          List(Return(IntLiter(1)(pos))(pos))
+        )(pos)),
+      List(IdentAsgn(IntTypeNode()(pos), Ident("x")(pos), Call(Ident("f")(pos), List(IntLiter(1)(pos)))(pos))(pos))
     )(pos)
     checkSucceeds(position)
   }

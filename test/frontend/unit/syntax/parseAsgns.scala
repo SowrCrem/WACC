@@ -9,7 +9,6 @@ import wacc.{
   Neg,
   Null,
   Exit,
-  Error,
   Ident,
   TypeNode,
   Position,

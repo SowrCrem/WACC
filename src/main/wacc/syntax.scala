@@ -217,9 +217,6 @@ case class Null()(val pos: (Int, Int)) extends Atom with LValue with PairElemTyp
 object Null extends ParserBridgePos0[Null]
 case class Ident(value: String)(val pos: (Int, Int)) extends Atom with LValue
 object Ident extends ParserBridgePos1[String, Ident]
-case class Error(value: String)(val pos: (Int, Int)) extends Atom 
-object Error extends ParserBridgePos1[String, Error]
-
 
 
 // Type nodes

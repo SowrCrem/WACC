@@ -30,7 +30,6 @@ import wacc.{
   Call,
   Null,
   Exit,
-  Error,
   Ident,
   Param,
   Return,

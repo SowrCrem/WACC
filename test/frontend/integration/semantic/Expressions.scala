@@ -13,31 +13,31 @@ import org.scalatest.matchers.should.Matchers._
 class Expressions extends AnyFlatSpec {
 
   "semanticErr - expressions tests: boolOpTypeErr.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/expressions/wacc/invalid/semanticErr/expressions//boolOpTypeErr.wacc")
+    throwsSemanticError("invalid/semanticErr/expressions/boolOpTypeErr.wacc")
   }
 
   "semanticErr - expressions tests: exprTypeErr.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/expressions/wacc/invalid/semanticErr/expressions//exprTypeErr.wacc")
+    throwsSemanticError("invalid/semanticErr/expressions/exprTypeErr.wacc")
   }
 
   "semanticErr - expressions tests: intOpTypeErr.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/expressions/wacc/invalid/semanticErr/expressions//intOpTypeErr.wacc")
+    throwsSemanticError("invalid/semanticErr/expressions/intOpTypeErr.wacc")
   }
 
   "semanticErr - expressions tests: lessPairExpr.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/expressions/wacc/invalid/semanticErr/expressions//lessPairExpr.wacc")
+    throwsSemanticError("invalid/semanticErr/expressions/lessPairExpr.wacc")
   }
 
   "semanticErr - expressions tests: mixedOpTypeErr.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/expressions/wacc/invalid/semanticErr/expressions//mixedOpTypeErr.wacc")
+    throwsSemanticError("invalid/semanticErr/expressions/mixedOpTypeErr.wacc")
   }
 
   "semanticErr - expressions tests: moreArrExpr.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/expressions/wacc/invalid/semanticErr/expressions//moreArrExpr.wacc")
+    throwsSemanticError("invalid/semanticErr/expressions/moreArrExpr.wacc")
   }
 
   "semanticErr - expressions tests: stringElemErr.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/expressions/wacc/invalid/semanticErr/expressions//stringElemErr.wacc")
+    throwsSemanticError("invalid/semanticErr/expressions/stringElemErr.wacc")
   }
 
 }

@@ -13,15 +13,15 @@ import org.scalatest.matchers.should.Matchers._
 class Literals extends AnyFlatSpec {
 
   "syntaxErr - literals tests: charLiteralSingle.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/literals/wacc/invalid/syntaxErr/literals//charLiteralSingle.wacc")
+    throwsSyntaxError("invalid/syntaxErr/literals/charLiteralSingle.wacc")
   }
 
   "syntaxErr - literals tests: stringLiteralNoNewlines.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/literals/wacc/invalid/syntaxErr/literals//stringLiteralNoNewlines.wacc")
+    throwsSyntaxError("invalid/syntaxErr/literals/stringLiteralNoNewlines.wacc")
   }
 
   "syntaxErr - literals tests: stringLiteralOnlyAscii.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/literals/wacc/invalid/syntaxErr/literals//stringLiteralOnlyAscii.wacc")
+    throwsSyntaxError("invalid/syntaxErr/literals/stringLiteralOnlyAscii.wacc")
   }
 
 }

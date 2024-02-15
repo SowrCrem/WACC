@@ -13,35 +13,35 @@ import org.scalatest.matchers.should.Matchers._
 class Sequence extends AnyFlatSpec {
 
   "valid - sequence tests: basicSeq2.wacc" should "return exit code 0" in {
-    throwsNoError("valid/sequence/wacc/valid/sequence//basicSeq2.wacc")
+    throwsNoError("valid/sequence/basicSeq2.wacc")
   }
 
   "valid - sequence tests: basicSeq.wacc" should "return exit code 0" in {
-    throwsNoError("valid/sequence/wacc/valid/sequence//basicSeq.wacc")
+    throwsNoError("valid/sequence/basicSeq.wacc")
   }
 
   "valid - sequence tests: boolAssignment.wacc" should "return exit code 0" in {
-    throwsNoError("valid/sequence/wacc/valid/sequence//boolAssignment.wacc")
+    throwsNoError("valid/sequence/boolAssignment.wacc")
   }
 
   "valid - sequence tests: charAssignment.wacc" should "return exit code 0" in {
-    throwsNoError("valid/sequence/wacc/valid/sequence//charAssignment.wacc")
+    throwsNoError("valid/sequence/charAssignment.wacc")
   }
 
   "valid - sequence tests: exitSimple.wacc" should "return exit code 0" in {
-    throwsNoError("valid/sequence/wacc/valid/sequence//exitSimple.wacc")
+    throwsNoError("valid/sequence/exitSimple.wacc")
   }
 
   "valid - sequence tests: intAssignment.wacc" should "return exit code 0" in {
-    throwsNoError("valid/sequence/wacc/valid/sequence//intAssignment.wacc")
+    throwsNoError("valid/sequence/intAssignment.wacc")
   }
 
   "valid - sequence tests: intLeadingZeros.wacc" should "return exit code 0" in {
-    throwsNoError("valid/sequence/wacc/valid/sequence//intLeadingZeros.wacc")
+    throwsNoError("valid/sequence/intLeadingZeros.wacc")
   }
 
   "valid - sequence tests: stringAssignment.wacc" should "return exit code 0" in {
-    throwsNoError("valid/sequence/wacc/valid/sequence//stringAssignment.wacc")
+    throwsNoError("valid/sequence/stringAssignment.wacc")
   }
 
 }

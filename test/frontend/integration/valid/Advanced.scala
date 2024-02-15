@@ -13,15 +13,15 @@ import org.scalatest.matchers.should.Matchers._
 class Advanced extends AnyFlatSpec {
 
   "valid - advanced tests: binarySortTree.wacc" should "return exit code 0" in {
-    throwsNoError("valid/advanced/wacc/valid/advanced//binarySortTree.wacc")
+    throwsNoError("valid/advanced/binarySortTree.wacc")
   }
 
   "valid - advanced tests: hashTable.wacc" should "return exit code 0" in {
-    throwsNoError("valid/advanced/wacc/valid/advanced//hashTable.wacc")
+    throwsNoError("valid/advanced/hashTable.wacc")
   }
 
   "valid - advanced tests: ticTacToe.wacc" should "return exit code 0" in {
-    throwsNoError("valid/advanced/wacc/valid/advanced//ticTacToe.wacc")
+    throwsNoError("valid/advanced/ticTacToe.wacc")
   }
 
 }

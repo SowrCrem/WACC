@@ -13,7 +13,7 @@ import org.scalatest.matchers.should.Matchers._
 class IO extends AnyFlatSpec {
 
   "semanticErr - IO tests: readTypeErr.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/IO/wacc/invalid/semanticErr/IO//readTypeErr.wacc")
+    throwsSemanticError("invalid/semanticErr/IO/readTypeErr.wacc")
   }
 
 }

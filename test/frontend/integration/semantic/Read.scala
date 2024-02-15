@@ -13,15 +13,15 @@ import org.scalatest.matchers.should.Matchers._
 class Read extends AnyFlatSpec {
 
   "semanticErr - read tests: readIntoBadFst.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/read/wacc/invalid/semanticErr/read//readIntoBadFst.wacc")
+    throwsSemanticError("invalid/semanticErr/read/readIntoBadFst.wacc")
   }
 
   "semanticErr - read tests: readIntoBadSnd.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/read/wacc/invalid/semanticErr/read//readIntoBadSnd.wacc")
+    throwsSemanticError("invalid/semanticErr/read/readIntoBadSnd.wacc")
   }
 
   "semanticErr - read tests: readTypeErr01.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/read/wacc/invalid/semanticErr/read//readTypeErr01.wacc")
+    throwsSemanticError("invalid/semanticErr/read/readTypeErr01.wacc")
   }
 
 }

@@ -13,7 +13,7 @@ import org.scalatest.matchers.should.Matchers._
 class If extends AnyFlatSpec {
 
   "semanticErr - if tests: ifIntCondition.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/if/wacc/invalid/semanticErr/if//ifIntCondition.wacc")
+    throwsSemanticError("invalid/semanticErr/if/ifIntCondition.wacc")
   }
 
 }

@@ -13,15 +13,15 @@ import org.scalatest.matchers.should.Matchers._
 class Expressions extends AnyFlatSpec {
 
   "syntaxErr - expressions tests: missingOperand1.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/expressions/wacc/invalid/syntaxErr/expressions//missingOperand1.wacc")
+    throwsSyntaxError("invalid/syntaxErr/expressions/missingOperand1.wacc")
   }
 
   "syntaxErr - expressions tests: missingOperand2.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/expressions/wacc/invalid/syntaxErr/expressions//missingOperand2.wacc")
+    throwsSyntaxError("invalid/syntaxErr/expressions/missingOperand2.wacc")
   }
 
   "syntaxErr - expressions tests: printlnConcat.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/expressions/wacc/invalid/syntaxErr/expressions//printlnConcat.wacc")
+    throwsSyntaxError("invalid/syntaxErr/expressions/printlnConcat.wacc")
   }
 
 }

@@ -13,59 +13,59 @@ import org.scalatest.matchers.should.Matchers._
 class Scope extends AnyFlatSpec {
 
   "valid - scope tests: ifNested1.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//ifNested1.wacc")
+    throwsNoError("valid/scope/ifNested1.wacc")
   }
 
   "valid - scope tests: ifNested2.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//ifNested2.wacc")
+    throwsNoError("valid/scope/ifNested2.wacc")
   }
 
   "valid - scope tests: indentationNotImportant.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//indentationNotImportant.wacc")
+    throwsNoError("valid/scope/indentationNotImportant.wacc")
   }
 
   "valid - scope tests: intsAndKeywords.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//intsAndKeywords.wacc")
+    throwsNoError("valid/scope/intsAndKeywords.wacc")
   }
 
   "valid - scope tests: printAllTypes.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//printAllTypes.wacc")
+    throwsNoError("valid/scope/printAllTypes.wacc")
   }
 
   "valid - scope tests: scopeBasic.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//scopeBasic.wacc")
+    throwsNoError("valid/scope/scopeBasic.wacc")
   }
 
   "valid - scope tests: scopeIfRedefine.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//scopeIfRedefine.wacc")
+    throwsNoError("valid/scope/scopeIfRedefine.wacc")
   }
 
   "valid - scope tests: scopeRedefine.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//scopeRedefine.wacc")
+    throwsNoError("valid/scope/scopeRedefine.wacc")
   }
 
   "valid - scope tests: scopeSimpleRedefine.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//scopeSimpleRedefine.wacc")
+    throwsNoError("valid/scope/scopeSimpleRedefine.wacc")
   }
 
   "valid - scope tests: scopeVars.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//scopeVars.wacc")
+    throwsNoError("valid/scope/scopeVars.wacc")
   }
 
   "valid - scope tests: scope.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//scope.wacc")
+    throwsNoError("valid/scope/scope.wacc")
   }
 
   "valid - scope tests: scopeWhileNested.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//scopeWhileNested.wacc")
+    throwsNoError("valid/scope/scopeWhileNested.wacc")
   }
 
   "valid - scope tests: scopeWhileRedefine.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//scopeWhileRedefine.wacc")
+    throwsNoError("valid/scope/scopeWhileRedefine.wacc")
   }
 
   "valid - scope tests: splitScope.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/wacc/valid/scope//splitScope.wacc")
+    throwsNoError("valid/scope/splitScope.wacc")
   }
 
 }

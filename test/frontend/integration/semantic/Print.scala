@@ -13,7 +13,7 @@ import org.scalatest.matchers.should.Matchers._
 class Print extends AnyFlatSpec {
 
   "semanticErr - print tests: printTypeErr01.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/print/wacc/invalid/semanticErr/print//printTypeErr01.wacc")
+    throwsSemanticError("invalid/semanticErr/print/printTypeErr01.wacc")
   }
 
 }

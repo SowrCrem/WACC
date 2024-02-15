@@ -13,7 +13,7 @@ import org.scalatest.matchers.should.Matchers._
 class Array extends AnyFlatSpec {
 
   "syntaxErr - array tests: arrayExpr.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/array/wacc/invalid/syntaxErr/array//arrayExpr.wacc")
+    throwsSyntaxError("invalid/syntaxErr/array/arrayExpr.wacc")
   }
 
 }

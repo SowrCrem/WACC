@@ -13,7 +13,7 @@ import org.scalatest.matchers.should.Matchers._
 class Print extends AnyFlatSpec {
 
   "syntaxErr - print tests: printlnCharArry.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/print/wacc/invalid/syntaxErr/print//printlnCharArry.wacc")
+    throwsSyntaxError("invalid/syntaxErr/print/printlnCharArry.wacc")
   }
 
 }

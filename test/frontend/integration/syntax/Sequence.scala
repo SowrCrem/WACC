@@ -13,23 +13,23 @@ import org.scalatest.matchers.should.Matchers._
 class Sequence extends AnyFlatSpec {
 
   "syntaxErr - sequence tests: doubleSeq.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/sequence/wacc/invalid/syntaxErr/sequence//doubleSeq.wacc")
+    throwsSyntaxError("invalid/syntaxErr/sequence/doubleSeq.wacc")
   }
 
   "syntaxErr - sequence tests: emptySeq.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/sequence/wacc/invalid/syntaxErr/sequence//emptySeq.wacc")
+    throwsSyntaxError("invalid/syntaxErr/sequence/emptySeq.wacc")
   }
 
   "syntaxErr - sequence tests: endSeq.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/sequence/wacc/invalid/syntaxErr/sequence//endSeq.wacc")
+    throwsSyntaxError("invalid/syntaxErr/sequence/endSeq.wacc")
   }
 
   "syntaxErr - sequence tests: extraSeq.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/sequence/wacc/invalid/syntaxErr/sequence//extraSeq.wacc")
+    throwsSyntaxError("invalid/syntaxErr/sequence/extraSeq.wacc")
   }
 
   "syntaxErr - sequence tests: missingSeq.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/sequence/wacc/invalid/syntaxErr/sequence//missingSeq.wacc")
+    throwsSyntaxError("invalid/syntaxErr/sequence/missingSeq.wacc")
   }
 
 }

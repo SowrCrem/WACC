@@ -13,51 +13,51 @@ import org.scalatest.matchers.should.Matchers._
 class While extends AnyFlatSpec {
 
   "valid - while tests: fibonacciFullIt.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//fibonacciFullIt.wacc")
+    throwsNoError("valid/while/fibonacciFullIt.wacc")
   }
 
   "valid - while tests: fibonacciIterative.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//fibonacciIterative.wacc")
+    throwsNoError("valid/while/fibonacciIterative.wacc")
   }
 
   "valid - while tests: loopCharCondition.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//loopCharCondition.wacc")
+    throwsNoError("valid/while/loopCharCondition.wacc")
   }
 
   "valid - while tests: loopIntCondition.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//loopIntCondition.wacc")
+    throwsNoError("valid/while/loopIntCondition.wacc")
   }
 
   "valid - while tests: max.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//max.wacc")
+    throwsNoError("valid/while/max.wacc")
   }
 
   "valid - while tests: min.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//min.wacc")
+    throwsNoError("valid/while/min.wacc")
   }
 
   "valid - while tests: rmStyleAddIO.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//rmStyleAddIO.wacc")
+    throwsNoError("valid/while/rmStyleAddIO.wacc")
   }
 
   "valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//rmStyleAdd.wacc")
+    throwsNoError("valid/while/rmStyleAdd.wacc")
   }
 
   "valid - while tests: whileBasic.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//whileBasic.wacc")
+    throwsNoError("valid/while/whileBasic.wacc")
   }
 
   "valid - while tests: whileBoolFlip.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//whileBoolFlip.wacc")
+    throwsNoError("valid/while/whileBoolFlip.wacc")
   }
 
   "valid - while tests: whileCount.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//whileCount.wacc")
+    throwsNoError("valid/while/whileCount.wacc")
   }
 
   "valid - while tests: whileFalse.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/wacc/valid/while//whileFalse.wacc")
+    throwsNoError("valid/while/whileFalse.wacc")
   }
 
 }

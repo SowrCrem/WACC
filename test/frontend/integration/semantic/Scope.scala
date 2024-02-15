@@ -13,11 +13,11 @@ import org.scalatest.matchers.should.Matchers._
 class Scope extends AnyFlatSpec {
 
   "semanticErr - scope tests: badParentScope.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/scope/wacc/invalid/semanticErr/scope//badParentScope.wacc")
+    throwsSemanticError("invalid/semanticErr/scope/badParentScope.wacc")
   }
 
   "semanticErr - scope tests: badScopeRedefine.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/scope/wacc/invalid/semanticErr/scope//badScopeRedefine.wacc")
+    throwsSemanticError("invalid/semanticErr/scope/badScopeRedefine.wacc")
   }
 
 }

@@ -13,23 +13,23 @@ import org.scalatest.matchers.should.Matchers._
 class Variables extends AnyFlatSpec {
 
   "syntaxErr - variables tests: badintAssignments1.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/variables/wacc/invalid/syntaxErr/variables//badintAssignments1.wacc")
+    throwsSyntaxError("invalid/syntaxErr/variables/badintAssignments1.wacc")
   }
 
   "syntaxErr - variables tests: badintAssignments2.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/variables/wacc/invalid/syntaxErr/variables//badintAssignments2.wacc")
+    throwsSyntaxError("invalid/syntaxErr/variables/badintAssignments2.wacc")
   }
 
   "syntaxErr - variables tests: badintAssignments.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/variables/wacc/invalid/syntaxErr/variables//badintAssignments.wacc")
+    throwsSyntaxError("invalid/syntaxErr/variables/badintAssignments.wacc")
   }
 
   "syntaxErr - variables tests: bigIntAssignment.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/variables/wacc/invalid/syntaxErr/variables//bigIntAssignment.wacc")
+    throwsSyntaxError("invalid/syntaxErr/variables/bigIntAssignment.wacc")
   }
 
   "syntaxErr - variables tests: varNoName.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/variables/wacc/invalid/syntaxErr/variables//varNoName.wacc")
+    throwsSyntaxError("invalid/syntaxErr/variables/varNoName.wacc")
   }
 
 }

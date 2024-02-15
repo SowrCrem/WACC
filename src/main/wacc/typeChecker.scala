@@ -449,7 +449,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     // BINARY OPERATIONS
     case Mul(lhs, rhs) =>
       checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
-    case DivNode(lhs, rhs) =>
+    case Div(lhs, rhs) =>
       checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
     case Mod(lhs, rhs) =>
       checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
@@ -493,7 +493,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         None
       }
     }
-    case AndNode(lhs, rhs) =>
+    case And(lhs, rhs) =>
       checkBoolBinOp(position, lhs, rhs, symbolTable, returnType)
     case Or(lhs, rhs) =>
       checkBoolBinOp(position, lhs, rhs, symbolTable, returnType)

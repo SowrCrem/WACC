@@ -22,8 +22,5 @@ object x86IRGenerator {
 //     }
 //   }
 
-    def astToIr(position: Position) {
-        
-    }
 
 }

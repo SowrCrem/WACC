@@ -18,13 +18,13 @@ create_test_entries () {
             create_test_entries "$file" "${path_var}/${subdirectory_name}" "$test_type" "$expected_exit_code" "$this_filename"
         elif [[ "$file" == *.wacc ]]; then
             file_name=$(basename "$file")
-            src_test_path="${path_var}/${subdirectory_name}/${file_name}"
+            src_test_path="${path_var}/${subdirectory_name}/${file}"
             test_name="\"${src_name} - ${subdirectory_name} tests: ${file_name}\""
             return_stmt="\"return exit code ${expected_exit_code}\""
 
             echo -e "  ${test_name} should ${return_stmt} in {
     pending
-    throws${test_type^}Error(\"invalid/semanticErr/array/arrayIndexComplexNotInt.wacc\")
+    throws${test_type^}Error(\"${src_test_path}\")
   }\n" >> "$this_filename"
         fi
     done
@@ -82,7 +82,7 @@ for src in "${directories[@]}"; do
             touch "$this_filename"
 
 
-            echo -e "package test.frontend.integration.${test_type}
+            echo -e "package test.frontend.integration.${test_type}.${subdirectory_name^}
 
 import wacc.Main
 import test.Utils._

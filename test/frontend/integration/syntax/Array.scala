@@ -1,4 +1,4 @@
-package test.frontend.integration.syntax
+package test.frontend.integration.syntax.Array
 
 import wacc.Main
 import test.Utils._
@@ -13,7 +13,7 @@ import org.scalatest.matchers.should.Matchers._
 class Array extends AnyFlatSpec {
 
   "syntaxErr - array tests: arrayExpr.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSyntaxError("invalid/syntaxErr/array/wacc/invalid/syntaxErr/array//arrayExpr.wacc")
   }
 
 }

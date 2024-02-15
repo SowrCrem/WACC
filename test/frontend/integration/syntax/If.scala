@@ -1,4 +1,4 @@
-package test.frontend.integration.syntax
+package test.frontend.integration.syntax.If
 
 import wacc.Main
 import test.Utils._
@@ -12,20 +12,20 @@ import org.scalatest.matchers.should.Matchers._
 
 class If extends AnyFlatSpec {
 
+  "syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {
+    throwsSyntaxError("invalid/syntaxErr/if/wacc/invalid/syntaxErr/if//ifiErr.wacc")
+  }
+
   "syntaxErr - if tests: ifNoelse.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSyntaxError("invalid/syntaxErr/if/wacc/invalid/syntaxErr/if//ifNoelse.wacc")
   }
 
   "syntaxErr - if tests: ifNofi.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSyntaxError("invalid/syntaxErr/if/wacc/invalid/syntaxErr/if//ifNofi.wacc")
   }
 
   "syntaxErr - if tests: ifNothen.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
-  }
-
-  "syntaxErr - if tests: ifiErr.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/semanticErr/array/arrayIndexComplexNotInt.wacc")
+    throwsSyntaxError("invalid/syntaxErr/if/wacc/invalid/syntaxErr/if//ifNothen.wacc")
   }
 
 }

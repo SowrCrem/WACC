@@ -5,7 +5,6 @@ sealed trait Instruction
 sealed trait Operand
 
 sealed trait Register extends Operand
-
 case object FP extends Register // Frame pointer
 case object SP extends Register // Stack pointer
 case object Dest extends Register // Destination register
@@ -26,7 +25,7 @@ case class MulInstr(dest: Operand, src: Operand, operand: Operand)
 case class DivInstr(dest: Operand, src: Operand, operand: Operand)
     extends Instruction
 
-case class AndInstr(dest: Operand, src: Operand, operand: Operand)
+case class AndInstr(dest: Operand, src: Operand)
     extends Instruction
 case class Eor(dest: Operand, src: Operand, operand: Operand)
     extends Instruction
@@ -43,3 +42,5 @@ case class PushRegisters(registers: List[Register]) extends Instruction
 case class PopRegisters(registers: List[Register]) extends Instruction
 case class Directive(val name: String) extends Instruction
 case class Label(val name: String) extends Instruction
+case class CallInstr(val name: String) extends Instruction
+case class ReturnInstr() extends Instruction

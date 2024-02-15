@@ -5,21 +5,22 @@ object X86RegisterMapper {
     val MAX_REG_NUM = 14
 
     val registerMap32Bit: Map[Int, String] = Map(
-        0 -> "eax", // Return register
-        1 -> "ebx", // Callee saved
-        2 -> "ecx", // Argument 4
-        3 -> "edx", // Argument 3
-        4 -> "esi", // Argument 2
-        5 -> "edi", // Argument 1
-        6 -> "ebp", // Callee saved
-        7 -> "r8",  // Argument 5
-        8 -> "r9",  // Argument 6
-        9 -> "r10",// Caller Saved
-        10 -> "r11",// Caller Saved
-        11 -> "r12",// Callee Saved
-        12 -> "r13",// Callee Saved
-        13 -> "r14",// Callee Saved
-        14 -> "r15" // Callee Saved
+        0 -> "rax", // Return register
+        1 -> "rbx", // Callee saved
+        2 -> "rcx", // Argument 4
+        3 -> "rdx", // Argument 3
+        4 -> "rsi", // Argument 2
+        5 -> "rdi", // Argument 1
+        6 -> "rsp", // Stack pointer
+        7 -> "rbp", // Callee saved
+        8 -> "r8",  // Argument 5
+        9 -> "r9",  // Argument 6
+        10 -> "r10",// Caller Saved
+        11 -> "r11",// Caller Saved
+        12 -> "r12",// Callee Saved
+        13 -> "r13",// Callee Saved
+        14 -> "r14",// Callee Saved
+        15 -> "r15" // Callee Saved
     )
     
 
@@ -29,7 +30,7 @@ object X86RegisterMapper {
         case SubInstr(dest, src, operand) => List(s"sub ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
         case MulInstr(dest, src, operand) => List(s"mul ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
         case DivInstr(dest, src, operand) => List(s"div ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
-        case AndInstr(dest, src, operand) => List(s"and ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
+        case AndInstr(dest, src) => List(s"and ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}")
         case Eor(dest, src, operand) => List(s"eor ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
         case Orr(dest, src, operand) => List(s"orr ${translateOperand_Intel_X86(dest)}, ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
         case Cmp(src, operand) => List(s"cmp ${translateOperand_Intel_X86(src)}, ${translateOperand_Intel_X86(operand)}")
@@ -40,6 +41,8 @@ object X86RegisterMapper {
         case PopRegisters(registers) => for (register <- registers) yield s"pop ${translateOperand_Intel_X86(register)}"
         case Directive(name) => List(s".$name")
         case Label(name) => List(s"$name:")
+        case CallInstr(name) => List(s"call _$name")
+        case ReturnInstr() => List(s"ret\n")
         case _ => throw new IllegalArgumentException("Invalid instruction")
     }
 
@@ -61,8 +64,8 @@ object X86RegisterMapper {
                 )
         }
 
-        case FP => "ebp"
-        case SP => "esp"        
+        case FP => "rbp"
+        case SP => "rsp"        
         /**
           * TODO: Check the immediate case is not erroneous
           * and doesn't allow invalid immediates to appear 

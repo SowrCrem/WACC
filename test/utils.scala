@@ -91,11 +91,11 @@ object Utils {
     exitsWithCode(path, -1)
   }
 
-  def throwsNoError(path: String): Assertion = {
+  def throwsNoError(path: String): Assertion = synchronized({
     exitsWithCode(path, 0)
-  }
+  })
 
-  private def exitsWithCode(path: String, code: Int): Assertion = {
+  private def exitsWithCode(path: String, code: Int): Assertion = synchronized({
     // If current directory is not the root of the project, then add a ../ to the start of the path
     var newPath = "test/wacc/" + path
     if (!new java.io.File("src/main/wacc/Main.scala").exists) {
@@ -109,5 +109,5 @@ object Utils {
     //   sedCommand.!
     // }
     exitCode shouldBe code
-  }
+  })
 }

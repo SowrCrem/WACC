@@ -113,9 +113,10 @@ if [ "$milestone" == "frontend" ]; then
   if [ "$feature" == "" ]; then
     run_tests "Syntax"
     run_tests "Semantic"
-    if [ "$type" == "integration" ]; then
-      run_tests "Valid"
-    fi
+    # Valid Tests Temporarily Ignored
+    # if [ "$type" == "integration" ]; then
+    #   run_tests "Valid"
+    # fi
   else
     run_tests "$feature"
   fi

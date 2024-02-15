@@ -31,7 +31,7 @@ object Main {
     }
   }
 
-  def compile(args: Array[String]): Int = args.headOption match {
+  def compile(args: Array[String]): Int = synchronized(args.headOption match {
     case Some(filename) => {
       // val fileContent = ("cat " + filename).!!
       var fileContent = ""
@@ -58,5 +58,5 @@ object Main {
       println("IO Error: No file path provided")
       -1
     }
-  }
+  })
 }

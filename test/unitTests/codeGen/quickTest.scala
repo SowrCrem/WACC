@@ -69,13 +69,12 @@ import org.scalatest.BeforeAndAfterEach
 import wacc.TypeChecker
 import wacc.Instruction
 import wacc.Mov
-import wacc.Immediate
+import wacc.Immediate32
 import wacc.PopRegisters
 import wacc.Directive
 import wacc.PushRegisters
 import wacc.Label
 import scala.collection.mutable.ListBuffer
-import wacc.{REG, FP, SP}
 import wacc._
 import wacc.{CallInstr, ReturnInstr, AndInstr, CallPLT, Push, Pop, PushRegisters, PopRegisters}
 
@@ -91,18 +90,18 @@ class QuickTest extends AnyFlatSpec with BeforeAndAfterEach {
     Directive("section .rodata"),
     Directive("text"),
     Label("main"),
-    PushRegisters(List(FP, REG(1))),
+    PushRegisters(List(FP, G0)),
     Mov(FP, SP),
-    Mov(REG(0), Immediate(-1)),
-    Mov(REG(5), REG(0)),
+    Mov(Dest, Immediate32(-1)),
+    Mov(Arg0, Dest),
     CallInstr("exit"),
-    Mov(REG(0), Immediate(0)),
-    PopRegisters(List(REG(1), FP)),
+    Mov(Dest, Immediate32(0)),
+    PopRegisters(List(G0, FP)),
     ReturnInstr(),
     Label("_exit"),
     Push(FP),
     Mov(FP, SP),
-    AndInstr(SP, Immediate(-16)),
+    AndInstr(SP, Immediate32(-16)),
     CallPLT("exit"),
     Mov(SP, FP),
     Pop(FP),

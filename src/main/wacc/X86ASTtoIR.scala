@@ -4,7 +4,48 @@ import scala.collection.mutable._
 
 object X86IRGenerator {
 
+  /** 
+    * Flag to indicate whether the exit function is used in the program
+  */
   var exitFunc: Boolean = false;
+
+  /**
+    * Map of variable names to registers
+  */
+  val variableMapping: Map[String, Register] = Map()
+
+  /** 
+   * Stack of registers that are currently in use
+   * and stack of registers that are available for use
+   * in the intermediate representation
+  */
+  var usedRegs : Stack[Register] = new Stack[Register]
+
+  val availableRegs = new Stack[Register] {
+    /** 
+     * Pops a register from the stack of available registers
+     * and pushes it onto the stack of used registers
+     * @return The register that was popped
+    */
+    def popToUsed(): Register = {
+        val reg = super.pop()
+        usedRegs.push(reg)
+        reg
+    }
+  }
+
+  usedRegs = new Stack[Register] {
+    /** 
+     * Pops a register from the stack of used registers
+     * and pushes it onto the stack of available registers
+     * @return The register that was popped
+    */
+    def popToAvailable(): Register = {
+      val reg = super.pop()
+      availableRegs.push(reg)
+      reg
+    }
+  }
 
   /** 
    * Generates the intermediate representation for the given AST
@@ -12,6 +53,11 @@ object X86IRGenerator {
    * @return The intermediate representation of the program
   */
   def generateIR(ast: Program): Buffer[Instruction] = {
+    availableRegs.pushAll(List(
+        G0, G1, G2, G3, G4, G5, G6,
+        Arg0, Arg1, Arg2, Arg3, Arg4, Arg5,
+        Dest
+    ))
     val instructions: Buffer[Instruction] = new ListBuffer[Instruction].empty
     instructions ++= List(
       Directive("intel_syntax noprefix"),
@@ -19,15 +65,15 @@ object X86IRGenerator {
       Directive("section .rodata"),
       Directive("text"),
       Label("main"),
-      PushRegisters(List(FP, REG(1))),
+      PushRegisters(List(FP, G0)),
       Mov(FP, SP)
     )
     instructions ++= astToIR(ast)
 
     
-    instructions += Mov(REG(0), Immediate(0)) // Return 0 if no exit function
+    instructions += Mov(Dest, Immediate32(0)) // Return 0 if no exit function
     instructions ++= List(
-      PopRegisters(List(REG(1), FP)),
+      PopRegisters(List(G0, FP)),
       ReturnInstr(),
       )
     if (exitFunc) {
@@ -58,12 +104,12 @@ object X86IRGenerator {
       exitFunc = true;
       println("reached")
       ListBuffer(
-        Mov(REG(0), Immediate(value)),
-        Mov(REG(5), REG(0)),
+        Mov(Dest, Immediate32(value)),
+        Mov(Arg0, Dest),
         CallInstr("exit")
       )
     }
-  }
+}
 
   /**
     * The intermediate representation for the exit function
@@ -72,7 +118,7 @@ object X86IRGenerator {
     Label("_exit"),
     Push(FP),
     Mov(FP, SP),
-    AndInstr(SP, Immediate(-16)),
+    AndInstr(SP, Immediate32(-16)),
     CallPLT("exit"),
     Mov(SP, FP),
     Pop(FP),

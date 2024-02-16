@@ -29,16 +29,16 @@ object X86IRGenerator {
       }
   }
   
-  usedRegs = new Map[String, Register] {
-    /** 
-     * Pops a register from the stack of used registers
-     * and pushes it onto the stack of available registers
-     * @return The register that was popped
-    */
-    def removeToAvailable(reg: Register): Boolean = {
-      //TODO: Implement
-    }
-  }
+  // usedRegs = new Map[String, Register] {
+  //   /** 
+  //    * Pops a register from the stack of used registers
+  //    * and pushes it onto the stack of available registers
+  //    * @return The register that was popped
+  //   */
+  //   def removeToAvailable(reg: Register): Boolean = {
+  //     //TODO: Implement
+  //   }
+  // }
 
 //   def asgnNextAvailableReg(): Register = {
 //     val reg = availableRegs.popToUsed()

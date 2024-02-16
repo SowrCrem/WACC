@@ -1,4 +1,4 @@
-package test.backend.codeGen
+package test.backend.unit.Exit
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._

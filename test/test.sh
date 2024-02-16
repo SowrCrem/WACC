@@ -120,7 +120,7 @@ if [ "$milestone" == "frontend" ]; then
     run_tests "$feature"
   fi
 else if [ "$milestone" == "backend" ]; then
-  echo "No tests for backend"
+  scala-cli test . --test-only "test.$milestone.$type*"
 else if [ "$milestone" == "extension" ]; then
   echo "No tests for extension"
 fi
@@ -130,7 +130,7 @@ fi
 echo "-----------------------------------"
 echo "All tests ran with overall exit code $exit_code."
 
-scala-cli clean . 
+scala-cli clean .
 
 # Exit with the stored exit code
 exit $exit_code

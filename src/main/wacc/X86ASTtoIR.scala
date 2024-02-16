@@ -8,44 +8,41 @@ object X86IRGenerator {
     * Flag to indicate whether the exit function is used in the program
   */
   var exitFunc: Boolean = false;
-
-  /**
-    * Map of variable names to registers
-  */
-  val variableMapping: Map[String, Register] = Map()
+  
+  val stack: Stack[Register] = new Stack[Register]
 
   /** 
-   * Stack of registers that are currently in use
-   * and stack of registers that are available for use
-   * in the intermediate representation
+    * Stack of available registers
   */
-  var usedRegs : Stack[Register] = new Stack[Register]
-
+  var usedRegs: Map[String, Register] = Map()
+  
   val availableRegs = new Stack[Register] {
     /** 
      * Pops a register from the stack of available registers
      * and pushes it onto the stack of used registers
      * @return The register that was popped
-    */
-    def popToUsed(): Register = {
+     */
+    def popToUsed(variable: String): Register = {
         val reg = super.pop()
-        usedRegs.push(reg)
+        usedRegs += (variable -> reg)
         reg
-    }
+      }
   }
-
-  usedRegs = new Stack[Register] {
+  
+  usedRegs = new Map[String, Register] {
     /** 
      * Pops a register from the stack of used registers
      * and pushes it onto the stack of available registers
      * @return The register that was popped
     */
-    def popToAvailable(): Register = {
-      val reg = super.pop()
-      availableRegs.push(reg)
-      reg
+    def removeToAvailable(reg: Register): Boolean = {
+      //TODO: Implement
     }
   }
+
+//   def asgnNextAvailableReg(): Register = {
+//     val reg = availableRegs.popToUsed()
+//   }
 
   /** 
    * Generates the intermediate representation for the given AST

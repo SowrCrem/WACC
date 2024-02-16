@@ -26,12 +26,17 @@ case class CallInstr(val name: String) extends Instruction
 case class CallPLT(val name: String) extends Instruction
 case class ReturnInstr() extends Instruction
 
+sealed trait Address
+case class StackAddress(val index: Int) extends Address {
+    // def toIntelString: String = s"qword [rbp - $offset]"
+    // TODO (Maybe store as index rather than offset)
+}
 
 sealed trait Operand {
     def toIntelString: String
 }
 
-sealed trait Register extends Operand
+sealed trait Register extends Operand with Address
 
 sealed trait SpecialRegister extends Register
 case object FP extends SpecialRegister {

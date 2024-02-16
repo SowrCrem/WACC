@@ -41,20 +41,11 @@ object Utils {
 
     def checkSucceeds(funcList: List[Func], statList: List[Stat]): Assertion = checkSucceeds(Program(funcList, statList)(pos))
 
-    def checkSucceeds(position: Position): Assertion = noException should be thrownBy typeChecker.check(position)
+    def checkSucceeds(node: Position): Assertion = noException should be thrownBy typeChecker.check(node)
 
-    def checkFails(node: Position, errorMessage: String = ""): Assertion = errorMessage match {
-      case "" => {
-        a [Throwable] shouldBe thrownBy {
-          typeChecker.check(node)
-        }
-      }
-      case msg => {
-        val e = intercept[Throwable] {
-          typeChecker.check(node)
-        }
-        e.getMessage shouldBe msg
-      }
+    def checkFails(node: Position, errorMessage: String = ""): Assertion = typeChecker.check(node) match {
+      case Left(_) => succeed
+      case _ => fail("No Semantic Errors were Thrown")
     }
   }
 
@@ -91,11 +82,11 @@ object Utils {
     exitsWithCode(path, -1)
   }
 
-  def throwsNoError(path: String): Assertion = {
+  def throwsNoError(path: String): Assertion = synchronized({
     exitsWithCode(path, 0)
-  }
+  })
 
-  private def exitsWithCode(path: String, code: Int): Assertion = {
+  private def exitsWithCode(path: String, code: Int): Assertion = synchronized({
     // If current directory is not the root of the project, then add a ../ to the start of the path
     var newPath = "test/wacc/" + path
     if (!new java.io.File("src/main/wacc/Main.scala").exists) {
@@ -109,5 +100,5 @@ object Utils {
     //   sedCommand.!
     // }
     exitCode shouldBe code
-  }
+  })
 }

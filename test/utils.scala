@@ -41,20 +41,11 @@ object Utils {
 
     def checkSucceeds(funcList: List[Func], statList: List[Stat]): Assertion = checkSucceeds(Program(funcList, statList)(pos))
 
-    def checkSucceeds(position: Position): Assertion = noException should be thrownBy typeChecker.check(position)
+    def checkSucceeds(node: Position): Assertion = noException should be thrownBy typeChecker.check(node)
 
-    def checkFails(node: Position, errorMessage: String = ""): Assertion = errorMessage match {
-      case "" => {
-        a [Throwable] shouldBe thrownBy {
-          typeChecker.check(node)
-        }
-      }
-      case msg => {
-        val e = intercept[Throwable] {
-          typeChecker.check(node)
-        }
-        e.getMessage shouldBe msg
-      }
+    def checkFails(node: Position, errorMessage: String = ""): Assertion = typeChecker.check(node) match {
+      case Left(_) => succeed
+      case _ => fail("No Semantic Errors were Thrown")
     }
   }
 

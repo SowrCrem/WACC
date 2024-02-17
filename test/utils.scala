@@ -1,18 +1,6 @@
 package test
 
-import wacc.Main
-import wacc.parser._
-import wacc.Errors._
-import wacc.{
-  Position,
-  Program,
-  Func,
-  Expr,
-  Stat,
-  Exit,
-  SymbolTable,
-  TypeChecker
-}
+import wacc._
 import parsley.{Failure, Result, Success}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.BeforeAndAfterEach

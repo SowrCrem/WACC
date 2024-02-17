@@ -1,29 +1,7 @@
 package test.frontend.unit.syntax
 
-import wacc.Main
+import wacc._
 import test.Utils._
-import wacc.lexer._
-import wacc.parser._
-import wacc.{
-  Program,
-  Expr,
-  Neg,
-  Null,
-  Exit,
-  Ident,
-  TypeNode,
-  Position,
-  Brackets,
-  IdentAsgn,
-  IntLiter,
-  BoolLiter,
-  CharLiter,
-  StringLiter,
-  IntTypeNode,
-  BoolTypeNode,
-  CharTypeNode,
-  StringTypeNode
-}
 import java.lang.StringBuilder
 import parsley.{Failure, Result, Success}
 import org.scalactic.{Fail, Bool}

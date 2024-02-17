@@ -73,12 +73,12 @@ object X86IRGenerator {
     */
   val exitIR: List[Instruction] = List(
     Label("_exit"),
-    Push(FP),
+    PushRegisters(List(FP)),
     Mov(FP, SP),
     AndInstr(SP, Immediate32(-16)),
     CallPLT("exit"),
     Mov(SP, FP),
-    Pop(FP),
+    PopRegisters(List(FP)),
     ReturnInstr() // Restore frame pointer and return
   )
 

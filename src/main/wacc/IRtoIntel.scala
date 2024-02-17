@@ -18,8 +18,6 @@ object X86CodeGenerator {
         case Orr(dest, src, operand) => List(s"  orr ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
         case Cmp(src, operand) => List(s"  cmp ${src.toIntelString}, ${operand.toIntelString}")
         case Lea(dest, src) => List(s"  lea ${dest.toIntelString}, ${src.toIntelString}")
-        case Push(src) => List(s"  push ${src.toIntelString}")
-        case Pop(dest) => List(s"  pop ${dest.toIntelString}")
         case PushRegisters(registers) => for (register <- registers) yield s"  push ${register.toIntelString}"
         case PopRegisters(registers) => for (register <- registers) yield s"  pop ${register.toIntelString}"
         case Directive(name) => List(s".$name")

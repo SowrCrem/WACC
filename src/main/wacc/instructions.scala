@@ -16,8 +16,6 @@ case class Mov(dest: Operand, operand: Operand) extends Instruction
 case class Cmp(src: Operand, operand: Operand) extends Instruction
 case class Lea(dest: Operand, src: Operand) extends Instruction
 
-case class Push(src: Operand) extends Instruction
-case class Pop(dest: Operand) extends Instruction
 case class PushRegisters(registers: List[Register]) extends Instruction
 case class PopRegisters(registers: List[Register]) extends Instruction
 case class Directive(val name: String) extends Instruction

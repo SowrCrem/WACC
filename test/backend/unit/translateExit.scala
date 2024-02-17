@@ -30,12 +30,12 @@ class translateExit extends AnyFlatSpec with BeforeAndAfterEach {
     PopRegisters(List(G0, FP)),
     ReturnInstr(),
     Label("_exit"),
-    Push(FP),
+    PushRegisters(List(FP)),
     Mov(FP, SP),
     AndInstr(SP, Immediate32(-16)),
     CallPLT("exit"),
     Mov(SP, FP),
-    Pop(FP),
+    PopRegisters(List(FP)),
     ReturnInstr()
   )
 

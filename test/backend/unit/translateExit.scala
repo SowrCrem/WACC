@@ -10,7 +10,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
 
-class QuickTest extends AnyFlatSpec with BeforeAndAfterEach {
+class translateExit extends AnyFlatSpec with BeforeAndAfterEach {
 
   val pos = (0, 0)
 

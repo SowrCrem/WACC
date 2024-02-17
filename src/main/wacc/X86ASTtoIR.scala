@@ -4,57 +4,19 @@ import scala.collection.mutable._
 
 object X86IRGenerator {
 
-  /** 
-    * Flag to indicate whether the exit function is used in the program
-  */
-  var exitFunc: Boolean = false;
-  
-  val stack: Stack[Register] = new Stack[Register]
-
-  /** 
-    * Stack of available registers
-  */
-  var usedRegs: Map[String, Register] = Map()
-  
-  val availableRegs = new Stack[Register] {
-    /** 
-     * Pops a register from the stack of available registers
-     * and pushes it onto the stack of used registers
-     * @return The register that was popped
-     */
-    def popToUsed(variable: String): Register = {
-        val reg = super.pop()
-        usedRegs += (variable -> reg)
-        reg
-      }
-  }
-  
-  usedRegs = new Map[String, Register] {
-    /** 
-     * Pops a register from the stack of used registers
-     * and pushes it onto the stack of available registers
-     * @return The register that was popped
+  /** Flag to indicate whether the exit function is used in the program
     */
-    def removeToAvailable(reg: Register): Boolean = {
-      //TODO: Implement
-    }
-  }
+  var exitFunc: Boolean = false
 
-//   def asgnNextAvailableReg(): Register = {
-//     val reg = availableRegs.popToUsed()
-//   }
+  val regTracker = new RegisterTracker
 
-  /** 
-   * Generates the intermediate representation for the given AST
-   * @param ast - The AST of the program to be translated
-   * @return The intermediate representation of the program
-  */
+  /** Generates the intermediate representation for the given AST
+    * @param ast
+    *   \- The AST of the program to be translated
+    * @return
+    *   The intermediate representation of the program
+    */
   def generateIR(ast: Program): Buffer[Instruction] = {
-    availableRegs.pushAll(List(
-        G0, G1, G2, G3, G4, G5, G6,
-        Arg0, Arg1, Arg2, Arg3, Arg4, Arg5,
-        Dest
-    ))
     val instructions: Buffer[Instruction] = new ListBuffer[Instruction].empty
     instructions ++= List(
       Directive("intel_syntax noprefix"),
@@ -67,24 +29,23 @@ object X86IRGenerator {
     )
     instructions ++= astToIR(ast)
 
-    
     instructions += Mov(Dest, Immediate32(0)) // Return 0 if no exit function
     instructions ++= List(
       PopRegisters(List(G0, FP)),
-      ReturnInstr(),
-      )
+      ReturnInstr()
+    )
     if (exitFunc) {
       instructions ++= exitIR
     }
     instructions
   }
 
-  /**
-    * Converts the given AST to intermediate representation
-    * by recursively traversing the AST and converting each node
-    * to a list of instructions in the IR.
+  /** Converts the given AST to intermediate representation by recursively
+    * traversing the AST and converting each node to a list of instructions in
+    * the IR.
     * @param position
-    * @return The intermediate representation of the given AST
+    * @return
+    *   The intermediate representation of the given AST
     */
   def astToIR(position: Position): Buffer[Instruction] = position match {
     case Program(funcList, stat) => {
@@ -106,10 +67,9 @@ object X86IRGenerator {
         CallInstr("exit")
       )
     }
-}
+  }
 
-  /**
-    * The intermediate representation for the exit function
+  /** The intermediate representation for the exit function
     */
   val exitIR: List[Instruction] = List(
     Label("_exit"),
@@ -119,7 +79,70 @@ object X86IRGenerator {
     CallPLT("exit"),
     Mov(SP, FP),
     Pop(FP),
-    ReturnInstr()// Restore frame pointer and return
+    ReturnInstr() // Restore frame pointer and return
   )
 
 }
+
+class RegisterTracker {
+
+  val NUM_SCRATCH_REGS = 3
+
+  /**
+    * Stack of available registers
+  */
+  val available = Stack(
+    G0, G1, G2, G3, G4, G5, G6,
+    Arg5, Arg4, Arg3, Arg2, Arg1, Arg0,
+    Dest
+  )
+
+  /**
+    * Stack of used registers
+    */
+  val used: Map[IdentScope, Register] = HashMap()
+
+  /**
+   * Stack of registers representing the state of the assembly stack
+   */
+  val stack: Stack[Register] = new Stack[Register]
+
+  /**
+    * Assigns am available register to a variable,
+    * or assigns a stack location if no registers are available.
+    * @param scope The scope of the variable (i.e. depth of the symbol table)
+    * @param name The name of the variable
+    */
+  def assignVar(scope: Int, name: String): Unit = {
+    if (available.size == 0) {
+      assignToStack(name+"_"+scope.toString)
+    }
+    val variable = IdentScope(scope, name)
+    val reg = available.pop()
+    used.addOne((variable -> reg))
+  }
+
+  /**
+    * Removes all variables in the given scope from the used registers
+    * @param scope The scope to remove
+    */
+  def exitScope(scope: Int): Unit = {
+    // val toRemove = used.filter(((IdentScope(sc,_), _)) -> sc == scope)
+    // for ((k : IdentScope, v : Register) <- toRemove) {
+      /*
+      * @TODO Implement
+      */
+      // available.push(v)
+      // used.remove(k)
+    // }
+  }
+
+  /**
+    * Assigns a stack address to a variable
+    */
+  def assignToStack(name: String): Unit = {
+    /** @TODO: Implement */
+  }
+}
+
+case class IdentScope(scope: Int, name: String)

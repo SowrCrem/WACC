@@ -82,9 +82,9 @@ class checkExprs extends SemanticUnitTester {
 
   it should "reject negations with non-bool types" in {
     checkFails(Not(IntLiter(1)(pos))(pos))
-    // checkFails(Not(CharLiter('a')(pos))(pos),       "Expected bool type, but got char type")
-    // checkFails(Not(StringLiter("hello")(pos))(pos), "Expected bool type, but got string type")
-    // checkFails(Not(Null()(pos))(pos),               "Expected bool type, but got null type")
+    checkFails(Not(CharLiter('a')(pos))(pos),       "Expected bool type, but got char type")
+    checkFails(Not(StringLiter("hello")(pos))(pos), "Expected bool type, but got string type")
+    checkFails(Not(Null()(pos))(pos),               "Expected bool type, but got null type")
   }
 
   it should "accept negations with brackets" in {

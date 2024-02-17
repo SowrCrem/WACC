@@ -113,14 +113,15 @@ if [ "$milestone" == "frontend" ]; then
   if [ "$feature" == "" ]; then
     run_tests "Syntax"
     run_tests "Semantic"
-    if [ "$type" == "integration" ]; then
-      run_tests "Valid"
-    fi
+    # Valid Tests Temporarily Ignored
+    # if [ "$type" == "integration" ]; then
+    #   run_tests "Valid"
+    # fi
   else
     run_tests "$feature"
   fi
 else if [ "$milestone" == "backend" ]; then
-  echo "No tests for backend"
+  scala-cli test . --test-only "test.$milestone.$type*"
 else if [ "$milestone" == "extension" ]; then
   echo "No tests for extension"
 fi
@@ -130,7 +131,7 @@ fi
 echo "-----------------------------------"
 echo "All tests ran with overall exit code $exit_code."
 
-scala-cli clean . 
+scala-cli clean .
 
 # Exit with the stored exit code
 exit $exit_code

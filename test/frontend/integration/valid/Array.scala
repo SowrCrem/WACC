@@ -12,6 +12,10 @@ import org.scalatest.matchers.should.Matchers._
 
 class Array extends AnyFlatSpec {
 
+  "valid - array tests: array.wacc" should "return exit code 0" in {
+    throwsNoError("valid/array/array.wacc")
+  }
+
   "valid - array tests: arrayBasic.wacc" should "return exit code 0" in {
     throwsNoError("valid/array/arrayBasic.wacc")
   }
@@ -46,10 +50,6 @@ class Array extends AnyFlatSpec {
 
   "valid - array tests: arraySimple.wacc" should "return exit code 0" in {
     throwsNoError("valid/array/arraySimple.wacc")
-  }
-
-  "valid - array tests: array.wacc" should "return exit code 0" in {
-    throwsNoError("valid/array/array.wacc")
   }
 
   "valid - array tests: charArrayInStringArray.wacc" should "return exit code 0" in {

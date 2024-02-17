@@ -1,85 +1,16 @@
-package test.backend.codeGen
+package test.backend.unit.translateExit
 
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers._
-import wacc.Main
-import wacc.{
-  Position,
-  IntLiter,
-  CharLiter,
-  StringLiter,
-  BoolLiter,
-  Ident,
-  Brackets,
-  Null,
-  Errors,
-  ArrayElem,
-  Plus,
-  Mul,
-  Div,
-  Not,
-  Len,
-  Skip,
-  Read,
-  If,
-  While,
-  Free,
-  Return,
-  Exit,
-  Print,
-  Println,
-  IdentAsgn,
-  IntTypeNode,
-  PairTypeNode,
-  PairElemTypeNode,
-  ArrayTypeNode,
-  BoolTypeNode,
-  CharTypeNode,
-  StringTypeNode,
-  Func,
-  ParamList,
-  Param,
-  Program,
-  TypeNode,
-  Call,
-  Expr,
-  NewPair,
-  ArrayLiter,
-  Neg,
-  Ord,
-  Chr,
-  Mod,
-  Minus,
-  GreaterThan,
-  GreaterThanEq,
-  LessThan,
-  LessThanEq,
-  Equals,
-  NotEquals,
-  And,
-  Or
-}
-import parsley.{Failure, Result, Success}
-import wacc.parser._
-import wacc.lexer._
-import org.scalactic.Bool
-import org.scalatest.compatible.Assertion
-import wacc.SymbolTable
-import org.scalatest.BeforeAndAfterEach
-import wacc.TypeChecker
-import wacc.Instruction
-import wacc.Mov
-import wacc.Immediate32
-import wacc.PopRegisters
-import wacc.Directive
-import wacc.PushRegisters
-import wacc.Label
-import scala.collection.mutable.ListBuffer
 import wacc._
-import wacc.{CallInstr, ReturnInstr, AndInstr, CallPLT, Push, Pop, PushRegisters, PopRegisters}
+import test.Utils._
+import parsley.{Failure, Result, Success}
+import org.scalactic.Bool
+import scala.collection.mutable.ListBuffer
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.compatible.Assertion
+import org.scalatest.matchers.should.Matchers._
 
-
-class QuickTest extends AnyFlatSpec with BeforeAndAfterEach {
+class translateExit extends AnyFlatSpec with BeforeAndAfterEach {
 
   val pos = (0, 0)
 

@@ -88,23 +88,13 @@ class RegisterTracker {
 
   val NUM_SCRATCH_REGS = 3
 
-  /**
-    * Stack of available registers
-  */
-  val available = Stack(
-    G0, G1, G2, G3, G4, G5, G6,
-    Arg5, Arg4, Arg3, Arg2, Arg1, Arg0,
-    Dest
-  )
+  /** Stack of available registers */
+  val available = Stack( G0, G1, G2, G3, G4, G5, G6, Arg5, Arg4, Arg3, Arg2, Arg1, Arg0, Dest)
 
-  /**
-    * Stack of used registers
-    */
+  /** Stack of used registers */
   val used: Map[IdentScope, Register] = HashMap()
 
-  /**
-   * Stack of registers representing the state of the assembly stack
-   */
+  /** Stack of registers representing the state of the assembly stack */
   val stack: Stack[Register] = new Stack[Register]
 
   /**
@@ -112,8 +102,12 @@ class RegisterTracker {
     * or assigns a stack location if no registers are available.
     * @param scope The scope of the variable (i.e. depth of the symbol table)
     * @param name The name of the variable
+    * 
+    * @PRE: No variable with the same name and scope is already assigned 
+    * (should fail semantic check)
     */
   def assignVar(scope: Int, name: String): Unit = {
+    /* Push to stack if no registers are available */
     if (available.size == 0) {
       assignToStack(name+"_"+scope.toString)
     }
@@ -127,14 +121,14 @@ class RegisterTracker {
     * @param scope The scope to remove
     */
   def exitScope(scope: Int): Unit = {
-    // val toRemove = used.filter(((IdentScope(sc,_), _)) -> sc == scope)
-    // for ((k : IdentScope, v : Register) <- toRemove) {
+    val toRemove = used.filter({case (k, v) => k.scope == scope})
+    for ((k : IdentScope, v : Register) <- toRemove) {
       /*
       * @TODO Implement
       */
-      // available.push(v)
-      // used.remove(k)
-    // }
+      available.push(v.asInstanceOf[Register with Product with java.io.Serializable])
+      used.remove(k)
+    }
   }
 
   /**

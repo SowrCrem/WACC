@@ -81,7 +81,7 @@ object Utils {
 
   def assemble(path: String): String = {
     val exeName = path.split(sep).last.split('.').head
-    val gccCommand = s"gcc -o .." + sep + "$exeName -z noexecstack .." + sep + "$exeName.s"
+    val gccCommand = s"gcc -o .." + sep + s"$exeName -z noexecstack .." + sep + s"$exeName.s"
     gccCommand.!
     ".." + sep + exeName
   }

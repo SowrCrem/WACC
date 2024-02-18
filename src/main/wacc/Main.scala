@@ -24,7 +24,7 @@ object Main {
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
-        // saveGeneratedCode(prog, fileName)
+        saveGeneratedCode(prog, fileName)
         0
       }
       case Left(msg) => {
@@ -43,7 +43,7 @@ object Main {
     }
     val file = new java.io.File(filename)
     val path = file.getAbsolutePath()
-    throw new Exception("Path to file: " + path)
+    // throw new Exception("Path to file: " + path)
     val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
     writer.write(content)
     writer.close()

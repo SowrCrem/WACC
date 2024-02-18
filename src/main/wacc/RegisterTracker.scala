@@ -3,8 +3,6 @@ import scala.collection.mutable._
 
 class RegisterTracker {
 
-  val NUM_SCRATCH_REGS = 3
-
   /** Stack of available registers */
   val available = Stack(G0, G1, G2, G3, G4, G5, G6, Arg5, Arg4, Arg3, Arg2, Arg1, Arg0, Dest)
 
@@ -12,7 +10,7 @@ class RegisterTracker {
   val used: Map[IdentScope, Register] = HashMap()
 
   /** Stack of registers representing the state of the assembly stack */
-  val stack: Stack[Register] = new Stack[Register]
+  val stack: Stack[IdentScope] = new Stack[IdentScope]
 
   /**
     * Assigns am available register to a variable,
@@ -73,8 +71,7 @@ class RegisterTracker {
   /**
     * Assigns a stack address to a variable
     */
-  def assignToStack(name: String): StackAddress = {
+  def assignToStack(name: String): Unit = {
     /** @TODO: Implement */
-    null
   }
 }

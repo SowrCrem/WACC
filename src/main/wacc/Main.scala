@@ -37,7 +37,8 @@ object Main {
   def saveGeneratedCode(prog: Program, fileName: String = "X86Code"): Unit = {
     val content = X86CodeGenerator.generate(prog)
     val file = new java.io.File(".." + java.io.File.separator + fileName + ".s")
-    println(file.getAbsolutePath())
+    val path = file.getAbsolutePath()
+    s"echo $path".!!
     val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
     writer.write(content)
     writer.close()

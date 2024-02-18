@@ -93,7 +93,15 @@ object Utils {
 
     val exeName = assemble(path)
     val exeReturn = s"./$exeName".!
-    // exeOutput shouldBe expOutput
+    try {
+      val exeOutput = s"./$exeName".!!
+      exeOutput shouldBe expOutput
+    } catch {
+      case e: Throwable => exeReturn match {
+        case 0 => fail("Execution Error: " + e.getMessage)
+        case _ => println("Non-Zero exit code as expected")
+      }
+    }
     exeReturn shouldBe expReturn
   }
 

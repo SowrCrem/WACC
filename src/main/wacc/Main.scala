@@ -38,10 +38,10 @@ object Main {
     val content = X86CodeGenerator.generate(prog)
     val file = new java.io.File(".." + java.io.File.separator + fileName + ".s")
     val path = file.getAbsolutePath()
-    s"echo $path".!!
-    val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
-    writer.write(content)
-    writer.close()
+    throw new Exception("Path to file: " + path)
+    // val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
+    // writer.write(content)
+    // writer.close()
   }
 
   def compile(args: Array[String]): Int = synchronized(args.headOption match {

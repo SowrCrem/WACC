@@ -50,6 +50,10 @@ run_tests() {
   if [ ! -z name ]; then
     part=".$(echo $name | tr '[:upper:]' '[:lower:]')"
   fi
+  # if name is "" then we need to change name to "Milestone Type"
+  if [ "$name" == "" ]; then
+    name="$milestone $type"
+  fi
   echo "-----------------------------------"
   echo "Running $name tests"
   scala-cli test . --test-only "test.$milestone.$type$part*"
@@ -121,7 +125,7 @@ if [ "$milestone" == "frontend" ]; then
     run_tests "$feature"
   fi
 else if [ "$milestone" == "backend" ]; then
-  scala-cli test . --test-only "test.$milestone.$type*"
+  run_tests ""
 else if [ "$milestone" == "extension" ]; then
   echo "No tests for extension"
 fi

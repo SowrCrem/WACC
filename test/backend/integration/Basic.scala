@@ -1,4 +1,4 @@
-package test.backend.integration.Basic
+package test.backend.integration
 
 import wacc._
 import test.Utils._

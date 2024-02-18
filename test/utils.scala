@@ -9,6 +9,10 @@ import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
 
 object Utils {
+
+  val sep = java.io.File.separator
+  def constructPath(paths: List[String]): String = paths.mkString(sep)
+
   abstract class SemanticUnitTester extends AnyFlatSpec with BeforeAndAfterEach {
     var symbolTable: SymbolTable = _
     var typeChecker: TypeChecker = _
@@ -37,8 +41,6 @@ object Utils {
       case _ => fail("No Semantic Errors were Thrown")
     }
   }
-
-  
 
   val pos = (0, 0)
 
@@ -78,10 +80,10 @@ object Utils {
   })
 
   def assemble(path: String): String = {
-    val exeName = path.split("/").last.split('.').head
-    val gccCommand = s"gcc -o ../$exeName -z noexecstack ../$exeName.s"
+    val exeName = path.split(sep).last.split('.').head
+    val gccCommand = s"gcc -o .." + sep + "$exeName -z noexecstack .." + sep + "$exeName.s"
     gccCommand.!
-    "../" + exeName
+    ".." + sep + exeName
   }
 
   def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = {
@@ -90,7 +92,6 @@ object Utils {
     } catch {
       case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + e.getMessage)
     }
-    "pwd".!!
     val exeName = assemble(path)
     val exeReturn = s"./$exeName".!
     try {
@@ -107,9 +108,9 @@ object Utils {
 
   private def exitsWithCode(path: String, code: Int): Assertion = synchronized({
     // If current directory is not the root of the project, then add a ../ to the start of the path
-    var newPath = "test/wacc/" + path
-    if (!new java.io.File("src/main/wacc/Main.scala").exists) {
-      newPath = "../" + newPath
+    var newPath = constructPath(List("test", "wacc", path))
+    if (!(new java.io.File(constructPath(List("src", "main", "wacc", "Main.scala")))).exists) {
+      newPath = constructPath(List("..", newPath))
     }
     val exitCode = Main.compile(Array(newPath))
     println("Exit Code: " + exitCode)

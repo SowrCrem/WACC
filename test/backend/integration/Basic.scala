@@ -13,19 +13,24 @@ import org.scalatest.matchers.should.Matchers._
 class Basic extends AnyFlatSpec {
 
   "WACC" should "run valid/basic/exit/exit-1.wacc" in {
-    runSucceeds("valid/basic/exit/exit-1.wacc", "", 255)
+    val path = constructPath(List("valid", "basic", "exit", "exit-1.wacc"))
+    runSucceeds(path, "", 255)
   }
 
   it should "run valid/basic/exit/exitBasic.wacc" in {
-    runSucceeds("valid/basic/exit/exitBasic.wacc", "", 7)
+    val path = constructPath(List("valid", "basic", "exit", "exitBasic.wacc"))
+    runSucceeds(path, "", 7)
   }
 
   it should "run valid/basic/exit/exitBasic2.wacc" in {
-    runSucceeds("valid/basic/exit/exitBasic2.wacc", "", 42)
+    val path = constructPath(List("valid", "basic", "exit", "exitBasic2.wacc"))
+    runSucceeds(path, "", 42)
   }
 
   it should "run valid/basic/exit/exitWrap.wacc" in {
-    runSucceeds("valid/basic/exit/exitWrap.wacc")
+    // runSucceeds("valid/basic/exit/exitWrap.wacc")
+    val path = constructPath(List("valid", "basic", "exit", "exitWrap.wacc"))
+    runSucceeds(path)
   }
 
   it should "run valid/basic/skip/comment.wacc" ignore {

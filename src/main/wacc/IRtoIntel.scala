@@ -1,13 +1,29 @@
 package wacc
 
 import scala.collection.mutable.Buffer
+import java.io.File
+import java.io.PrintWriter
+
 
 
 object X86CodeGenerator {
         
-        def makeAssemblyIntel(instrs: Buffer[Instruction]): String = instrs.map(transInstr).flatten.mkString("\n")
+    def createAssemblyFile(instrs: Buffer[Instruction], directory: String, filename: String): Unit = {
+        val contents = makeAssemblyIntel(instrs)
+        val filepath = directory + filename + ".s"
+        val newFile : File = new File(filepath)
+        val writer : PrintWriter = new PrintWriter(filepath)
+        try {
+            writer.write(contents)
+        } finally {
+            writer.close()
+        }
+        println("Made file: " + filename + ".s")
+    }
+
+    def makeAssemblyIntel(instrs: Buffer[Instruction]): String = instrs.map(transInstr).flatten.mkString("\n")
         
-        def transInstr(instruction: Instruction) : List[String] = instruction match {
+    def transInstr(instruction: Instruction) : List[String] = instruction match {
         case Mov(dest, operand) => List(s"  mov ${dest.toIntelString}, ${operand.toIntelString}")
         case AddInstr(dest, src, operand) => List(s"  add ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
         case SubInstr(dest, src, operand) => List(s"  sub ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")

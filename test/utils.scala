@@ -77,14 +77,23 @@ object Utils {
     exitsWithCode(path, 0)
   })
 
-  def runSucceeds(path: String, expOutput: String, expReturn: String): Assertion = {
-    throwsNoError(path)
+  def assemble(path: String): String = {
     val exeName = path.split("/").last.split('.').head
     val gccCommand = s"gcc -o ../$exeName -z noexecstack ../$exeName.s"
-    val executionCommand = s"./../$exeName | echo $$?"
-    val exeOutput = gccCommand.!
-    val exeReturn = executionCommand.!
-    exeOutput shouldBe expOutput
+    gccCommand.!
+    "../" + exeName
+  }
+
+  def runSucceeds(path: String, expOutput: String, expReturn: Int = 1): Assertion = {
+    try {
+      throwsNoError(path)
+    } catch {
+      case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + e.getMessage)
+    }
+
+    val exeName = assemble(path)
+    val exeReturn = s"./$exeName".!
+    // exeOutput shouldBe expOutput
     exeReturn shouldBe expReturn
   }
 

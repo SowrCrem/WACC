@@ -11,11 +11,16 @@ import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
 
 class Basic extends AnyFlatSpec {
-  "The compiler" should "compile valid/basic/exit/exit-1.wacc" ignore {
-    runSucceeds("valid/basic/exit-1.wacc", "", "255")
+
+  "WACC" should "run valid/basic/exit/exit-1.wacc" in {
+    runSucceeds("valid/basic/exit/exit-1.wacc", "", 255)
   }
 
-  it should "compile valid/basic/exitBasic.wacc" ignore {
-    runSucceeds("valid/basic/exit/exitBasic.wacc", "", "7")
+  it should "run valid/basic/exitBasic.wacc" in {
+    runSucceeds("valid/basic/exit/exitBasic.wacc", "", 7)
+  }
+
+  it should "run valid/if/if1.wacc" ignore {
+    runSucceeds("valid/if/if1.wacc", "correct")
   }
 }

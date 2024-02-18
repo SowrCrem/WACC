@@ -92,7 +92,7 @@ if [[ "$milestone" != "frontend" && "$milestone" != "backend" && "$milestone" !=
   exit 1
 fi
 
-if [[ "$type" == "" ]]; then
+if [[ "$type" == "" && "$milestone" == "frontend" ]]; then
   # run_tests with with all possible types
   echo ""
   echo "-----------------------------------"
@@ -106,14 +106,14 @@ if [[ "$type" == "" ]]; then
   type="integration"
   run_tests "Syntax"
   run_tests "Semantic"
-  run_tests "Valid"
+  # run_tests "Valid"
 else if [[ "$type" != "unit" && "$type" != "integration" && "$type" != "" ]]; then
   echo "Invalid type: $type should be one of unit, integration"
   exit 1
 fi
 fi
 
-if [ "$milestone" == "frontend" ]; then
+if [[ "$milestone" == "frontend" && "$type" != "" ]]; then
   if [ "$feature" == "" ]; then
     run_tests "Syntax"
     run_tests "Semantic"

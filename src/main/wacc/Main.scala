@@ -21,10 +21,10 @@ object Main {
     100
   }
 
-  def semanticCheck(prog: Program): Int = {
+  def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
-        saveGeneratedCode(prog)
+        saveGeneratedCode(prog, fileName)
         0
       }
       case Left(msg) => {
@@ -34,9 +34,9 @@ object Main {
     }
   }
 
-  def saveGeneratedCode(prog: Program): Unit = {
+  def saveGeneratedCode(prog: Program, fileName: String = "X86Code"): Unit = {
     val content = X86CodeGenerator.generate(prog)
-    val file = new java.io.File(".." + java.io.File.separator + "X86Code.s")
+    val file = new java.io.File(".." + java.io.File.separator + fileName + ".s")
     val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
     writer.write(content)
     writer.close()
@@ -45,6 +45,8 @@ object Main {
   def compile(args: Array[String]): Int = synchronized(args.headOption match {
     case Some(filename) => {
       // val fileContent = ("cat " + filename).!!
+      // set a new val name to filename spliced - remove the .wacc extension and only take the substring from the end until the last slash
+      val fileName = filename.split("/").last.split('.').head
       var fileContent = ""
       try {
         fileContent = scala.io.Source.fromFile(filename).mkString
@@ -57,7 +59,7 @@ object Main {
       parser.parse(fileContent) match {
         case Success(prog) => prog match {
           case Program(funcList, _) => parser.validFunctions(funcList) match {
-            case true  => semanticCheck(prog)
+            case true  => semanticCheck(prog, fileName)
             case false => syntaxError("Non-terminating branches found")
           }
           case _ => syntaxError("Program is not Well-Formed")

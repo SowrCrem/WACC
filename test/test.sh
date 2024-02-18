@@ -135,7 +135,38 @@ fi
 echo "-----------------------------------"
 echo "All tests ran with overall exit code $exit_code."
 
-scala-cli clean .
+# Clean up
+make clean
 
 # Exit with the stored exit code
 exit $exit_code
+
+
+# args=$@
+
+# args=$(echo $args | tr '[:upper:]' '[:lower:]')
+
+# package="test.$(echo $args | tr ' ' '.')"
+# name=$args
+
+# chmod +x build.sh
+# ./build.sh
+
+# # Add the grandparent directory to the PATH and go to the parent directory
+# export PATH="$(dirname "$(dirname "$PWD")"):$PATH"
+# cd ..
+# # scala-cli clean . 
+# # scala-cli compile .
+
+# echo "-----------------------------------"
+# echo "Running $name tests"
+# scala-cli test . --test-only "$package*"
+# echo "-----------------------------------"
+
+
+# exit_code=$?
+# echo "all tests ran with overall exit code $exit_code."
+
+# exit $exit_code
+# ```
+

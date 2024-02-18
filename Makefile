@@ -10,8 +10,10 @@ all:
 	cd test && bash build.sh && cd ..
 
 clean:
+	find . -type f -name "*.s" -delete
+	find . -maxdepth 1 -type f -not -name "*.*" -not -name "Makefile" -not -name "compile" -not -name ".git*" -delete
 	scala-cli clean . && rm -f wacc-compiler
-
+	
 frontend-integration-tests:
 	cd test && bash build.sh frontend integration && cd ..
 

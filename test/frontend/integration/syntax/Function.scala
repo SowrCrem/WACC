@@ -20,12 +20,12 @@ class Function extends AnyFlatSpec {
     throwsSyntaxError("invalid/syntaxErr/function/badlyPlaced.wacc")
   }
 
-  "syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/function/funcExpr.wacc")
-  }
-
   "syntaxErr - function tests: funcExpr2.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/syntaxErr/function/funcExpr2.wacc")
+  }
+
+  "syntaxErr - function tests: funcExpr.wacc" should "return exit code 100" in {
+    throwsSyntaxError("invalid/syntaxErr/function/funcExpr.wacc")
   }
 
   "syntaxErr - function tests: functionConditionalNoReturn.wacc" should "return exit code 100" in {
@@ -44,12 +44,12 @@ class Function extends AnyFlatSpec {
     throwsSyntaxError("invalid/syntaxErr/function/functionMissingCall.wacc")
   }
 
-  "syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/function/functionMissingPType.wacc")
-  }
-
   "syntaxErr - function tests: functionMissingParam.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/syntaxErr/function/functionMissingParam.wacc")
+  }
+
+  "syntaxErr - function tests: functionMissingPType.wacc" should "return exit code 100" in {
+    throwsSyntaxError("invalid/syntaxErr/function/functionMissingPType.wacc")
   }
 
   "syntaxErr - function tests: functionMissingType.wacc" should "return exit code 100" in {

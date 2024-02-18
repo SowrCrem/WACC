@@ -84,7 +84,7 @@ object Utils {
     "../" + exeName
   }
 
-  def runSucceeds(path: String, expOutput: String, expReturn: Int = 1): Assertion = {
+  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = {
     try {
       throwsNoError(path)
     } catch {

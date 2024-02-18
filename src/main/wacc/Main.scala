@@ -36,12 +36,17 @@ object Main {
 
   def saveGeneratedCode(prog: Program, fileName: String = "X86Code"): Unit = {
     val content = X86CodeGenerator.generate(prog)
-    val file = new java.io.File(".." + java.io.File.separator + fileName + ".s")
+    // Check if we're in the root of the project (we can see the src folder) if not, we need to go up one level
+    var filename = fileName + ".s"
+    if (!new java.io.File("src").exists()) {
+      filename = ".." + java.io.File.separator + filename
+    }
+    val file = new java.io.File(filename)
     val path = file.getAbsolutePath()
-    throw new Exception("Path to file: " + path)
-    // val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
-    // writer.write(content)
-    // writer.close()
+    // throw new Exception("Path to file: " + path)
+    val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
+    writer.write(content)
+    writer.close()
   }
 
   def compile(args: Array[String]): Int = synchronized(args.headOption match {

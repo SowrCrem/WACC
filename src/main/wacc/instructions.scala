@@ -2,7 +2,6 @@ package wacc
 
 sealed trait Instruction
 
-
 case class AddInstr(dest: Operand, src: Operand, operand: Operand) extends Instruction
 case class SubInstr(dest: Operand, src: Operand, operand: Operand) extends Instruction
 case class MulInstr(dest: Operand, src: Operand, operand: Operand) extends Instruction
@@ -23,6 +22,13 @@ case class Label(val name: String) extends Instruction
 case class CallInstr(val name: String) extends Instruction
 case class CallPLT(val name: String) extends Instruction
 case class ReturnInstr() extends Instruction
+
+case class IncrementStackPointer4B() extends Instruction
+case class IncrementStackPointer8B() extends Instruction
+case class IncrementStackPointerNB(val value: Int) extends Instruction
+case class DecrementStackPointer4B() extends Instruction
+case class DecrementStackPointer8B() extends Instruction
+case class DecrementStackPointerNB(val value: Int) extends Instruction
 
 sealed trait Address
 case class StackAddress(val index: Int) extends Address {

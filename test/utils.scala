@@ -90,7 +90,7 @@ object Utils {
     } catch {
       case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + e.getMessage)
     }
-
+    "pwd".!!
     val exeName = assemble(path)
     val exeReturn = s"./$exeName".!
     try {

@@ -1,4 +1,4 @@
-package test.backend.unit.RegisterTrackerTest
+package test.backend.unit
 
 import wacc._
 import org.scalatest.matchers.should.Matchers._

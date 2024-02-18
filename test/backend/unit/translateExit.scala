@@ -1,4 +1,4 @@
-package test.backend.unit.translateExit
+package test.backend.unit
 
 import wacc._
 import test.Utils._
@@ -9,10 +9,13 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
+import sys.process._
 
 class translateExit extends AnyFlatSpec with BeforeAndAfterEach {
 
   val pos = (0, 0)
+  val node = Program(List(), List(Exit(IntLiter(-1)(pos))(pos)))(pos)
+  val filename = ".." + java.io.File.separator + "X86Code.s"
 
   //This is based on the reference compiler output for valid/exit-1.wacc
   val instrs: ListBuffer[Instruction] = ListBuffer(
@@ -68,7 +71,6 @@ class translateExit extends AnyFlatSpec with BeforeAndAfterEach {
       ).mkString("\n")
 
   "compiler" should "create IR for basic exit program" in {
-    val node = Program(List(), List(Exit(IntLiter(-1)(pos))(pos)))(pos)
 
     X86IRGenerator.generateIR(node) should be(
       instrs
@@ -79,6 +81,14 @@ class translateExit extends AnyFlatSpec with BeforeAndAfterEach {
 
     println(X86CodeGenerator.makeAssemblyIntel(instrs))
     X86CodeGenerator.makeAssemblyIntel(instrs) should be {
+      instrsTranslated
+    }
+  }
+
+  it should "save the X86 assembly for basic exit program" in {
+    Main.saveGeneratedCode(node)
+    val fileContent = scala.io.Source.fromFile(filename).mkString
+    fileContent should be {
       instrsTranslated
     }
   }

@@ -1,6 +1,7 @@
 package test
 
 import wacc._
+import sys.process._
 import parsley.{Failure, Result, Success}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.BeforeAndAfterEach
@@ -36,6 +37,8 @@ object Utils {
       case _ => fail("No Semantic Errors were Thrown")
     }
   }
+
+  
 
   val pos = (0, 0)
 
@@ -73,6 +76,34 @@ object Utils {
   def throwsNoError(path: String): Assertion = synchronized({
     exitsWithCode(path, 0)
   })
+
+  def assemble(path: String): String = {
+    val exeName = path.split("/").last.split('.').head
+    val gccCommand = s"gcc -o ../$exeName -z noexecstack ../$exeName.s"
+    gccCommand.!
+    "../" + exeName
+  }
+
+  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = {
+    try {
+      throwsNoError(path)
+    } catch {
+      case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + e.getMessage)
+    }
+
+    val exeName = assemble(path)
+    val exeReturn = s"./$exeName".!
+    try {
+      val exeOutput = s"./$exeName".!!
+      exeOutput shouldBe expOutput
+    } catch {
+      case e: Throwable => exeReturn match {
+        case 0 => fail("Execution Error: " + e.getMessage)
+        case _ => println("Non-Zero exit code as expected")
+      }
+    }
+    exeReturn shouldBe expReturn
+  }
 
   private def exitsWithCode(path: String, code: Int): Assertion = synchronized({
     // If current directory is not the root of the project, then add a ../ to the start of the path

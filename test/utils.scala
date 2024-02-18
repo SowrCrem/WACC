@@ -1,18 +1,7 @@
 package test
 
-import wacc.Main
-import wacc.parser._
-import wacc.Errors._
-import wacc.{
-  Position,
-  Program,
-  Func,
-  Expr,
-  Stat,
-  Exit,
-  SymbolTable,
-  TypeChecker
-}
+import wacc._
+import sys.process._
 import parsley.{Failure, Result, Success}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.BeforeAndAfterEach
@@ -20,6 +9,10 @@ import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
 
 object Utils {
+
+  val sep = java.io.File.separator
+  def constructPath(paths: List[String]): String = paths.mkString(sep)
+
   abstract class SemanticUnitTester extends AnyFlatSpec with BeforeAndAfterEach {
     var symbolTable: SymbolTable = _
     var typeChecker: TypeChecker = _
@@ -86,11 +79,38 @@ object Utils {
     exitsWithCode(path, 0)
   })
 
+  def assemble(path: String): String = {
+    val exeName = path.split(sep).last.split('.').head
+    val gccCommand = s"gcc -o .." + sep + s"$exeName -z noexecstack .." + sep + s"$exeName.s"
+    gccCommand.!
+    ".." + sep + exeName
+  }
+
+  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = {
+    try {
+      throwsNoError(path)
+    } catch {
+      case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + e.getMessage)
+    }
+    val exeName = assemble(path)
+    val exeReturn = s"./$exeName".!
+    try {
+      val exeOutput = s"./$exeName".!!
+      exeOutput shouldBe expOutput
+    } catch {
+      case e: Throwable => exeReturn match {
+        case 0 => fail("Execution Error: " + e.getMessage)
+        case _ => println("Non-Zero exit code as expected")
+      }
+    }
+    exeReturn shouldBe expReturn
+  }
+
   private def exitsWithCode(path: String, code: Int): Assertion = synchronized({
     // If current directory is not the root of the project, then add a ../ to the start of the path
-    var newPath = "test/wacc/" + path
-    if (!new java.io.File("src/main/wacc/Main.scala").exists) {
-      newPath = "../" + newPath
+    var newPath = constructPath(List("test", "wacc", path))
+    if (!(new java.io.File(constructPath(List("src", "main", "wacc", "Main.scala")))).exists) {
+      newPath = constructPath(List("..", newPath))
     }
     val exitCode = Main.compile(Array(newPath))
     println("Exit Code: " + exitCode)

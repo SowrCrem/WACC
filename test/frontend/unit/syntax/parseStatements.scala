@@ -177,13 +177,13 @@ class parseStatements extends AnyFlatSpec {
     parseSucceeds("if true then skip else skip fi", If(BoolLiter(true)(pos), List(Skip()(pos)), List(Skip()(pos)))(pos))
   }
 
-  // Tests for while -----------------------------------------------------------------------------------------------------
+//   // Tests for while -----------------------------------------------------------------------------------------------------
 
   it should "parse while" in {
     parseSucceeds("while true do skip done", While(BoolLiter(true)(pos), List(Skip()(pos)))(pos))
   }
 
-  // Tests for semicolon -------------------------------------------------------------------------------------------------
+//   // Tests for semicolon -------------------------------------------------------------------------------------------------
 
   it should "parse multiple statements" in {
     parseSucceeds("skip; skip", List(Skip()(pos), Skip()(pos)))

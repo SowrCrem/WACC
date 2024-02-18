@@ -1,3 +1,6 @@
+*
+!/**/
+!*.*
 *.bsp/
 *.metals/
 *.scala-build/
@@ -5,4 +8,5 @@
 *.idea/
 *target/
 *.txt
+*.s
 wacc-compiler

@@ -1,5 +1,5 @@
 variables:
-  wacc_image: gumjoe/wacc-ci-scala:slim
+  wacc_image: gumjoe/wacc-ci-scala:x86
 
 stages:
   - build

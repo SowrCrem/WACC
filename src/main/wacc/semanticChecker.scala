@@ -24,6 +24,7 @@ object semanticChecker {
     } catch {
       // Should not reach this case after refactoring
       case e: Throwable => return Left(e.getMessage())
+      
     }
   }
 

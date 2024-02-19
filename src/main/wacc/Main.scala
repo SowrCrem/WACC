@@ -12,6 +12,10 @@ import scala.annotation.varargs
 
 object Main {
 
+  var backendTests = false
+
+  def setBackendTests(): Unit = backendTests = true
+
   def LABTS = new java.io.File("src").exists()
 
   def parentDirPath(path: String): String = ".." + java.io.File.separator + path
@@ -29,7 +33,7 @@ object Main {
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
-        saveGeneratedCode(prog, fileName)
+        if (backendTests || LABTS ) {saveGeneratedCode(prog, fileName) }
         0
       }
       case Left(msg) => {

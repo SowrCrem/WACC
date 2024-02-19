@@ -14,6 +14,8 @@ object Main {
 
   def LABTS = new java.io.File("src").exists()
 
+  def parentDirPath(path: String): String = ".." + java.io.File.separator + path
+
   def main(args: Array[String]): Unit = {
     val exitCode = compile(args)
     sys.exit(exitCode)
@@ -41,9 +43,7 @@ object Main {
     val content = X86CodeGenerator.generate(prog)
     // Check if we're in the root of the project (we can see the src folder) if not, we need to go up one level
     var filename = fileName + ".s"
-    if (!LABTS) {
-      filename = ".." + java.io.File.separator + filename
-    }
+    if (!LABTS) { filename = parentDirPath(filename) }
     val file = new java.io.File(filename)
     val path = file.getAbsolutePath()
     // throw new Exception("Path to file: " + path)

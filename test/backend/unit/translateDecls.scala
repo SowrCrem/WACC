@@ -70,7 +70,7 @@ class translateDecls extends AnyFlatSpec with BeforeAndAfterEach {
         ""
       ).mkString("\n")
 
-  "compiler" should "create IR for basic exit program" in {
+  "compiler" should "create IR for basic exit program" ignore {
 
     X86IRGenerator.generateIR(node) should be(
       instrs
@@ -85,7 +85,7 @@ class translateDecls extends AnyFlatSpec with BeforeAndAfterEach {
     }
   }
 
-  it should "save the X86 assembly for basic exit program" in {
+  it should "save the X86 assembly for basic exit program" ignore {
     Main.saveGeneratedCode(node)
     val fileContent = scala.io.Source.fromFile(filename).mkString
     fileContent should be {

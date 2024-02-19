@@ -67,6 +67,9 @@ object X86IRGenerator {
         CallInstr("exit")
       )
     }
+    case Skip() => {
+      ListBuffer()
+    }
   }
 
   /** The intermediate representation for the exit function

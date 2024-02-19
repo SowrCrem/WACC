@@ -7,7 +7,7 @@ import scala.annotation.tailrec
    [ ] exitScope is not used at all (unnecessary function)
 
    */
-
+ 
 class SymbolTable(val parent: Option[SymbolTable]) {
 
   var dictionary: Map[String, Position] = Map()

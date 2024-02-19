@@ -12,8 +12,15 @@ class StackMachine {
   /** size of stack */
   def stackSize: Int = stackSim.size
 
-  def pushToStack(variables : VariableScope): Buffer[Instruction] = {
+  val scratchRegisters = Stack(G0, G1, G2, G3)
+
+  def pushToStack(variables : VariableScope, value : Int, size : Int): Buffer[Instruction] = {
     /** @TODO */
+    val prefix = size match {
+      case 2 => ""
+      case 4 => "e"
+      case 8 => "r"
+    }
     null
   }
 

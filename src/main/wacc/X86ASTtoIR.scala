@@ -84,4 +84,4 @@ object X86IRGenerator {
 
 }
 
-case class IdentScope(scope: Int, name: String)
+case class VariableScope(scope: Int, name: String)

@@ -54,9 +54,16 @@ object X86IRGenerator {
         funcIR.appendAll(astToIR(func))
       }
       val ir = new ListBuffer[Instruction]
-      val statInstrs = for (s <- stat) yield astToIR(s)
+      val statInstrs = for (s <- stat) yield statToIR(s)
       ir ++= statInstrs.flatten
       ir.appendAll(funcIR)
+    }
+    
+  }
+
+  def statToIR(stat: Stat): Buffer[Instruction] = stat match {
+    case IdentAsgn(typeNode, ident, expr) => {
+      null
     }
     case Exit(IntLiter(value)) => {
       exitFunc = true;

@@ -65,6 +65,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
               case Some(_) =>
                 errors += new AlreadyDefinedError(position, param.ident.value)
               case None =>
+                param.typeNode.isParam = true;
                 newSymbolTable.add(param.ident.value, param.typeNode)
             }
           })
@@ -360,7 +361,9 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       val exprType = exprList.map(expr => check(expr, symbolTable, returnType))
 
       if (exprType.distinct.length == 1) {
-        Some(ArrayTypeNode(exprType.head.get)(position.pos))
+        val arrtype = ArrayTypeNode(exprType.head.get)(position.pos)
+        arrtype.length = exprList.length
+        Some(arrtype)
       } else if (exprType.distinct.length == 0) {
         None
       } else {
@@ -370,7 +373,9 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             Some(ArrayTypeNode(CharTypeNode()(position.pos))(position.pos))
           ) && exprType.contains(Some(StringTypeNode()(position.pos)))
         ) {
-          Some(ArrayTypeNode(StringTypeNode()(position.pos))(position.pos))
+          val arrtype = ArrayTypeNode(StringTypeNode()(position.pos))(position.pos)
+          arrtype.length = exprList.length
+          Some(arrtype)
         } else
           errors += new ArrayElemTypeError(position, 
             List(exprType.map(_.getOrElse("none").toString()).mkString(", "))

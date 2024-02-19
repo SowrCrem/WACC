@@ -10,11 +10,11 @@ import scala.annotation.tailrec
  
 class SymbolTable(val parent: Option[SymbolTable]) {
 
-  var dictionary: Map[String, Position] = Map()
+  var dictionary: Map[String, TypeNode] = Map()
   var children: List[SymbolTable] = List()
 
   // Add identity and position node into dictionary
-  def add(identName: String, position: Position): Unit = {
+  def add(identName: String, position: TypeNode): Unit = {
     dictionary.addOne(identName, position)
   }
 

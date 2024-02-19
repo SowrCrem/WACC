@@ -12,13 +12,24 @@ import scala.annotation.varargs
 
 object Main {
 
+  val sep = java.io.File.separator
   var backendTests = false
 
   def setBackendTests(): Unit = backendTests = true
 
-  def LABTS = new java.io.File("src").exists()
+  def inRootDir = new java.io.File("src").exists()
 
-  def parentDirPath(path: String): String = ".." + java.io.File.separator + path
+  def constructPath(paths: List[String]): String = paths.mkString(sep)
+
+  def parentDirPath(path: String): String = constructPath(List("..", path))
+
+  def getFilename(path: String): String = path.split(sep).last.split('.').head
+
+  def adaptedPath(path: String): String = {
+    var newPath = constructPath(List("test", "wacc", path))
+    if (!inRootDir) { newPath = parentDirPath(newPath) }
+    newPath
+  }
 
   def main(args: Array[String]): Unit = {
     val exitCode = compile(args)
@@ -33,7 +44,7 @@ object Main {
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
-        if (backendTests || LABTS ) {saveGeneratedCode(prog, fileName) }
+        if (backendTests || inRootDir ) {saveGeneratedCode(prog, fileName) }
         0
       }
       case Left(msg) => {
@@ -47,7 +58,7 @@ object Main {
     val content = X86CodeGenerator.generate(prog)
     // Check if we're in the root of the project (we can see the src folder) if not, we need to go up one level
     var filename = fileName + ".s"
-    if (!LABTS) { filename = parentDirPath(filename) }
+    if (!inRootDir) { filename = parentDirPath(filename) }
     val file = new java.io.File(filename)
     val path = file.getAbsolutePath()
     // throw new Exception("Path to file: " + path)
@@ -57,13 +68,13 @@ object Main {
   }
 
   def compile(args: Array[String]): Int = synchronized(args.headOption match {
-    case Some(filename) => {
+    case Some(filepath) => {
       // val fileContent = ("cat " + filename).!!
       // set a new val name to filename spliced - remove the .wacc extension and only take the substring from the end until the last slash
-      val fileName = filename.split(java.io.File.separator).last.split('.').head
+      val fileName = getFilename(filepath)
       var fileContent = ""
       try {
-        fileContent = scala.io.Source.fromFile(filename).mkString
+        fileContent = scala.io.Source.fromFile(filepath).mkString
       } catch {
         case e: java.io.FileNotFoundException => {
           println("IO Error: File not found")

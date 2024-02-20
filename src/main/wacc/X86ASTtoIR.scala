@@ -10,6 +10,24 @@ object X86IRGenerator {
 
   val regTracker = new RegisterTracker
 
+  val stringLiterals: Map[String, String] = Map()
+  var rodataDirectives: ListBuffer[Directive] = ListBuffer()
+
+  /** Adds a string literal to the rodata section of the assembly code
+    * @param literal
+    *   \- The string literal to be added
+    * @return
+    *   The label of the string literal
+    */
+  def addStringLiteral(literal: String): String = {
+    stringLiterals.getOrElseUpdate(literal, {
+      val label = s"string${stringLiterals.size}"
+      rodataDirectives += Directive(s"$label: .asciz \"$literal\"")
+      label
+    })
+  }
+
+
   /** Generates the intermediate representation for the given AST
     * @param ast
     *   \- The AST of the program to be translated
@@ -18,26 +36,35 @@ object X86IRGenerator {
     */
   def generateIR(ast: Program): Buffer[Instruction] = {
     val instructions: Buffer[Instruction] = new ListBuffer[Instruction].empty
-    instructions ++= List(
+
+    // Add the necessary directives
+    val initDirectives =  List(
       Directive("intel_syntax noprefix"),
       Directive("globl main"),
-      Directive("section .rodata"),
-      Directive("text"),
-      Label("main"),
-      PushRegisters(List(FP)),
-      Mov(FP, SP)
     )
+
+    val mainInitialisation = ListBuffer(Directive("text"), Label("main"), PushRegisters(List(FP)), Mov(FP, SP))
+
+    // instructions ++= mainInitialisation
+
     ast.symbolTable.printSymbolTable()
 
     // Add the main frame
-    StackMachine.addFrame(ast.symbolTable, None)
+    val addMainFrame = StackMachine.addFrame(ast.symbolTable, None)
 
-    instructions ++= astToIR(ast)
+    val intermediateRepresentation = astToIR(ast)
 
     // Pop the main frame
     val decrementStackInstr = StackMachine.popFrame()
-    instructions ++= decrementStackInstr
+    // instructions ++= decrementStackInstr
+
     
+
+    instructions ++= initDirectives
+    instructions ++= Directive("section .rodata") +: rodataDirectives
+    instructions ++= mainInitialisation
+    instructions ++= intermediateRepresentation
+    instructions ++= decrementStackInstr
 
     instructions += Mov(Dest, Immediate32(0)) // Return 0 if no exit function
     instructions ++= List(
@@ -48,6 +75,7 @@ object X86IRGenerator {
     if (exitFunc) {
       instructions ++= exitIR
     }
+
     instructions
   }
 
@@ -74,12 +102,13 @@ object X86IRGenerator {
 
   }
 
+  
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
     case IdentAsgn(typeNode, ident, expr) => {
       // Dynamically determine the size of the variable from the typeNode
       val varSize = typeNode.size
 
-      // Step 1: Allocate space on the stack based on the variable size
+      // // Step 1: Allocate space on the stack based on the variable size
       val instructions =
         ListBuffer[Instruction](DecrementStackPointerNB(varSize))
 
@@ -137,7 +166,10 @@ object X86IRGenerator {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a character literal, we can simply move the value to the variable
       instructions += Mov(Dest, Immediate32(value.toInt))
-
+    }
+    case StringLiter(value) =>{
+      val label = addStringLiteral(value)
+      ListBuffer(LoadEffectiveAddress(Dest, RegisterLabelAddress(IP, LabelAddress(label))))
     }
 
   }

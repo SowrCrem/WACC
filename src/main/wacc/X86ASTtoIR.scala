@@ -106,16 +106,16 @@ object X86IRGenerator {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is an integer literal, we can simply move the value to the variable
       instructions += Mov(Dest, Immediate32(value))
-      instructions += SubInstr(SP, Immediate32(4), null)
       instructions += Mov(SP, Dest)
+      instructions += DecrementStackPointer8B()
     }
     // Handle other types of expressions
     case BoolLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a boolean literal, we can simply move the value to the variable
       instructions += Mov(Dest, Immediate32(if (value) 1 else 0))
-      instructions += SubInstr(SP, Immediate32(4), null)
       instructions += Mov(SP, Dest)
+      instructions += DecrementStackPointer8B()
     
     }
 

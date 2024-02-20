@@ -31,6 +31,11 @@ object X86CodeGenerator {
     case CallPLT(name) => List(s"  call ${name}@plt")
     case ReturnInstr() => List(s"  ret\n")
     case DecrementStackPointerNB(value) => List(s"  sub rsp, ${8*value}")
+    case IncrementStackPointerNB(value) => List(s"  add rsp, ${8*value}")
+    case DecrementStackPointer4B() => List(s"  sub rsp, 4")
+    case IncrementStackPointer4B() => List(s"  add rsp, 4")
+    case DecrementStackPointer8B() => List(s"  sub rsp, 8")
+    case IncrementStackPointer8B() => List(s"  add rsp, 8")
     case x => throw new IllegalArgumentException("Invalid instruction type: " + x)
   }
 }

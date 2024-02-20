@@ -150,11 +150,13 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
         // if a parameter list is present, the current stack frame is that of a function
         isFunction = true
 
-        // offsets for function parameters are calculated by starting from the end of the
-        // local variables and accounting for the space taken by the return address and the
-        // frame pointer (2 * 4 bytes), simulating the typical layout of a stack frame in x86
-        // where parameters are pushed onto the stack in reverse order after local variables
-        // and control information
+        /**  
+          * offsets for function parameters are calculated by starting from the end of the
+          * local variables and accounting for the space taken by the return address and the
+          * frame pointer (2 * 4 bytes), simulating the typical layout of a stack frame in x86
+          * where parameters are pushed onto the stack in reverse order after local variables
+          * and control information
+        */
         var currentOffset = localVarSize + 2 * 4
         for (p <- paramList.paramList.reverse) {
           varMap.addOne(p.ident.value, currentOffset)

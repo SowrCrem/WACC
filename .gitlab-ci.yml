@@ -20,7 +20,7 @@ test-frontend-unit-job:
   stage: test-frontend-unit
   image: $wacc_image
   script:
-    - if [ $fast-frontend = "true" ]; then exit 0; fi
+    - if [ $fast-frontend=="true" ]; then exit 0; fi
     - cd test
     - ./test.sh frontend unit
   artifacts:
@@ -31,7 +31,7 @@ test-frontend-integration-job:
   stage: test-frontend-integration
   image: $wacc_image
   script:
-    - if [ $fast-frontend = "true" ]; then exit 0; fi
+    - if [ $fast-frontend=="true" ]; then exit 0; fi
     - cd test
     - ./test.sh frontend integration
   artifacts:

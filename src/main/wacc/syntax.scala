@@ -55,10 +55,14 @@ trait ParserBridgePos4[-A, -B, -C, -D, +E] extends ParserSingletonBridgePos[(A, 
 
 // Program (Extending Position)
 
-case class Program(funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) extends Position
+case class Program(funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) extends Position {
+  var symbolTable: SymbolTable  = new SymbolTable(None);
+}
 object Program extends ParserBridgePos2[List[Func], List[Stat], Program]
 
-case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, statList: List[Stat])(val pos: (Int, Int)) extends Position with TypeNode
+case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, statList: List[Stat])(val pos: (Int, Int)) extends Position with TypeNode {
+  var symbolTable: SymbolTable = new SymbolTable(None);
+}
 object Func extends ParserBridgePos4[TypeNode, Ident, ParamList, List[Stat], Func]
 
 // Param-List (Extending Position)
@@ -96,15 +100,24 @@ case class Print(expr: Expr)(val pos: (Int, Int)) extends Stat
 object Print extends ParserBridgePos1[Expr, Print]
 case class Println(expr: Expr)(val pos: (Int, Int)) extends Stat
 object Println extends ParserBridgePos1[Expr, Println]
-case class If(expr: Expr, stats1: List[Stat], stats2: List[Stat])(val pos: (Int, Int)) extends Stat
+case class If(expr: Expr, stats1: List[Stat], stats2: List[Stat])(val pos: (Int, Int)) extends Stat {
+  var symbolTableTrue: SymbolTable = new SymbolTable(None);
+  var symbolTableFalse: SymbolTable = new SymbolTable(None);
+
+}
 object If extends ParserBridgePos3[Expr, List[Stat], List[Stat], If] {
   override def labels = List("if statement")
+
 }
-case class While(expr: Expr, stats: List[Stat])(val pos: (Int, Int)) extends Stat
+case class While(expr: Expr, stats: List[Stat])(val pos: (Int, Int)) extends Stat {
+  var symbolTable: SymbolTable = new SymbolTable(None);  
+}
 object While extends ParserBridgePos2[Expr, List[Stat], While] {
   override def labels = List("while loop")
 }
-case class BeginEnd(stats: List[Stat])(val pos: (Int, Int)) extends Stat
+case class BeginEnd(stats: List[Stat])(val pos: (Int, Int)) extends Stat {
+  var symbolTable: SymbolTable = new SymbolTable(None);
+}
 object BeginEnd extends ParserBridgePos1[List[Stat], BeginEnd]
 
 // RValue 

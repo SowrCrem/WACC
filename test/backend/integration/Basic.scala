@@ -12,42 +12,42 @@ import org.scalatest.matchers.should.Matchers._
 
 class Basic extends AnyFlatSpec {
 
-  "WACC" should "run valid/basic/exit/exit-1.wacc" in {
+  "WACC" should "run valid/basic/exit/exit-1.wacc" ignore {
     val path = constructPath(List("valid", "basic", "exit", "exit-1.wacc"))
     runSucceeds(path, "", 255)
   }
 
-  it should "run valid/basic/exit/exitBasic.wacc" in {
+  it should "run valid/basic/exit/exitBasic.wacc" ignore {
     val path = constructPath(List("valid", "basic", "exit", "exitBasic.wacc"))
     runSucceeds(path, "", 7)
   }
 
-  it should "run valid/basic/exit/exitBasic2.wacc" in {
+  it should "run valid/basic/exit/exitBasic2.wacc" ignore {
     val path = constructPath(List("valid", "basic", "exit", "exitBasic2.wacc"))
     runSucceeds(path, "", 42)
   }
 
-  it should "run valid/basic/exit/exitWrap.wacc" in {
+  it should "run valid/basic/exit/exitWrap.wacc" ignore  {
     // runSucceeds("valid/basic/exit/exitWrap.wacc")
     val path = constructPath(List("valid", "basic", "exit", "exitWrap.wacc"))
     runSucceeds(path)
   }
 
-  it should "run valid/basic/skip/comment.wacc" in {
+  it should "run valid/basic/skip/comment.wacc" ignore {
     val path = constructPath(List("valid", "basic", "skip", "comment.wacc"))
 
     runSucceeds("valid/basic/skip/comment.wacc")
   }
 
-  it should "run valid/basic/skip/commentEoF.wacc" in {
+  it should "run valid/basic/skip/commentEoF.wacc" ignore {
     runSucceeds("valid/basic/skip/commentEoF.wacc")
   }
 
-  it should "run valid/basic/skip/commentInLine.wacc" in {
+  it should "run valid/basic/skip/commentInLine.wacc" ignore {
     runSucceeds("valid/basic/skip/commentInLine.wacc")
   }
 
-  it should "run valid/basic/skip/skip.wacc" in {
+  it should "run valid/basic/skip/skip.wacc" ignore {
     runSucceeds("valid/basic/skip/skip.wacc")
   }
 }

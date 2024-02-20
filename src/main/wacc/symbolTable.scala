@@ -52,4 +52,14 @@ class SymbolTable(val parent: Option[SymbolTable]) {
     this.parent
   }
 
+  def printSymbolTable(): Unit = {
+    println("====Symbol Table==") 
+    if (dictionary.size == 0) {
+      println("Empty")
+    }
+    println(dictionary)
+    children.foreach(_.printSymbolTable())
+    println("==================")
+  }
+
 }

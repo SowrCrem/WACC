@@ -15,7 +15,7 @@ object X86CodeGenerator {
   def transInstr(instruction: Instruction) : List[String] = instruction match {
     case Mov(dest, operand) => List(s"  mov ${dest.toIntelString}, ${operand.toIntelString}")
     case AddInstr(dest, src, operand) => List(s"  add ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
-    case SubInstr(dest, src, operand) => List(s"  sub ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
+    case SubInstr(dest, src, operand) => List(s"  sub ${dest.toIntelString}, ${src.toIntelString}")
     case MulInstr(dest, src, operand) => List(s"  mul ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
     case DivInstr(dest, src, operand) => List(s"  div ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
     case AndInstr(dest, src) => List(s"  and ${dest.toIntelString}, ${src.toIntelString}")
@@ -30,6 +30,7 @@ object X86CodeGenerator {
     case CallInstr(name) => List(s"  call _${name}")
     case CallPLT(name) => List(s"  call ${name}@plt")
     case ReturnInstr() => List(s"  ret\n")
-    case _ => throw new IllegalArgumentException("Invalid instruction")
+    case DecrementStackPointerNB(value) => List(s"  sub rsp, ${8*value}")
+    case x => throw new IllegalArgumentException("Invalid instruction type: " + x)
   }
 }

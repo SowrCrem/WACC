@@ -22,7 +22,7 @@ class Basic extends AnyFlatSpec {
     runSucceeds(path, "", 7)
   }
 
-  it should "run valid/basic/exit/exitBasic2.wacc" ignore {
+  it should "run valid/basic/exit/exitBasic2.wacc" in {
     val path = constructPath(List("valid", "basic", "exit", "exitBasic2.wacc"))
     runSucceeds(path, "", 42)
   }
@@ -33,7 +33,7 @@ class Basic extends AnyFlatSpec {
     runSucceeds(path)
   }
 
-  it should "run valid/basic/skip/comment.wacc" ignore {
+  it should "run valid/basic/skip/comment.wacc" in {
     val path = constructPath(List("valid", "basic", "skip", "comment.wacc"))
 
     runSucceeds("valid/basic/skip/comment.wacc")

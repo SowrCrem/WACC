@@ -24,7 +24,7 @@ object X86IRGenerator {
       Directive("section .rodata"),
       Directive("text"),
       Label("main"),
-      PushRegisters(List(FP, G0)),
+      PushRegisters(List(FP)),
       Mov(FP, SP)
     )
     ast.symbolTable.printSymbolTable()
@@ -32,11 +32,16 @@ object X86IRGenerator {
 
     instructions ++= astToIR(ast)
 
+    val decrementStackInstr = StackMachine.popFrame()
+    instructions ++= decrementStackInstr
+    
+
     instructions += Mov(Dest, Immediate32(0)) // Return 0 if no exit function
     instructions ++= List(
-      PopRegisters(List(G0, FP)),
       ReturnInstr()
     )
+
+
     if (exitFunc) {
       instructions ++= exitIR
     }
@@ -83,6 +88,15 @@ object X86IRGenerator {
 
       StackMachine.printStack()
 
+      StackMachine.offset(ident.value) match {
+        case Some(offset) => {
+          instructions += Mov(FPOffset(offset), Dest)
+        }
+        case None => {
+          throw new RuntimeException("Variable not found in stack")
+        }
+      }
+
       instructions
     }
     case Exit(IntLiter(value)) => {
@@ -106,25 +120,21 @@ object X86IRGenerator {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is an integer literal, we can simply move the value to the variable
       instructions += Mov(Dest, Immediate32(value))
-      instructions += Mov(SP, Dest)
-      instructions += DecrementStackPointer8B()
+
     }
     // Handle other types of expressions
     case BoolLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a boolean literal, we can simply move the value to the variable
       instructions += Mov(Dest, Immediate32(if (value) 1 else 0))
-      instructions += Mov(SP, Dest)
-      instructions += DecrementStackPointer8B()
-    
+  
     }
 
     case CharLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a character literal, we can simply move the value to the variable
       instructions += Mov(Dest, Immediate32(value.toInt))
-      instructions += SubInstr(SP, Immediate32(4), null)
-      instructions += Mov(SP, Dest)
+
     }
 
   }

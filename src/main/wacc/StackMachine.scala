@@ -3,6 +3,7 @@ import scala.collection.mutable
 import scala.collection.mutable.Stack
 import scala.collection.mutable.ListBuffer
 import scala.annotation.tailrec
+import parsley.internal.machine.instructions.Pop
 
 object StackMachine {
 
@@ -48,14 +49,17 @@ object StackMachine {
 
     var totalOffset = 0
 
-    frames.reverseIterator.foreach { frame =>
-      {
-        frame.findVarOffset(name) match {
-          case -1     => { totalOffset += frameTotalSize(frame) }
-          case offset => Some(totalOffset + offset)
-        }
-      }
+    if (frames.isEmpty) {
+      println("No frames in stack")
     }
+
+    frames.reverse.foreach(frame => {
+      frame.findVarOffset(name) match {
+        case -1     => { totalOffset += frameTotalSize(frame) 
+                          printf("not in this frame?")}
+        case offset => return Some(totalOffset + offset)
+      }
+    })
 
     None
   }
@@ -94,6 +98,30 @@ object StackMachine {
       Mov(FP, SP)
     )
 
+  }
+
+  def popFrame(): ListBuffer[Instruction] = {
+
+
+    // List of instructions to increment the stack pointer by the size of the local variables in the stack frame
+    val incrementStackInstr = new ListBuffer[Instruction]().empty
+
+    var size = frames.last.localVarSize
+
+    // Increment the stack pointer by the size of the local variables in the stack frame
+    while (size > 1024) {
+      incrementStackInstr += IncrementStackPointerNB(1024)
+      size -= 1024
+    }
+
+    if (size > 0) {
+      incrementStackInstr += IncrementStackPointerNB(size)
+    }
+
+    // Remove the last frame from the stack
+    frames = frames.dropRight(1)
+
+    incrementStackInstr ++ ListBuffer(PopRegisters(List(FP)))
   }
 
   def printStack(): Unit = {
@@ -169,12 +197,17 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
   }
 
   def findVarOffset(name: String): Int = {
-    if (varMap.contains(name)) {
+    if (varMap.contains(name)) 
+    {
+
       return varMap(name)
     } else {
+      print("Variable not found in stack:" + name)
+      this.printFrame()
       return -1
     }
   }
+  
 
   // Debugging function to print the stack frame
   def printFrame(): Unit = {

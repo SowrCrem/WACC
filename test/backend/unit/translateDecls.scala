@@ -31,14 +31,12 @@ class translateDecls extends AnyFlatSpec with BeforeAndAfterEach {
     Directive("section .rodata"),
     Directive("text"),
     Label("main"),
-    PushRegisters(List(FP, G0)),
+    PushRegisters(List(FP)),
     Mov(FP, SP),
     DecrementStackPointerNB(1),
     Mov(Dest, Immediate32(0)),
-    SubInstr(SP, Immediate32(4), null),
-    Mov(SP, Dest),
     Mov(Dest, Immediate32(0)),
-    PopRegisters(List(G0, FP)),
+    PopRegisters(List(FP)),
     ReturnInstr()
   )
   val instrsTranslated = """.intel_syntax noprefix
@@ -58,7 +56,7 @@ class translateDecls extends AnyFlatSpec with BeforeAndAfterEach {
                               pop rbp
                               ret"""
 
-  "compiler" should "create IR for basic boolean decl program" ignore {
+  "compiler" should "create IR for basic boolean decl program" in {
 
     semanticChecker.check(node) should be {
       Right(0)

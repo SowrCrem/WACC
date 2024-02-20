@@ -24,7 +24,7 @@ object Main {
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
-        // saveGeneratedCode(prog, fileName)
+        saveGeneratedCode(prog, fileName)
         0
       }
       case Left(msg) => {

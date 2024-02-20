@@ -1,6 +1,6 @@
 variables:
   wacc_image: gumjoe/wacc-ci-scala:x86
-  fast-frontend: true
+  fast-frontend: "true"
 
 stages:
   - build

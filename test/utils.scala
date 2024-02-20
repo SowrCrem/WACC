@@ -86,7 +86,7 @@ object Utils {
     ".." + sep + exeName
   }
 
-  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = {
+  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = synchronized{
     Main.setBackendTests()
     try {
       throwsNoError(path)

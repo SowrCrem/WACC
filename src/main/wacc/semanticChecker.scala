@@ -28,4 +28,8 @@ object semanticChecker {
     }
   }
 
+  def reset() : Unit = {
+    topLevelSymbolTable = new SymbolTable(None)
+    typeChecker = new TypeChecker(topLevelSymbolTable)
+  }
 }

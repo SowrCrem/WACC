@@ -43,6 +43,12 @@ sealed trait Operand {
 sealed trait Register extends Operand with Address
 
 sealed trait SpecialRegister extends Register
+
+
+case object IP extends SpecialRegister {
+    def toIntelString: String = "rip"
+} // Instruction pointer
+
 case object FP extends SpecialRegister {
     def toIntelString: String = "rbp"
 } // Frame pointer
@@ -99,6 +105,14 @@ case class FPOffset(val offset: Int) extends Operand {
     def toIntelString: String = s"qword ptr [rbp - $offset]"
 }
 
+case class LabelAddress(val label: String) extends Operand {
+    def toIntelString: String = label
+}
+
+case class RegisterLabelAddress(val register: Register, val label: LabelAddress) extends Operand {
+    def toIntelString: String = s"[${register.toIntelString} + .${label.toIntelString}]"
+}
+
 case class Immediate32(val value: Int) extends Operand {
     def verify: Boolean = value >= Int.MinValue && value <= Int.MaxValue
     def toIntelString: String = {
@@ -111,3 +125,5 @@ case class Immediate32(val value: Int) extends Operand {
 case object EMPTY extends Operand {
     def toIntelString: String = ""
 }
+
+case class LoadEffectiveAddress(val dest: Operand, val src: Operand) extends Instruction

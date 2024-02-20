@@ -87,6 +87,7 @@ object Utils {
   }
 
   def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = {
+    Main.setBackendTests()
     try {
       throwsNoError(path)
     } catch {

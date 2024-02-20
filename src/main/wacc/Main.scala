@@ -11,6 +11,15 @@ import scala.annotation.varargs
 */
 
 object Main {
+
+  var backendTests = false
+
+  def setBackendTests(): Unit = backendTests = true
+
+  def LABTS = new java.io.File("src").exists()
+
+  def parentDirPath(path: String): String = ".." + java.io.File.separator + path
+
   def main(args: Array[String]): Unit = {
     val exitCode = compile(args)
     sys.exit(exitCode)
@@ -24,7 +33,7 @@ object Main {
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
-        saveGeneratedCode(prog, fileName)
+        if (backendTests || LABTS ) {saveGeneratedCode(prog, fileName) }
         0
       }
       case Left(msg) => {
@@ -36,7 +45,12 @@ object Main {
 
   def saveGeneratedCode(prog: Program, fileName: String = "X86Code"): Unit = {
     val content = X86CodeGenerator.generate(prog)
-    val file = new java.io.File(".." + java.io.File.separator + fileName + ".s")
+    // Check if we're in the root of the project (we can see the src folder) if not, we need to go up one level
+    var filename = fileName + ".s"
+    if (!LABTS) { filename = parentDirPath(filename) }
+    val file = new java.io.File(filename)
+    val path = file.getAbsolutePath()
+    // throw new Exception("Path to file: " + path)
     val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
     writer.write(content)
     writer.close()

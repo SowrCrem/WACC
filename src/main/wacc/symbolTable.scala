@@ -7,14 +7,14 @@ import scala.annotation.tailrec
    [ ] exitScope is not used at all (unnecessary function)
 
    */
-
+ 
 class SymbolTable(val parent: Option[SymbolTable]) {
 
-  var dictionary: Map[String, Position] = Map()
+  var dictionary: Map[String, TypeNode] = Map()
   var children: List[SymbolTable] = List()
 
   // Add identity and position node into dictionary
-  def add(identName: String, position: Position): Unit = {
+  def add(identName: String, position: TypeNode): Unit = {
     dictionary.addOne(identName, position)
   }
 
@@ -50,6 +50,16 @@ class SymbolTable(val parent: Option[SymbolTable]) {
   // Return to parent symbol table
   def exitScope(): Option[SymbolTable] = {
     this.parent
+  }
+
+  def printSymbolTable(): Unit = {
+    println("====Symbol Table==") 
+    if (dictionary.size == 0) {
+      println("Empty")
+    }
+    println(dictionary)
+    children.foreach(_.printSymbolTable())
+    println("==================")
   }
 
 }

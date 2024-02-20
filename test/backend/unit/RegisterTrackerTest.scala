@@ -14,7 +14,7 @@ class RegisterTrackerTest extends AnyFlatSpec {
   "register tracker" should "assignAndGetVar - Assign variable to register" in {
     val tracker = new RegisterTracker()
     val (reg, evictedFlag) = tracker.assignAndGetVar(0, "x")
-    tracker.used should contain (IdentScope(0, "x") -> reg)
+    tracker.used should contain (VariableScope(0, "x") -> reg)
     tracker.available should not contain reg
     evictedFlag shouldBe false
   }
@@ -28,9 +28,9 @@ class RegisterTrackerTest extends AnyFlatSpec {
     }
     val (reg, evictedFlag) = tracker.assignAndGetVar(0, "y")
     evictedFlag shouldBe true
-    tracker.used should contain (IdentScope(0, "y") -> reg)
+    tracker.used should contain (VariableScope(0, "y") -> reg)
     tracker.available should not contain reg
-    tracker.stack should contain (IdentScope(1, "x"))
+    tracker.stack should contain (VariableScope(1, "x"))
   }
 
   it should "exitLastScope - Deallocate variables in the most local scope" in {
@@ -39,7 +39,7 @@ class RegisterTrackerTest extends AnyFlatSpec {
     val (reg2, _) = tracker.assignAndGetVar(1, "y")
     val (reg3, _) = tracker.assignAndGetVar(1, "z")
     tracker.exitLastScope(1, 2)
-    tracker.used should contain (IdentScope(0, "x"), reg1)
+    tracker.used should contain (VariableScope(0, "x"), reg1)
     tracker.available should contain (reg2)
     tracker.available should contain (reg3)
     tracker.used should not contain reg2

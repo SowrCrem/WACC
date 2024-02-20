@@ -3,14 +3,14 @@ import scala.collection.mutable._
 
 class RegisterTracker {
 
-  /** Stack of available registers */
+  /** Stack of available registers */ 
   val available = Stack(G0, G1, G2, G3, G4, G5, G6, Arg5, Arg4, Arg3, Arg2, Arg1, Arg0, Dest)
 
   /** Stack of used registers */
-  val used: Map[IdentScope, Register] = HashMap()
+  val used: Map[VariableScope, Register] = HashMap()
 
   /** Stack of registers representing the state of the assembly stack */
-  val stack: Stack[IdentScope] = new Stack[IdentScope]
+  val stack: Stack[VariableScope] = new Stack[VariableScope]
 
   /**
     * Assigns am available register to a variable,
@@ -33,7 +33,7 @@ class RegisterTracker {
       evictedFlag = true
       assert(available.size > 0, "No registers available")
     }
-    val variable = IdentScope(scope, name)
+    val variable = VariableScope(scope, name)
     val reg = available.pop()
     used.addOne((variable -> reg))
     Tuple2(reg, evictedFlag)
@@ -44,7 +44,7 @@ class RegisterTracker {
     * from the used stack
     * @param mappedVal The mapping from variable to register for the register to be freed
   */
-  private def freeRegister(mappedVal: (IdentScope, Register)): Unit = {
+  private def freeRegister(mappedVal: (VariableScope, Register)): Unit = {
     available.push(
       mappedVal._2.asInstanceOf[Register with Product with java.io.Serializable]
       )                       // Push the register back to the available stack
@@ -58,7 +58,7 @@ class RegisterTracker {
   def exitLastScope(scope: Int, stackframeIndex: Int): Unit = {
     /* Remove all variables in the given scope from the used registers */
     val toRemove = used.filter({case (k, v) => k.scope == scope})
-    for ((k : IdentScope, v : Register) <- toRemove) {
+    for ((k : VariableScope, v : Register) <- toRemove) {
       available.push(v.asInstanceOf[Register with Product with java.io.Serializable])
       used.remove(k)
     }

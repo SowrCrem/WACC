@@ -95,6 +95,10 @@ case object Arg5 extends ArgRegister {
     def toIntelString: String = "r9"
 }
 
+case class FPOffset(val offset: Int) extends Operand {
+    def toIntelString: String = s"qword ptr [rbp - $offset]"
+}
+
 case class Immediate32(val value: Int) extends Operand {
     def verify: Boolean = value >= Int.MinValue && value <= Int.MaxValue
     def toIntelString: String = {

@@ -33,19 +33,21 @@ class Basic extends AnyFlatSpec {
     runSucceeds(path)
   }
 
-  it should "run valid/basic/skip/comment.wacc" ignore {
+  it should "run valid/basic/skip/comment.wacc" in {
+    val path = constructPath(List("valid", "basic", "skip", "comment.wacc"))
+
     runSucceeds("valid/basic/skip/comment.wacc")
   }
 
-  it should "run valid/basic/skip/commentEoF.wacc" ignore {
+  it should "run valid/basic/skip/commentEoF.wacc" in{
     runSucceeds("valid/basic/skip/commentEoF.wacc")
   }
 
-  it should "run valid/basic/skip/commentInLine.wacc" ignore {
+  it should "run valid/basic/skip/commentInLine.wacc" in {
     runSucceeds("valid/basic/skip/commentInLine.wacc")
   }
 
-  it should "run valid/basic/skip/skip.wacc" ignore {
+  it should "run valid/basic/skip/skip.wacc" in {
     runSucceeds("valid/basic/skip/skip.wacc")
   }
 }

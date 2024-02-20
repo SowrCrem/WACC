@@ -34,8 +34,10 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       returnType: Option[TypeNode]
   ): Option[TypeNode] = position match {
     // PROGRAMS
-    case Program(funcList, statList) => //checkProgram(position, funcList, stat)
+    case prog@Program(funcList, statList) => //checkProgram(position, funcList, stat)
       {
+
+
         funcList.foreach {
           case func@Func(typeNode, ident, paramList, statList) => {
             symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
@@ -51,7 +53,14 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         funcList.foreach(func => check(func, symbolTable, None))
         // Check statements
         statList.foreach(stat => check(stat, symbolTable, None))
+
+
+        // Set the symbol table of the program to the current (root) symbol table
+        prog.symbolTable = symbolTable
+
         None // Program has no type
+
+
       }
     
     // FUNCTIONS
@@ -65,13 +74,18 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
               case Some(_) =>
                 errors += new AlreadyDefinedError(position, param.ident.value)
               case None =>
+                param.typeNode.isParam = true;
                 newSymbolTable.add(param.ident.value, param.typeNode)
             }
           })
           symbolTable.add(ident.value, func)
 
+          // Set the symbol table of the function to the new (scoped) symbol table
+
           // Check statements
           statList.foreach(stat => check(stat, newSymbolTable, Some(typeNode)))
+          func.symbolTable = newSymbolTable
+
           Some(typeNode)
         case None => errors += new NotDefinedError(position, ident.value)
           None
@@ -269,7 +283,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
 
 
     // IF STATEMENTS
-    case If(cond, ifStats, elseStats) =>
+    case i@If(cond, ifStats, elseStats) =>
       val newSymbolTableTrue = symbolTable.enterScope()
       val newSymbolTableFalse = symbolTable.enterScope()
       val condType = check(cond, symbolTable, returnType)
@@ -279,23 +293,31 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
 
       ifStats.foreach(stat => check(stat, newSymbolTableTrue, returnType))
       elseStats.foreach(stat => check(stat, newSymbolTableFalse, returnType))
+
+      i.symbolTableTrue = newSymbolTableTrue
+      i.symbolTableFalse = newSymbolTableFalse
       None
 
     // WHILE STATEMENTS
-    case While(cond, stats) =>
+    case w@While(cond, stats) =>
       val newSymbolTable = symbolTable.enterScope()
       val condType = check(cond, symbolTable, returnType)
       if (condType != Some(BoolTypeNode()(position.pos))) {
         errors += new TypeMismatchError(position, "bool", condType.getOrElse("none").toString())
       }
 
+
       stats.foreach(stat => check(stat, newSymbolTable, returnType))
+
+      w.symbolTable = newSymbolTable
       None
 
     // BEGIN-END STATEMENTS
-    case BeginEnd(stats) =>
+    case be@BeginEnd(stats) =>
       val newSymbolTable = symbolTable.enterScope()
       stats.foreach(stat => check(stat, newSymbolTable, returnType))
+
+      be.symbolTable = newSymbolTable
       None
 
 
@@ -360,7 +382,9 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       val exprType = exprList.map(expr => check(expr, symbolTable, returnType))
 
       if (exprType.distinct.length == 1) {
-        Some(ArrayTypeNode(exprType.head.get)(position.pos))
+        val arrtype = ArrayTypeNode(exprType.head.get)(position.pos)
+        arrtype.length = exprList.length
+        Some(arrtype)
       } else if (exprType.distinct.length == 0) {
         None
       } else {
@@ -370,7 +394,9 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             Some(ArrayTypeNode(CharTypeNode()(position.pos))(position.pos))
           ) && exprType.contains(Some(StringTypeNode()(position.pos)))
         ) {
-          Some(ArrayTypeNode(StringTypeNode()(position.pos))(position.pos))
+          val arrtype = ArrayTypeNode(StringTypeNode()(position.pos))(position.pos)
+          arrtype.length = exprList.length
+          Some(arrtype)
         } else
           errors += new ArrayElemTypeError(position, 
             List(exprType.map(_.getOrElse("none").toString()).mkString(", "))

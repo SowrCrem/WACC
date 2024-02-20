@@ -24,16 +24,27 @@ object X86IRGenerator {
       Directive("section .rodata"),
       Directive("text"),
       Label("main"),
-      PushRegisters(List(FP, G0)),
+      PushRegisters(List(FP)),
       Mov(FP, SP)
     )
+    ast.symbolTable.printSymbolTable()
+
+    // Add the main frame
+    StackMachine.addFrame(ast.symbolTable, None)
+
     instructions ++= astToIR(ast)
+
+    // Pop the main frame
+    val decrementStackInstr = StackMachine.popFrame()
+    instructions ++= decrementStackInstr
+    
 
     instructions += Mov(Dest, Immediate32(0)) // Return 0 if no exit function
     instructions ++= List(
-      PopRegisters(List(G0, FP)),
       ReturnInstr()
     )
+
+
     if (exitFunc) {
       instructions ++= exitIR
     }
@@ -48,15 +59,48 @@ object X86IRGenerator {
     *   The intermediate representation of the given AST
     */
   def astToIR(position: Position): Buffer[Instruction] = position match {
-    case Program(funcList, stat) => {
+    case prog@Program(funcList, stat) => {
+
       val funcIR = new ListBuffer[Instruction]
       for (func <- funcList) {
         funcIR.appendAll(astToIR(func))
       }
+      
       val ir = new ListBuffer[Instruction]
-      val statInstrs = for (s <- stat) yield astToIR(s)
+      val statInstrs = for (s <- stat) yield statToIR(s)
       ir ++= statInstrs.flatten
       ir.appendAll(funcIR)
+    }
+
+  }
+
+  def statToIR(stat: Stat): Buffer[Instruction] = stat match {
+    case IdentAsgn(typeNode, ident, expr) => {
+      // Dynamically determine the size of the variable from the typeNode
+      val varSize = typeNode.size
+
+      // Step 1: Allocate space on the stack based on the variable size
+      val instructions =
+        ListBuffer[Instruction](DecrementStackPointerNB(varSize))
+
+      // Step 2: Initialize the variable with the given expression
+      instructions ++= exprToIR(expr)
+
+      // Step 3: Update StackMachine context with the new variable
+      StackMachine.putVarOnStack(ident.value)
+
+      StackMachine.printStack()
+
+      StackMachine.offset(ident.value) match {
+        case Some(offset) => {
+          instructions += Mov(FPOffset(offset), Dest)
+        }
+        case None => {
+          throw new RuntimeException("Variable not found in stack")
+        }
+      }
+
+      instructions
     }
     case Exit(IntLiter(value)) => {
       exitFunc = true;
@@ -67,6 +111,35 @@ object X86IRGenerator {
         CallInstr("exit")
       )
     }
+    case Skip() => {
+      ListBuffer()
+    }
+  }
+
+  def exprToIR(expr: Position): Buffer[Instruction] = expr match {
+
+    case IntLiter(value) => {
+
+      val instructions = ListBuffer[Instruction]().empty
+      // If the expression is an integer literal, we can simply move the value to the variable
+      instructions += Mov(Dest, Immediate32(value))
+
+    }
+    // Handle other types of expressions
+    case BoolLiter(value) => {
+      val instructions = ListBuffer[Instruction]().empty
+      // If the expression is a boolean literal, we can simply move the value to the variable
+      instructions += Mov(Dest, Immediate32(if (value) 1 else 0))
+  
+    }
+
+    case CharLiter(value) => {
+      val instructions = ListBuffer[Instruction]().empty
+      // If the expression is a character literal, we can simply move the value to the variable
+      instructions += Mov(Dest, Immediate32(value.toInt))
+
+    }
+
   }
 
   /** The intermediate representation for the exit function
@@ -84,4 +157,4 @@ object X86IRGenerator {
 
 }
 
-case class IdentScope(scope: Int, name: String)
+case class VariableScope(scope: Int, name: String)

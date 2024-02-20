@@ -11,7 +11,7 @@
 // import org.scalatest.matchers.should.Matchers._
 // import sys.process._
 
-// class translateExit extends AnyFlatSpec with BeforeAndAfterEach {
+// class translateSkip extends AnyFlatSpec with BeforeAndAfterEach {
 
 //   val pos = (0, 0)
 //   val node = Program(List(), List(Exit(IntLiter(-1)(pos))(pos)))(pos)

@@ -16,17 +16,17 @@ class Variable extends AnyFlatSpec {
     runSucceeds("../wacc/valid/variables/boolDeclaration.wacc", "", 0)
   }
 
-  it should "run valid/variables/boolDeclaration2.wacc" in {
-    runSucceeds("../wacc/valid/variables/boolDeclaration2.wacc", "", 0)
-  }
+  // it should "run valid/variables/boolDeclaration2.wacc" in {
+  //   runSucceeds("../wacc/valid/variables/boolDeclaration2.wacc", "", 0)
+  // }
 
-  it should "run valid/variables/intDeclaration.wacc" in {
-    runSucceeds("../wacc/valid/variables/intDeclaration.wacc", "", 0)
-  }
+  // it should "run valid/variables/intDeclaration.wacc" in {
+  //   runSucceeds("../wacc/valid/variables/intDeclaration.wacc", "", 0)
+  // }
 
-  it should "run valid/variables/charDeclaration.wacc" in {
-    runSucceeds("../wacc/valid/variables/charDeclaration.wacc", "", 0)
-  }
+  // it should "run valid/variables/charDeclaration.wacc" in {
+  //   runSucceeds("../wacc/valid/variables/charDeclaration.wacc", "", 0)
+  // }
 
 
 

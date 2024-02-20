@@ -28,10 +28,13 @@ object X86IRGenerator {
       Mov(FP, SP)
     )
     ast.symbolTable.printSymbolTable()
+
+    // Add the main frame
     StackMachine.addFrame(ast.symbolTable, None)
 
     instructions ++= astToIR(ast)
 
+    // Pop the main frame
     val decrementStackInstr = StackMachine.popFrame()
     instructions ++= decrementStackInstr
     

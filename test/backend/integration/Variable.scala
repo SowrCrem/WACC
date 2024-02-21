@@ -39,7 +39,7 @@
 //   }
 
 //   it should "run valid/variables/longVarNames.wacc" in {
-//     runSucceeds("../wacc/valid/variables/longVarNames.wacc", "", 0)
+//     runSucceeds("../wacc/valid/variables/longVarNames.wacc", "", 5)
 //   }
 
 //   it should "run valid/variables.stringCarriageReturn.wacc" in {
@@ -54,7 +54,26 @@
 //     runSucceeds("../wacc/valid/variables/emptyStringDeclaration.wacc", "", 0)
 //   }
 
+//   it should "run valid/variables/zeroIntDeclaration.wacc" in {
+//     runSucceeds("../wacc/valid/variables/zeroIntDeclaration.wacc", "", 0)
+//   }
+
+//   it should "run valid/manyVariables.wacc" in {
+//     runSucceeds("../wacc/valid/variables/manyVariables.wacc", "", 0)
+//   }
+
+//   it should "run valid/variables/puncCharDeclaration.wacc" in {
+//     runSucceeds("../wacc/valid/variables/puncCharDeclaration.wacc", "", 0)
+//   }
+
+//   it should "run valid/variables/capCharDeclaration.wacc" in {
+//     runSucceeds("../wacc/valid/variables/capCharDeclaration.wacc", "", 0)
+//   }
+
+//   it should "run valid/variables._VarNames.wacc" in {
+//     runSucceeds("../wacc/valid/variables/_VarNames.wacc", "", 19)
+//   }
 
 
-  
 // }
+  

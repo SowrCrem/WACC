@@ -109,10 +109,10 @@ object StackMachine {
     var size = frames.last.localVarSize
 
     // Increment the stack pointer by the size of the local variables in the stack frame
-    while (size > 1024) {
-      incrementStackInstr += IncrementStackPointerNB(1024)
-      size -= 1024
-    }
+    // while (size > 1024) {
+    //   incrementStackInstr += IncrementStackPointerNB(1024)
+    //   size -= 1024
+    // }
 
     if (size > 0) {
       incrementStackInstr += IncrementStackPointerNB(size)

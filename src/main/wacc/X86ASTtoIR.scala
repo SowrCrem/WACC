@@ -20,13 +20,14 @@ object X86IRGenerator {
     *   The label of the string literal
     */
   def addStringLiteral(literal: String): String = {
-    stringLiterals.getOrElseUpdate(literal, {
-      val label = s"string${stringLiterals.size}"
-      rodataDirectives += Directive(s"$label: .asciz \"$literal\"")
-      label
-    })
+    stringLiterals.getOrElseUpdate(
+      literal, {
+        val label = s"string${stringLiterals.size}"
+        rodataDirectives += Directive(s"$label: .asciz \"$literal\"")
+        label
+      }
+    )
   }
-
 
   /** Generates the intermediate representation for the given AST
     * @param ast
@@ -38,12 +39,17 @@ object X86IRGenerator {
     val instructions: Buffer[Instruction] = new ListBuffer[Instruction].empty
 
     // Add the necessary directives
-    val initDirectives =  List(
+    val initDirectives = List(
       Directive("intel_syntax noprefix"),
-      Directive("globl main"),
+      Directive("globl main")
     )
 
-    val mainInitialisation = ListBuffer(Directive("text"), Label("main"), PushRegisters(List(FP)), Mov(FP, SP))
+    val mainInitialisation = ListBuffer(
+      Directive("text"),
+      Label("main"),
+      PushRegisters(List(FP)),
+      Mov(FP, SP)
+    )
 
     // instructions ++= mainInitialisation
 
@@ -58,8 +64,6 @@ object X86IRGenerator {
     val decrementStackInstr = StackMachine.popFrame()
     // instructions ++= decrementStackInstr
 
-    
-
     instructions ++= initDirectives
     instructions ++= Directive("section .rodata") +: rodataDirectives
     instructions ++= mainInitialisation
@@ -70,7 +74,6 @@ object X86IRGenerator {
     instructions ++= List(
       ReturnInstr()
     )
-
 
     if (exitFunc) {
       instructions ++= exitIR
@@ -87,13 +90,13 @@ object X86IRGenerator {
     *   The intermediate representation of the given AST
     */
   def astToIR(position: Position): Buffer[Instruction] = position match {
-    case prog@Program(funcList, stat) => {
+    case prog @ Program(funcList, stat) => {
 
       val funcIR = new ListBuffer[Instruction]
       for (func <- funcList) {
         funcIR.appendAll(astToIR(func))
       }
-      
+
       val ir = new ListBuffer[Instruction]
       val statInstrs = for (s <- stat) yield statToIR(s)
       ir ++= statInstrs.flatten
@@ -102,7 +105,6 @@ object X86IRGenerator {
 
   }
 
-  
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
     case IdentAsgn(typeNode, ident, expr) => {
       // Dynamically determine the size of the variable from the typeNode
@@ -131,14 +133,26 @@ object X86IRGenerator {
 
       instructions
     }
-    case Exit(IntLiter(value)) => {
+    case AsgnEq(lhs, rhs) => {
+      lhs match {
+        case Ident(ident) => {
+          val instructions = exprToIR(rhs)
+          StackMachine.offset(ident) match {
+            case Some(offset) => {
+              instructions += Mov(FPOffset(offset), Dest)
+            }
+            case None => {
+              throw new RuntimeException("Variable not found in stack")
+            }
+          }
+          instructions
+        }
+        // need to have cases for pairs and array elements later
+      }
+    }
+    case Exit(expr) => {
       exitFunc = true;
-      println("reached")
-      ListBuffer(
-        Mov(Dest, Immediate32(value)),
-        Mov(Arg0, Dest),
-        CallInstr("exit")
-      )
+      exprToIR(expr) ++ ListBuffer(Mov(Arg0, Dest), CallInstr("exit"))
     }
     case Skip() => {
       ListBuffer()
@@ -159,7 +173,7 @@ object X86IRGenerator {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a boolean literal, we can simply move the value to the variable
       instructions += Mov(Dest, Immediate32(if (value) 1 else 0))
-  
+
     }
 
     case CharLiter(value) => {
@@ -167,9 +181,24 @@ object X86IRGenerator {
       // If the expression is a character literal, we can simply move the value to the variable
       instructions += Mov(Dest, Immediate32(value.toInt))
     }
-    case StringLiter(value) =>{
+    case StringLiter(value) => {
       val label = addStringLiteral(value)
-      ListBuffer(LoadEffectiveAddress(Dest, RegisterLabelAddress(IP, LabelAddress(label))))
+      ListBuffer(
+        LoadEffectiveAddress(
+          Dest,
+          RegisterLabelAddress(IP, LabelAddress(label))
+        )
+      )
+    }
+    case Ident(ident) => {
+      StackMachine.offset(ident) match {
+        case Some(offset) => {
+          ListBuffer(Mov(Dest, FPOffset(offset)))
+        }
+        case None => {
+          throw new RuntimeException("Variable not found in stack")
+        }
+      }
     }
 
   }

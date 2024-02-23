@@ -4,8 +4,6 @@ import scala.collection.mutable.Buffer
 import java.io.File
 import java.io.PrintWriter
 
-
-
 object X86CodeGenerator {
 
   def generate(program: Program): String = makeAssemblyIntel(X86IRGenerator.generateIR(program))

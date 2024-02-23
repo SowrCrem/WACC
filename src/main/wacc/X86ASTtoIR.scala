@@ -76,7 +76,7 @@ object X86IRGenerator {
     )
 
     if (exitFunc) {
-      instructions ++= exitIR
+      instructions ++= exitLabelIR
     }
 
     instructions
@@ -102,7 +102,6 @@ object X86IRGenerator {
       ir ++= statInstrs.flatten
       ir.appendAll(funcIR)
     }
-
   }
 
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
@@ -111,8 +110,7 @@ object X86IRGenerator {
       val varSize = typeNode.size
 
       // // Step 1: Allocate space on the stack based on the variable size
-      val instructions =
-        ListBuffer[Instruction](DecrementStackPointerNB(varSize))
+      val instructions = ListBuffer[Instruction](DecrementStackPointerNB(varSize))
 
       // Step 2: Initialize the variable with the given expression
       instructions ++= exprToIR(expr)
@@ -147,7 +145,7 @@ object X86IRGenerator {
           }
           instructions
         }
-        // need to have cases for pairs and array elements later
+        // TODO: need to have cases for pairs and array elements later
       }
     }
     case Exit(expr) => {
@@ -155,6 +153,32 @@ object X86IRGenerator {
       exprToIR(expr) ++ ListBuffer(Mov(Arg0, Dest), CallInstr("exit"))
     }
     case Skip() => {
+      ListBuffer()
+    }
+
+    // TODO: Implement
+    case Read(lhs) => {
+      ListBuffer()
+    }
+    case Free(expr) => {
+      exprToIR(expr) ++ ListBuffer(Mov(Arg0, Dest), CallInstr("free"))
+    }
+    case Return(expr) => {
+      exprToIR(expr) ++ ListBuffer(Mov(Dest, FPOffset(0)), ReturnInstr())
+    }
+    case Print(expr) => {   
+      ListBuffer()
+    }
+    case Println(expr) => {
+      ListBuffer()
+    }
+    case If(expr, thenStat, elseStat) => {
+      ListBuffer()
+    }
+    case While(expr, stat) => {
+      ListBuffer()
+    }
+    case BeginEnd(stat) => {
       ListBuffer()
     }
   }
@@ -205,7 +229,7 @@ object X86IRGenerator {
 
   /** The intermediate representation for the exit function
     */
-  val exitIR: List[Instruction] = List(
+  val exitLabelIR: List[Instruction] = List(
     Label("_exit"),
     PushRegisters(List(FP)),
     Mov(FP, SP),
@@ -214,6 +238,29 @@ object X86IRGenerator {
     Mov(SP, FP),
     PopRegisters(List(FP)),
     ReturnInstr() // Restore frame pointer and return
+  )
+
+  val printLabelIR: List[Instruction] = List(
+    Directive("section .rodata"),
+      Directive("int 4"),
+    Label(".L._prints_str0"),
+      Directive("asciz \"%.*s\""),
+    Directive("text"),
+    Label("_prints"),
+    PushRegisters(List(FP)),
+    Mov(FP, SP),
+    AndInstr(SP, Immediate32(-16)),
+    Mov(Arg2, G0),
+    // mov esi, dword ptr [rdi - 4]
+    // lea rdi, [rip + .L._prints_str0]
+    // mov al, 0
+    // call printf@plt
+    // mov rdi, 0
+    // call fflush@plt
+    // mov rsp, rbp
+    // pop rbp
+    // ret
+    
   )
 
 }

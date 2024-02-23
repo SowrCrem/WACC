@@ -11,46 +11,46 @@ import scala.annotation.varargs
 */
 
 object Main {
-   val hardCodedPrintCase = ".intel_syntax noprefix" +
-    ".globl main" + 
-    ".section .rodata" + 
-    "# length of .L.str0" + 
-    "	.int 12" + 
-    ".L.str0:" + 
-    "	.asciz \"Hello World!\"" + 
-    ".text" + 
-    "main:" + 
-    "	push rbp" + 
-    "		push rbx" + 
-    "		mov rbp, rsp" + 
-    "		lea rax, [rip + .L.str0]" + 
-    "		push rax" + 
-    "		pop rax" + 
-    "		mov rax, rax" + 
-    "		mov rdi, rax" + 
-    "		call _prints" + 
-    "		mov rax, 0" + 
-    "		pop rbx" + 
-    "		pop rbp" + 
-    "		ret" + 
-    "	.section .rodata" + 
-    "		.int 4" + 
-    "	.L._prints_str0:" + 
-    "		.asciz \"%.*s\"" + 
-    "	.text" + 
-    "	_prints:" + 
-    "		push rbp" + 
-    "		mov rbp, rsp" + 
-    "		and rsp, -16" + 
-    "		mov rdx, rdi" + 
-    "		mov esi, dword ptr [rdi - 4]" + 
-    "		lea rdi, [rip + .L._prints_str0]" + 
-    "		mov al, 0" + 
-    "		call printf@plt" + 
-    "		mov rdi, 0" + 
-    "		call fflush@plt" + 
-    "		mov rsp, rbp" + 
-    "		pop rbp" + 
+   val hardCodedPrintCase = ".intel_syntax noprefix\n" +
+    ".globl main\n" + 
+    ".section .rodata\n" + 
+    "# length of .L.str0\n" + 
+    "	.int 12\n" + 
+    ".L.str0:\n" + 
+    "	.asciz \"Hello World!\"\n" + 
+    ".text\n" + 
+    "main:\n" + 
+    "	push rbp\n" + 
+    "		push rbx\n" + 
+    "		mov rbp, rsp\n" + 
+    "		lea rax, [rip + .L.str0]\n" + 
+    "		push rax\n" + 
+    "		pop rax\n" + 
+    "		mov rax, rax\n" + 
+    "		mov rdi, rax\n" + 
+    "		call _prints\n" + 
+    "		mov rax, 0\n" + 
+    "		pop rbx\n" + 
+    "		pop rbp\n" + 
+    "		ret\n" + 
+    "	.section .rodata\n" + 
+    "		.int 4\n" + 
+    "	.L._prints_str0:\n" + 
+    "		.asciz \"%.*s\"\n" + 
+    "	.text\n" + 
+    "	_prints:\n" + 
+    "		push rbp\n" + 
+    "		mov rbp, rsp\n" + 
+    "		and rsp, -16\n" + 
+    "		mov rdx, rdi\n" + 
+    "		mov esi, dword ptr [rdi - 4]\n" + 
+    "		lea rdi, [rip + .L._prints_str0]\n" + 
+    "		mov al, 0\n" + 
+    "		call printf@plt\n" + 
+    "		mov rdi, 0\n" + 
+    "		call fflush@plt\n" + 
+    "		mov rsp, rbp\n" + 
+    "		pop rbp\n" + 
     "		ret"
 
   val sep = java.io.File.separator

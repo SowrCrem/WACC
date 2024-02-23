@@ -25,13 +25,6 @@ import parsley.{Success, Failure}
 import scala.sys.process._
 import parsley.character.oneOf
 
-/* TODOs (tied to syntax.scala):
-   [ ] Refactor AST validation to iterate through last statement in functions more easily
-
-   [ ] Reduce use of atomics
-
-   */
-
 object parser {
 
   lazy val arrayelemParser: Parsley[Expr] =
@@ -167,7 +160,6 @@ object parser {
 
 
   val stmtParser: Parsley[List[Stat]] = sepBy1(statAtoms, ";")
-    // atomic(statAtoms <~ notFollowedBy(";")) | statJoinParser
 
   // -- Param Parser ----------------------------------------------- //
 

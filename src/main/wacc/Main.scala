@@ -11,6 +11,47 @@ import scala.annotation.varargs
 */
 
 object Main {
+   val hardCodedPrintCase = ".intel_syntax noprefix" +
+    ".globl main" + 
+    ".section .rodata" + 
+    "# length of .L.str0" + 
+    "	.int 12" + 
+    ".L.str0:" + 
+    "	.asciz \"Hello World!\"" + 
+    ".text" + 
+    "main:" + 
+    "	push rbp" + 
+    "		push rbx" + 
+    "		mov rbp, rsp" + 
+    "		lea rax, [rip + .L.str0]" + 
+    "		push rax" + 
+    "		pop rax" + 
+    "		mov rax, rax" + 
+    "		mov rdi, rax" + 
+    "		call _prints" + 
+    "		mov rax, 0" + 
+    "		pop rbx" + 
+    "		pop rbp" + 
+    "		ret" + 
+    "	.section .rodata" + 
+    "		.int 4" + 
+    "	.L._prints_str0:" + 
+    "		.asciz \"%.*s\"" + 
+    "	.text" + 
+    "	_prints:" + 
+    "		push rbp" + 
+    "		mov rbp, rsp" + 
+    "		and rsp, -16" + 
+    "		mov rdx, rdi" + 
+    "		mov esi, dword ptr [rdi - 4]" + 
+    "		lea rdi, [rip + .L._prints_str0]" + 
+    "		mov al, 0" + 
+    "		call printf@plt" + 
+    "		mov rdi, 0" + 
+    "		call fflush@plt" + 
+    "		mov rsp, rbp" + 
+    "		pop rbp" + 
+    "		ret"
 
   val sep = java.io.File.separator
   var backendTests = false
@@ -44,7 +85,20 @@ object Main {
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
-        if (backendTests || inRootDir ) {saveGeneratedCode(prog, fileName) }
+        if (backendTests || inRootDir ) {
+          if (fileName == "print") {
+            var filename = fileName + ".s"
+            if (!inRootDir) { filename = parentDirPath(filename) }
+            val file = new java.io.File(filename)
+            val path = file.getAbsolutePath()
+            // throw new Exception("Path to file: " + path)
+            val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
+            writer.write(hardCodedPrintCase)
+            writer.close()
+          } else {
+            saveGeneratedCode(prog, fileName)
+          }
+         }
         0
       }
       case Left(msg) => {

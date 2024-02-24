@@ -4,7 +4,7 @@ import scala.collection.mutable._
 class RegisterTracker {
 
   /** Stack of available registers */ 
-  val available = Stack(G0, G1, G2, G3, G4, G5, G6, Arg5, Arg4, Arg3, Arg2, Arg1, Arg0, Dest)
+  val available = Stack(G0, G1, G2, G3, G4, G5, G6, Arg5, Arg4, Arg3, Arg2, Arg1, Arg0, Ret)
 
   /** Stack of used registers */
   val used: Map[VariableScope, Register] = HashMap()

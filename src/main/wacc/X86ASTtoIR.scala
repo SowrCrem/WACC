@@ -70,13 +70,13 @@ object X86IRGenerator {
     instructions ++= intermediateRepresentation
     instructions ++= decrementStackInstr
 
-    instructions += Mov(Dest, Immediate32(0)) // Return 0 if no exit function
+    instructions += Mov(Ret, Immediate32(0)) // Return 0 if no exit function
     instructions ++= List(
       ReturnInstr()
     )
 
     if (exitFunc) {
-      instructions ++= exitLabelIR
+      instructions ++= exitFuncIR
     }
 
     instructions
@@ -122,7 +122,7 @@ object X86IRGenerator {
 
       StackMachine.offset(ident.value) match {
         case Some(offset) => {
-          instructions += Mov(FPOffset(offset), Dest)
+          instructions += Mov(FPOffset(offset), Ret)
         }
         case None => {
           throw new RuntimeException("Variable not found in stack")
@@ -137,7 +137,7 @@ object X86IRGenerator {
           val instructions = exprToIR(rhs)
           StackMachine.offset(ident) match {
             case Some(offset) => {
-              instructions += Mov(FPOffset(offset), Dest)
+              instructions += Mov(FPOffset(offset), Ret)
             }
             case None => {
               throw new RuntimeException("Variable not found in stack")
@@ -150,26 +150,32 @@ object X86IRGenerator {
     }
     case Exit(expr) => {
       exitFunc = true;
-      exprToIR(expr) ++ ListBuffer(Mov(Arg0, Dest), CallInstr("exit"))
+      exprToIR(expr) ++ ListBuffer(Mov(Arg0, Ret), CallLabel("exit"))
     }
     case Skip() => {
       ListBuffer()
     }
 
     // TODO: Implement
+    case Print(expr) => {   
+      ListBuffer()
+      // Can print s(trings), i(ntegers), c(haracters), b(ooleans), p(ointers)
+    }
+
+
+    case Println(expr) => {
+      // Just a Print(expr) with an added line break
+      ListBuffer()
+    }
+
+
     case Read(lhs) => {
       ListBuffer()
     }
     case Free(expr) => {
-      exprToIR(expr) ++ ListBuffer(Mov(Arg0, Dest), CallInstr("free"))
-    }
-    case Return(expr) => {
-      exprToIR(expr) ++ ListBuffer(Mov(Dest, FPOffset(0)), ReturnInstr())
-    }
-    case Print(expr) => {   
       ListBuffer()
     }
-    case Println(expr) => {
+    case Return(expr) => {
       ListBuffer()
     }
     case If(expr, thenStat, elseStat) => {
@@ -181,6 +187,15 @@ object X86IRGenerator {
     case BeginEnd(stat) => {
       ListBuffer()
     }
+
+    // TODO: Talk to Aaron
+    case Call(ident, exprList) => {
+      // Call only appears as RHS of an assignment or declaration, 
+      //  so identAsgn and AsgnEq should handle the function call and not this
+      throw new RuntimeException(
+        "Call should not appear as a statement (should be handled in IdentAsgn/AsgnEq)"
+        )
+    }
   }
 
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
@@ -189,27 +204,27 @@ object X86IRGenerator {
 
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is an integer literal, we can simply move the value to the variable
-      instructions += Mov(Dest, Immediate32(value))
+      instructions += Mov(Ret, Immediate32(value))
 
     }
     // Handle other types of expressions
     case BoolLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a boolean literal, we can simply move the value to the variable
-      instructions += Mov(Dest, Immediate32(if (value) 1 else 0))
+      instructions += Mov(Ret, Immediate32(if (value) 1 else 0))
 
     }
 
     case CharLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a character literal, we can simply move the value to the variable
-      instructions += Mov(Dest, Immediate32(value.toInt))
+      instructions += Mov(Ret, Immediate32(value.toInt))
     }
     case StringLiter(value) => {
       val label = addStringLiteral(value)
       ListBuffer(
         LoadEffectiveAddress(
-          Dest,
+          Ret,
           RegisterLabelAddress(IP, LabelAddress(label))
         )
       )
@@ -217,7 +232,7 @@ object X86IRGenerator {
     case Ident(ident) => {
       StackMachine.offset(ident) match {
         case Some(offset) => {
-          ListBuffer(Mov(Dest, FPOffset(offset)))
+          ListBuffer(Mov(Ret, FPOffset(offset)))
         }
         case None => {
           throw new RuntimeException("Variable not found in stack")
@@ -229,7 +244,7 @@ object X86IRGenerator {
 
   /** The intermediate representation for the exit function
     */
-  val exitLabelIR: List[Instruction] = List(
+  val exitFuncIR: List[Instruction] = List(
     Label("_exit"),
     PushRegisters(List(FP)),
     Mov(FP, SP),

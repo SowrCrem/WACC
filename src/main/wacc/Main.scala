@@ -82,6 +82,17 @@ object Main {
     100
   }
 
+  def saveGeneratedCode(prog: Program, fileName: String = "X86Code"): Unit = {
+    val content = X86CodeGenerator.generate(prog)
+    var filename = fileName + ".s"
+    if (!inRootDir) { filename = parentDirPath(filename) }
+    val file = new java.io.File(filename)
+    val path = file.getAbsolutePath()
+    val writer = new PrintWriter(new java.io.FileOutputStream(file, false))
+    writer.write(content)
+    writer.close()
+  }
+
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
@@ -108,23 +119,8 @@ object Main {
     }
   }
 
-  def saveGeneratedCode(prog: Program, fileName: String = "X86Code"): Unit = {
-    val content = X86CodeGenerator.generate(prog)
-    // Check if we're in the root of the project (we can see the src folder) if not, we need to go up one level
-    var filename = fileName + ".s"
-    if (!inRootDir) { filename = parentDirPath(filename) }
-    val file = new java.io.File(filename)
-    val path = file.getAbsolutePath()
-    // throw new Exception("Path to file: " + path)
-    val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
-    writer.write(content)
-    writer.close()
-  }
-
   def compile(args: Array[String]): Int = synchronized(args.headOption match {
     case Some(filepath) => {
-      // val fileContent = ("cat " + filename).!!
-      // set a new val name to filename spliced - remove the .wacc extension and only take the substring from the end until the last slash
       val fileName = getFilename(filepath)
       var fileContent = ""
       try {
@@ -132,7 +128,7 @@ object Main {
       } catch {
         case e: java.io.FileNotFoundException => {
           println("IO Error: File not found")
-          return -1
+          -1
         }
       }
       parser.parse(fileContent) match {

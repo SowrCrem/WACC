@@ -6,9 +6,10 @@ import java.io.PrintWriter
 
 object X86CodeGenerator {
 
-  def generate(program: Program): String = makeAssemblyIntel(X86IRGenerator.generateIR(program))
+  def generate(program: Program): String = toAssemblyIntel(X86IRGenerator.generateIR(program))
+    // generateIR should return instructions, but predefined assembly should be added here
 
-  def makeAssemblyIntel(instrs: Buffer[Instruction]): String = instrs.map(transInstr).flatten.mkString("\n")
+  def toAssemblyIntel(instrs: Buffer[Instruction]): String = instrs.map(transInstr).flatten.mkString("\n")
   
   def transInstr(instruction: Instruction) : List[String] = instruction match {
     case Mov(dest, operand) => List(s"  mov ${dest.toIntelString}, ${operand.toIntelString}")
@@ -24,8 +25,8 @@ object X86CodeGenerator {
     case PushRegisters(registers) => for (register <- registers) yield s"  push ${register.toIntelString}"
     case PopRegisters(registers) => for (register <- registers) yield s"  pop ${register.toIntelString}"
     case Directive(name) => List(s".$name")
-    case Label(name) => List(s"$name:")
-    case CallInstr(name) => List(s"  call _${name}")
+    case Label(name) => List(s"$name:") // Procedure label
+    case CallLabel(name) => List(s"  call ${name}")
     case CallPLT(name) => List(s"  call ${name}@plt")
     case ReturnInstr() => List(s"  ret\n")
     case DecrementStackPointerNB(value) => List(s"  sub rsp, ${8*value}")

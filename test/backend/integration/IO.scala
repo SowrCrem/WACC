@@ -18,5 +18,8 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
 
   }
 
-
+  // "WACC" should "run valid/IO/print/print.wacc" in {
+  //     println("Current directory: " + System.getProperty("user.dir"))
+  //     runSucceeds("../wacc/valid/IO/print/print.wacc", "Hello World!!", 0)
+  // }
 }

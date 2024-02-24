@@ -4,14 +4,23 @@ import scala.collection.mutable._
 
 object X86IRGenerator {
 
-  /** Flag to indicate whether the exit function is used in the program
-    */
+  // Flag to indicate whether any syscall functions are used in the program
   var exitFunc: Boolean = false
-
+  var printsFunc: Boolean = false
+  var printiFunc: Boolean = false
+  var printcFunc: Boolean = false
+  var printbFunc: Boolean = false
+  var printpFunc: Boolean = false
+  var printlnFunc: Boolean = false
+  
   val regTracker = new RegisterTracker
 
+  // Hashmap of string literal values to their corresponding labels
   val stringLiterals: Map[String, String] = Map()
-  var rodataDirectives: ListBuffer[Directive] = ListBuffer()
+  
+  var rodataDirectives: ListBuffer[Instruction] = ListBuffer(
+    Directive("section .rodata")
+  )
 
   /** Adds a string literal to the rodata section of the assembly code
     * @param literal
@@ -21,9 +30,13 @@ object X86IRGenerator {
     */
   def addStringLiteral(literal: String): String = {
     stringLiterals.getOrElseUpdate(
-      literal, {
-        val label = s"string${stringLiterals.size}"
-        rodataDirectives += Directive(s"$label: .asciz \"$literal\"")
+      literal, 
+      {
+        val label = s"str${stringLiterals.size}"
+        rodataDirectives += Directive(s"int ${literal.length}")
+        // rodataDirectives += Directive(s"$label: .asciz \"$literal\"")
+        rodataDirectives += Label(label)
+        rodataDirectives += Directive(s"asciz \"$literal\"")
         label
       }
     )
@@ -65,18 +78,18 @@ object X86IRGenerator {
     // instructions ++= decrementStackInstr
 
     instructions ++= initDirectives
-    instructions ++= Directive("section .rodata") +: rodataDirectives
+    instructions ++= rodataDirectives
     instructions ++= mainInitialisation
     instructions ++= intermediateRepresentation
     instructions ++= decrementStackInstr
 
-    instructions += Mov(Ret, Immediate32(0)) // Return 0 if no exit function
+    instructions += Mov(RAX, Imm(0)) // Return 0 if no exit function
     instructions ++= List(
       ReturnInstr()
     )
 
     if (exitFunc) {
-      instructions ++= exitFuncIR
+      instructions ++= _exitIR
     }
 
     instructions
@@ -122,7 +135,7 @@ object X86IRGenerator {
 
       StackMachine.offset(ident.value) match {
         case Some(offset) => {
-          instructions += Mov(FPOffset(offset), Ret)
+          instructions += Mov(FPOffset(offset), RAX)
         }
         case None => {
           throw new RuntimeException("Variable not found in stack")
@@ -137,7 +150,7 @@ object X86IRGenerator {
           val instructions = exprToIR(rhs)
           StackMachine.offset(ident) match {
             case Some(offset) => {
-              instructions += Mov(FPOffset(offset), Ret)
+              instructions += Mov(FPOffset(offset), RAX)
             }
             case None => {
               throw new RuntimeException("Variable not found in stack")
@@ -150,7 +163,7 @@ object X86IRGenerator {
     }
     case Exit(expr) => {
       exitFunc = true;
-      exprToIR(expr) ++ ListBuffer(Mov(Arg0, Ret), CallLabel("exit"))
+      exprToIR(expr) ++ ListBuffer(Mov(Arg0, RAX), CallLabel("exit"))
     }
     case Skip() => {
       ListBuffer()
@@ -160,6 +173,21 @@ object X86IRGenerator {
     case Print(expr) => {   
       ListBuffer()
       // Can print s(trings), i(ntegers), c(haracters), b(ooleans), p(ointers)
+      expr match {
+        case StringLiter(value) => {
+          val label = addStringLiteral(value)
+          ListBuffer(
+            LoadEffectiveAddress(
+              Arg0,
+              RegisterLabelAddress(IP, LabelAddress(label))
+            ),
+            CallPLT("printf")
+          )
+        }
+        case _ => {
+          exprToIR(expr) ++ ListBuffer(Mov(Arg0, RAX), CallPLT("printf"))
+        }
+      }
     }
 
 
@@ -204,27 +232,27 @@ object X86IRGenerator {
 
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is an integer literal, we can simply move the value to the variable
-      instructions += Mov(Ret, Immediate32(value))
+      instructions += Mov(RAX, Imm(value))
 
     }
     // Handle other types of expressions
     case BoolLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a boolean literal, we can simply move the value to the variable
-      instructions += Mov(Ret, Immediate32(if (value) 1 else 0))
+      instructions += Mov(RAX, Imm(if (value) 1 else 0))
 
     }
 
     case CharLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a character literal, we can simply move the value to the variable
-      instructions += Mov(Ret, Immediate32(value.toInt))
+      instructions += Mov(RAX, Imm(value.toInt))
     }
     case StringLiter(value) => {
       val label = addStringLiteral(value)
       ListBuffer(
         LoadEffectiveAddress(
-          Ret,
+          RAX,
           RegisterLabelAddress(IP, LabelAddress(label))
         )
       )
@@ -232,7 +260,7 @@ object X86IRGenerator {
     case Ident(ident) => {
       StackMachine.offset(ident) match {
         case Some(offset) => {
-          ListBuffer(Mov(Ret, FPOffset(offset)))
+          ListBuffer(Mov(RAX, FPOffset(offset)))
         }
         case None => {
           throw new RuntimeException("Variable not found in stack")
@@ -244,38 +272,65 @@ object X86IRGenerator {
 
   /** The intermediate representation for the exit function
     */
-  val exitFuncIR: List[Instruction] = List(
+  val _exitIR: List[Instruction] = List(
     Label("_exit"),
     PushRegisters(List(FP)),
     Mov(FP, SP),
-    AndInstr(SP, Immediate32(-16)),
+    AndInstr(SP, Imm(-16)),
     CallPLT("exit"),
     Mov(SP, FP),
     PopRegisters(List(FP)),
-    ReturnInstr() // Restore frame pointer and return
+    ReturnInstr() 
+
+    // _exit:
+    //   push rbp
+    //   mov rbp, rsp
+    //   and rsp, -16
+    //   call exit@plt
+    //   mov rsp, rbp
+    //   pop rbp
+    //   ret
   )
 
-  val printLabelIR: List[Instruction] = List(
+  val _printsIR: List[Instruction] = List(
     Directive("section .rodata"),
+    // .section .rodata
       Directive("int 4"),
+    //	.int 4
     Label(".L._prints_str0"),
+    // .L._prints_str0:
       Directive("asciz \"%.*s\""),
+    // 	.asciz "%.*s"
     Directive("text"),
+    // .text
     Label("_prints"),
+    // _prints:
     PushRegisters(List(FP)),
+    //  push rbp
     Mov(FP, SP),
-    AndInstr(SP, Immediate32(-16)),
+    //  mov rbp, rsp
+    AndInstr(SP, Imm(-16)),
+    //  and rsp, -16
     Mov(Arg2, G0),
+    //  mov rdx, rdi
+    Mov(ESI, PtrSizeOffset(DWord, Offset(Arg0, Imm(4)))),
     // mov esi, dword ptr [rdi - 4]
+    Lea(Arg0, MemAt(PosOffset(IP, LabelAddress(".L._prints_str0")))),
     // lea rdi, [rip + .L._prints_str0]
+    Mov(AL, Imm(0)),
     // mov al, 0
+    CallPLT("printf"),
     // call printf@plt
+    Mov(Arg0, Imm(0)),
     // mov rdi, 0
+    CallPLT("fflush"),
     // call fflush@plt
+    Mov(SP, FP),
     // mov rsp, rbp
+    PopRegisters(List(FP)),
     // pop rbp
+    ReturnInstr()
     // ret
-    
   )
 
 }

@@ -11,47 +11,6 @@ import scala.annotation.varargs
 */
 
 object Main {
-   val hardCodedPrintCase = ".intel_syntax noprefix\n" +
-    ".globl main\n" + 
-    ".section .rodata\n" + 
-    "# length of .L.str0\n" + 
-    "	.int 12\n" + 
-    ".L.str0:\n" + 
-    "	.asciz \"Hello World!\"\n" + 
-    ".text\n" + 
-    "main:\n" + 
-    "	push rbp\n" + 
-    "		push rbx\n" + 
-    "		mov rbp, rsp\n" + 
-    "		lea rax, [rip + .L.str0]\n" + 
-    "		push rax\n" + 
-    "		pop rax\n" + 
-    "		mov rax, rax\n" + 
-    "		mov rdi, rax\n" + 
-    "		call _prints\n" + 
-    "		mov rax, 0\n" + 
-    "		pop rbx\n" + 
-    "		pop rbp\n" + 
-    "		ret\n" + 
-    "	.section .rodata\n" + 
-    "		.int 4\n" + 
-    "	.L._prints_str0:\n" + 
-    "		.asciz \"%.*s\"\n" + 
-    "	.text\n" + 
-    "	_prints:\n" + 
-    "		push rbp\n" + 
-    "		mov rbp, rsp\n" + 
-    "		and rsp, -16\n" + 
-    "		mov rdx, rdi\n" + 
-    "		mov esi, dword ptr [rdi - 4]\n" + 
-    "		lea rdi, [rip + .L._prints_str0]\n" + 
-    "		mov al, 0\n" + 
-    "		call printf@plt\n" + 
-    "		mov rdi, 0\n" + 
-    "		call fflush@plt\n" + 
-    "		mov rsp, rbp\n" + 
-    "		pop rbp\n" + 
-    "		ret"
 
   val sep = java.io.File.separator
   var backendTests = false
@@ -96,20 +55,7 @@ object Main {
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
-        if (backendTests || inRootDir ) {
-          if (fileName == "print") {
-            var filename = fileName + ".s"
-            if (!inRootDir) { filename = parentDirPath(filename) }
-            val file = new java.io.File(filename)
-            val path = file.getAbsolutePath()
-            // throw new Exception("Path to file: " + path)
-            val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
-            writer.write(hardCodedPrintCase)
-            writer.close()
-          } else {
-            saveGeneratedCode(prog, fileName)
-          }
-         }
+        if (backendTests || inRootDir ) { saveGeneratedCode(prog, fileName) }
         0
       }
       case Left(msg) => {
@@ -128,7 +74,7 @@ object Main {
       } catch {
         case e: java.io.FileNotFoundException => {
           println("IO Error: File not found")
-          -1
+          sys.exit(-1)
         }
       }
       parser.parse(fileContent) match {

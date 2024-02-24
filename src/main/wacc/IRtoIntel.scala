@@ -12,18 +12,18 @@ object X86CodeGenerator {
   def toAssemblyIntel(instrs: Buffer[Instruction]): String = instrs.map(transInstr).flatten.mkString("\n")
   
   def transInstr(instruction: Instruction) : List[String] = instruction match {
-    case Mov(dest, operand) => List(s"  mov ${dest.toIntelString}, ${operand.toIntelString}")
-    case AddInstr(dest, src, operand) => List(s"  add ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
-    case SubInstr(dest, src, operand) => List(s"  sub ${dest.toIntelString}, ${src.toIntelString}")
-    case MulInstr(dest, src, operand) => List(s"  mul ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
-    case DivInstr(dest, src, operand) => List(s"  div ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
-    case AndInstr(dest, src) => List(s"  and ${dest.toIntelString}, ${src.toIntelString}")
-    case Eor(dest, src, operand) => List(s"  eor ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
-    case Orr(dest, src, operand) => List(s"  orr ${dest.toIntelString}, ${src.toIntelString}, ${operand.toIntelString}")
-    case Cmp(src, operand) => List(s"  cmp ${src.toIntelString}, ${operand.toIntelString}")
-    case Lea(dest, src) => List(s"  lea ${dest.toIntelString}, ${src.toIntelString}")
-    case PushRegisters(registers) => for (register <- registers) yield s"  push ${register.toIntelString}"
-    case PopRegisters(registers) => for (register <- registers) yield s"  pop ${register.toIntelString}"
+    case Mov(dest, operand) => List(s"  mov ${dest.toString}, ${operand.toString}")
+    case AddInstr(dest, src, operand) => List(s"  add ${dest.toString}, ${src.toString}, ${operand.toString}")
+    case SubInstr(dest, src, operand) => List(s"  sub ${dest.toString}, ${src.toString}")
+    case MulInstr(dest, src, operand) => List(s"  mul ${dest.toString}, ${src.toString}, ${operand.toString}")
+    case DivInstr(dest, src, operand) => List(s"  div ${dest.toString}, ${src.toString}, ${operand.toString}")
+    case AndInstr(dest, src) => List(s"  and ${dest.toString}, ${src.toString}")
+    case Eor(dest, src, operand) => List(s"  eor ${dest.toString}, ${src.toString}, ${operand.toString}")
+    case Orr(dest, src, operand) => List(s"  orr ${dest.toString}, ${src.toString}, ${operand.toString}")
+    case Cmp(src, operand) => List(s"  cmp ${src.toString}, ${operand.toString}")
+    case Lea(dest, src) => List(s"  lea ${dest.toString}, ${src.toString}")
+    case PushRegisters(registers) => for (register <- registers) yield s"  push ${register.toString}"
+    case PopRegisters(registers) => for (register <- registers) yield s"  pop ${register.toString}"
     case Directive(name) => List(s".$name")
     case Label(name) => List(s"$name:") // Procedure label
     case CallLabel(name) => List(s"  call ${name}")
@@ -35,7 +35,7 @@ object X86CodeGenerator {
     case IncrementStackPointer4B() => List(s"  add rsp, 4")
     case DecrementStackPointer8B() => List(s"  sub rsp, 8")
     case IncrementStackPointer8B() => List(s"  add rsp, 8")
-    case LoadEffectiveAddress(dest, src) => List(s"  lea ${dest.toIntelString}, ${src.toIntelString}")
+    case LoadEffectiveAddress(dest, src) => List(s"  lea ${dest.toString}, ${src.toString}")
     case x => throw new IllegalArgumentException("Invalid instruction type: " + x)
   }
 }

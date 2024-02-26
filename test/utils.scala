@@ -10,8 +10,7 @@ import org.scalatest.matchers.should.Matchers._
 
 object Utils {
 
-  val sep = java.io.File.separator
-  def constructPath(paths: List[String]): String = paths.mkString(sep)
+  def constructPath(paths: List[String]) = Main.constructPath(paths)
 
   abstract class SemanticUnitTester extends AnyFlatSpec with BeforeAndAfterEach {
     var symbolTable: SymbolTable = _
@@ -80,10 +79,11 @@ object Utils {
   })
 
   def assemble(path: String): String = {
-    val exeName = path.split(sep).last.split('.').head
-    val gccCommand = s"gcc -o .." + sep + s"$exeName -z noexecstack .." + sep + s"$exeName.s"
+    // Returns the name of the executable after assembling the .s file
+    val exeName = Main.getFilename(path)
+    val gccCommand = s"gcc -o " + Main.parentDirPath(exeName) + "-z noexecstack .." + Main.parentDirPath(exeName) + ".s"
     gccCommand.!
-    ".." + sep + exeName
+    Main.parentDirPath(exeName)
   }
 
   def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = synchronized{
@@ -108,18 +108,9 @@ object Utils {
   }
 
   private def exitsWithCode(path: String, code: Int): Assertion = synchronized({
-    // If current directory is not the root of the project, then add a ../ to the start of the path
-    var newPath = constructPath(List("test", "wacc", path))
-    if (!(new java.io.File(constructPath(List("src", "main", "wacc", "Main.scala")))).exists) {
-      newPath = constructPath(List("..", newPath))
-    }
+    var newPath = Main.adaptedPath(path)
     val exitCode = Main.compile(Array(newPath))
-    println("Exit Code: " + exitCode)
-    // if (exitCode != 200) {
-    //   val filePath = "test/integration/semantic/checkArrays.scala"
-    //   val sedCommand = s"""sed -i '0,/"semanticErr - array tests: arrayIndexComplexNotInt.wacc" should "return exit code 200" in {/s/"semanticErr - array tests: arrayIndexComplexNotInt.wacc" should "return exit code 200" in {/"semanticErr - array tests: arrayIndexComplexNotInt.wacc" should "return exit code 200" ignore {/' $filePath"""
-    //   sedCommand.!
-    // }
+    println("Compilation Exit Code: " + exitCode)
     exitCode shouldBe code
   })
 }

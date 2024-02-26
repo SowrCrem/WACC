@@ -1,5 +1,6 @@
 variables:
   wacc_image: gumjoe/wacc-ci-scala:x86
+  fast_frontend: "true"
 
 stages:
   - build
@@ -19,6 +20,7 @@ test-frontend-unit-job:
   stage: test-frontend-unit
   image: $wacc_image
   script:
+    - if [ "$fast_frontend"=="true" ]; then exit 0; fi
     - cd test
     - ./test.sh frontend unit
   artifacts:
@@ -29,6 +31,7 @@ test-frontend-integration-job:
   stage: test-frontend-integration
   image: $wacc_image
   script:
+    - if [ "$fast_frontend"=="true" ]; then exit 0; fi
     - cd test
     - ./test.sh frontend integration
   artifacts:

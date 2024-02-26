@@ -18,5 +18,8 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
 
   }
 
+  "WACC" should "run valid/IO/print/print.wacc" in {
+    runSucceeds("../wacc/valid/IO/print/print.wacc", "", 0)
+  }
 
 }

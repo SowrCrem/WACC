@@ -1,22 +1,60 @@
 package wacc
 
+import parsley.internal.machine.instructions.Instr
+
 sealed trait Instruction
 
-case class AddInstr(dest: Operand, src: Operand, operand: Operand) extends Instruction
-case class SubInstr(dest: Operand, src: Operand, operand: Operand) extends Instruction
-case class MulInstr(dest: Operand, src: Operand, operand: Operand) extends Instruction
-case class DivInstr(dest: Operand, src: Operand, operand: Operand) extends Instruction
+object InstrSize extends Enumeration {
 
-case class AndInstr(dest: Operand, src: Operand) extends Instruction
-case class Eor(dest: Operand, src: Operand, operand: Operand) extends Instruction
-case class Orr(dest: Operand, src: Operand, operand: Operand) extends Instruction
+  type InstrSize = Value
 
-case class Mov(dest: Operand, operand: Operand) extends Instruction
-case class Cmp(src: Operand, operand: Operand) extends Instruction
-case class Lea(dest: Operand, src: Operand) extends Instruction
+  val fullReg = Value(64)
+  val halfReg = Value(32)
+  val quarterReg = Value(16)
+  val eigthReg = Value(8)
+}
 
-case class PushRegisters(registers: List[Register]) extends Instruction
-case class PopRegisters(registers: List[Register]) extends Instruction
+import InstrSize._
+
+case class AddInstr(
+    dest: Operand,
+    src: Operand,
+    operand: Operand,
+    instrSize: InstrSize
+) extends Instruction
+case class SubInstr(
+    dest: Operand,
+    src: Operand,
+    operand: Operand,
+    instrSize: InstrSize
+) extends Instruction
+
+case class MulInstr(
+    dest: Operand,
+    src: Operand,
+    operand: Operand,
+    instrSize: InstrSize
+) extends Instruction
+case class DivInstr(
+    dest: Operand,
+    src: Operand,
+    operand: Operand,
+    instrSize: InstrSize
+) extends Instruction
+
+case class AndInstr(dest: Operand, src: Operand, instrSize: InstrSize)
+    extends Instruction
+case class Eor(dest: Operand, src: Operand, operand: Operand, instrSize: InstrSize)
+    extends Instruction
+case class Orr(dest: Operand, src: Operand, operand: Operand, instrSize: InstrSize)
+    extends Instruction
+
+case class Mov(dest: Operand, operand: Operand, size: InstrSize) extends Instruction
+case class Cmp(src: Operand, operand: Operand, size: InstrSize) extends Instruction
+case class Lea(dest: Operand, src: Operand, size: InstrSize) extends Instruction
+
+case class PushRegisters(registers: List[Register], size: InstrSize) extends Instruction
+case class PopRegisters(registers: List[Register], size: InstrSize) extends Instruction
 case class Directive(val name: String) extends Instruction
 case class Label(val name: String) extends Instruction
 case class CallInstr(val name: String) extends Instruction
@@ -29,80 +67,161 @@ case class IncrementStackPointerNB(val value: Int) extends Instruction
 case class DecrementStackPointer4B() extends Instruction
 case class DecrementStackPointer8B() extends Instruction
 case class DecrementStackPointerNB(val value: Int) extends Instruction
-case class LoadEffectiveAddress(val dest: Operand, val src: Operand) extends Instruction
+case class LoadEffectiveAddress(val dest: Operand, val src: Operand, size: InstrSize)
+    extends Instruction
 
 sealed trait Address
 case class StackAddress(val index: Int) extends Address {
-    // def toIntelString: String = s"qword [rbp - $offset]"
-    // TODO (Maybe store as index rather than offset)
+  // def toIntelString: String = s"qword [rbp - $offset]"
+  // TODO (Maybe store as index rather than offset)
 }
 
 sealed trait Operand {
-    def toIntelString: String
+  def toIntelString(size: InstrSize): String
 }
 
 sealed abstract trait Register extends Operand with Address {
-    def toIntelString: String
+  override def toIntelString(size: InstrSize): String
 }
 
 sealed trait SpecialRegister extends Register
 
+case object IP extends SpecialRegister {
+  def toIntelString(size: InstrSize): String = "rip"
+} // Instruction pointer
 
-case object IP extends SpecialRegister { def toIntelString: String = "rip" } // Instruction pointer
+case object FP extends SpecialRegister {
+  def toIntelString(size: InstrSize): String = "rbp"
+} // Frame pointer
+case object SP extends SpecialRegister {
+  def toIntelString(size: InstrSize): String = "rsp"
+} // Stack pointer
 
-case object FP extends SpecialRegister { def toIntelString: String = "rbp" } // Frame pointer
-case object SP extends SpecialRegister { def toIntelString: String = "rsp" } // Stack pointer
-case object Dest extends SpecialRegister { def toIntelString: String = "rax" } // Destination register
+// Destination register
+case object Dest extends SpecialRegister {
+  def toIntelString(size: InstrSize): String = { // rax
+    size match {
+      case InstrSize.fullReg    => "rax"
+      case InstrSize.halfReg    => "eax"
+      case InstrSize.quarterReg => "ax"
+      case InstrSize.eigthReg   => "al"
+    }
+  }
+
+}
 
 sealed trait GeneralRegister extends Register
-case object G0 extends GeneralRegister { def toIntelString: String = "rbx" }
-case object G1 extends GeneralRegister { def toIntelString: String = "r10" }
-case object G2 extends GeneralRegister { def toIntelString: String = "r11" }
-case object G3 extends GeneralRegister { def toIntelString: String = "r12" }
-case object G4 extends GeneralRegister { def toIntelString: String = "r13" }
-case object G5 extends GeneralRegister { def toIntelString: String = "r14" }
-case object G6 extends GeneralRegister { def toIntelString: String = "r15" }
+case object G0 extends GeneralRegister {
+  def toIntelString(size: InstrSize): String = { // rbx
+    size match {
+      case InstrSize.fullReg    => "rbx"
+      case InstrSize.halfReg    => "ebx"
+      case InstrSize.quarterReg => "bx"
+      case InstrSize.eigthReg   => "bl"
+    }
+  }
+}
+case object G1 extends GeneralRegister {
+  def toIntelString(size: InstrSize): String = "r10"
+}
+case object G2 extends GeneralRegister {
+  def toIntelString(size: InstrSize): String = "r11"
+}
+case object G3 extends GeneralRegister {
+  def toIntelString(size: InstrSize): String = "r12"
+}
+case object G4 extends GeneralRegister {
+  def toIntelString(size: InstrSize): String = "r13"
+}
+case object G5 extends GeneralRegister {
+  def toIntelString(size: InstrSize): String = "r14"
+}
+case object G6 extends GeneralRegister {
+  def toIntelString(size: InstrSize): String = "r15"
+}
 sealed trait ArgRegister extends Register
-case object Arg0 extends ArgRegister { def toIntelString: String = "rdi" }
-case object Arg1 extends ArgRegister { def toIntelString: String = "rsi" }
-case object Arg2 extends ArgRegister { def toIntelString: String = "rdx" }
-case object Arg3 extends ArgRegister { def toIntelString: String = "rcx" }
-case object Arg4 extends ArgRegister { def toIntelString: String = "r8" }
-case object Arg5 extends ArgRegister { def toIntelString: String = "r9" }
+case object Arg0 extends ArgRegister {
+  def toIntelString(size: InstrSize): String = { //rdi
+    size match {
+      case InstrSize.fullReg    => "rdi"
+      case InstrSize.halfReg    => "edi"
+      case InstrSize.quarterReg => "di"
+      case InstrSize.eigthReg   => "dil"
+    }
+  }
+}
+case object Arg1 extends ArgRegister {
+  def toIntelString(size: InstrSize): String = { //rsi
+    size match {
+      case InstrSize.fullReg    => "rsi"
+      case InstrSize.halfReg    => "esi"
+      case InstrSize.quarterReg => "si"
+      case InstrSize.eigthReg   => "sil"
+    }
+  }
+}
+case object Arg2 extends ArgRegister {
+  def toIntelString(size: InstrSize): String = { //rdx
+    size match {
+      case InstrSize.fullReg    => "rdx"
+      case InstrSize.halfReg    => "edx"
+      case InstrSize.quarterReg => "dx"
+      case InstrSize.eigthReg   => "dl"
+    }
+  }
+}
+case object Arg3 extends ArgRegister {
+  def toIntelString(size: InstrSize): String = { //rcx
+    size match {
+      case InstrSize.fullReg    => "rcx"
+      case InstrSize.halfReg    => "ecx"
+      case InstrSize.quarterReg => "cx"
+      case InstrSize.eigthReg   => "cl"
+    }
+  }
+}
+case object Arg4 extends ArgRegister {
+  def toIntelString(size: InstrSize): String = "r8"
+}
+case object Arg5 extends ArgRegister {
+  def toIntelString(size: InstrSize): String = "r9"
+}
 
 case class FPOffset(val offset: Int) extends Operand {
-    def toIntelString: String = s"qword ptr [rbp - $offset]"
+  def toIntelString(size: InstrSize): String = s"qword ptr [rbp - $offset]"
 }
 
 case class LabelAddress(val label: String) extends Operand {
-    def toIntelString: String = label
+  def toIntelString(size: InstrSize): String = label
 }
 
-case class RegisterLabelAddress(val register: Register, val label: LabelAddress) extends Operand {
-    def toIntelString: String = s"[${register.toIntelString} + .${label.toIntelString}]"
+case class RegisterLabelAddress(val register: Register, val label: LabelAddress)
+    extends Operand {
+  def toIntelString(size: InstrSize): String =
+    s"[${register.toIntelString(size)} + .${label.toIntelString(size)}]"
 }
 
 case class Immediate32(val value: Int) extends Operand {
-    def verify: Boolean = value >= Int.MinValue && value <= Int.MaxValue
-    def toIntelString: String = {
-        if (this.verify)
-            value.toString
-        else
-            throw new IllegalArgumentException("Immediate value out of range")
-    }
+  def verify: Boolean = value >= Int.MinValue && value <= Int.MaxValue
+  def toIntelString(size: InstrSize): String = {
+    if (this.verify)
+      value.toString
+    else
+      throw new IllegalArgumentException("Immediate value out of range")
+  }
 }
 case object EMPTY extends Operand {
-    def toIntelString: String = ""
+  def toIntelString(size: InstrSize): String = ""
 }
 
 case class OffsetReg(reg: Register, offset: Int) extends Operand with Register {
-    def toIntelString: String = s"${reg.toIntelString} + $offset"
+  def toIntelString(size: InstrSize): String = s"${reg.toIntelString(size)} + $offset"
 }
 
 case class Reg64(reg: Register) extends Operand {
-    def toIntelString: String = s"qword ptr [${reg.toIntelString}]"
+  def toIntelString(size: InstrSize): String = s"qword ptr [${reg.toIntelString(size)}]"
 }
 
 case class Reg32(reg: Register) extends Operand {
-    def toIntelString: String = s"dword ptr [${reg.toIntelString}]"
+  def toIntelString(size: InstrSize): String = s"dword ptr [${reg.toIntelString(size)}]"
 }

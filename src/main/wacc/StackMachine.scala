@@ -94,8 +94,8 @@ object StackMachine {
     }
 
     // List of instructions to push the frame pointer onto the stack and set it to the stack pointer
-    ListBuffer(PushRegisters(List(FP))) ++ decrementStackInstr ++ ListBuffer(
-      Mov(FP, SP)
+    ListBuffer(PushRegisters(List(FP),  InstrSize.fullReg)) ++ decrementStackInstr ++ ListBuffer(
+      Mov(FP, SP,  InstrSize.fullReg)
     )
 
   }
@@ -121,7 +121,7 @@ object StackMachine {
     // Remove the last frame from the stack
     frames = frames.dropRight(1)
 
-    incrementStackInstr ++ ListBuffer(PopRegisters(List(FP)))
+    incrementStackInstr ++ ListBuffer(PopRegisters(List(FP),  InstrSize.fullReg))
   }
 
   def printStack(): Unit = {

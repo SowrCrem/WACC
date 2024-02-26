@@ -4,9 +4,9 @@ import scala.collection.mutable._
 
 object X86IRGenerator {
 
-  /** Flag to indicate whether the exit function is used in the program
+  /** The library function generator
     */
-  var exitFunc: Boolean = false
+  val lib: LibFunGenerator = new LibFunGenerator()
 
   val regTracker = new RegisterTracker
 
@@ -23,6 +23,7 @@ object X86IRGenerator {
     stringLiterals.getOrElseUpdate(
       literal, {
         val label = s"string${stringLiterals.size}"
+        rodataDirectives += Directive(s"int ${literal.length()}")
         rodataDirectives += Directive(s"$label: .asciz \"$literal\"")
         label
       }
@@ -47,8 +48,8 @@ object X86IRGenerator {
     val mainInitialisation = ListBuffer(
       Directive("text"),
       Label("main"),
-      PushRegisters(List(FP)),
-      Mov(FP, SP)
+      PushRegisters(List(FP), InstrSize.fullReg),
+      Mov(FP, SP, InstrSize.fullReg)
     )
 
     // instructions ++= mainInitialisation
@@ -70,14 +71,12 @@ object X86IRGenerator {
     instructions ++= intermediateRepresentation
     instructions ++= decrementStackInstr
 
-    instructions += Mov(Dest, Immediate32(0)) // Return 0 if no exit function
+    instructions += Mov(Dest, Immediate32(0), InstrSize.fullReg) // Return 0 if no exit function
     instructions ++= List(
       ReturnInstr()
     )
 
-    if (exitFunc) {
-      instructions ++= exitIR
-    }
+    instructions ++= lib.addLibFuns()
 
     instructions
   }
@@ -124,7 +123,7 @@ object X86IRGenerator {
 
       StackMachine.offset(ident.value) match {
         case Some(offset) => {
-          instructions += Mov(FPOffset(offset), Dest)
+          instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
         }
         case None => {
           throw new RuntimeException("Variable not found in stack")
@@ -139,7 +138,7 @@ object X86IRGenerator {
           val instructions = exprToIR(rhs)
           StackMachine.offset(ident) match {
             case Some(offset) => {
-              instructions += Mov(FPOffset(offset), Dest)
+              instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
             }
             case None => {
               throw new RuntimeException("Variable not found in stack")
@@ -150,13 +149,48 @@ object X86IRGenerator {
         // need to have cases for pairs and array elements later
       }
     }
+    case Print(expr) => {
+      printToIR(expr)
+    }
     case Exit(expr) => {
-      exitFunc = true;
-      exprToIR(expr) ++ ListBuffer(Mov(Arg0, Dest), CallInstr("exit"))
+      lib.setExitFlag(true)
+      exprToIR(expr) ++ ListBuffer(Mov(Arg0, Dest, InstrSize.fullReg), CallInstr("exit"))
     }
     case Skip() => {
       ListBuffer()
     }
+  }
+
+  def printToIR(expr: Expr): Buffer[Instruction] = {
+    val func = expr match {
+      case ArrayElem(i, elist) => {
+        elist.head match {
+          case CharLiter(value) => {
+            CallInstr("print_string")
+          }
+          case _ => {
+            CallInstr("print_reference")
+          }
+        }
+      }
+      case StringLiter(pos) => {
+        CallInstr("print_string")
+      }
+      case BoolLiter(pos) => {
+        CallInstr("print_bool")
+      }
+      case CharLiter(pos) => {
+        CallInstr("print_char")
+      }
+      case IntLiter(pos) => {
+        CallInstr("print_int")
+      }
+      case _ => {
+        CallInstr("print_reference")
+      }
+    }
+
+    exprToIR(expr) += func
   }
 
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
@@ -165,35 +199,35 @@ object X86IRGenerator {
 
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is an integer literal, we can simply move the value to the variable
-      instructions += Mov(Dest, Immediate32(value))
+      instructions += Mov(Dest, Immediate32(value), InstrSize.fullReg)
 
     }
     // Handle other types of expressions
     case BoolLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a boolean literal, we can simply move the value to the variable
-      instructions += Mov(Dest, Immediate32(if (value) 1 else 0))
+      instructions += Mov(Dest, Immediate32(if (value) 1 else 0), InstrSize.fullReg)
 
     }
-
     case CharLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a character literal, we can simply move the value to the variable
-      instructions += Mov(Dest, Immediate32(value.toInt))
+      instructions += Mov(Dest, Immediate32(value.toInt),  InstrSize.fullReg)
     }
     case StringLiter(value) => {
       val label = addStringLiteral(value)
       ListBuffer(
         LoadEffectiveAddress(
           Dest,
-          RegisterLabelAddress(IP, LabelAddress(label))
+          RegisterLabelAddress(IP, LabelAddress(label)),
+          InstrSize.fullReg
         )
       )
     }
     case Ident(ident) => {
       StackMachine.offset(ident) match {
         case Some(offset) => {
-          ListBuffer(Mov(Dest, FPOffset(offset)))
+          ListBuffer(Mov(Dest, FPOffset(offset), InstrSize.fullReg))
         }
         case None => {
           throw new RuntimeException("Variable not found in stack")
@@ -202,19 +236,6 @@ object X86IRGenerator {
     }
 
   }
-
-  /** The intermediate representation for the exit function
-    */
-  val exitIR: List[Instruction] = List(
-    Label("_exit"),
-    PushRegisters(List(FP)),
-    Mov(FP, SP),
-    AndInstr(SP, Immediate32(-16)),
-    CallPLT("exit"),
-    Mov(SP, FP),
-    PopRegisters(List(FP)),
-    ReturnInstr() // Restore frame pointer and return
-  )
 
 }
 

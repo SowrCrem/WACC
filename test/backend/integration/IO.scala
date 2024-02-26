@@ -18,5 +18,15 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
 
   }
 
+  "WACC" should "run valid/basic/exit/exit-1.wacc" in {
+    val path = constructPath(List("valid", "basic", "exit", "exit-1.wacc"))
+    runSucceeds(path, "", 255)
+  }
+
+  it should "run valid/basic/exit/exitBasic.wacc" in {
+    val path = constructPath(List("valid", "basic", "exit", "exitBasic.wacc"))
+    runSucceeds(path, "", 7)
+  }
+
 
 }

@@ -214,14 +214,22 @@ case object EMPTY extends Operand {
   def toIntelString(size: InstrSize): String = ""
 }
 
-case class OffsetReg(reg: Register, offset: Int) extends Operand with Register {
-  def toIntelString(size: InstrSize): String = s"${reg.toIntelString(size)} + $offset"
+case class OffsetRegLabel(reg: Register, label: LabelAddress) extends Operand with Register {
+  def toIntelString(size: InstrSize): String = s"[${reg.toIntelString(size)} + .${label.toIntelString(size)}]"
+}
+
+case class OffsetRegPos(reg: Register, offset: Int) extends Operand with Register {
+  def toIntelString(size: InstrSize): String = s"[${reg.toIntelString(size)} + $offset]"
+}
+
+case class OffsetRegNeg(reg: Register, offset: Int) extends Operand with Register {
+  def toIntelString(size: InstrSize): String = s"${reg.toIntelString(size)} - $offset"
 }
 
 case class Reg64(reg: Register) extends Operand {
   def toIntelString(size: InstrSize): String = s"qword ptr [${reg.toIntelString(size)}]"
 }
 
-case class Reg32(reg: Register) extends Operand {
-  def toIntelString(size: InstrSize): String = s"dword ptr [${reg.toIntelString(size)}]"
+case class Reg32(reg: Register, offset: Int) extends Operand {
+  def toIntelString(size: InstrSize): String = s"dword ptr [${reg.toIntelString(InstrSize.fullReg)} + $offset]"
 }

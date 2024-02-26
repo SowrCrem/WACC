@@ -71,7 +71,11 @@ object X86IRGenerator {
     instructions ++= intermediateRepresentation
     instructions ++= decrementStackInstr
 
-    instructions += Mov(Dest, Immediate32(0), InstrSize.fullReg) // Return 0 if no exit function
+    instructions += Mov(
+      Dest,
+      Immediate32(0),
+      InstrSize.fullReg
+    ) // Return 0 if no exit function
     instructions ++= List(
       ReturnInstr()
     )
@@ -150,11 +154,16 @@ object X86IRGenerator {
       }
     }
     case Print(expr) => {
+      lib.setprintStringFlag(true)
+
       printToIR(expr)
     }
     case Exit(expr) => {
       lib.setExitFlag(true)
-      exprToIR(expr) ++ ListBuffer(Mov(Arg0, Dest, InstrSize.fullReg), CallInstr("exit"))
+      exprToIR(expr) ++ ListBuffer(
+        Mov(Arg0, Dest, InstrSize.fullReg),
+        CallInstr("exit")
+      )
     }
     case Skip() => {
       ListBuffer()
@@ -190,7 +199,12 @@ object X86IRGenerator {
       }
     }
 
-    exprToIR(expr) += func
+     exprToIR(expr) ++= ListBuffer(
+        PushRegisters(List(Dest), InstrSize.fullReg),
+        PopRegisters(List(Dest), InstrSize.fullReg),
+        Mov(Dest, Dest, InstrSize.fullReg),
+        Mov(Arg0, Dest, InstrSize.fullReg),
+      ) ++= ListBuffer(func)
   }
 
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
@@ -206,13 +220,17 @@ object X86IRGenerator {
     case BoolLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a boolean literal, we can simply move the value to the variable
-      instructions += Mov(Dest, Immediate32(if (value) 1 else 0), InstrSize.fullReg)
+      instructions += Mov(
+        Dest,
+        Immediate32(if (value) 1 else 0),
+        InstrSize.fullReg
+      )
 
     }
     case CharLiter(value) => {
       val instructions = ListBuffer[Instruction]().empty
       // If the expression is a character literal, we can simply move the value to the variable
-      instructions += Mov(Dest, Immediate32(value.toInt),  InstrSize.fullReg)
+      instructions += Mov(Dest, Immediate32(value.toInt), InstrSize.fullReg)
     }
     case StringLiter(value) => {
       val label = addStringLiteral(value)

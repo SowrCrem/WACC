@@ -5,6 +5,9 @@ import parsley.internal.machine.instructions.Instr
 
 class LibFunGenerator {
 
+
+  private var dataCounter = 0
+
   private var exitFlag : Boolean = false
   private var printStringFlag : Boolean = false
   private var printIntFlag : Boolean = false
@@ -14,7 +17,7 @@ class LibFunGenerator {
 
 
 
-  /**
+  /**printStringIR
     * Adds the library functions to the IR based
     *  on flags set in the compiler
     * @return
@@ -25,7 +28,9 @@ class LibFunGenerator {
       libFuns ++= exitIR
     }
     if (printStringFlag) {
-      libFuns ++= printStringIR
+      var rodata = printDataIR("%.*s") 
+      val x = rodata ++ printStringIR
+      libFuns ++= x
     }
 
     libFuns
@@ -63,13 +68,34 @@ class LibFunGenerator {
     */
 
   val printStringIR: List[Instruction] = List(
-    Directive("section ,rodata"),
-
     Label("_print_string"),
     PushRegisters(List(FP), InstrSize.fullReg),
     Mov(FP, SP, InstrSize.fullReg),
     AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
-    Mov(G0, Arg0, InstrSize.fullReg),
-
+    Mov(Arg2, Arg0, InstrSize.fullReg),
+    Mov(Arg1, Reg32(Arg0, -4), InstrSize.halfReg),
+    LoadEffectiveAddress(Arg0, OffsetRegLabel(IP, LabelAddress(s"_prints_string${dataCounter}")), InstrSize.fullReg),
+    Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+    CallPLT("printf"),
+    Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+    CallPLT("fflush"),
+    Mov(SP, FP,  InstrSize.fullReg),
+    PopRegisters(List(FP),  InstrSize.fullReg),
+    ReturnInstr() // Restore frame pointer and return
   )
+
+
+
+
+  def printDataIR(data: String): List[Instruction] = {
+    val label = s"_prints_string${dataCounter}"
+    val dataIR = List(
+      Directive("section .rodata"),
+      Directive(s"int ${data.length()}"),
+      Directive(s"$label: .asciz \"$data\""),
+      Directive("text")
+    )
+    dataCounter += 1
+    dataIR
+  }
 }

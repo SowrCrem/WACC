@@ -2,11 +2,12 @@ package wacc
 
 import scala.collection.mutable._
 import parsley.internal.machine.instructions.Instr
+import parsley.internal.deepembedding.singletons.Offset
 
 class LibFunGenerator {
 
 
-  private var dataCounter = 0
+  private var dataCounter = -1
 
   private var exitFlag : Boolean = false
   private var printStringFlag : Boolean = false
@@ -14,6 +15,7 @@ class LibFunGenerator {
   private var printBoolFlag : Boolean = false
   private var printCharFlag : Boolean = false
   private var printReferenceFlag : Boolean = false
+  private var printLnFlag : Boolean = false
 
 
 
@@ -29,7 +31,17 @@ class LibFunGenerator {
     }
     if (printStringFlag) {
       var rodata = printDataIR("%.*s") 
-      val x = rodata ++ printStringIR
+      val x = rodata ++ printStringIR()
+      libFuns ++= x
+    }
+    if (printIntFlag) {
+      var rodata = printIntDataIR("%d")
+      val x = rodata ++ printIntIr()
+      libFuns ++= x
+    }
+    if (printLnFlag) {
+      var rodata = printlnDataIR("")
+      val x = rodata ++ printLnIR()
       libFuns ++= x
     }
 
@@ -46,7 +58,7 @@ class LibFunGenerator {
 
   /** The intermediate representation for the exit function
     */
-  val exitIR: List[Instruction] = List(
+  def exitIR: List[Instruction] = List(
     Label("_exit"),
     PushRegisters(List(FP), InstrSize.fullReg),
     Mov(FP, SP, InstrSize.fullReg),
@@ -62,12 +74,11 @@ class LibFunGenerator {
   def setprintStringFlag(flag: Boolean): Unit = {
     printStringFlag = flag
   }
-
   /**
     * The intermediate representation for the print string function
     */
 
-  val printStringIR: List[Instruction] = List(
+  def printStringIR(): List[Instruction] = List(
     Label("_print_string"),
     PushRegisters(List(FP), InstrSize.fullReg),
     Mov(FP, SP, InstrSize.fullReg),
@@ -85,17 +96,78 @@ class LibFunGenerator {
   )
 
 
+  def setPrintLnFlag(flag: Boolean): Unit = {
+    printLnFlag = flag
+  }
+
+  def printLnIR() : List[Instruction] = List(
+    Label("_print_ln"),
+    PushRegisters(List(FP), InstrSize.fullReg),
+    Mov(FP, SP, InstrSize.fullReg),
+    AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+    LoadEffectiveAddress(Arg0, OffsetRegLabel(IP, LabelAddress(s"_println_string${dataCounter}")), InstrSize.fullReg),
+    CallPLT("puts"),
+    Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+    CallPLT("fflush"),
+    Mov(SP, FP,  InstrSize.fullReg),
+    PopRegisters(List(FP),  InstrSize.fullReg),
+    ReturnInstr()
+  )
+
+  def setPrintIntFlag(flag: Boolean): Unit = {
+    printIntFlag = flag
+  }
+
+  def printIntIr() : List[Instruction] = List(
+    Label("_print_int"),
+    PushRegisters(List(FP), InstrSize.fullReg),
+    Mov(FP, SP, InstrSize.fullReg),
+    AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+    Mov(Arg1, Arg0, InstrSize.fullReg),
+    LoadEffectiveAddress(Arg0, OffsetRegLabel(IP, LabelAddress(s"_printi_string${dataCounter}")), InstrSize.fullReg),
+    Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+    CallPLT("printf"),
+    Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+    CallPLT("fflush"),
+    Mov(SP, FP,  InstrSize.fullReg),
+    PopRegisters(List(FP),  InstrSize.fullReg),
+    ReturnInstr()
+  )
 
 
-  def printDataIR(data: String): List[Instruction] = {
-    val label = s"_prints_string${dataCounter}"
+
+
+  def createDataIR(data: String, labelPrefix: String): List[Instruction] = {
+    dataCounter += 1
+    val label = s"${labelPrefix}_string${dataCounter}"
     val dataIR = List(
       Directive("section .rodata"),
       Directive(s"int ${data.length()}"),
       Directive(s"$label: .asciz \"$data\""),
       Directive("text")
     )
-    dataCounter += 1
     dataIR
   }
+
+  def printDataIR(data: String): List[Instruction] = {
+    createDataIR(data, "_prints")
+  }
+
+  def printlnDataIR(data: String): List[Instruction] = {
+    createDataIR(data, "_println")
+  }
+
+  def printIntDataIR(data: String): List[Instruction] = {
+    createDataIR(data, "_printi")
+  }
+
+  
+  //for testing purposes
+  def reset() : Unit = {
+    dataCounter = -1
+    exitFlag = false
+    printStringFlag = false
+    printLnFlag = false
+  }
+
 }

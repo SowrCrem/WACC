@@ -154,9 +154,12 @@ object X86IRGenerator {
       }
     }
     case Print(expr) => {
-      lib.setprintStringFlag(true)
 
-      printToIR(expr)
+      printToIR(expr, false)
+    }
+    case Println(expr) => {
+      lib.setPrintLnFlag(true)
+      printToIR(expr, true)
     }
     case Exit(expr) => {
       lib.setExitFlag(true)
@@ -170,7 +173,7 @@ object X86IRGenerator {
     }
   }
 
-  def printToIR(expr: Expr): Buffer[Instruction] = {
+  def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
     val func = expr match {
       case ArrayElem(i, elist) => {
         elist.head match {
@@ -183,6 +186,7 @@ object X86IRGenerator {
         }
       }
       case StringLiter(pos) => {
+        lib.setprintStringFlag(true)
         CallInstr("print_string")
       }
       case BoolLiter(pos) => {
@@ -192,6 +196,7 @@ object X86IRGenerator {
         CallInstr("print_char")
       }
       case IntLiter(pos) => {
+        lib.setPrintIntFlag(true)
         CallInstr("print_int")
       }
       case _ => {
@@ -199,12 +204,21 @@ object X86IRGenerator {
       }
     }
 
+    
+
      exprToIR(expr) ++= ListBuffer(
         PushRegisters(List(Dest), InstrSize.fullReg),
         PopRegisters(List(Dest), InstrSize.fullReg),
         Mov(Dest, Dest, InstrSize.fullReg),
         Mov(Arg0, Dest, InstrSize.fullReg),
-      ) ++= ListBuffer(func)
+      ) ++= {
+        if (!println) {
+          ListBuffer(func)
+        } else {
+
+          ListBuffer(func, CallInstr("print_ln"))
+        }
+      }
   }
 
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
@@ -254,6 +268,14 @@ object X86IRGenerator {
     }
 
   }
+
+  // for testing 
+  def reset(): Unit = {
+    stringLiterals.clear()
+    rodataDirectives.clear()
+    lib.reset()
+  }
+
 
 }
 

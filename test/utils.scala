@@ -81,9 +81,14 @@ object Utils {
 
   def assemble(path: String): String = {
     val exeName = path.split(sep).last.split('.').head
-    val gccCommand = s"gcc -o .." + sep + s"$exeName -z noexecstack .." + sep + s"$exeName.s"
+    var exePath = s"$exeName.s"
+    if (!Main.ROOT_DIR) { exePath = Main.parentDirPath(exePath) }
+    var assembledPath = exeName
+    if (!Main.ROOT_DIR) { assembledPath = Main.parentDirPath(assembledPath) }
+    val gccCommand = s"gcc -o " + s"$assembledPath -z noexecstack " + s"$exePath"
     gccCommand.!
-    ".." + sep + exeName
+    "pwd".!
+    assembledPath
   }
 
   def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = synchronized{

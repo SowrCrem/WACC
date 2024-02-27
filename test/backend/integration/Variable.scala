@@ -15,7 +15,6 @@ class Variable extends AnyFlatSpec with BeforeAndAfterEach {
 
   override protected def afterEach(): Unit = {
     semanticChecker.reset()
-
   }
 
   "WACC" should "run valid/basic/sequence/basicSeq.wacc" in {

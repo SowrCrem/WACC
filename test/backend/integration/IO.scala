@@ -16,13 +16,11 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
   override protected def afterEach(): Unit = {
     semanticChecker.reset()
     X86IRGenerator.reset()
-
   }
 
   it should "run valid/IO/print/print.wacc" in {
     val path = constructPath(List("valid", "IO", "print", "print.wacc"))
     runSucceeds(path, "Hello World!", 0)
-
   }
 
 
@@ -54,7 +52,6 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
   it should "run valid/IO/print/printCharAsString.wacc" ignore {
     val path = constructPath(List("valid", "IO", "print", "printCharAsString.wacc"))
     runSucceeds(path, "a", 0)
-
   }
 
 

@@ -28,5 +28,22 @@ class Expression extends AnyFlatSpec with BeforeAndAfterEach {
         runSucceeds(path, "Hello World!", 0)
     }
 
+    it should "run valid/expressions/boolCalc.wacc" in {
+        val path = constructPath(List("valid", "expressions", "boolCalc.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
+
+    it should "run valid/expressions/equalsExpr.wacc" in {
+        val path = constructPath(List("valid", "expressions", "equalsExpr.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
+
+    it should "run valid/expressions/andOverOrExpr.wacc" in {
+        val path = constructPath(List("valid", "expressions", "andOverOrExpr.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
+
+
+
 }
   

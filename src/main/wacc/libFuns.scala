@@ -11,6 +11,7 @@ class LibFunGenerator {
   private var dataCounter = -1
 
   // -------------------- Flags for the library functions ---------------------------------------
+
   private var exitFlag: Boolean = false
   private var printStringFlag: Boolean = false
   private var printIntFlag: Boolean = false
@@ -172,7 +173,7 @@ class LibFunGenerator {
     */
   def printBoolIr(): List[Instruction] = List(
     Cmp(Arg0, Immediate32(0), InstrSize.eigthReg),
-    JumpNotEqual("print_true"),
+    JumpIfCond("print_true", InstrCond.notEqual),
     LoadEffectiveAddress(
       Arg2,
       OffsetRegLabel(IP, LabelAddress(s"_printb_false")),

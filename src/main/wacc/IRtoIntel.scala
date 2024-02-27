@@ -15,13 +15,13 @@ object X86CodeGenerator {
   def transInstr(instruction: Instruction) : List[String] = instruction match {
     case Mov(dest, operand, instrSize) => List(s"  mov ${dest.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
     case MovWithSignExtend(dest, operand, size1, size2) => List(s"  movsx ${dest.toIntelString(size1)}, ${operand.toIntelString(size2)}")
-    case AddInstr(dest, src, operand, instrSize) => List(s"  add ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
-    case SubInstr(dest, src, operand, instrSize) => List(s"  sub ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
-    case MulInstr(dest, src, operand, instrSize) => List(s"  mul ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
-    case DivInstr(dest, src, operand, instrSize) => List(s"  div ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
+    case AddInstr(dest, src, instrSize) => List(s"  add ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case SubInstr(dest, src, instrSize) => List(s"  sub ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case MulInstr(dest, src, instrSize) => List(s"  mul ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case DivInstr(dest, src, instrSize) => List(s"  div ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case AndInstr(dest, src, instrSize) => List(s"  and ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
-    case Eor(dest, src, operand, instrSize) => List(s"  eor ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
-    case Orr(dest, src, operand, instrSize) => List(s"  orr ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
+    case Eor(dest, src, operand, instrSize) => List(s"  eor ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case Orr(dest, src, operand, instrSize) => List(s"  orr ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case Cmp(src, operand, instrSize) => List(s"  cmp ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
     case Lea(dest, src, instrSize) => List(s"  lea ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case PushRegisters(registers, instrSize) => for (register <- registers) yield s"  push ${register.toIntelString(instrSize)}"
@@ -38,10 +38,9 @@ object X86CodeGenerator {
     case DecrementStackPointer8B() => List(s"  sub rsp, 8")
     case IncrementStackPointer8B() => List(s"  add rsp, 8")
     case LoadEffectiveAddress(dest, src, instrSize) => List(s"  lea ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
-    case JumpNotEqual(label) => List(s"  jne $label")
-    case JumpEqual(label) => List(s"  je $label")
+    case JumpIfCond(label, cond) => List(s"  j${cond} $label")
     case Jump(label) => List(s"  jmp $label")
-    case SetByteIfEqual(dest, size) => List(s"  sete ${dest.toIntelString(size)}")
+    case SetByteIfCond(dest, cond, size) => List(s"  set${cond} ${dest.toIntelString(size)}")
     case x => throw new IllegalArgumentException("Invalid instruction type: " + x)
   }
 }

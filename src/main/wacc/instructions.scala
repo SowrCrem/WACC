@@ -14,31 +14,39 @@ object InstrSize extends Enumeration {
   val eigthReg = Value(8)
 }
 
+object InstrCond extends Enumeration {
+  type InstrCond = Value
+  val equal = Value("e")
+  val notEqual = Value("ne")
+  val lessThan = Value("l")
+  val lessThanEqual = Value("le")
+  val greaterThan = Value("g")
+  val greaterThanEqual = Value("ge")
+}
+
+
+import InstrCond._
 import InstrSize._
 
 case class AddInstr(
     dest: Operand,
     src: Operand,
-    operand: Operand,
     instrSize: InstrSize
 ) extends Instruction
 case class SubInstr(
     dest: Operand,
     src: Operand,
-    operand: Operand,
     instrSize: InstrSize
 ) extends Instruction
 
 case class MulInstr(
     dest: Operand,
     src: Operand,
-    operand: Operand,
     instrSize: InstrSize
 ) extends Instruction
 case class DivInstr(
     dest: Operand,
     src: Operand,
-    operand: Operand,
     instrSize: InstrSize
 ) extends Instruction
 
@@ -63,13 +71,11 @@ case class CallInstr(val name: String) extends Instruction
 case class CallPLT(val name: String) extends Instruction
 case class ReturnInstr() extends Instruction
 
-case class JumpNotEqual(val label: String) extends Instruction
-case class JumpEqual(val label: String) extends Instruction
-case class JumpLessThan(val label: String) extends Instruction
-case class JumpGreaterThan(val label: String) extends Instruction
 case class Jump(val label: String) extends Instruction
 
-case class SetByteIfEqual(val dest: Operand, size: InstrSize) extends Instruction
+case class JumpIfCond(val label: String, cond: InstrCond) extends Instruction
+
+case class SetByteIfCond(val dest: Operand, cond: InstrCond, size: InstrSize) extends Instruction
 
 case class IncrementStackPointer4B() extends Instruction
 case class IncrementStackPointer8B() extends Instruction
@@ -132,22 +138,52 @@ case object G0 extends GeneralRegister {
   }
 }
 case object G1 extends GeneralRegister {
-  def toIntelString(size: InstrSize): String = "r10"
+  def toIntelString(size: InstrSize): String = size match {
+    case InstrSize.fullReg    => "r10"
+    case InstrSize.halfReg    => "r10d"
+    case InstrSize.quarterReg => "r10w"
+    case InstrSize.eigthReg   => "r10b"
+  }
 }
 case object G2 extends GeneralRegister {
-  def toIntelString(size: InstrSize): String = "r11"
+  def toIntelString(size: InstrSize): String = size match {
+    case InstrSize.fullReg    => "r11"
+    case InstrSize.halfReg    => "r11d"
+    case InstrSize.quarterReg => "r11w"
+    case InstrSize.eigthReg   => "r11b"
+  }
 }
 case object G3 extends GeneralRegister {
-  def toIntelString(size: InstrSize): String = "r12"
+  def toIntelString(size: InstrSize): String = size match {
+    case InstrSize.fullReg    => "r12"
+    case InstrSize.halfReg    => "r12d"
+    case InstrSize.quarterReg => "r12w"
+    case InstrSize.eigthReg   => "r12b"
+  }
 }
 case object G4 extends GeneralRegister {
-  def toIntelString(size: InstrSize): String = "r13"
+  def toIntelString(size: InstrSize): String = size match {
+    case InstrSize.fullReg    => "r13"
+    case InstrSize.halfReg    => "r13d"
+    case InstrSize.quarterReg => "r13w"
+    case InstrSize.eigthReg   => "r13b"
+  }
 }
 case object G5 extends GeneralRegister {
-  def toIntelString(size: InstrSize): String = "r14"
+  def toIntelString(size: InstrSize): String = size match {
+    case InstrSize.fullReg    => "r14"
+    case InstrSize.halfReg    => "r14d"
+    case InstrSize.quarterReg => "r14w"
+    case InstrSize.eigthReg   => "r14b"
+  }
 }
 case object G6 extends GeneralRegister {
-  def toIntelString(size: InstrSize): String = "r15"
+  def toIntelString(size: InstrSize): String = size match {
+    case InstrSize.fullReg    => "r15"
+    case InstrSize.halfReg    => "r15d"
+    case InstrSize.quarterReg => "r15w"
+    case InstrSize.eigthReg   => "r15b"
+  }
 }
 sealed trait ArgRegister extends Register
 case object Arg0 extends ArgRegister {

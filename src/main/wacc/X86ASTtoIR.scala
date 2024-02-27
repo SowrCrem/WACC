@@ -1,6 +1,7 @@
 package wacc
 
 import scala.collection.mutable._
+import InstrCond._
 
 object X86IRGenerator {
 
@@ -13,7 +14,7 @@ object X86IRGenerator {
   val stringLiterals: Map[String, String] = Map()
   var rodataDirectives: ListBuffer[Directive] = ListBuffer()
 
-  var labelCounter : Int = 0
+  var labelCounter: Int = 0
 
   /** Adds a string literal to the rodata section of the assembly code
     * @param literal
@@ -200,27 +201,28 @@ object X86IRGenerator {
       }
 
     }
-     exprToIR(expr) ++= ListBuffer(
-        PushRegisters(List(Dest), InstrSize.fullReg),
-        PopRegisters(List(Dest), InstrSize.fullReg),
-        Mov(Dest, Dest, InstrSize.fullReg),
-        Mov(Arg0, Dest, InstrSize.fullReg),
-      ) ++= {
-        if (!println) {
-          ListBuffer(func)
-        } else {
+    exprToIR(expr) ++= ListBuffer(
+      PushRegisters(List(Dest), InstrSize.fullReg),
+      PopRegisters(List(Dest), InstrSize.fullReg),
+      Mov(Dest, Dest, InstrSize.fullReg),
+      Mov(Arg0, Dest, InstrSize.fullReg)
+    ) ++= {
+      if (!println) {
+        ListBuffer(func)
+      } else {
 
-          ListBuffer(func, CallInstr("print_ln"))
-        }
+        ListBuffer(func, CallInstr("print_ln"))
       }
+    }
   }
-
-
 
   // --------------- Expression IR Generation -------------------------------------//
 
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
 
+    case Brackets(expr) => {
+      exprToIR(expr)
+    }
     case IntLiter(value) => {
 
       val instructions = ListBuffer[Instruction]().empty
@@ -266,47 +268,82 @@ object X86IRGenerator {
     }
     case And(expr1, expr2) => {
       // evaluate each expression before performing the and operation
-      val expr1IR = exprToIR(expr1)
-      val expr2IR = exprToIR(expr2)
-      val setup = expr1IR ++ ListBuffer(
-        Mov(G1, Dest, InstrSize.fullReg)
-      ) ++ expr2IR ++ ListBuffer(Mov(G2, Dest, InstrSize.fullReg))
+      val setup = binOpSetup(expr1, expr2)
       labelCounter += 1
       setup ++= ListBuffer(
         Cmp(G1, Immediate32(1), InstrSize.fullReg),
-        JumpNotEqual(s"and_false${labelCounter}"),
+        JumpIfCond(s"and_false${labelCounter}", InstrCond.notEqual),
         Cmp(G2, Immediate32(1), InstrSize.fullReg),
         Label(s"and_false${labelCounter}"),
-        SetByteIfEqual(Dest, InstrSize.eigthReg),
+        SetByteIfCond(Dest, InstrCond.equal, InstrSize.eigthReg),
         MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
       )
     }
     case Or(expr1, expr2) => {
-      val expr1IR = exprToIR(expr1)
-      val expr2IR = exprToIR(expr2)
-      val setup = expr1IR ++ ListBuffer(Mov(G1, Dest, InstrSize.fullReg)) ++ expr2IR ++ ListBuffer(
-        Mov(G2, Dest, InstrSize.fullReg))
+      val setup = binOpSetup(expr1, expr2)
       labelCounter += 1
       setup ++= ListBuffer(
         Cmp(G1, Immediate32(1), InstrSize.fullReg),
-        JumpEqual(s"or_true${labelCounter}"),
+        JumpIfCond(s"or_true${labelCounter}", InstrCond.equal),
         Cmp(G2, Immediate32(1), InstrSize.fullReg),
         Label(s"or_true${labelCounter}"),
-        SetByteIfEqual(Dest, InstrSize.eigthReg),
+        SetByteIfCond(Dest, InstrCond.equal, InstrSize.eigthReg),
         MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
       )
     }
+    case Equals(expr1, expr2) => {
+      compBinOp(expr1, expr2, InstrCond.equal)
+    }
+    case GreaterThan(expr1, expr2) => {
+      compBinOp(expr1, expr2, InstrCond.greaterThan)
+    }
+    case LessThan(expr1, expr2) => {
+      compBinOp(expr1, expr2, InstrCond.lessThan)
+    }
+    case NotEquals(expr1, expr2) => {
+      compBinOp(expr1, expr2, InstrCond.notEqual)
+    }
+    case GreaterThanEq(expr1, expr2) => {
+      compBinOp(expr1, expr2, InstrCond.greaterThanEqual)
+    }
+    case LessThanEq(expr1, expr2) => {
+      compBinOp(expr1, expr2, InstrCond.lessThanEqual)
+    }
+    case Plus(expr1, expr2) => {
+      val setup = binOpSetup(expr1, expr2)
+      setup ++= ListBuffer(
+        Mov(Dest, G1, InstrSize.halfReg),
+        AddInstr(Dest, G2, InstrSize.halfReg),
 
+
+      )
+    }
   }
 
-  // for testing 
+  def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
+    val expr1IR = exprToIR(expr1)
+    val expr2IR = exprToIR(expr2)
+    expr1IR ++ ListBuffer(
+      Mov(G1, Dest, InstrSize.fullReg)
+    ) ++ expr2IR ++ ListBuffer(Mov(G2, Dest, InstrSize.fullReg))
+  }
+
+  def compBinOp(expr1: Expr, expr2: Expr, comparison : InstrCond) = {
+    val setup = binOpSetup(expr1, expr2)
+    setup ++= ListBuffer(
+      Cmp(G1, G2, InstrSize.fullReg),
+      SetByteIfCond(Dest, comparison, InstrSize.eigthReg),
+      MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
+    )
+  }
+
+  // for testing
   def reset(): Unit = {
     stringLiterals.clear()
     rodataDirectives.clear()
     lib.reset()
     labelCounter = 0
   }
-
 
 }
 

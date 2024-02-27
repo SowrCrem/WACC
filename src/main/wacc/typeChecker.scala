@@ -75,6 +75,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                 errors += new AlreadyDefinedError(position, param.ident.value)
               case None =>
                 param.typeNode.isParam = true;
+                param.ident.typeNode = param.typeNode
                 newSymbolTable.add(param.ident.value, param.typeNode)
             }
           })
@@ -102,12 +103,15 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         case Some(t) =>
           t match {
             case Func(_, _, _, _) =>
+              ident.typeNode = typeNode
               symbolTable.add(ident.value, typeNode)
             case x if x != typeNode =>
+              ident.typeNode = typeNode
               symbolTable.add(ident.value, typeNode)
             case _  => errors += new AlreadyDefinedError(position, ident.value)
           }
         case None => {
+          ident.typeNode = typeNode
           symbolTable.add(ident.value, typeNode)
         }
       }
@@ -116,6 +120,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       exprType match {
         // See if the type of the expression matches the type of the variable
         case Some(t) if t == typeNode => {
+          ident.typeNode = symbol
           symbolTable.add(ident.value, symbol)
           None
         }
@@ -147,6 +152,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                 case _      => false
               }
               if (xCompat && yCompat) {
+                ident.typeNode = symbol
                 symbolTable.add(ident.value, symbol)
                 None
               } else {
@@ -163,6 +169,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
               ArrayTypeNode(CharTypeNode()(position.pos))(position.pos)
             ))
           ) {
+            ident.typeNode = symbol
             symbolTable.add(ident.value, symbol)
             None
           } else {
@@ -172,6 +179,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
               errors += new TypeMismatchError(position, 
                 typeNode.toString(), exprType.getOrElse("none").toString())
             } else {
+              ident.typeNode = symbol
               symbolTable.add(ident.value, symbol)
               None
             }
@@ -572,12 +580,15 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     case CharLiter(_)   => Some(CharTypeNode()(position.pos))
     case BoolLiter(_)   => Some(BoolTypeNode()(position.pos))
     case StringLiter(_) => Some(StringTypeNode()(position.pos))
-    case Ident(value) =>
+    case i@Ident(value) =>
       symbolTable.lookupAll(value, Some(symbolTable)) match {
         case Some(t) =>
           t match {
             case (Func(typeNode, _, _, _)) => Some(typeNode)
-            case _                         => Some(t.asInstanceOf[TypeNode])
+            case _                         => {
+              i.typeNode = t.asInstanceOf[TypeNode]
+              Some(t.asInstanceOf[TypeNode])
+            }
           }
         case None =>
           // Identifier not found

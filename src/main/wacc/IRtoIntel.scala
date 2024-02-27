@@ -14,6 +14,7 @@ object X86CodeGenerator {
   
   def transInstr(instruction: Instruction) : List[String] = instruction match {
     case Mov(dest, operand, instrSize) => List(s"  mov ${dest.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
+    case MovWithSignExtend(dest, operand, size1, size2) => List(s"  movsx ${dest.toIntelString(size1)}, ${operand.toIntelString(size2)}")
     case AddInstr(dest, src, operand, instrSize) => List(s"  add ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
     case SubInstr(dest, src, operand, instrSize) => List(s"  sub ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case MulInstr(dest, src, operand, instrSize) => List(s"  mul ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
@@ -40,6 +41,7 @@ object X86CodeGenerator {
     case JumpNotEqual(label) => List(s"  jne $label")
     case JumpEqual(label) => List(s"  je $label")
     case Jump(label) => List(s"  jmp $label")
+    case SetByteIfEqual(dest, size) => List(s"  sete ${dest.toIntelString(size)}")
     case x => throw new IllegalArgumentException("Invalid instruction type: " + x)
   }
 }

@@ -91,7 +91,7 @@ object Utils {
     try {
       throwsNoError(path)
     } catch {
-      case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + e.getMessage)
+      case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + expReturn + " " + e.getMessage)
     }
     val exeName = assemble(path)
     val exeReturn = s"./$exeName".!

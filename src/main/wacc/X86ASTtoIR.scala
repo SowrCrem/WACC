@@ -13,6 +13,8 @@ object X86IRGenerator {
   val stringLiterals: Map[String, String] = Map()
   var rodataDirectives: ListBuffer[Directive] = ListBuffer()
 
+  var labelCounter : Int = 0
+
   /** Adds a string literal to the rodata section of the assembly code
     * @param literal
     *   \- The string literal to be added
@@ -108,10 +110,12 @@ object X86IRGenerator {
 
   }
 
+  // ------- Statement IR Generation -----------------------------------------------//
+
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
     case IdentAsgn(typeNode, ident, expr) => {
       // Dynamically determine the size of the variable from the typeNode
-      val varSize = typeNode.size
+      val varSize = typeNode.size / 8
 
       // // Step 1: Allocate space on the stack based on the variable size
       val instructions =
@@ -174,39 +178,29 @@ object X86IRGenerator {
   }
 
   def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
-    val func = expr match {
-      case ArrayElem(i, elist) => {
-        elist.head match {
-          case CharLiter(value) => {
-            CallInstr("print_string")
-          }
-          case _ => {
-            CallInstr("print_reference")
-          }
-        }
-      }
-      case StringLiter(pos) => {
-        lib.setprintStringFlag(true)
+    val func = expr.typeNode match {
+      case StringTypeNode() => {
+        lib.setPrintStringFlag(true)
         CallInstr("print_string")
       }
-      case BoolLiter(pos) => {
+      case BoolTypeNode() => {
         lib.setPrintBoolFlag(true)
         CallInstr("print_bool")
       }
-      case CharLiter(pos) => {
+      case CharTypeNode() => {
+        lib.setPrintCharFlag(true)
         CallInstr("print_char")
       }
-      case IntLiter(pos) => {
+      case IntTypeNode() => {
         lib.setPrintIntFlag(true)
         CallInstr("print_int")
       }
       case _ => {
+        printf("Type printing: :" + expr.typeNode.toString())
         CallInstr("print_reference")
       }
+
     }
-
-    
-
      exprToIR(expr) ++= ListBuffer(
         PushRegisters(List(Dest), InstrSize.fullReg),
         PopRegisters(List(Dest), InstrSize.fullReg),
@@ -221,6 +215,10 @@ object X86IRGenerator {
         }
       }
   }
+
+
+
+  // --------------- Expression IR Generation -------------------------------------//
 
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
 
@@ -267,6 +265,22 @@ object X86IRGenerator {
         }
       }
     }
+    case And(expr1, expr2) => {
+      val expr1IR = exprToIR(expr1)
+      val expr2IR = exprToIR(expr2)
+      val setup = expr1IR ++ ListBuffer(
+        Mov(G1, Dest, InstrSize.fullReg)
+      ) ++ expr2IR ++ ListBuffer(Mov(G2, Dest, InstrSize.fullReg))
+      labelCounter += 1
+      setup ++= ListBuffer(
+        Cmp(G1, Immediate32(1), InstrSize.fullReg),
+        JumpNotEqual(s"and_false${labelCounter}"),
+        Cmp(G2, Immediate32(1), InstrSize.fullReg),
+        Label(s"and_false${labelCounter}"),
+        SetByteIfEqual(Dest, InstrSize.eigthReg),
+        MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
+      )
+    }
 
   }
 
@@ -275,6 +289,7 @@ object X86IRGenerator {
     stringLiterals.clear()
     rodataDirectives.clear()
     lib.reset()
+    labelCounter = 0
   }
 
 

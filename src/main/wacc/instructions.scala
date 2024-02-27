@@ -50,6 +50,8 @@ case class Orr(dest: Operand, src: Operand, operand: Operand, instrSize: InstrSi
     extends Instruction
 
 case class Mov(dest: Operand, operand: Operand, size: InstrSize) extends Instruction
+case class MovWithSignExtend(dest: Operand, operand: Operand, size1: InstrSize, size2: InstrSize)
+    extends Instruction
 case class Cmp(src: Operand, operand: Operand, size: InstrSize) extends Instruction
 case class Lea(dest: Operand, src: Operand, size: InstrSize) extends Instruction
 
@@ -67,6 +69,7 @@ case class JumpLessThan(val label: String) extends Instruction
 case class JumpGreaterThan(val label: String) extends Instruction
 case class Jump(val label: String) extends Instruction
 
+case class SetByteIfEqual(val dest: Operand, size: InstrSize) extends Instruction
 
 case class IncrementStackPointer4B() extends Instruction
 case class IncrementStackPointer8B() extends Instruction

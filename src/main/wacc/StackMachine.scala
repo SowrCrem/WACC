@@ -106,7 +106,7 @@ object StackMachine {
     // List of instructions to increment the stack pointer by the size of the local variables in the stack frame
     val incrementStackInstr = new ListBuffer[Instruction]().empty
 
-    var size = frames.last.localVarSize
+    var size = frames.last.localVarSize/8
 
     // Increment the stack pointer by the size of the local variables in the stack frame
     // while (size > 1024) {

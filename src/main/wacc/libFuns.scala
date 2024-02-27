@@ -10,7 +10,6 @@ class LibFunGenerator {
     */
   private var dataCounter = -1
 
-
   // -------------------- Flags for the library functions ---------------------------------------
   private var exitFlag: Boolean = false
   private var printStringFlag: Boolean = false
@@ -20,8 +19,6 @@ class LibFunGenerator {
   private var printReferenceFlag: Boolean = false
   private var printLnFlag: Boolean = false
 
-
-
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
     */
@@ -30,22 +27,29 @@ class LibFunGenerator {
     if (exitFlag) {
       libFuns ++= exitIR
     }
-    libFuns ++= addPrintFunc(printStringFlag, printDataIR("%.*s"), "printString")
+    libFuns ++= addPrintFunc(
+      printStringFlag,
+      printDataIR("%.*s"),
+      "printString"
+    )
     libFuns ++= addPrintFunc(printIntFlag, printIntDataIR("%d"), "printInt")
     libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
     libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")
+    libFuns ++= addPrintFunc(printCharFlag, printCharDataIR(), "printChar")
+
     libFuns
   }
 
-
-
-  /**
-    * Adds the print function to the IR based on the flag set in the compiler
-    * 
-    * @param flag determines whether to add the print function to the IR
-    * @param dataGenerator the generator for the data section of the print function
-    * @param printLabel the label for the print function
-    * @return the IR for the print function
+  /** Adds the print function to the IR based on the flag set in the compiler
+    *
+    * @param flag
+    *   determines whether to add the print function to the IR
+    * @param dataGenerator
+    *   the generator for the data section of the print function
+    * @param printLabel
+    *   the label for the print function
+    * @return
+    *   the IR for the print function
     */
   private def addPrintFunc(
       flag: Boolean,
@@ -101,13 +105,14 @@ class LibFunGenerator {
       case "printInt"    => commonPrologue("_print_int") ++ printIntIr()
       case "printBool"   => commonPrologue("_print_bool") ++ printBoolIr()
       case "printLn"     => commonPrologue("_print_ln") ++ printLnIR()
+      case "printChar"   => commonPrologue("_print_char") ++ printCharIR()
     }
 
     printCase ++ commonEpilogue()
 
   }
 
-  def setprintStringFlag(flag: Boolean): Unit = {
+  def setPrintStringFlag(flag: Boolean): Unit = {
     printStringFlag = flag
   }
 
@@ -197,6 +202,25 @@ class LibFunGenerator {
     CallPLT("fflush")
   )
 
+  def setPrintCharFlag(flag: Boolean): Unit = {
+    printCharFlag = flag
+  }
+
+  def printCharIR(): List[Instruction] = {
+    List(
+      Mov(Arg1, Arg0, InstrSize.eigthReg),
+      LoadEffectiveAddress(
+        Arg0,
+        OffsetRegLabel(IP, LabelAddress(s"_printc_string${dataCounter}")),
+        InstrSize.fullReg
+      ),
+      Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+      CallPLT("printf"),
+      Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+      CallPLT("fflush")
+    )
+  }
+
   /** The intermediate representation creator for the data section of library
     * functions
     * @param data
@@ -256,6 +280,10 @@ class LibFunGenerator {
       List("false", "true", "%.*s"),
       List("_printb_false", "_printb_true", "_printb_string0")
     )
+  }
+
+  def printCharDataIR(): List[Instruction] = {
+    createDataIR("%c", "_printc")
   }
 
   /** Resets the flags and data counter

@@ -173,22 +173,17 @@ object X86IRGenerator {
         CallInstr("exit")
       )
     }
-    case If(expr, trueCase, falseCase) => {
-      val label = labelCounter
-      labelCounter += 1
-      val instructions = exprToIR(expr)
-      val trueCaseInstructions = for (s <- trueCase) yield statToIR(s)
-      val falseCaseInstructions = for (s <- falseCase) yield statToIR(s)
- 
-      instructions ++= ListBuffer(
-        Cmp(Dest, Immediate32(0), InstrSize.fullReg),
-        JumpIfCond(s"else${label}", InstrCond.equal)
-      ) ++= trueCaseInstructions.flatten ++= ListBuffer(
-        Jump(s"end${label}"),
-        Label(s"else${label}")
-      ) ++= falseCaseInstructions.flatten ++= ListBuffer(
-        Label(s"end${label}")
-      )
+    case ifNode@If(expr, trueCase, falseCase) => {
+      val cond = exprToIR(expr)
+      val thenCase = {
+         val table = ifNode.symbolTableTrue
+         val trueStats = for (s <- trueCase) yield statToIR(s)
+         if (table.dictionary.size > 0) {
+           StackMachine.addFrame(table, None) ++ trueStats.flatten ++ StackMachine.popFrame()
+         }
+      }
+
+      ListBuffer()
     }
     case Skip() => {
       ListBuffer()

@@ -52,8 +52,6 @@ object X86IRGenerator {
     val mainInitialisation = ListBuffer(
       Directive("text"),
       Label("main"),
-      PushRegisters(List(FP), InstrSize.fullReg),
-      Mov(FP, SP, InstrSize.fullReg)
     )
 
     // instructions ++= mainInitialisation
@@ -72,6 +70,7 @@ object X86IRGenerator {
     instructions ++= initDirectives
     instructions ++= Directive("section .rodata") +: rodataDirectives
     instructions ++= mainInitialisation
+    instructions ++= addMainFrame
     instructions ++= intermediateRepresentation
     instructions ++= decrementStackInstr
 
@@ -120,8 +119,10 @@ object X86IRGenerator {
       val varSize = typeNode.size / 8
 
       // // Step 1: Allocate space on the stack based on the variable size
-      val instructions =
-        ListBuffer[Instruction](DecrementStackPointerNB(varSize))
+      val instructions = ListBuffer[Instruction]().empty
+
+      // val instructions =
+      //   ListBuffer[Instruction](DecrementStackPointerNB(varSize))
 
       // Step 2: Initialize the variable with the given expression
       instructions ++= exprToIR(expr)
@@ -180,10 +181,29 @@ object X86IRGenerator {
          val trueStats = for (s <- trueCase) yield statToIR(s)
          if (table.dictionary.size > 0) {
            StackMachine.addFrame(table, None) ++ trueStats.flatten ++ StackMachine.popFrame()
+         } else {
+            trueStats.flatten
          }
       }
-
-      ListBuffer()
+      val elseCase = {
+        val table = ifNode.symbolTableFalse
+        val falseStats = for (s <- falseCase) yield statToIR(s)
+        if (table.dictionary.size > 0) {
+          StackMachine.addFrame(table, None) ++ falseStats.flatten ++ StackMachine.popFrame()
+        } else {
+          falseStats.flatten
+        }
+      }
+      labelCounter += 1
+      cond ++ ListBuffer(
+        Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+        JumpIfCond(s"else${labelCounter}", InstrCond.equal)
+      ) ++ thenCase ++ ListBuffer(
+        Jump(s"end${labelCounter}"),
+        Label(s"else${labelCounter}")
+      ) ++ elseCase ++ ListBuffer(
+        Label(s"end${labelCounter}")
+      )
     }
     case Skip() => {
       ListBuffer()

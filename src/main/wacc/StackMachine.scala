@@ -72,9 +72,8 @@ object StackMachine {
       size -= 1024
     }
 
-    if (size > 0) {
-      decrementStackInstr += DecrementStackPointerNB(size)
-    }
+    decrementStackInstr += DecrementStackPointerNB(size)
+    
 
     // List of instructions to push the frame pointer onto the stack and set it to the stack pointer
     ListBuffer(PushRegisters(List(FP),  InstrSize.fullReg)) ++ decrementStackInstr ++ ListBuffer(
@@ -91,12 +90,10 @@ object StackMachine {
 
     var size = frames.last.localVarSize/8
 
-    // Increment the stack pointer by the size of the local variables in the stack frame
-    // while (size > 1024) {
-    //   incrementStackInstr += IncrementStackPointerNB(1024)
-    //   size -= 1024
-    // }
+    printf("popping frame with size: %d\n", size)
 
+    frames.last.printFrame()
+  
     if (size > 0) {
       incrementStackInstr += IncrementStackPointerNB(size)
     }

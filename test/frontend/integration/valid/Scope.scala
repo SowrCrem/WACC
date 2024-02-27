@@ -32,10 +32,6 @@ class Scope extends AnyFlatSpec {
     throwsNoError("valid/scope/printAllTypes.wacc")
   }
 
-  "valid - scope tests: scope.wacc" should "return exit code 0" in {
-    throwsNoError("valid/scope/scope.wacc")
-  }
-
   "valid - scope tests: scopeBasic.wacc" should "return exit code 0" in {
     throwsNoError("valid/scope/scopeBasic.wacc")
   }
@@ -54,6 +50,10 @@ class Scope extends AnyFlatSpec {
 
   "valid - scope tests: scopeVars.wacc" should "return exit code 0" in {
     throwsNoError("valid/scope/scopeVars.wacc")
+  }
+
+  "valid - scope tests: scope.wacc" should "return exit code 0" in {
+    throwsNoError("valid/scope/scope.wacc")
   }
 
   "valid - scope tests: scopeWhileNested.wacc" should "return exit code 0" in {

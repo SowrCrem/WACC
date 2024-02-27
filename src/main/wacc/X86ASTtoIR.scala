@@ -173,6 +173,23 @@ object X86IRGenerator {
         CallInstr("exit")
       )
     }
+    case If(expr, trueCase, falseCase) => {
+      val label = labelCounter
+      labelCounter += 1
+      val instructions = exprToIR(expr)
+      val trueCaseInstructions = for (s <- trueCase) yield statToIR(s)
+      val falseCaseInstructions = for (s <- falseCase) yield statToIR(s)
+ 
+      instructions ++= ListBuffer(
+        Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+        JumpIfCond(s"else${label}", InstrCond.equal)
+      ) ++= trueCaseInstructions.flatten ++= ListBuffer(
+        Jump(s"end${label}"),
+        Label(s"else${label}")
+      ) ++= falseCaseInstructions.flatten ++= ListBuffer(
+        Label(s"end${label}")
+      )
+    }
     case Skip() => {
       ListBuffer()
     }
@@ -322,6 +339,9 @@ object X86IRGenerator {
     case Div(expr1, expr2) => {
       intBinOp(expr1, expr2, ArithmOperations.div)
     }
+    case Mod(expr1, expr2) => {
+      intBinOp(expr1, expr2, ArithmOperations.mod)
+    }
   }
 
   def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
@@ -379,7 +399,7 @@ object X86IRGenerator {
         generalOp(operation, s"_errOverflow", InstrCond.overflow)
       case ArithmOperations.mul =>
         generalOp(operation, s"_errOverflow", InstrCond.overflow)
-      case ArithmOperations.div => {
+      case ArithmOperations.div | ArithmOperations.mod => {
         lib.setDivideByZeroFlag(true)
         setup ++= ListBuffer(
           Cmp(
@@ -389,7 +409,17 @@ object X86IRGenerator {
           ), // Check for divide by zero
           JumpIfCond(s"_errDivByZero", InstrCond.equal),
           ConvertDoubleWordToQuadWord(),
-          DivInstr(Dest, G2, InstrSize.fullReg),
+          DivInstr(Dest, G2, InstrSize.halfReg)
+        )
+
+        if (operation == ArithmOperations.mod) {
+          setup ++= ListBuffer(
+            Mov(Dest, Arg2, InstrSize.halfReg),
+            Mov(Dest, Dest, InstrSize.halfReg)
+          )
+        }
+
+        setup ++= ListBuffer(
           MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
         )
       }

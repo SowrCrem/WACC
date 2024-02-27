@@ -31,7 +31,8 @@ object ArithmOperations extends Enumeration {
   val sub = Value("SUB")
   val mul = Value("MUL")
   val div = Value("DIV")
-
+  val mod = Value("MOD")
+  
 }
 
 

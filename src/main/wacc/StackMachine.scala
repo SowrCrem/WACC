@@ -5,28 +5,11 @@ import scala.collection.mutable.ListBuffer
 import scala.annotation.tailrec
 import parsley.internal.machine.instructions.Pop
 
+
+/**
+  *  Special Grade Cursed Object
+  * */
 object StackMachine {
-
-  /** Stack simulated via stack object */
-  // val stackSim : Stack[VariableScope] = Stack()
-
-  // /** Index of the current stack frame */
-  // val frameIndex = 0
-
-  // /** size of stack */
-  // def stackSize: Int = stackSim.size
-
-  // val scratchRegisters = Stack(G0, G1, G2, G3)
-
-  // def pushToStack(variables : VariableScope, value : Int, size : Int): mutable.Buffer[Instruction] = {
-  //   /** @TODO */
-  //   val prefix = size match {
-  //     case 2 => ""
-  //     case 4 => "e"
-  //     case 8 => "r"
-  //   }
-  //   null
-  // }
 
   private var frames: List[StackFrame] = List().empty
 
@@ -79,7 +62,7 @@ object StackMachine {
     // List of instructions to decrement the stack pointer by the size of the local variables in the stack frame
     val decrementStackInstr = new ListBuffer[Instruction]().empty
 
-    var size = newFrame.localVarSize
+    var size = newFrame.localVarSize/8
 
     println("adding frame with size: " + size)
 
@@ -89,13 +72,12 @@ object StackMachine {
       size -= 1024
     }
 
-    if (size > 0) {
-      decrementStackInstr += DecrementStackPointerNB(size)
-    }
+    decrementStackInstr += DecrementStackPointerNB(size)
+    
 
     // List of instructions to push the frame pointer onto the stack and set it to the stack pointer
-    ListBuffer(PushRegisters(List(FP))) ++ decrementStackInstr ++ ListBuffer(
-      Mov(FP, SP)
+    ListBuffer(PushRegisters(List(FP),  InstrSize.fullReg)) ++ decrementStackInstr ++ ListBuffer(
+      Mov(FP, SP,  InstrSize.fullReg)
     )
 
   }
@@ -106,14 +88,12 @@ object StackMachine {
     // List of instructions to increment the stack pointer by the size of the local variables in the stack frame
     val incrementStackInstr = new ListBuffer[Instruction]().empty
 
-    var size = frames.last.localVarSize
+    var size = frames.last.localVarSize/8
 
-    // Increment the stack pointer by the size of the local variables in the stack frame
-    while (size > 1024) {
-      incrementStackInstr += IncrementStackPointerNB(1024)
-      size -= 1024
-    }
+    printf("popping frame with size: %d\n", size)
 
+    frames.last.printFrame()
+  
     if (size > 0) {
       incrementStackInstr += IncrementStackPointerNB(size)
     }
@@ -121,15 +101,17 @@ object StackMachine {
     // Remove the last frame from the stack
     frames = frames.dropRight(1)
 
-    incrementStackInstr ++ ListBuffer(PopRegisters(List(FP)))
+    incrementStackInstr ++ ListBuffer(PopRegisters(List(FP),  InstrSize.fullReg))
   }
 
   def printStack(): Unit = {
+    println("Printing stack --------------------")
     frames.reverse.foreach(frame => {
       println(">--------> Start Frame <--------<")
       frame.printFrame()
       println(">--------> End Frame <--------<")
     })
+    println("End of stack --------------------")
   }
 
 }

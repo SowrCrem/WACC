@@ -12,6 +12,7 @@ class LibFunGenerator {
 
   // -------------------- Flags for the library functions ---------------------------------------
 
+  // The flags indicate that their corresponding functions must be added to the assembly output if set to true
   private var exitFlag: Boolean = false
   private var printStringFlag: Boolean = false
   private var printIntFlag: Boolean = false
@@ -19,12 +20,18 @@ class LibFunGenerator {
   private var printCharFlag: Boolean = false
   private var printReferenceFlag: Boolean = false
   private var printLnFlag: Boolean = false
+  private var overflowFlag: Boolean = false
 
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
     */
   def addLibFuns(): ListBuffer[Instruction] = {
+
     val libFuns = new ListBuffer[Instruction]()
+    if (overflowFlag) {
+      val data = createDataErrOverflow()
+      libFuns ++= data ++ errOverflowIR()
+    }
     if (exitFlag) {
       libFuns ++= exitIR
     }
@@ -33,12 +40,56 @@ class LibFunGenerator {
     libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
     libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")
     libFuns ++= addPrintFunc(printCharFlag, printCharDataIR(), "printChar")
+ 
 
     libFuns
   }
 
-  /** Adds the print function to the IR based on the flag set in the compiler
+
+  def setOverflowFlag(flag: Boolean): Unit = {
+    overflowFlag = flag
+  }
+
+  def createDataErrOverflow(): List[Instruction] = {
+    createDataIRNoCounter("fatal error: integer overflow or underflow occurred\\n", "_overflow_string")
+  }
+
+  /**
+    * The intermediate representation for the overflow error function
     *
+    * @return
+    */
+  def errOverflowIR(): List[Instruction] = {
+    setPrintStringFlag(true)
+    List(
+      Label("_errOverflow"),
+      AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+      LoadEffectiveAddress(
+        Arg0,
+        OffsetRegLabel(IP, LabelAddress("_overflow_string")),
+        InstrSize.fullReg
+      ),
+      CallInstr("print_string"),
+      Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
+      CallPLT("exit")
+    )
+  }
+
+  /** Adds the print function to the IR based on the flag set in the compiler
+    *libFuns ++= List(
+        Label("p_throw_overflow_error"),
+        PushRegisters(List(FP), InstrSize.fullReg),
+        Mov(FP, SP, InstrSize.fullReg),
+        AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+        LoadEffectiveAddress(
+          Arg0,
+          OffsetRegLabel(IP, LabelAddress("_overflow_error")),
+          InstrSize.fullReg
+        ),
+        CallPLT("printf"),
+        Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+        CallPLT("exit")
+      )
     * @param flag
     *   determines whether to add the print function to the IR
     * @param dataGenerator
@@ -236,6 +287,18 @@ class LibFunGenerator {
     )
     dataIR
   }
+
+  def createDataIRNoCounter(data: String, labelPrefix: String): List[Instruction] = {
+    val label = s"${labelPrefix}"
+    val dataIR = List(
+      Directive("section .rodata"),
+      Directive(s"int ${data.length()}"),
+      Directive(s"$label: .asciz \"$data\""),
+      Directive("text")
+    )
+    dataIR
+  }
+ 
 
   /** The intermediate representation creator for the data section of library
     * functions taking a list of strings and a list of label prefixes which are

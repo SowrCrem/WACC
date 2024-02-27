@@ -311,11 +311,13 @@ object X86IRGenerator {
     }
     case Plus(expr1, expr2) => {
       val setup = binOpSetup(expr1, expr2)
+      labelCounter += 1
+      lib.setOverflowFlag(true)
       setup ++= ListBuffer(
         Mov(Dest, G1, InstrSize.halfReg),
         AddInstr(Dest, G2, InstrSize.halfReg),
-
-
+        JumpIfCond(s"_errOverflow", InstrCond.overflow),
+        MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.halfReg)
       )
     }
   }

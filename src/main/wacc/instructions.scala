@@ -22,6 +22,7 @@ object InstrCond extends Enumeration {
   val lessThanEqual = Value("le")
   val greaterThan = Value("g")
   val greaterThanEqual = Value("ge")
+  val overflow = Value("o")
 }
 
 

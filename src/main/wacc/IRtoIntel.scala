@@ -17,8 +17,8 @@ object X86CodeGenerator {
     case MovWithSignExtend(dest, operand, size1, size2) => List(s"  movsx ${dest.toIntelString(size1)}, ${operand.toIntelString(size2)}")
     case AddInstr(dest, src, instrSize) => List(s"  add ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case SubInstr(dest, src, instrSize) => List(s"  sub ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
-    case MulInstr(dest, src, instrSize) => List(s"  mul ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
-    case DivInstr(dest, src, instrSize) => List(s"  div ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case MulInstr(dest, src, instrSize) => List(s"  imul ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case DivInstr(dest, src, instrSize) => List(s"  idiv ${src.toIntelString(instrSize)}")
     case AndInstr(dest, src, instrSize) => List(s"  and ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case Eor(dest, src, operand, instrSize) => List(s"  eor ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case Orr(dest, src, operand, instrSize) => List(s"  orr ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
@@ -41,6 +41,7 @@ object X86CodeGenerator {
     case JumpIfCond(label, cond) => List(s"  j${cond} $label")
     case Jump(label) => List(s"  jmp $label")
     case SetByteIfCond(dest, cond, size) => List(s"  set${cond} ${dest.toIntelString(size)}")
+    case ConvertDoubleWordToQuadWord() => List(s"  cdq")
     case x => throw new IllegalArgumentException("Invalid instruction type: " + x)
   }
 }

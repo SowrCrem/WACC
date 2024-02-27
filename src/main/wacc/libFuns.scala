@@ -21,6 +21,7 @@ class LibFunGenerator {
   private var printReferenceFlag: Boolean = false
   private var printLnFlag: Boolean = false
   private var overflowFlag: Boolean = false
+  private var divideByZeroFlag: Boolean = false
 
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
@@ -32,30 +33,65 @@ class LibFunGenerator {
       val data = createDataErrOverflow()
       libFuns ++= data ++ errOverflowIR()
     }
+    if (divideByZeroFlag) {
+      val data = createDataDivZero()
+      libFuns ++= data ++ divZeroIR()
+    }
     if (exitFlag) {
       libFuns ++= exitIR
     }
-    libFuns ++= addPrintFunc(printStringFlag,printDataIR("%.*s"),"printString")
+    libFuns ++= addPrintFunc(
+      printStringFlag,
+      printDataIR("%.*s"),
+      "printString"
+    )
     libFuns ++= addPrintFunc(printIntFlag, printIntDataIR("%d"), "printInt")
     libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
     libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")
     libFuns ++= addPrintFunc(printCharFlag, printCharDataIR(), "printChar")
- 
 
     libFuns
   }
 
+  def setDivideByZeroFlag(flag: Boolean): Unit = {
+    divideByZeroFlag = flag
+  }
+
+  def createDataDivZero(): List[Instruction] = {
+    createDataIRNoCounter(
+      "fatal error: division or modulo by zero\\n",
+      "_divide_by_zero_string"
+    )
+  }
+
+  def divZeroIR(): List[Instruction] = {
+    setPrintStringFlag(true)
+    List(
+      Label("_errDivByZero"),
+      AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+      LoadEffectiveAddress(
+        Arg0,
+        OffsetRegLabel(IP, LabelAddress("_divide_by_zero_string")),
+        InstrSize.fullReg
+      ),
+      CallInstr("print_string"),
+      Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
+      CallPLT("exit")
+    )
+  }
 
   def setOverflowFlag(flag: Boolean): Unit = {
     overflowFlag = flag
   }
 
   def createDataErrOverflow(): List[Instruction] = {
-    createDataIRNoCounter("fatal error: integer overflow or underflow occurred\\n", "_overflow_string")
+    createDataIRNoCounter(
+      "fatal error: integer overflow or underflow occurred\\n",
+      "_overflow_string"
+    )
   }
 
-  /**
-    * The intermediate representation for the overflow error function
+  /** The intermediate representation for the overflow error function
     *
     * @return
     */
@@ -76,20 +112,6 @@ class LibFunGenerator {
   }
 
   /** Adds the print function to the IR based on the flag set in the compiler
-    *libFuns ++= List(
-        Label("p_throw_overflow_error"),
-        PushRegisters(List(FP), InstrSize.fullReg),
-        Mov(FP, SP, InstrSize.fullReg),
-        AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
-        LoadEffectiveAddress(
-          Arg0,
-          OffsetRegLabel(IP, LabelAddress("_overflow_error")),
-          InstrSize.fullReg
-        ),
-        CallPLT("printf"),
-        Mov(Arg0, Immediate32(0), InstrSize.fullReg),
-        CallPLT("exit")
-      )
     * @param flag
     *   determines whether to add the print function to the IR
     * @param dataGenerator
@@ -288,7 +310,10 @@ class LibFunGenerator {
     dataIR
   }
 
-  def createDataIRNoCounter(data: String, labelPrefix: String): List[Instruction] = {
+  def createDataIRNoCounter(
+      data: String,
+      labelPrefix: String
+  ): List[Instruction] = {
     val label = s"${labelPrefix}"
     val dataIR = List(
       Directive("section .rodata"),
@@ -298,7 +323,6 @@ class LibFunGenerator {
     )
     dataIR
   }
- 
 
   /** The intermediate representation creator for the data section of library
     * functions taking a list of strings and a list of label prefixes which are

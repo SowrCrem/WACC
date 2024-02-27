@@ -25,6 +25,15 @@ object InstrCond extends Enumeration {
   val overflow = Value("o")
 }
 
+object ArithmOperations extends Enumeration {
+  type ArithmOperations = Value
+  val add = Value("ADD")
+  val sub = Value("SUB")
+  val mul = Value("MUL")
+  val div = Value("DIV")
+
+}
+
 
 import InstrCond._
 import InstrSize._
@@ -50,6 +59,9 @@ case class DivInstr(
     src: Operand,
     instrSize: InstrSize
 ) extends Instruction
+
+
+case class ConvertDoubleWordToQuadWord() extends Instruction
 
 case class AndInstr(dest: Operand, src: Operand, instrSize: InstrSize)
     extends Instruction

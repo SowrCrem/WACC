@@ -2,6 +2,7 @@ package wacc
 
 import scala.collection.mutable._
 import InstrCond._
+import ArithmOperations._
 
 object X86IRGenerator {
 
@@ -310,27 +311,95 @@ object X86IRGenerator {
       compBinOp(expr1, expr2, InstrCond.lessThanEqual)
     }
     case Plus(expr1, expr2) => {
-      val setup = binOpSetup(expr1, expr2)
-      labelCounter += 1
-      lib.setOverflowFlag(true)
-      setup ++= ListBuffer(
-        Mov(Dest, G1, InstrSize.halfReg),
-        AddInstr(Dest, G2, InstrSize.halfReg),
-        JumpIfCond(s"_errOverflow", InstrCond.overflow),
-        MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.halfReg)
-      )
+      intBinOp(expr1, expr2, ArithmOperations.add)
+    }
+    case Minus(expr1, expr2) => {
+      intBinOp(expr1, expr2, ArithmOperations.sub)
+    }
+    case Mul(expr1, expr2) => {
+      intBinOp(expr1, expr2, ArithmOperations.mul)
+    }
+    case Div(expr1, expr2) => {
+      intBinOp(expr1, expr2, ArithmOperations.div)
     }
   }
 
   def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
     val expr1IR = exprToIR(expr1)
     val expr2IR = exprToIR(expr2)
-    expr1IR ++ ListBuffer(
-      Mov(G1, Dest, InstrSize.fullReg)
-    ) ++ expr2IR ++ ListBuffer(Mov(G2, Dest, InstrSize.fullReg))
+    expr2 match {
+      case Brackets(_) => {
+        expr2IR ++ ListBuffer(
+          Mov(G2, Dest, InstrSize.fullReg)
+        ) ++ expr1IR ++ ListBuffer(Mov(G1, Dest, InstrSize.fullReg))
+      }
+      case _ =>
+        expr1IR ++ ListBuffer(
+          Mov(G1, Dest, InstrSize.fullReg)
+        ) ++ expr2IR ++ ListBuffer(
+          Mov(G2, Dest, InstrSize.fullReg)
+        )
+    }
+
   }
 
-  def compBinOp(expr1: Expr, expr2: Expr, comparison : InstrCond) = {
+  def intBinOp(
+      expr1: Expr,
+      expr2: Expr,
+      operation: ArithmOperations
+  ): Buffer[Instruction] = {
+    val setup = binOpSetup(expr1, expr2)
+    setup ++= ListBuffer(
+      Mov(Dest, G1, InstrSize.fullReg)
+    )
+
+    def generalOp(
+        operation: ArithmOperations,
+        jumpLabel: String,
+        cond: InstrCond
+    ) = {
+      lib.setOverflowFlag(true)
+      val instr = operation match {
+        case ArithmOperations.add => AddInstr(Dest, G2, InstrSize.fullReg)
+        case ArithmOperations.sub => SubInstr(Dest, G2, InstrSize.fullReg)
+        case ArithmOperations.mul => MulInstr(Dest, G2, InstrSize.fullReg)
+        case _ => throw new RuntimeException("Not a generalized operation")
+      }
+      setup ++= ListBuffer(
+        instr,
+        JumpIfCond(jumpLabel, cond),
+        MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
+      )
+    }
+
+    operation match {
+      case ArithmOperations.add =>
+        generalOp(operation, s"_errOverflow", InstrCond.overflow)
+      case ArithmOperations.sub =>
+        generalOp(operation, s"_errOverflow", InstrCond.overflow)
+      case ArithmOperations.mul =>
+        generalOp(operation, s"_errOverflow", InstrCond.overflow)
+      case ArithmOperations.div => {
+        lib.setDivideByZeroFlag(true)
+        setup ++= ListBuffer(
+          Cmp(
+            G2,
+            Immediate32(0),
+            InstrSize.fullReg
+          ), // Check for divide by zero
+          JumpIfCond(s"_errDivByZero", InstrCond.equal),
+          ConvertDoubleWordToQuadWord(),
+          DivInstr(Dest, G2, InstrSize.fullReg),
+          MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
+        )
+      }
+      case _ => throw new RuntimeException("Invalid operation")
+
+    }
+
+  }
+
+  def compBinOp(expr1: Expr, expr2: Expr, comparison: InstrCond) = {
     val setup = binOpSetup(expr1, expr2)
     setup ++= ListBuffer(
       Cmp(G1, G2, InstrSize.fullReg),

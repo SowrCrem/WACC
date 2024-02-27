@@ -37,6 +37,9 @@ object X86CodeGenerator {
     case DecrementStackPointer8B() => List(s"  sub rsp, 8")
     case IncrementStackPointer8B() => List(s"  add rsp, 8")
     case LoadEffectiveAddress(dest, src, instrSize) => List(s"  lea ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case JumpNotEqual(label) => List(s"  jne $label")
+    case JumpEqual(label) => List(s"  je $label")
+    case Jump(label) => List(s"  jmp $label")
     case x => throw new IllegalArgumentException("Invalid instruction type: " + x)
   }
 }

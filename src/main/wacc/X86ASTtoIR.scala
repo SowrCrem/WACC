@@ -190,6 +190,7 @@ object X86IRGenerator {
         CallInstr("print_string")
       }
       case BoolLiter(pos) => {
+        lib.setPrintBoolFlag(true)
         CallInstr("print_bool")
       }
       case CharLiter(pos) => {

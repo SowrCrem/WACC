@@ -61,6 +61,13 @@ case class CallInstr(val name: String) extends Instruction
 case class CallPLT(val name: String) extends Instruction
 case class ReturnInstr() extends Instruction
 
+case class JumpNotEqual(val label: String) extends Instruction
+case class JumpEqual(val label: String) extends Instruction
+case class JumpLessThan(val label: String) extends Instruction
+case class JumpGreaterThan(val label: String) extends Instruction
+case class Jump(val label: String) extends Instruction
+
+
 case class IncrementStackPointer4B() extends Instruction
 case class IncrementStackPointer8B() extends Instruction
 case class IncrementStackPointerNB(val value: Int) extends Instruction

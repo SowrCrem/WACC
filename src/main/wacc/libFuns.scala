@@ -27,11 +27,7 @@ class LibFunGenerator {
     if (exitFlag) {
       libFuns ++= exitIR
     }
-    libFuns ++= addPrintFunc(
-      printStringFlag,
-      printDataIR("%.*s"),
-      "printString"
-    )
+    libFuns ++= addPrintFunc(printStringFlag,printDataIR("%.*s"),"printString")
     libFuns ++= addPrintFunc(printIntFlag, printIntDataIR("%d"), "printInt")
     libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
     libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")

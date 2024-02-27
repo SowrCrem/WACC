@@ -158,7 +158,6 @@ object X86IRGenerator {
       }
     }
     case Print(expr) => {
-
       printToIR(expr, false)
     }
     case Println(expr) => {
@@ -266,6 +265,7 @@ object X86IRGenerator {
       }
     }
     case And(expr1, expr2) => {
+      // evaluate each expression before performing the and operation
       val expr1IR = exprToIR(expr1)
       val expr2IR = exprToIR(expr2)
       val setup = expr1IR ++ ListBuffer(
@@ -277,6 +277,21 @@ object X86IRGenerator {
         JumpNotEqual(s"and_false${labelCounter}"),
         Cmp(G2, Immediate32(1), InstrSize.fullReg),
         Label(s"and_false${labelCounter}"),
+        SetByteIfEqual(Dest, InstrSize.eigthReg),
+        MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
+      )
+    }
+    case Or(expr1, expr2) => {
+      val expr1IR = exprToIR(expr1)
+      val expr2IR = exprToIR(expr2)
+      val setup = expr1IR ++ ListBuffer(Mov(G1, Dest, InstrSize.fullReg)) ++ expr2IR ++ ListBuffer(
+        Mov(G2, Dest, InstrSize.fullReg))
+      labelCounter += 1
+      setup ++= ListBuffer(
+        Cmp(G1, Immediate32(1), InstrSize.fullReg),
+        JumpEqual(s"or_true${labelCounter}"),
+        Cmp(G2, Immediate32(1), InstrSize.fullReg),
+        Label(s"or_true${labelCounter}"),
         SetByteIfEqual(Dest, InstrSize.eigthReg),
         MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
       )

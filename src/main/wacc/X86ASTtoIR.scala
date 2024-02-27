@@ -173,6 +173,18 @@ object X86IRGenerator {
         CallInstr("exit")
       )
     }
+    case ifNode@If(expr, trueCase, falseCase) => {
+      val cond = exprToIR(expr)
+      val thenCase = {
+         val table = ifNode.symbolTableTrue
+         val trueStats = for (s <- trueCase) yield statToIR(s)
+         if (table.dictionary.size > 0) {
+           StackMachine.addFrame(table, None) ++ trueStats.flatten ++ StackMachine.popFrame()
+         }
+      }
+
+      ListBuffer()
+    }
     case Skip() => {
       ListBuffer()
     }
@@ -322,6 +334,9 @@ object X86IRGenerator {
     case Div(expr1, expr2) => {
       intBinOp(expr1, expr2, ArithmOperations.div)
     }
+    case Mod(expr1, expr2) => {
+      intBinOp(expr1, expr2, ArithmOperations.mod)
+    }
   }
 
   def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
@@ -379,7 +394,7 @@ object X86IRGenerator {
         generalOp(operation, s"_errOverflow", InstrCond.overflow)
       case ArithmOperations.mul =>
         generalOp(operation, s"_errOverflow", InstrCond.overflow)
-      case ArithmOperations.div => {
+      case ArithmOperations.div | ArithmOperations.mod => {
         lib.setDivideByZeroFlag(true)
         setup ++= ListBuffer(
           Cmp(
@@ -389,7 +404,17 @@ object X86IRGenerator {
           ), // Check for divide by zero
           JumpIfCond(s"_errDivByZero", InstrCond.equal),
           ConvertDoubleWordToQuadWord(),
-          DivInstr(Dest, G2, InstrSize.fullReg),
+          DivInstr(Dest, G2, InstrSize.halfReg)
+        )
+
+        if (operation == ArithmOperations.mod) {
+          setup ++= ListBuffer(
+            Mov(Dest, Arg2, InstrSize.halfReg),
+            Mov(Dest, Dest, InstrSize.halfReg)
+          )
+        }
+
+        setup ++= ListBuffer(
           MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
         )
       }

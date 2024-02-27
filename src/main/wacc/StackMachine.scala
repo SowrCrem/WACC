@@ -5,28 +5,11 @@ import scala.collection.mutable.ListBuffer
 import scala.annotation.tailrec
 import parsley.internal.machine.instructions.Pop
 
+
+/**
+  *  Special Grade Cursed Object
+  * */
 object StackMachine {
-
-  /** Stack simulated via stack object */
-  // val stackSim : Stack[VariableScope] = Stack()
-
-  // /** Index of the current stack frame */
-  // val frameIndex = 0
-
-  // /** size of stack */
-  // def stackSize: Int = stackSim.size
-
-  // val scratchRegisters = Stack(G0, G1, G2, G3)
-
-  // def pushToStack(variables : VariableScope, value : Int, size : Int): mutable.Buffer[Instruction] = {
-  //   /** @TODO */
-  //   val prefix = size match {
-  //     case 2 => ""
-  //     case 4 => "e"
-  //     case 8 => "r"
-  //   }
-  //   null
-  // }
 
   private var frames: List[StackFrame] = List().empty
 
@@ -79,7 +62,7 @@ object StackMachine {
     // List of instructions to decrement the stack pointer by the size of the local variables in the stack frame
     val decrementStackInstr = new ListBuffer[Instruction]().empty
 
-    var size = newFrame.localVarSize
+    var size = newFrame.localVarSize/8
 
     println("adding frame with size: " + size)
 
@@ -125,11 +108,13 @@ object StackMachine {
   }
 
   def printStack(): Unit = {
+    println("Printing stack --------------------")
     frames.reverse.foreach(frame => {
       println(">--------> Start Frame <--------<")
       frame.printFrame()
       println(">--------> End Frame <--------<")
     })
+    println("End of stack --------------------")
   }
 
 }

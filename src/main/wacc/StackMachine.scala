@@ -29,7 +29,7 @@ object StackMachine {
 
   }
 
-  def offset(name: String): Option[Int] = {
+  def offset(name: String): Option[(Int, Int)] = {
 
     var totalOffset = 0
 
@@ -47,7 +47,7 @@ object StackMachine {
                         }
         case offset => {
           printf("found %s in frame with offset %d\n", name, offset + totalOffset)
-          return Some(totalOffset + offset)
+          return Some((offset, totalOffset))
         }
       }
     })

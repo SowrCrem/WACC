@@ -9,11 +9,10 @@
 
 begin
   int x = 1 ;
+  println x;
   begin
     x = 3 ;
-    bool z = true;
-    println x;
-    println z
+    bool z = true
   end ;
   int y = 2 ;
   println x ;

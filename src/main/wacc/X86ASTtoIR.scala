@@ -115,21 +115,46 @@ object X86IRGenerator {
   // ------- Statement IR Generation -----------------------------------------------//
 
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
-    case be@BeginEnd(statList) => {
+    case be @ BeginEnd(statList) => {
       val body = {
         val table = be.symbolTable
         val addFrame = StackMachine.addFrame(
           table,
           None
         )
-        val stats= for (s <- statList) yield statToIR(s)
+        val stats = for (s <- statList) yield statToIR(s)
         if (table.dictionary.size > 0) {
           addFrame ++ stats.flatten ++ StackMachine.popFrame()
         } else {
           stats.flatten
         }
       }
-      ListBuffer() ++ body 
+      ListBuffer() ++ body
+    }
+    case AsgnEq(lhs, rhs) => {
+      lhs match {
+        case Ident(ident) => {
+          val instructions = exprToIR(rhs)
+          StackMachine.offset(ident) match {
+            case Some((offset, fpchange)) => {
+              val setup = ListBuffer(
+                AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                PopRegisters(List(FP), InstrSize.fullReg)
+              )
+              setup ++ instructions ++ ListBuffer(
+                Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+              ) ++ ListBuffer(
+                PushRegisters(List(FP), InstrSize.fullReg), SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                Mov(FP, SP, InstrSize.fullReg)
+              )
+            }
+            case None => {
+              throw new RuntimeException("Variable not found in stack")
+            }
+          }
+        }
+        // need to have cases for pairs and array elements later
+      }
     }
     case IdentAsgn(typeNode, ident, expr) => {
       // Dynamically determine the size of the variable from the typeNode
@@ -147,34 +172,34 @@ object X86IRGenerator {
       // Step 3: Update StackMachine context with the new variable
       StackMachine.putVarOnStack(ident.value)
 
-
       StackMachine.offset(ident.value) match {
-        case Some(offset) => {
-          instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+        case Some((offset, fpchange)) => {
+          // instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+          fpchange match {
+            case 0 => {
+              instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+            }
+            case _ => {
+              val setup = ListBuffer(
+                AddInstr(SP, Immediate32(offset), InstrSize.fullReg),
+                PopRegisters(List(FP), InstrSize.fullReg)
+              )
+              setup ++ instructions ++ ListBuffer(
+                PushRegisters(List(FP), InstrSize.fullReg),
+                SubInstr(SP, Immediate32(offset), InstrSize.fullReg),
+                Mov(FP, SP, InstrSize.fullReg)
+              )
+            }
+          }
         }
         case None => {
-          throw new RuntimeException("Variable not found in stack: Identifier Assignment")
+          throw new RuntimeException(
+            "Variable not found in stack: Identifier Assignment"
+          )
         }
       }
 
       instructions
-    }
-    case AsgnEq(lhs, rhs) => {
-      lhs match {
-        case Ident(ident) => {
-          val instructions = exprToIR(rhs)
-          StackMachine.offset(ident) match {
-            case Some(offset) => {
-              instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-            }
-            case None => {
-              throw new RuntimeException("Variable not found in stack")
-            }
-          }
-          instructions
-        }
-        // need to have cases for pairs and array elements later
-      }
     }
     case Print(expr) => {
       printToIR(expr, false)
@@ -338,8 +363,26 @@ object X86IRGenerator {
     }
     case Ident(ident) => {
       StackMachine.offset(ident) match {
-        case Some(offset) => {
-          ListBuffer(Mov(Dest, FPOffset(offset), InstrSize.fullReg))
+        case Some((offset, fpchange)) => {
+          fpchange match {
+            case 0 => {
+              ListBuffer(Mov(Dest, FPOffset(offset), InstrSize.fullReg))
+            }
+            case _ => {
+              val setup = ListBuffer(
+                AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                PopRegisters(List(FP), InstrSize.fullReg)
+              )
+              setup ++ ListBuffer(
+                Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+              ) ++ ListBuffer(
+                PushRegisters(List(FP), InstrSize.fullReg),
+                SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                Mov(FP, SP, InstrSize.fullReg)
+              )
+
+            }
+          }
         }
         case None => {
           throw new RuntimeException("Variable not found in stack")
@@ -406,7 +449,7 @@ object X86IRGenerator {
     }
   }
 
- def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
+  def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
     val expr1IR = exprToIR(expr1)
     val expr2IR = exprToIR(expr2)
 

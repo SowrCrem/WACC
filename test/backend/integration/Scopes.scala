@@ -52,10 +52,5 @@ class Scope extends AnyFlatSpec with BeforeAndAfterEach {
         val path = constructPath(List("valid", "scope", "splitScope.wacc"))
         runSucceeds(path, "Hello World!", 0)
     }
-
-    
-
- 
-
 }
   

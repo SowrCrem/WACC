@@ -391,21 +391,29 @@ object X86IRGenerator {
     }
   }
 
-  def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
+ def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
     val expr1IR = exprToIR(expr1)
     val expr2IR = exprToIR(expr2)
 
     expr2 match {
       case Brackets(_) => {
         expr2IR ++ ListBuffer(
-          Mov(G2, Dest, InstrSize.fullReg)
-        ) ++ expr1IR ++ ListBuffer(Mov(G1, Dest, InstrSize.fullReg))
+          DecrementStackPointerNB(2),
+          PushRegisters(List(Dest), InstrSize.fullReg)
+        ) ++ expr1IR ++ ListBuffer(
+          Mov(G2, Dest, InstrSize.fullReg),
+          PopRegisters(List(G1), InstrSize.fullReg),
+          IncrementStackPointerNB(2)
+        )
       }
       case _ =>
         expr1IR ++ ListBuffer(
-          Mov(G1, Dest, InstrSize.fullReg)
+          DecrementStackPointerNB(2),
+          PushRegisters(List(Dest), InstrSize.fullReg)
         ) ++ expr2IR ++ ListBuffer(
-          Mov(G2, Dest, InstrSize.fullReg)
+          Mov(G2, Dest, InstrSize.fullReg),
+          PopRegisters(List(G1), InstrSize.fullReg),
+          IncrementStackPointerNB(2)
         )
     }
 

@@ -65,5 +65,11 @@ class Loop extends AnyFlatSpec with BeforeAndAfterEach {
 , "while", "rmStyleAddIO.wacc"))
         runSucceeds(path, "Hello World!", 0)
     }
+
+    it should "run valid/while/max.wacc" in {
+        val path = constructPath(List("valid", "while", "max.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    
+    }
 }
   

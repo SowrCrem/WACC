@@ -49,6 +49,21 @@ class Loop extends AnyFlatSpec with BeforeAndAfterEach {
         runSucceeds(path, "Hello World!", 0)
     }
 
+    it should "run valid/while/fibonacciFullIt.wacc" ignore {
+        val path = constructPath(List("valid", "while", "fibonacciFullIt.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
 
+    it should "run valid/while/fibonacciIterative.wacc" in {
+        val path = constructPath(List("valid", "while", "fibonacciIterative.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
+
+
+    it should "run valid/while rmStyleAddIO.wacc" ignore {
+        val path = constructPath(List("valid"
+, "while", "rmStyleAddIO.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
 }
   

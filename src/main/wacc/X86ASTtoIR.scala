@@ -267,16 +267,16 @@ object X86IRGenerator {
 
     }
     exprToIR(expr) ++= ListBuffer(
-      DecrementStackPointerNB(1),
+      DecrementStackPointerNB(8),
       PushRegisters(List(Dest), InstrSize.fullReg),
       PopRegisters(List(Dest), InstrSize.fullReg),
       Mov(Dest, Dest, InstrSize.fullReg),
       Mov(Arg0, Dest, InstrSize.fullReg)
     ) ++= {
       if (!println) {
-        ListBuffer(func, IncrementStackPointerNB(1))
+        ListBuffer(func, IncrementStackPointerNB(8))
       } else {
-        ListBuffer(func, CallInstr("print_ln"), IncrementStackPointerNB(1))
+        ListBuffer(func, CallInstr("print_ln"), IncrementStackPointerNB(8))
       }
     }
   }

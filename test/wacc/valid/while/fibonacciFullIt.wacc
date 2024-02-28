@@ -25,7 +25,7 @@ begin
     save = f0 ;
     f0 = f1 ;
     f1 = save + f1 ;
-    n = n - 1
+    n = n - 1 
   done ;
   println f0
 end

@@ -137,16 +137,27 @@ object X86IRGenerator {
           val instructions = exprToIR(rhs)
           StackMachine.offset(ident) match {
             case Some((offset, fpchange)) => {
-              val setup = ListBuffer(
-                AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
-                PopRegisters(List(FP), InstrSize.fullReg)
-              )
-              setup ++ instructions ++ ListBuffer(
-                Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-              ) ++ ListBuffer(
-                PushRegisters(List(FP), InstrSize.fullReg), SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
-                Mov(FP, SP, InstrSize.fullReg)
-              )
+
+              fpchange match {
+                case 0 => {
+                  instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+
+                }
+                case _ => {
+                  val setup = ListBuffer(
+                    AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    PopRegisters(List(FP), InstrSize.fullReg)
+                  )
+                  setup ++ instructions ++ ListBuffer(
+                    Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                  ) ++ ListBuffer(
+                    PushRegisters(List(FP), InstrSize.fullReg),
+                    SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    Mov(FP, SP, InstrSize.fullReg)
+                  )
+                }
+              }
+
             }
             case None => {
               throw new RuntimeException("Variable not found in stack")

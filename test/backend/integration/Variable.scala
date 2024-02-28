@@ -31,7 +31,7 @@ class Variable extends AnyFlatSpec with BeforeAndAfterEach {
 
   it should "run valid/variables/charDeclaration.wacc" in {
     runSucceeds("../wacc/valid/variables/charDeclaration.wacc", "", 0)
-  }
+  } 
 
   it should "run valid/variables/stringDeclaration.wacc" in {
     runSucceeds("../wacc/valid/variables/stringDeclaration.wacc", "", 0)

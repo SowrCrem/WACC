@@ -137,11 +137,9 @@ object X86IRGenerator {
           val instructions = exprToIR(rhs)
           StackMachine.offset(ident) match {
             case Some((offset, fpchange)) => {
-
               fpchange match {
                 case 0 => {
                   instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-
                 }
                 case _ => {
                   val setup = ListBuffer(
@@ -168,6 +166,7 @@ object X86IRGenerator {
       }
     }
     case IdentAsgn(typeNode, ident, expr) => {
+
       // Dynamically determine the size of the variable from the typeNode
       val varSize = typeNode.size / 8
 
@@ -400,6 +399,12 @@ object X86IRGenerator {
         }
       }
     }
+    case Equals(expr1, expr2) => {
+      compBinOp(expr1, expr2, InstrCond.equal)
+    }
+    case NotEquals(expr1, expr2) => {
+      compBinOp(expr1, expr2, InstrCond.notEqual)
+    }
     case And(expr1, expr2) => {
       // evaluate each expression before performing the and operation
       val setup = binOpSetup(expr1, expr2)
@@ -425,17 +430,11 @@ object X86IRGenerator {
         MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
       )
     }
-    case Equals(expr1, expr2) => {
-      compBinOp(expr1, expr2, InstrCond.equal)
-    }
     case GreaterThan(expr1, expr2) => {
       compBinOp(expr1, expr2, InstrCond.greaterThan)
     }
     case LessThan(expr1, expr2) => {
       compBinOp(expr1, expr2, InstrCond.lessThan)
-    }
-    case NotEquals(expr1, expr2) => {
-      compBinOp(expr1, expr2, InstrCond.notEqual)
     }
     case GreaterThanEq(expr1, expr2) => {
       compBinOp(expr1, expr2, InstrCond.greaterThanEqual)
@@ -464,26 +463,33 @@ object X86IRGenerator {
     val expr1IR = exprToIR(expr1)
     val expr2IR = exprToIR(expr2)
 
+    val leftPrecedence = expr1IR ++ ListBuffer(
+      DecrementStackPointerNB(2),
+      PushRegisters(List(Dest), InstrSize.fullReg)
+    ) ++ expr2IR ++ ListBuffer(
+      Mov(G2, Dest, InstrSize.fullReg),
+      PopRegisters(List(G1), InstrSize.fullReg),
+      IncrementStackPointerNB(2)
+    )
+
+    val rightPrecedence = expr2IR ++ ListBuffer(
+      DecrementStackPointerNB(2),
+      PushRegisters(List(Dest), InstrSize.fullReg)
+    ) ++ expr1IR ++ ListBuffer(
+      Mov(G2, Dest, InstrSize.fullReg),
+      PopRegisters(List(G1), InstrSize.fullReg),
+      IncrementStackPointerNB(2)
+    )
+
     expr2 match {
       case Brackets(_) => {
-        expr2IR ++ ListBuffer(
-          DecrementStackPointerNB(2),
-          PushRegisters(List(Dest), InstrSize.fullReg)
-        ) ++ expr1IR ++ ListBuffer(
-          Mov(G2, Dest, InstrSize.fullReg),
-          PopRegisters(List(G1), InstrSize.fullReg),
-          IncrementStackPointerNB(2)
-        )
+        expr1 match {
+          case Brackets(_) => leftPrecedence
+          case _           => rightPrecedence
+
+        }
       }
-      case _ =>
-        expr1IR ++ ListBuffer(
-          DecrementStackPointerNB(2),
-          PushRegisters(List(Dest), InstrSize.fullReg)
-        ) ++ expr2IR ++ ListBuffer(
-          Mov(G2, Dest, InstrSize.fullReg),
-          PopRegisters(List(G1), InstrSize.fullReg),
-          IncrementStackPointerNB(2)
-        )
+      case _ => leftPrecedence
     }
 
   }

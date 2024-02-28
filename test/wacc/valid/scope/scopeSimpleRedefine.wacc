@@ -7,7 +7,7 @@
 
 # Program:
 
-begin
+begin 
   int x = 12 ;
   begin
     bool x = true ;

@@ -49,7 +49,7 @@ object StackMachine {
             name,
             offset + totalOffset
           )
-          return Some((offset, totalOffset))
+          return Some((offset + 8, totalOffset))
         }
       }
     })
@@ -72,7 +72,7 @@ object StackMachine {
     // List of instructions to decrement the stack pointer by the size of the local variables in the stack frame
     val decrementStackInstr = new ListBuffer[Instruction]().empty
 
-    var size = newFrame.localVarSize / 8
+    var size = (newFrame.localVarSize / 8) + 1
 
     println("adding frame with size: " + size)
 
@@ -94,7 +94,7 @@ object StackMachine {
     // List of instructions to increment the stack pointer by the size of the local variables in the stack frame
     val incrementStackInstr = new ListBuffer[Instruction]().empty
 
-    var size = frames.last.localVarSize / 8
+    var size = (frames.last.localVarSize / 8) + 1
 
     printf("popping frame with size: %d\n", size)
 

@@ -143,14 +143,14 @@ object X86IRGenerator {
                 }
                 case _ => {
                   val setup = ListBuffer(
-                    AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
                     PopRegisters(List(FP), InstrSize.fullReg)
                   )
                   setup ++ instructions ++ ListBuffer(
                     Mov(FPOffset(offset), Dest, InstrSize.fullReg)
                   ) ++ ListBuffer(
                     PushRegisters(List(FP), InstrSize.fullReg),
-                    SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
                     Mov(FP, SP, InstrSize.fullReg)
                   )
                 }

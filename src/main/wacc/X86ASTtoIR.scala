@@ -28,7 +28,8 @@ object X86IRGenerator {
       literal, {
         val label = s"string${stringLiterals.size}"
         rodataDirectives += Directive(s"int ${literal.length()}")
-        rodataDirectives += Directive(s"$label: .asciz \"$literal\"")
+        val escapedLiteral = literal.replace("\\", "\\\\").replace("\"", "\\\"")
+        rodataDirectives += Directive(s"$label: .asciz \"$escapedLiteral\"")
         label
       }
     )
@@ -51,7 +52,7 @@ object X86IRGenerator {
 
     val mainInitialisation = ListBuffer(
       Directive("text"),
-      Label("main"),
+      Label("main")
     )
 
     // instructions ++= mainInitialisation
@@ -174,22 +175,53 @@ object X86IRGenerator {
         CallInstr("exit")
       )
     }
-    case ifNode@If(expr, trueCase, falseCase) => {
+    case whileNode @ While(expr, stats) => {
+      val cond = exprToIR(expr)
+      val body = {
+        val table = whileNode.symbolTable
+        val loopStats = for (s <- stats) yield statToIR(s)
+        if (table.dictionary.size > 0) {
+          StackMachine.addFrame(
+            table,
+            None
+          ) ++ loopStats.flatten ++ StackMachine.popFrame()
+        } else {
+          loopStats.flatten
+        }
+      }
+      labelCounter += 1
+
+      ListBuffer(Jump(s"cond${labelCounter}")) ++ ListBuffer(
+        Label(s"while${labelCounter}")
+      ) ++ body ++ ListBuffer(
+        Label(s"cond${labelCounter}")
+      ) ++ cond ++ ListBuffer(
+        Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+        JumpIfCond(s"while${labelCounter}", InstrCond.notEqual)
+      )
+    }
+    case ifNode @ If(expr, trueCase, falseCase) => {
       val cond = exprToIR(expr)
       val thenCase = {
-         val table = ifNode.symbolTableTrue
-         val trueStats = for (s <- trueCase) yield statToIR(s)
-         if (table.dictionary.size > 0) {
-           StackMachine.addFrame(table, None) ++ trueStats.flatten ++ StackMachine.popFrame()
-         } else {
-            trueStats.flatten
-         }
+        val table = ifNode.symbolTableTrue
+        val trueStats = for (s <- trueCase) yield statToIR(s)
+        if (table.dictionary.size > 0) {
+          StackMachine.addFrame(
+            table,
+            None
+          ) ++ trueStats.flatten ++ StackMachine.popFrame()
+        } else {
+          trueStats.flatten
+        }
       }
       val elseCase = {
         val table = ifNode.symbolTableFalse
         val falseStats = for (s <- falseCase) yield statToIR(s)
         if (table.dictionary.size > 0) {
-          StackMachine.addFrame(table, None) ++ falseStats.flatten ++ StackMachine.popFrame()
+          StackMachine.addFrame(
+            table,
+            None
+          ) ++ falseStats.flatten ++ StackMachine.popFrame()
         } else {
           falseStats.flatten
         }
@@ -235,16 +267,16 @@ object X86IRGenerator {
 
     }
     exprToIR(expr) ++= ListBuffer(
+      DecrementStackPointerNB(1),
       PushRegisters(List(Dest), InstrSize.fullReg),
       PopRegisters(List(Dest), InstrSize.fullReg),
       Mov(Dest, Dest, InstrSize.fullReg),
       Mov(Arg0, Dest, InstrSize.fullReg)
     ) ++= {
       if (!println) {
-        ListBuffer(func)
+        ListBuffer(func, IncrementStackPointerNB(1))
       } else {
-
-        ListBuffer(func, CallInstr("print_ln"))
+        ListBuffer(func, CallInstr("print_ln"), IncrementStackPointerNB(1))
       }
     }
   }
@@ -362,6 +394,7 @@ object X86IRGenerator {
   def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
     val expr1IR = exprToIR(expr1)
     val expr2IR = exprToIR(expr2)
+
     expr2 match {
       case Brackets(_) => {
         expr2IR ++ ListBuffer(
@@ -385,7 +418,7 @@ object X86IRGenerator {
   ): Buffer[Instruction] = {
     val setup = binOpSetup(expr1, expr2)
     setup ++= ListBuffer(
-      Mov(Dest, G1, InstrSize.fullReg)
+      Mov(Dest, G1, InstrSize.halfReg)
     )
 
     def generalOp(
@@ -395,15 +428,15 @@ object X86IRGenerator {
     ) = {
       lib.setOverflowFlag(true)
       val instr = operation match {
-        case ArithmOperations.add => AddInstr(Dest, G2, InstrSize.fullReg)
-        case ArithmOperations.sub => SubInstr(Dest, G2, InstrSize.fullReg)
-        case ArithmOperations.mul => MulInstr(Dest, G2, InstrSize.fullReg)
+        case ArithmOperations.add => AddInstr(Dest, G2, InstrSize.halfReg)
+        case ArithmOperations.sub => SubInstr(Dest, G2, InstrSize.halfReg)
+        case ArithmOperations.mul => MulInstr(Dest, G2, InstrSize.halfReg)
         case _ => throw new RuntimeException("Not a generalized operation")
       }
       setup ++= ListBuffer(
         instr,
         JumpIfCond(jumpLabel, cond),
-        MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
+        MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.halfReg)
       )
     }
 
@@ -435,7 +468,7 @@ object X86IRGenerator {
         }
 
         setup ++= ListBuffer(
-          MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
+          MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.halfReg)
         )
       }
       case _ => throw new RuntimeException("Invalid operation")

@@ -115,6 +115,22 @@ object X86IRGenerator {
   // ------- Statement IR Generation -----------------------------------------------//
 
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
+    case be@BeginEnd(statList) => {
+      val body = {
+        val table = be.symbolTable
+        val addFrame = StackMachine.addFrame(
+          table,
+          None
+        )
+        val stats= for (s <- statList) yield statToIR(s)
+        if (table.dictionary.size > 0) {
+          addFrame ++ stats.flatten ++ StackMachine.popFrame()
+        } else {
+          stats.flatten
+        }
+      }
+      ListBuffer() ++ body 
+    }
     case IdentAsgn(typeNode, ident, expr) => {
       // Dynamically determine the size of the variable from the typeNode
       val varSize = typeNode.size / 8
@@ -131,14 +147,13 @@ object X86IRGenerator {
       // Step 3: Update StackMachine context with the new variable
       StackMachine.putVarOnStack(ident.value)
 
-      StackMachine.printStack()
 
       StackMachine.offset(ident.value) match {
         case Some(offset) => {
           instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
         }
         case None => {
-          throw new RuntimeException("Variable not found in stack")
+          throw new RuntimeException("Variable not found in stack: Identifier Assignment")
         }
       }
 

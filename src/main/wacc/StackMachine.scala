@@ -24,6 +24,7 @@ object StackMachine {
     // otherwise 0 because the frame is that of a loop or a conditional block
     val additionalSize = if (frame.isFunction) 2 * 4 else 0
 
+
     baseSize + additionalSize
 
   }
@@ -36,11 +37,18 @@ object StackMachine {
       println("No frames in stack")
     }
 
+    printf("Looking for %s in stack\n", name)
+    printStack()
+
     frames.reverse.foreach(frame => {
       frame.findVarOffset(name) match {
-        case -1     => { totalOffset += frameTotalSize(frame) 
-                          printf("not in this frame?")}
-        case offset => return Some(totalOffset + offset)
+        case -1     => { totalOffset += (frameTotalSize(frame))
+                          printf("not in this frame? totalOffset is now %d\n", totalOffset)
+                        }
+        case offset => {
+          printf("found %s in frame with offset %d\n", name, offset + totalOffset)
+          return Some(totalOffset + offset)
+        }
       }
     })
 
@@ -184,7 +192,7 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
 
       return varMap(name)
     } else {
-      print("Variable not found in stack:" + name)
+      println("Variable not found in current frame:" + name + "\n")
       this.printFrame()
       return -1
     }

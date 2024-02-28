@@ -33,6 +33,26 @@ class Scope extends AnyFlatSpec with BeforeAndAfterEach {
         runSucceeds(path, "Hello World!", 0)
     }
 
+    it should "run valid/scope/scopeBasic.wacc" in {
+        val path = constructPath(List("valid", "scope", "scopeBasic.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
+
+    it should "run valid/scope/scopeVars.wacc" in {
+        val path = constructPath(List("valid", "scope", "scopeVars.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
+
+    it should "run valid/scope/scopeSimpleRedefine.wacc" in {
+        val path = constructPath(List("valid", "scope", "scopeSimpleRedefine.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
+
+    it should "run valid/scope/splitScope.wacc" in {
+        val path = constructPath(List("valid", "scope", "splitScope.wacc"))
+        runSucceeds(path, "Hello World!", 0)
+    }
+
     
 
  

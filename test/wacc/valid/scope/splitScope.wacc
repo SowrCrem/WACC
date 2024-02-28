@@ -11,7 +11,9 @@ begin
   int x = 1 ;
   begin
     x = 3 ;
-    bool z = true
+    bool z = true;
+    println x;
+    println z
   end ;
   int y = 2 ;
   println x ;

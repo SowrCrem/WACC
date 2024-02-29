@@ -30,10 +30,7 @@ class LibFunGenerator {
   private var printCharFlag: Boolean = false
   private var printReferenceFlag: Boolean = false
   private var printLnFlag: Boolean = false
-  private var overflowFlag: Boolean = false
-  private var divideByZeroFlag: Boolean = false
-  private var outOfMemoryFlag: Boolean = false
-
+  private var mallocFlag: Boolean = false
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
     */
@@ -49,6 +46,7 @@ class LibFunGenerator {
     libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
     libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")
     libFuns ++= addPrintFunc(printCharFlag, printCharDataIR(), "printChar")
+    libFuns ++= addMallocFunc()
     libFuns
   }
   
@@ -135,6 +133,37 @@ class LibFunGenerator {
     val errMessage: String = "fatal error: out of memory\\n"
   }
   
+  /**
+    * Sets the flag to print malloc assembly code
+    * @param flag
+    */
+  def setMallocFlag(flag: Boolean): Unit = {
+    mallocFlag = flag
+  }
+
+  /**
+    * Adds the malloc function to the IR based on the flag set in the compiler
+    * @return A list of instructions representing the malloc function
+  */
+  def addMallocFunc(): List[Instruction] = {
+    if (mallocFlag) {
+      List(
+        Label("_malloc"),
+        PushRegisters(List(FP), InstrSize.fullReg),
+        Mov(FP, SP, InstrSize.fullReg),
+        AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+        CallPLT("malloc"),
+        Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+        JumpIfCond(outOfMemory.labelName, InstrCond.equal),
+        Mov(SP, FP, InstrSize.fullReg),
+        PopRegisters(List(FP), InstrSize.fullReg),
+        ReturnInstr()
+      )
+    } else {
+      List.empty[Instruction]
+    }
+  }
+
   /** Adds the print function to the IR based on the flag set in the compiler
     * @param flag
     *   determines whether to add the print function to the IR

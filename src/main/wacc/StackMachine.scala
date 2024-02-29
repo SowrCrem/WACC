@@ -26,6 +26,18 @@ object StackMachine {
 
   }
 
+  /**
+   * Calculates the offset of a variable in the stack frames.
+   *
+   * @param name The name of the variable to find the offset for.
+  /**
+   * Calculates the offset of a variable within a frame and the total offset of the frame.
+   * The offset is calculated in relation to the frame's base address.
+   *
+   * @return An optional tuple containing the offset of the variable and the total offset of the frame.
+   */
+   *         Returns None if the variable is not found in any of the frames.
+   */
   def offset(name: String): Option[(Int, Int)] = {
 
     var totalOffset = 0

@@ -113,7 +113,6 @@ object X86IRGenerator {
       ir ++= statInstrs.flatten
       ir.appendAll(funcIR)
     }
-
   }
 
   def generateFunctionIR(func: Func): ListBuffer[Instruction] = {
@@ -190,9 +189,6 @@ object X86IRGenerator {
 
       // // Step 1: Allocate space on the stack based on the variable size
       val instructions = ListBuffer[Instruction]().empty
-
-      // val instructions =
-      //   ListBuffer[Instruction](DecrementStackPointerNB(varSize))
 
       // Step 2: Initialize the variable with the given expression
       instructions ++= exprToIR(expr)

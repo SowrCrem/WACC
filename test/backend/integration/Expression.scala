@@ -15,6 +15,7 @@ class Expression extends AnyFlatSpec with BeforeAndAfterEach {
 
   override protected def afterEach(): Unit = {
     semanticChecker.reset()
+    X86IRGenerator.reset()
   }
 
     "WACC" should "run valid/expressions/andExpr.wacc" in {

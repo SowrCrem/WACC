@@ -58,8 +58,8 @@ object functionGenerator {
 
   def reset(): Unit = {
     funcLabelsAndBody.clear()
-    labelsToTables.clear()
     labelsToFuncs.clear()
-    
+    labelsToTables.clear()
+
   }
 }

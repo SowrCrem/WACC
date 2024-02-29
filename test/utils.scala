@@ -100,13 +100,20 @@ object Utils {
     try {
       throwsNoError(path)
     } catch {
-      case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + expReturn + " " + e.getMessage)
+      case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + getExitCode(path) + ". Error Message: " + e.getMessage)
     }
     val exeName = assemble(path)
     val exeCommand = inputs match {
-      case Some(inputList) => s"\"${inputList.mkString(" ")}\" | ./$exeName"
+      case Some(inputList) => {
+        // FOR HARDIV: should be in the format ./exeName <<< inputList.mkString("\n")
+        val inputString = inputList.mkString(" ")
+        s"./$exeName <<< $inputString"
+      }
       case _               => s"./$exeName"
     }
+    // Command being run
+    println(exeCommand)
+
     val exeReturn = exeCommand.!
     try {
       val exeOutput = exeCommand.!!
@@ -122,18 +129,17 @@ object Utils {
   }
 
   private def exitsWithCode(path: String, code: Int): Assertion = synchronized({
+    val exitCode = getExitCode(path)
+    println("Exit Code: " + exitCode + " Expected: " + code)
+    exitCode shouldBe code
+  })
+
+  private def getExitCode(path: String): Int = synchronized({
     // If current directory is not the root of the project, then add a ../ to the start of the path
     var newPath = constructPath(List("test", "wacc", path))
     if (!(new java.io.File(constructPath(List("src", "main", "wacc", "Main.scala")))).exists) {
       newPath = constructPath(List("..", newPath))
     }
-    val exitCode = Main.compile(Array(newPath))
-    println("Exit Code: " + exitCode)
-    // if (exitCode != 200) {
-    //   val filePath = "test/integration/semantic/checkArrays.scala"
-    //   val sedCommand = s"""sed -i '0,/"semanticErr - array tests: arrayIndexComplexNotInt.wacc" should "return exit code 200" in {/s/"semanticErr - array tests: arrayIndexComplexNotInt.wacc" should "return exit code 200" in {/"semanticErr - array tests: arrayIndexComplexNotInt.wacc" should "return exit code 200" ignore {/' $filePath"""
-    //   sedCommand.!
-    // }
-    exitCode shouldBe code
+    Main.compile(Array(newPath))
   })
 }

@@ -101,7 +101,8 @@ object X86IRGenerator {
 
       val funcIR = new ListBuffer[Instruction]
       for (func <- funcList) {
-        funcIR.appendAll(astToIR(func))
+        // funcIR.appendAll(astToIR(func))
+        generateFunctionIR(func)
       }
 
       val ir = new ListBuffer[Instruction]

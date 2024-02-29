@@ -294,6 +294,19 @@ case class Reg64(reg: Register) extends Operand {
   def toIntelString(size: InstrSize): String = s"qword ptr [${reg.toIntelString(size)}]"
 }
 
-case class Reg32(reg: Register, offset: Int) extends Operand {
+case class Reg32Offset(reg: Register, offset: Int) extends Operand {
   def toIntelString(size: InstrSize): String = s"dword ptr [${reg.toIntelString(InstrSize.fullReg)} + $offset]"
 }
+
+case class Reg32(reg: Register) extends Operand {
+  def toIntelString(size: InstrSize): String = s"dword ptr [${reg.toIntelString(InstrSize.fullReg)}]"
+}
+
+case class Reg16(reg: Register) extends Operand {
+  def toIntelString(size: InstrSize): String = s"word ptr [${reg.toIntelString(size)}]"
+}
+
+case class Reg8(reg: Register) extends Operand {
+  def toIntelString(size: InstrSize): String = s"byte ptr [${reg.toIntelString(size)}]"
+}
+

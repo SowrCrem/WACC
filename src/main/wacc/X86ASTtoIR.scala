@@ -179,7 +179,8 @@ object X86IRGenerator {
             }
           }
         }
-        // need to have cases for pairs and array elements later
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // TODO: need to have cases for pairs and array elements later
       }
     }
     case IdentAsgn(typeNode, ident, expr) => {
@@ -313,32 +314,101 @@ object X86IRGenerator {
     case Skip() => {
       ListBuffer()
     }
+
+    // TODO: Implement
+    case Call(ident, args) => ???
+    case Free(expr) => ???
+    case Read(lhs) => {
+      val instructions = ListBuffer[Instruction]().empty
+      
+      // for now
+      instructions ++= exprToIR(lhs)
+
+      // Should perform the same action as AsgnEq in a sense
+
+      // mov rax, r12
+      // mov rdi, rax
+      // call readi/readc
+      // mov r11, rax
+      // mov rax, r11
+      // mov r12, rax
+
+      // StackMachine.offset(lhs) match {
+      //   case Some((offset, fpchange)) => {
+      //     fpchange match {
+      //       case 0 => {
+      //         // mov rax, qword ptr [rbp - offset]
+      //         instructions += Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+      //       }
+      //       case _ => {
+      //         val setup = ListBuffer(
+      //           // add rsp, fpchange
+      //           AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+      //           // pop rbp
+      //           PopRegisters(List(FP), InstrSize.fullReg)
+      //         )
+      //         setup ++ 
+      //         ListBuffer(
+      //           // mov rax, qword ptr [rbp - offset]
+      //           Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+      //         ) ++ 
+      //         ListBuffer(
+      //           // push rbp
+      //           PushRegisters(List(FP), InstrSize.fullReg),
+      //           // sub rsp, fpchange
+      //           SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+      //           // mov rbp, rsp
+      //           Mov(FP, SP, InstrSize.fullReg)
+      //         )
+
+      //       }
+      //     }
+      //   }
+      //   case None => {
+      //     throw new RuntimeException("Variable not found in stack")
+      //   }
+      // }
+
+      // lhs.typeNode match {
+      //   case IntTypeNode() => {
+      //     lib.setReadIntFlag(true)
+      //     instructions += CallInstr("readi")
+      //   }
+      //   case CharTypeNode() => {
+      //     lib.setReadCharFlag(true)
+      //     instructions += CallInstr("readc")
+      //   }
+      // }
+    }
   }
 
   def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
     val func = expr.typeNode match {
       case StringTypeNode() => {
         lib.setPrintStringFlag(true)
-        CallInstr("print_string")
+        CallInstr("prints")
       }
       case BoolTypeNode() => {
         lib.setPrintBoolFlag(true)
-        CallInstr("print_bool")
+        CallInstr("printb")
       }
       case CharTypeNode() => {
         lib.setPrintCharFlag(true)
-        CallInstr("print_char")
+        CallInstr("printc")
       }
       case IntTypeNode() => {
         lib.setPrintIntFlag(true)
-        CallInstr("print_int")
+        CallInstr("printi")
       }
       case _ => {
+        // Must be Array || Error? || Pair
         printf("Type printing: :" + expr.typeNode.toString())
-        CallInstr("print_reference")
+        lib.setPrintPtrFlag(true)
+        CallInstr("printp")
       }
 
     }
+    
     exprToIR(expr) ++= ListBuffer(
       DecrementStackPointerNB(8),
       PushRegisters(List(Dest), InstrSize.fullReg),
@@ -349,7 +419,7 @@ object X86IRGenerator {
       if (!println) {
         ListBuffer(func, IncrementStackPointerNB(8))
       } else {
-        ListBuffer(func, CallInstr("print_ln"), IncrementStackPointerNB(8))
+        ListBuffer(func, CallInstr("println"), IncrementStackPointerNB(8))
       }
     }
   }

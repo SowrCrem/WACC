@@ -26,10 +26,12 @@ class LibFunGenerator {
   private var exitFlag: Boolean = false
   private var printStringFlag: Boolean = false
   private var printIntFlag: Boolean = false
-  private var printBoolFlag: Boolean = false
   private var printCharFlag: Boolean = false
-  private var printReferenceFlag: Boolean = false
+  private var printBoolFlag: Boolean = false
   private var printLnFlag: Boolean = false
+  private var printPtrFlag: Boolean = false
+  private var readCharFlag: Boolean = false
+  private var readIntFlag: Boolean = false
   private var mallocFlag: Boolean = false
   
   /** Adds the library functions to the IR based on flags set in the compiler
@@ -42,11 +44,14 @@ class LibFunGenerator {
     libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
     libFuns ++= exitIR
     libFuns ++= outOfMemory.createErrMessageIR() ++ outOfMemory.generateErrIR()
-    libFuns ++= addPrintFunc(printStringFlag, printDataIR("%.*s"), "printString")
-    libFuns ++= addPrintFunc(printIntFlag, printIntDataIR("%d"), "printInt")
-    libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
-    libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")
-    libFuns ++= addPrintFunc(printCharFlag, printCharDataIR(), "printChar")
+    libFuns ++= addIOFunc(printStringFlag, printDataIR("%.*s"), "printString")
+    libFuns ++= addIOFunc(printIntFlag, printIntDataIR("%d"), "printInt")
+    libFuns ++= addIOFunc(printBoolFlag, printBoolDataIR(), "printBool")
+    libFuns ++= addIOFunc(printLnFlag, printlnDataIR(""), "printLn")
+    libFuns ++= addIOFunc(printCharFlag, printCharDataIR("%c"), "printChar")
+    libFuns ++= addIOFunc(printPtrFlag, printPtrDataIR("%p"), "printPtr")
+    libFuns ++= addIOFunc(readCharFlag, readCharDataIR(" %c"), "readChar")
+    libFuns ++= addIOFunc(readIntFlag, readIntDataIR(" %d"), "readInt")
     libFuns ++= addMallocFunc()
     libFuns
   }
@@ -112,7 +117,7 @@ class LibFunGenerator {
           OffsetRegLabel(IP, LabelAddress(dataName)),
           InstrSize.fullReg
         ),
-        CallInstr("print_string"),
+        CallInstr("prints"),
         Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
         CallPLT("exit")
       )
@@ -165,24 +170,24 @@ class LibFunGenerator {
     }
   }
 
-  /** Adds the print function to the IR based on the flag set in the compiler
+  /** Adds the IO function to the IR based on the flag set in the compiler
     * @param flag
-    *   determines whether to add the print function to the IR
+    *   determines whether to add the IO function to the IR
     * @param dataGenerator
-    *   the generator for the data section of the print function
+    *   the generator for the data section of the IO function
     * @param printLabel
-    *   the label for the print function
+    *   the label for the IO function
     * @return
-    *   the IR for the print function
+    *   the IR for the IO function
     */
-  private def addPrintFunc(
+  private def addIOFunc(
       flag: Boolean,
       dataGenerator: => List[Instruction],
-      printLabel: String
+      IOLabel: String
   ): List[Instruction] = {
     if (flag) {
       val rodata = dataGenerator
-      rodata ++ createPrintIR(printLabel)
+      rodata ++ createIOIR(IOLabel)
     } else {
       List.empty[Instruction] // Return an empty list if the flag is not set
     }
@@ -207,12 +212,12 @@ class LibFunGenerator {
   )
 
   /**
-   * Generates the intermediate representation (IR) for creating the print functions
+   * Generates the intermediate representation (IR) for creating the input/output functions
    * @param label
    *   determines which print function to create
    * @return
    */
-  def createPrintIR(label: String): List[Instruction] = {
+  def createIOIR(label: String): List[Instruction] = {
     def commonPrologue(labelName: String): List[Instruction] = List(
       Label(labelName),
       PushRegisters(List(FP), InstrSize.fullReg),
@@ -226,15 +231,18 @@ class LibFunGenerator {
       ReturnInstr()
     )
 
-    val printCase = label match {
-      case "printString" => commonPrologue("_print_string") ++ printStringIR()
-      case "printInt"    => commonPrologue("_print_int") ++ printIntIr()
-      case "printBool"   => commonPrologue("_print_bool") ++ printBoolIr()
-      case "printLn"     => commonPrologue("_print_ln") ++ printLnIR()
-      case "printChar"   => commonPrologue("_print_char") ++ printCharIR()
+    val IOCase = label match {
+      case "printString" => commonPrologue("_prints") ++ printStringIR()
+      case "printInt"    => commonPrologue("_printi") ++ printIntIr()
+      case "printBool"   => commonPrologue("_printb") ++ printBoolIr()
+      case "printLn"     => commonPrologue("_println") ++ printLnIR()
+      case "printChar"   => commonPrologue("_printc") ++ printCharIR()
+      case "printPtr"    => commonPrologue("_printp") ++ printPtrIR()
+      case "readChar"    => commonPrologue("_readc") ++ readCharIR()
+      case "readInt"     => commonPrologue("_readi") ++ readIntIR()
     }
 
-    printCase ++ commonEpilogue()
+    IOCase ++ commonEpilogue()
 
   }
 
@@ -247,7 +255,7 @@ class LibFunGenerator {
    */
   def printStringIR(): List[Instruction] = List(
     Mov(Arg2, Arg0, InstrSize.fullReg),
-    Mov(Arg1, Reg32(Arg0, -4), InstrSize.halfReg),
+    Mov(Arg1, Reg32Offset(Arg0, -4), InstrSize.halfReg),
     LoadEffectiveAddress(
       Arg0,
       OffsetRegLabel(IP, LabelAddress(s"_prints_string${dataCounter}")),
@@ -320,7 +328,7 @@ class LibFunGenerator {
       InstrSize.fullReg
     ),
     Label("print_end"),
-    Mov(Arg1, Reg32(Arg2, -4), InstrSize.halfReg),
+    Mov(Arg1, Reg32Offset(Arg2, -4), InstrSize.halfReg),
     LoadEffectiveAddress(
       Arg0,
       OffsetRegLabel(IP, LabelAddress(s"_printb_string0")),
@@ -354,13 +362,131 @@ class LibFunGenerator {
     )
   }
 
+  def setPrintPtrFlag(flag: Boolean): Unit = {
+    printPtrFlag = flag
+  }
+
+  /**
+   * Generates the intermediate representation (IR) for the print pointer function 
+   */
+  def printPtrIR(): List[Instruction] = {
+    List(
+      // push rbp
+      // mov rbp, rsp
+      // and rsp, -16
+      // mov rsi, rdi
+      Mov(Arg1, Arg0, InstrSize.fullReg),
+      // lea rdi, [rip + .L._printp_str0]
+      LoadEffectiveAddress(
+        Arg0,
+        OffsetRegLabel(IP, LabelAddress(s"_printp_string${dataCounter}")),
+        InstrSize.fullReg
+      ),
+      // mov al, 0
+      Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+      // call printf@plt
+      CallPLT("printf"),
+      // mov rdi, 0
+      Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+      // call fflush@plt
+      CallPLT("fflush")
+      // mov rsp, rbp
+      // pop rbp
+      // ret
+    )
+  }
+
+  def setReadCharFlag(flag: Boolean): Unit = {
+    readCharFlag = flag
+  }
+
+  /**
+   * Generates the intermediate representation (IR) for the read char function
+   */
+  def readCharIR(): List[Instruction] = {
+    List(
+      // push rbp
+      // mov rbp, rsp
+      // and rsp, -16
+      // sub rsp, 16
+      SubInstr(SP, Immediate32(16), InstrSize.fullReg),
+      // mov byte ptr [rsp], dil
+      Mov(Reg8(SP), Arg0, InstrSize.eigthReg),
+      // lea rsi, qword ptr [rsp]
+      LoadEffectiveAddress(
+        Arg1,
+        Reg64(SP),
+        InstrSize.fullReg
+      ),
+      // lea rdi, [rip + .L._readc_str0]
+      LoadEffectiveAddress(
+        Arg0,
+        OffsetRegLabel(IP, LabelAddress(s"_readc_string${dataCounter}")),
+        InstrSize.fullReg
+      ),
+      // mov al, 0
+      Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+      // call scanf@plt
+      CallPLT("scanf"),
+      // movsx rax, byte ptr [rsp]
+      MovWithSignExtend(Dest, Reg8(SP), InstrSize.fullReg, InstrSize.fullReg),
+      // add rsp, 16
+      AddInstr(SP, Immediate32(16), InstrSize.fullReg) // As epilogue functions don't do this
+      // mov rsp, rbp
+      // pop rbp
+      // ret
+    )
+  }
+
+  def setReadIntFlag(flag: Boolean): Unit = {
+    readIntFlag = flag
+  }
+
+  /**
+   * Generates the intermediate representation (IR) for the read int function
+   */
+  def readIntIR(): List[Instruction] = {
+    List(
+      // push rbp
+      // mov rbp, rsp
+      // and rsp, -16
+      // sub rsp, 16
+      SubInstr(SP, Immediate32(16), InstrSize.fullReg),
+      // mov dword ptr [rsp], edi
+      Mov(Reg32(SP), Arg0, InstrSize.halfReg),
+      // lea rsi, qword ptr [rsp]
+      LoadEffectiveAddress(
+        Arg1,
+        Reg64(SP),
+        InstrSize.fullReg
+      ),
+      // lea rdi, [rip + .L._readi_str0]
+      LoadEffectiveAddress(
+        Arg0,
+        OffsetRegLabel(IP, LabelAddress(s"_readi_string${dataCounter}")),
+        InstrSize.fullReg
+      ),
+      // mov al, 0
+      Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+      // call scanf@plt
+      CallPLT("scanf"),
+      // movsx rax, dword ptr [rsp]
+      MovWithSignExtend(Dest, Reg32(SP), InstrSize.fullReg, InstrSize.fullReg),
+      // add rsp, 16
+      AddInstr(SP, Immediate32(16), InstrSize.fullReg) // As epilogue functions don't do this
+      // mov rsp, rbp
+      // pop rbp
+      // ret
+    )
+  }
+
   /**
    * Generates the intermediate representation (IR) for the data section of library functions
    * @param data
    * @param labelPrefix
    *   the prefix for the label
    * @return
-   */
+     */
   def createDataIR(data: String, labelPrefix: String): List[Instruction] = {
     dataCounter += 1
     val label = s"${labelPrefix}_string${dataCounter}"
@@ -429,8 +555,20 @@ class LibFunGenerator {
     )
   }
 
-  def printCharDataIR(): List[Instruction] = {
-    createDataIR("%c", "_printc")
+  def printCharDataIR(data: String): List[Instruction] = {
+    createDataIR(data, "_printc")
+  }
+  
+  def printPtrDataIR(data: String): List[Instruction] = {
+    createDataIR(data, "_printp")
+  }
+
+  def readCharDataIR(data: String): List[Instruction] = {
+    createDataIR(data, "_readc")
+  }
+
+  def readIntDataIR(data: String): List[Instruction] = {
+    createDataIR(data, "_readi")
   }
 
   /** Resets the flags and data counter

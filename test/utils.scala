@@ -91,7 +91,11 @@ object Utils {
     assembledPath
   }
 
-  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = synchronized{
+  def runSucceedsWithInputs(path: String, inputs: List[String], expOutput: String = "", expReturn: Int = 0): Assertion = {
+    runSucceeds(path, expOutput, expReturn, Some(inputs))
+  }
+
+  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0, inputs: Option[List[String]] = None): Assertion = synchronized {
     Main.setBackendTests()
     try {
       throwsNoError(path)
@@ -99,9 +103,13 @@ object Utils {
       case e: Throwable => fail("Compilation Error: Main.compile returned non-zero exit code: " + expReturn + " " + e.getMessage)
     }
     val exeName = assemble(path)
-    val exeReturn = s"./$exeName".!
+    val exeCommand = inputs match {
+      case Some(inputList) => s"\"${inputList.mkString(" ")}\" | ./$exeName"
+      case _               => s"./$exeName"
+    }
+    val exeReturn = exeCommand.!
     try {
-      val exeOutput = s"./$exeName".!!
+      val exeOutput = exeCommand.!!
       // exeOutput shouldBe expOutput
       printf("\nTest-output: \n" + exeOutput)
     } catch {

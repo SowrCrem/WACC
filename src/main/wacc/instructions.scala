@@ -272,7 +272,7 @@ case class FPOffset(val offset: Int) extends Operand {
   * Mov(RegisterPtr(FP, InstrSize.fullReg, MAX_REGSIZE), Dest, InstrSize.fullReg) translates to
   * "mov qword ptr [rbp + 8], rax"
   */
-case class RegisterPtr(val register: Register, val size : InstrSize, val offset : Int) extends Operand {
+case class RegisterPtr(val register: Register, val size : InstrSize, var offset : Int) extends Operand {
   def toIntelString(unused: InstrSize): String = {
     val prefix = size match {
       case InstrSize.fullReg => "qword"
@@ -280,7 +280,13 @@ case class RegisterPtr(val register: Register, val size : InstrSize, val offset 
       case InstrSize.quarterReg => "word"
       case InstrSize.eigthReg => "byte"
     }
-    s"$prefix ptr [${register.toIntelString(InstrSize.fullReg)} + $offset]"
+    val operator = if (offset < 0) {
+      offset *= -1
+      "-"
+    } else {
+      "+"
+    }
+    s"$prefix ptr [${register.toIntelString(InstrSize.fullReg)} $operator $offset]"
   } 
 }
 

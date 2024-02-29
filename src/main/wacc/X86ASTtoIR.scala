@@ -209,7 +209,7 @@ object X86IRGenerator {
             Mov(G2, Dest, InstrSize.fullReg),
             AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg),
             Mov(Dest, Immediate32(arr.size), InstrSize.fullReg),
-            Mov(RegisterPtr(G2, InstrSize.halfReg, -HALF_REGSIZE), Dest, InstrSize.halfReg),
+            Mov(RegisterPtr(G2, InstrSize.halfReg, (-1) * HALF_REGSIZE), Dest, InstrSize.halfReg),
           )
         }
         case _ => List()
@@ -225,6 +225,7 @@ object X86IRGenerator {
           // instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
           fpchange match {
             case 0 => {
+              instructions.prependAll(arrInstructions)
               instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
             }
             case _ => {

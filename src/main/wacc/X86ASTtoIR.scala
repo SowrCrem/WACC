@@ -313,6 +313,7 @@ object X86IRGenerator {
       case _ => {
         // Must be Array || Error? || Pair
         printf("Type printing: :" + expr.typeNode.toString())
+        lib.setPrintPtrFlag(true)
         CallInstr("printp")
       }
 

@@ -28,12 +28,12 @@ class IO extends AnyFlatSpec {
     throwsNoError("valid/IO/print/multipleStringsAssignment.wacc")
   }
 
-  "valid - print tests: print.wacc" should "return exit code 0" in {
-    throwsNoError("valid/IO/print/print.wacc")
-  }
-
   "valid - print tests: print-backspace.wacc" should "return exit code 0" in {
     throwsNoError("valid/IO/print/print-backspace.wacc")
+  }
+
+  "valid - print tests: print.wacc" should "return exit code 0" in {
+    throwsNoError("valid/IO/print/print.wacc")
   }
 
   "valid - print tests: printBool.wacc" should "return exit code 0" in {

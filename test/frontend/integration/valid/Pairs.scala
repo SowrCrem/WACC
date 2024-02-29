@@ -56,12 +56,12 @@ class Pairs extends AnyFlatSpec {
     throwsNoError("valid/pairs/null.wacc")
   }
 
-  "valid - pairs tests: pairarray.wacc" should "return exit code 0" in {
-    throwsNoError("valid/pairs/pairarray.wacc")
-  }
-
   "valid - pairs tests: pairExchangeArrayOk.wacc" should "return exit code 0" in {
     throwsNoError("valid/pairs/pairExchangeArrayOk.wacc")
+  }
+
+  "valid - pairs tests: pairarray.wacc" should "return exit code 0" in {
+    throwsNoError("valid/pairs/pairarray.wacc")
   }
 
   "valid - pairs tests: printNull.wacc" should "return exit code 0" in {

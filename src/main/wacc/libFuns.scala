@@ -355,6 +355,10 @@ class LibFunGenerator {
     )
   }
 
+  def setPrintPtrFlag(flag: Boolean): Unit = {
+    printPtrFlag = flag
+  }
+
   /**
    * Generates the intermediate representation (IR) for the print pointer function 
    */

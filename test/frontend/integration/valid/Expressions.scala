@@ -156,20 +156,20 @@ class Expressions extends AnyFlatSpec {
     throwsNoError("valid/expressions/negExpr.wacc")
   }
 
-  "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {
-    throwsNoError("valid/expressions/notequalsExpr.wacc")
-  }
-
   "valid - expressions tests: notExpr.wacc" should "return exit code 0" in {
     throwsNoError("valid/expressions/notExpr.wacc")
   }
 
-  "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {
-    throwsNoError("valid/expressions/ordAndchrExpr.wacc")
+  "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {
+    throwsNoError("valid/expressions/notequalsExpr.wacc")
   }
 
   "valid - expressions tests: orExpr.wacc" should "return exit code 0" in {
     throwsNoError("valid/expressions/orExpr.wacc")
+  }
+
+  "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {
+    throwsNoError("valid/expressions/ordAndchrExpr.wacc")
   }
 
   "valid - expressions tests: plusExpr.wacc" should "return exit code 0" in {

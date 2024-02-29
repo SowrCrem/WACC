@@ -195,6 +195,9 @@ object X86IRGenerator {
       // Step 2: Initialize the variable with the given expression
       val arrInstructions = typeNode match {
         case arr @ ArrayTypeNode(elem) => {
+          lib.setMallocFlag(true)
+          lib.outOfMemory.setFlag(true)
+
           /** Use G2 for array pointers for time being when assigning arrays
             * as a special case of the calling convention.
             * 
@@ -206,8 +209,7 @@ object X86IRGenerator {
             Mov(G2, Dest, InstrSize.fullReg),
             AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg),
             Mov(Dest, Immediate32(arr.size), InstrSize.fullReg),
-            Mov(RegisterPtr(G2, InstrSize.halfReg, HALF_REGSIZE), Dest, InstrSize.halfReg),
-
+            Mov(RegisterPtr(G2, InstrSize.halfReg, -HALF_REGSIZE), Dest, InstrSize.halfReg),
           )
         }
         case _ => List()
@@ -416,7 +418,16 @@ object X86IRGenerator {
       )
     }
     case ArrayLiter(entries) => {
-      ListBuffer()
+      // Assume special calling convention for array stores - r11 is used to store the array pointer
+      var offset : Int = 0 // As we initially store the size of the array in the first 4 bytes
+      val instructions : ListBuffer[Instruction] = ListBuffer()
+      for (e <- entries) {
+        instructions ++= exprToIR(e)
+        instructions += Mov(RegisterPtr(G2, InstrSize.halfReg, HALF_REGSIZE), Dest, InstrSize.halfReg)
+        offset += MAX_REGSIZE
+      }
+      instructions += Mov(Dest, G2, InstrSize.fullReg)
+      instructions
     }
     case Ident(ident) => {
       StackMachine.offset(ident) match {

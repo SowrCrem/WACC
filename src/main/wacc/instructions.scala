@@ -261,6 +261,17 @@ case class FPOffset(val offset: Int) extends Operand {
   def toIntelString(size: InstrSize): String = RegisterPtr(FP, InstrSize.fullReg, offset).toIntelString(size)
 }
 
+/**
+  * RegisterPtr represents a pointer to the address within a register with an offset
+  * 
+  * @param register denotes the register representing a pointer to a memory address
+  * @param size denotes the size of the memory address (qword, dword, word, byte)
+  * @param offset denotes the offset from the base address
+  * 
+  * Example use:
+  * Mov(RegisterPtr(FP, InstrSize.fullReg, MAX_REGSIZE), Dest, InstrSize.fullReg) translates to
+  * "mov qword ptr [rbp + 8], rax"
+  */
 case class RegisterPtr(val register: Register, val size : InstrSize, val offset : Int) extends Operand {
   def toIntelString(unused: InstrSize): String = {
     val prefix = size match {
@@ -269,7 +280,7 @@ case class RegisterPtr(val register: Register, val size : InstrSize, val offset 
       case InstrSize.quarterReg => "word"
       case InstrSize.eigthReg => "byte"
     }
-    s"$prefix ptr [${register.toIntelString(InstrSize.fullReg)} - $offset]"
+    s"$prefix ptr [${register.toIntelString(InstrSize.fullReg)} + $offset]"
   } 
 }
 

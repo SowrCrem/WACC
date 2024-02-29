@@ -38,17 +38,23 @@ class LibFunGenerator {
   def addLibFuns(): ListBuffer[Instruction] = {
 
     val libFuns = new ListBuffer[Instruction]()
+    libFuns ++= addMallocFunc()
+    libFuns ++= exitIR
+    // Place error messages here to avoid conflicts with other labels 
+    // (e.g. addMallocFunc sets outOfMemory flag)
     libFuns ++= overflow.createErrMessageIR() ++ overflow.generateErrIR()
     libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
-    libFuns ++= exitIR
     libFuns ++= outOfMemory.createErrMessageIR() ++ outOfMemory.generateErrIR()
+
+    // Place print functions at end to avoid conflicts with other labels 
+    // (e.g. errType messages sets printStringFlag)
     libFuns ++= addPrintFunc(printStringFlag, printDataIR("%.*s"), "printString")
     libFuns ++= addPrintFunc(printIntFlag, printIntDataIR("%d"), "printInt")
     libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
     libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")
     libFuns ++= addPrintFunc(printCharFlag, printCharDataIR(), "printChar")
     libFuns ++= addPrintFunc(printPtrFlag, printPtrDataIR("%p"), "printPtr")
-    libFuns ++= addMallocFunc()
+
     libFuns
   }
   
@@ -113,7 +119,7 @@ class LibFunGenerator {
           OffsetRegLabel(IP, LabelAddress(dataName)),
           InstrSize.fullReg
         ),
-        CallInstr("print_string"),
+        CallInstr("prints"),
         Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
         CallPLT("exit")
       )
@@ -134,6 +140,7 @@ class LibFunGenerator {
     val dataName = "_array_out_of_memory"
     val errMessage: String = "fatal error: out of memory\\n"
   }
+
   
   /**
     * Sets the flag to print malloc assembly code
@@ -149,6 +156,7 @@ class LibFunGenerator {
   */
   def addMallocFunc(): List[Instruction] = {
     if (mallocFlag) {
+      outOfMemory.setFlag(true)
       List(
         Label("_malloc"),
         PushRegisters(List(FP), InstrSize.fullReg),

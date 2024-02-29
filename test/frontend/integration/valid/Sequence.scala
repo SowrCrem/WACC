@@ -12,12 +12,12 @@ import org.scalatest.matchers.should.Matchers._
 
 class Sequence extends AnyFlatSpec {
 
-  "valid - sequence tests: basicSeq.wacc" should "return exit code 0" in {
-    throwsNoError("valid/sequence/basicSeq.wacc")
-  }
-
   "valid - sequence tests: basicSeq2.wacc" should "return exit code 0" in {
     throwsNoError("valid/sequence/basicSeq2.wacc")
+  }
+
+  "valid - sequence tests: basicSeq.wacc" should "return exit code 0" in {
+    throwsNoError("valid/sequence/basicSeq.wacc")
   }
 
   "valid - sequence tests: boolAssignment.wacc" should "return exit code 0" in {

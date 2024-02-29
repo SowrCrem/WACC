@@ -86,6 +86,8 @@ object X86IRGenerator {
 
     instructions ++= lib.addLibFuns()
 
+    instructions ++= functionGenerator.generateFunctionCode()
+
     instructions
   }
 
@@ -101,7 +103,9 @@ object X86IRGenerator {
 
       val funcIR = new ListBuffer[Instruction]
       for (func <- funcList) {
-        funcIR.appendAll(astToIR(func))
+        // funcIR.appendAll(astToIR(func))
+        val funcBody = generateFunctionIR(func)
+        functionGenerator.addFunction(func.ident.value, func, funcBody)
       }
 
       val ir = new ListBuffer[Instruction]
@@ -109,6 +113,19 @@ object X86IRGenerator {
       ir ++= statInstrs.flatten
       ir.appendAll(funcIR)
     }
+
+  }
+
+  def generateFunctionIR(func: Func): ListBuffer[Instruction] = {
+
+    
+    val body = {
+      val table = func.symbolTable
+      val stats = for (s <- func.statList) yield statToIR(s)
+      stats.flatten
+    }
+
+    ListBuffer() ++ body 
 
   }
 
@@ -131,6 +148,7 @@ object X86IRGenerator {
       }
       ListBuffer() ++ body
     }
+
     case AsgnEq(lhs, rhs) => {
       lhs match {
         case Ident(ident) => {
@@ -285,6 +303,11 @@ object X86IRGenerator {
         Label(s"else${labelCounter}")
       ) ++ elseCase ++ ListBuffer(
         Label(s"end${labelCounter}")
+      )
+    }
+    case Return(expr) => {
+      exprToIR(expr) ++ ListBuffer(
+        ReturnInstr()
       )
     }
     case Skip() => {
@@ -459,6 +482,30 @@ object X86IRGenerator {
     }
     case Mod(expr1, expr2) => {
       intBinOp(expr1, expr2, ArithmOperations.mod)
+    }
+    case Call(ident, paramList) => {
+      val instructions = new ListBuffer[Instruction]().empty
+      val funcLabel = functionGenerator.getFunctionLabel(ident.value)
+      val functionNode = functionGenerator.getFunctionNode(funcLabel)
+      val handleParams = ListBuffer[Instruction]().empty
+      if (paramList.size > 0) {
+        handleParams ++= ListBuffer( 
+          DecrementStackPointerNB(paramList.size)
+        )
+      }
+      for (param <- paramList) {
+        handleParams ++= exprToIR(param)
+        handleParams ++= ListBuffer(
+          PushRegisters(List(Dest), InstrSize.fullReg)
+        )
+      }
+
+      val setupStack = StackMachine.addFrame(functionGenerator.getFunctionTable(funcLabel), Some(functionNode.paramList)) 
+
+      instructions ++= handleParams ++ setupStack ++ ListBuffer(
+        CallInstr(funcLabel)
+      ) ++ StackMachine.popFrame()
+
     }
   }
 

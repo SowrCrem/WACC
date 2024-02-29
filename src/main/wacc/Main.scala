@@ -56,8 +56,6 @@ object Main {
 
   def compile(args: Array[String]): Int = synchronized(args.headOption match {
     case Some(filename) => {
-      // val fileContent = ("cat " + filename).!!
-      // set a new val name to filename spliced - remove the .wacc extension and only take the substring from the end until the last slash
       val fileName = filename.split(java.io.File.separator).last.split('.').head
       var fileContent = ""
       try {

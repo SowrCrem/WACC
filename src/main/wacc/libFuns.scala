@@ -40,24 +40,15 @@ class LibFunGenerator {
   def addLibFuns(): ListBuffer[Instruction] = {
 
     val libFuns = new ListBuffer[Instruction]()
-    if (overflowFlag) {
-      libFuns ++= overflow.createErrMessageIR() ++ overflow.generateErrIR()
-    }
-    if (divideByZeroFlag) {
-      libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
-    }
-    if (exitFlag) {
-      libFuns ++= exitIR
-    }
-    if (outOfMemoryFlag) {
-      libFuns ++= outOfMemory.createErrMessageIR() ++ outOfMemory.generateErrIR()
-    }
+    libFuns ++= overflow.createErrMessageIR() ++ overflow.generateErrIR()
+    libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
+    libFuns ++= exitIR
+    libFuns ++= outOfMemory.createErrMessageIR() ++ outOfMemory.generateErrIR()
     libFuns ++= addPrintFunc(printStringFlag, printDataIR("%.*s"), "printString")
     libFuns ++= addPrintFunc(printIntFlag, printIntDataIR("%d"), "printInt")
     libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
     libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")
     libFuns ++= addPrintFunc(printCharFlag, printCharDataIR(), "printChar")
-
     libFuns
   }
   
@@ -72,25 +63,47 @@ class LibFunGenerator {
     * 
     * See examples below for overflow, divideByZero, and outOfMemory
   */
-  private sealed abstract trait ErrType {
+  sealed abstract trait ErrType {
     val labelName: String
     val dataName: String
     val errMessage: String
-    // val printErrFlag = false
+    var printErrFlag = false
+
+    /**
+      *  @return a bool indicating whether the assembly for this error should be printed
+      * (default is false)
+    */
+    private def getFlag: Boolean = {
+      printErrFlag
+    }
+
+    /**
+      * Sets the flag for the error
+      * @param flag
+      */
+    def setFlag(flag: Boolean): Unit = {
+      printErrFlag = flag
+    }
     
     /**
       * Generates the intermediate representation (IR) for the data section (i.e. error message) of the library functions
-      * @return the IR for the data section as a list of instructions
+      * @return an empty list if the error flag is not set, otherwise the IR for the data section as a list of instructions
       */
     def createErrMessageIR(): List[Instruction] = {
+      if (!getFlag) {
+        return List.empty[Instruction]
+      }
       createDataIRNoCounter(errMessage, dataName)
     }
 
     /** 
       * Generates the intermediate representation (IR) for the library functions
-      * @return the IR for the library functions as a list of instructions
+      * @return an empty list if the error flag is not set, otherwise the IR for the library functions as a list of instructions
     */
     def generateErrIR(): List[Instruction] = {
+      if (!getFlag) {
+        return List.empty[Instruction]
+      }
       setPrintStringFlag(true)
       List(
         Label(labelName),
@@ -106,29 +119,22 @@ class LibFunGenerator {
       )
     }
   }
-  private case object overflow extends ErrType {
+  case object overflow extends ErrType {
     val labelName = "_errOverflow"
     val dataName = "_overflow_string"
     val errMessage: String = "fatal error: integer overflow or underflow occurred\\n"
   }
-  private case object divideByZero extends ErrType {
+  case object divideByZero extends ErrType {
     val labelName = "_errDivByZero"
     val dataName = "_divide_by_zero_string"
     val errMessage: String = "fatal error: division or modulo by zero\\n"
   }
-  private case object outOfMemory extends ErrType {
+  case object outOfMemory extends ErrType {
     val labelName = "_errOutOfMemory"
     val dataName = "_array_out_of_memory"
     val errMessage: String = "fatal error: out of memory\\n"
   }
-
-  def setOverflowFlag(flag: Boolean): Unit = {
-    overflowFlag = flag
-  }
   
-  def setDivideByZeroFlag(flag: Boolean): Unit = {
-    divideByZeroFlag = flag
-  }
   /** Adds the print function to the IR based on the flag set in the compiler
     * @param flag
     *   determines whether to add the print function to the IR

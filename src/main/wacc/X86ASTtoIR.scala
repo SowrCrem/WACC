@@ -509,7 +509,7 @@ object X86IRGenerator {
         jumpLabel: String,
         cond: InstrCond
     ) = {
-      lib.setOverflowFlag(true)
+      lib.overflow.setFlag(true)
       val instr = operation match {
         case ArithmOperations.add => AddInstr(Dest, G2, InstrSize.halfReg)
         case ArithmOperations.sub => SubInstr(Dest, G2, InstrSize.halfReg)
@@ -531,7 +531,7 @@ object X86IRGenerator {
       case ArithmOperations.mul =>
         generalOp(operation, s"_errOverflow", InstrCond.overflow)
       case ArithmOperations.div | ArithmOperations.mod => {
-        lib.setDivideByZeroFlag(true)
+        lib.divideByZero.setFlag(true)
         setup ++= ListBuffer(
           Cmp(
             G2,

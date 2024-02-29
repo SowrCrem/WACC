@@ -80,6 +80,10 @@ class Expressions extends AnyFlatSpec {
     throwsNoError("valid/expressions/lessExpr.wacc")
   }
 
+  "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
+    throwsNoError("valid/expressions/longExpr.wacc")
+  }
+
   "valid - expressions tests: longExpr2.wacc" should "return exit code 0" in {
     throwsNoError("valid/expressions/longExpr2.wacc")
   }
@@ -88,16 +92,12 @@ class Expressions extends AnyFlatSpec {
     throwsNoError("valid/expressions/longExpr3.wacc")
   }
 
-  "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
-    throwsNoError("valid/expressions/longExpr.wacc")
+  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
+    throwsNoError("valid/expressions/longSplitExpr.wacc")
   }
 
   "valid - expressions tests: longSplitExpr2.wacc" should "return exit code 0" in {
     throwsNoError("valid/expressions/longSplitExpr2.wacc")
-  }
-
-  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
-    throwsNoError("valid/expressions/longSplitExpr.wacc")
   }
 
   "valid - expressions tests: minusExpr.wacc" should "return exit code 0" in {

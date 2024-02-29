@@ -2,6 +2,15 @@ package wacc
 
 import parsley.internal.machine.instructions.Instr
 
+/** Constants used in the stack machine
+  * REGSIZEs defined in bytes
+  */
+object Constants {
+  val MAX_REGSIZE: Int = 8
+  val HALF_REGSIZE: Int = 4
+  val BYTE: Int = 1
+}
+
 sealed trait Instruction
 
 object InstrSize extends Enumeration {
@@ -74,6 +83,7 @@ case class Orr(dest: Operand, src: Operand, operand: Operand, instrSize: InstrSi
 case class Mov(dest: Operand, operand: Operand, size: InstrSize) extends Instruction
 case class MovWithSignExtend(dest: Operand, operand: Operand, size1: InstrSize, size2: InstrSize)
     extends Instruction
+case class MovToPtr()
 case class Cmp(src: Operand, operand: Operand, size: InstrSize) extends Instruction
 case class Lea(dest: Operand, src: Operand, size: InstrSize) extends Instruction
 
@@ -248,7 +258,19 @@ case object Arg5 extends ArgRegister {
 }
 
 case class FPOffset(val offset: Int) extends Operand {
-  def toIntelString(size: InstrSize): String = s"qword ptr [rbp - $offset]"
+  def toIntelString(size: InstrSize): String = RegisterPtr(FP, InstrSize.fullReg, offset).toIntelString(size)
+}
+
+case class RegisterPtr(val register: Register, val size : InstrSize, val offset : Int) extends Operand {
+  def toIntelString(unused: InstrSize): String = {
+    val prefix = size match {
+      case InstrSize.fullReg => "qword"
+      case InstrSize.halfReg => "dword"
+      case InstrSize.quarterReg => "word"
+      case InstrSize.eigthReg => "byte"
+    }
+    s"$prefix ptr [${register.toIntelString(InstrSize.fullReg)} - $offset]"
+  } 
 }
 
 case class LabelAddress(val label: String) extends Operand {

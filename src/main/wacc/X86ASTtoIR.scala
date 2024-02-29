@@ -3,6 +3,8 @@ package wacc
 import scala.collection.mutable._
 import InstrCond._
 import ArithmOperations._
+import Constants._
+import parsley.internal.machine.instructions.Instr
 
 object X86IRGenerator {
 
@@ -191,6 +193,26 @@ object X86IRGenerator {
       val instructions = ListBuffer[Instruction]().empty
 
       // Step 2: Initialize the variable with the given expression
+      val arrInstructions = typeNode match {
+        case arr @ ArrayTypeNode(elem) => {
+          /** Use G2 for array pointers for time being when assigning arrays
+            * as a special case of the calling convention.
+            * 
+            * NOTE: This will need to change for a register tracker implementation
+          */
+          List(
+            Mov(Arg0, Immediate32((arr.size + 1) * MAX_REGSIZE), InstrSize.halfReg),
+            CallInstr("malloc"),
+            Mov(G2, Dest, InstrSize.fullReg),
+            AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg),
+            Mov(Dest, Immediate32(arr.size), InstrSize.fullReg),
+            Mov(RegisterPtr(G2, InstrSize.halfReg, HALF_REGSIZE), Dest, InstrSize.halfReg),
+
+          )
+        }
+        case _ => List()
+      }
+
       instructions ++= exprToIR(expr)
 
       // Step 3: Update StackMachine context with the new variable
@@ -208,7 +230,7 @@ object X86IRGenerator {
                 AddInstr(SP, Immediate32(offset), InstrSize.fullReg),
                 PopRegisters(List(FP), InstrSize.fullReg)
               )
-              setup ++ instructions ++ ListBuffer(
+              setup ++ arrInstructions ++ instructions ++ ListBuffer(
                 PushRegisters(List(FP), InstrSize.fullReg),
                 SubInstr(SP, Immediate32(offset), InstrSize.fullReg),
                 Mov(FP, SP, InstrSize.fullReg)
@@ -392,6 +414,9 @@ object X86IRGenerator {
           InstrSize.fullReg
         )
       )
+    }
+    case ArrayLiter(entries) => {
+      ListBuffer()
     }
     case Ident(ident) => {
       StackMachine.offset(ident) match {

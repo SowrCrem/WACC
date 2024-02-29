@@ -57,5 +57,15 @@ class SimpleFunctions extends AnyFlatSpec with BeforeAndAfterEach {
     val path = constructPath(List("valid", "function", "simple_functions", "incFunction.wacc"))
     runSucceeds(path, "Hello World!", 0)
   } 
+
+  it should "run valid/function/simple_functions/lotsOfLocals.wacc" in {
+    val path = constructPath(List("valid", "function", "simple_functions", "lotsOfLocals.wacc"))
+    runSucceeds(path, "Hello World!", 0)
+  }
+
+  it should "run valid/function/simple_functions/argScopeCanBeShadowed.wacc" in {
+    val path = constructPath(List("valid", "function", "simple_functions", "argScopeCanBeShadowed.wacc"))
+    runSucceeds(path, "Hello World!", 0)
+  }
   
 }

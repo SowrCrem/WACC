@@ -91,11 +91,11 @@ object Utils {
     assembledPath
   }
 
-  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0): Assertion = runSucceeds(path, expOutput, expReturn, None)
+  def runSucceedsWithInputs(path: String, inputs: List[String], expOutput: String = "", expReturn: Int = 0): Assertion = {
+    runSucceeds(path, expOutput, expReturn, Some(inputs))
+  }
 
-  def runSucceeds(path: String, expOutput: String, expReturn: Int, inputs: List[String]): Assertion = runSucceeds(path, expOutput, expReturn, Some(inputs))
-
-  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0, inputs: Option[List[String]]): Assertion = synchronized {
+  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0, inputs: Option[List[String]] = None): Assertion = synchronized {
     Main.setBackendTests()
     try {
       throwsNoError(path)

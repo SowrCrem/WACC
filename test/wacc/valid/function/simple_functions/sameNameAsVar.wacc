@@ -7,7 +7,7 @@
 # Program:
 
 begin
-  int f() is
+  int f() is 
     return 5
   end
 

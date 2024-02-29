@@ -383,6 +383,7 @@ object X86IRGenerator {
   }
 
   def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
+
     val func = expr.typeNode match {
       case StringTypeNode() => {
         lib.setPrintStringFlag(true)
@@ -402,7 +403,10 @@ object X86IRGenerator {
       }
       case _ => {
         // Must be Array || Error? || Pair
-        printf("Type printing: :" + expr.typeNode.toString())
+        // printf("Type printing: :" + expr.typeNode.toString())
+        if (expr.typeNode == null) {
+          printf("Type printing: :" + expr.toString())
+        }
         lib.setPrintPtrFlag(true)
         CallInstr("printp")
       }

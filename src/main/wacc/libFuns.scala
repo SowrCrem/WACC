@@ -26,10 +26,10 @@ class LibFunGenerator {
   private var exitFlag: Boolean = false
   private var printStringFlag: Boolean = false
   private var printIntFlag: Boolean = false
-  private var printBoolFlag: Boolean = false
   private var printCharFlag: Boolean = false
-  private var printReferenceFlag: Boolean = false
+  private var printBoolFlag: Boolean = false
   private var printLnFlag: Boolean = false
+  private var printPtrFlag: Boolean = false
   private var mallocFlag: Boolean = false
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
@@ -46,6 +46,7 @@ class LibFunGenerator {
     libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
     libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")
     libFuns ++= addPrintFunc(printCharFlag, printCharDataIR(), "printChar")
+    libFuns ++= addPrintFunc(printPtrFlag, printPtrDataIR("%p"), "printPtr")
     libFuns ++= addMallocFunc()
     libFuns
   }
@@ -226,11 +227,12 @@ class LibFunGenerator {
     )
 
     val printCase = label match {
-      case "printString" => commonPrologue("_print_string") ++ printStringIR()
-      case "printInt"    => commonPrologue("_print_int") ++ printIntIr()
-      case "printBool"   => commonPrologue("_print_bool") ++ printBoolIr()
-      case "printLn"     => commonPrologue("_print_ln") ++ printLnIR()
-      case "printChar"   => commonPrologue("_print_char") ++ printCharIR()
+      case "printString" => commonPrologue("_prints") ++ printStringIR()
+      case "printInt"    => commonPrologue("_printi") ++ printIntIr()
+      case "printBool"   => commonPrologue("_printb") ++ printBoolIr()
+      case "printLn"     => commonPrologue("_println") ++ printLnIR()
+      case "printChar"   => commonPrologue("_printc") ++ printCharIR()
+      case "printPtr"    => commonPrologue("_printp") ++ printPtrIR()
     }
 
     printCase ++ commonEpilogue()
@@ -354,6 +356,36 @@ class LibFunGenerator {
   }
 
   /**
+   * Generates the intermediate representation (IR) for the print pointer function 
+   */
+  def printPtrIR(): List[Instruction] = {
+    List(
+      // push rbp
+      // mov rbp, rsp
+      // and rsp, -16
+      // mov rsi, rdi
+      Mov(Arg1, Arg0, InstrSize.fullReg),
+      // lea rdi, [rip + .L._printp_str0]
+      LoadEffectiveAddress(
+        Arg0,
+        OffsetRegLabel(IP, LabelAddress(s"_printp_string${dataCounter}")),
+        InstrSize.fullReg
+      ),
+      // mov al, 0
+      Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+      // call printf@plt
+      CallPLT("printf"),
+      // mov rdi, 0
+      Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+      // call fflush@plt
+      CallPLT("fflush")
+      // mov rsp, rbp
+      // pop rbp
+      // ret
+    )
+  }
+
+  /**
    * Generates the intermediate representation (IR) for the data section of library functions
    * @param data
    * @param labelPrefix
@@ -411,6 +443,10 @@ class LibFunGenerator {
 
   def printDataIR(data: String): List[Instruction] = {
     createDataIR(data, "_prints")
+  }
+  
+  def printPtrDataIR(data: String): List[Instruction] = {
+    createDataIR(data, "_printp")
   }
 
   def printlnDataIR(data: String): List[Instruction] = {

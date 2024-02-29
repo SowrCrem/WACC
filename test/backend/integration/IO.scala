@@ -18,6 +18,16 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
+  //  HARDIV TRY FIX THIS FIRST (Just should run - hangs indefinitely right now)
+
+  // it should "run valid/IO/read/read.wacc" in {
+  //   val path = constructPath(List("valid", "IO", "read", "read.wacc"))
+  //   val expectedOut = "3"
+  //   runSucceedsWithInputs(path, List("3", "3"), expectedOut, 0)
+  // }
+
+  // echoBigInt.wacc  echoBigNegInt.wacc  echoChar.wacc  echoInt.wacc  echoNegInt.wacc  echoPuncChar.wacc  read.wacc  readAtEof.wacc
+
   // it should "run valid/IO/print/multipleStringAssignment.wacc" in {
   //   val path = constructPath(List("valid", "IO", "print", "multipleStringAssignment.wacc"))
   //   val expectedOut = "s1 is Hi\ns2 is Hello\nThey are not the same string.\nNow make s1 = s2" +
@@ -25,63 +35,61 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
   //   runSucceeds(path, expectedOut, 0)
   // }
 
-
-
       // ARRAYS NOT YET IMPLEMENTED
 
-  it should "run valid/IO/print/printCharAsString.wacc" in {
-    val path = constructPath(List("valid", "IO", "print", "printCharAsString.wacc"))
-    val expectedOut = "foo\nbar"
-    runSucceeds(path, expectedOut, 0)
-  }
+  // it should "run valid/IO/print/printCharAsString.wacc" in {
+  //   val path = constructPath(List("valid", "IO", "print", "printCharAsString.wacc"))
+  //   val expectedOut = "foo\nbar"
+  //   runSucceeds(path, expectedOut, 0)
+  // }
 
   // it should "run valid/IO/print/printCharArray.wacc" in {
   //   val path = constructPath(List("valid", "IO", "print", "printCharArray.wacc"))
   //   runSucceeds(path, "hi!", 0)
   // }
 
-  // it should "run valid/IO/print/printEscChar.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "printEscChar.wacc"))
-  //   runSucceeds(path, "An escaped character example is \"", 0)
-  // }
+  it should "run valid/IO/print/printEscChar.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "printEscChar.wacc"))
+    runSucceeds(path, "An escaped character example is \"", 0)
+  }
 
-  // it should "run valid/IO/print/print-backspace.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "print-backspace.wacc"))
-  //   val expectedOut = "Hello\b World!"
-  //   runSucceeds(path, expectedOut, 0)
-  // }
+  it should "run valid/IO/print/print-backspace.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "print-backspace.wacc"))
+    val expectedOut = "Hello\b World!"
+    runSucceeds(path, expectedOut, 0)
+  }
 
-  // it should "run valid/IO/print/hashInProgram.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "hashInProgram.wacc"))
-  //   val expectedOut = "We can print the hash character: #" +
-  //                     "\nWe can also print # when its in a string."
-  //   runSucceeds(path, expectedOut, 0)
-  // }
+  it should "run valid/IO/print/hashInProgram.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "hashInProgram.wacc"))
+    val expectedOut = "We can print the hash character: #" +
+                      "\nWe can also print # when its in a string."
+    runSucceeds(path, expectedOut, 0)
+  }
 
-  // "WACC" should "run valid/IO/print/print.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "print.wacc"))
-  //   runSucceeds(path, "Hello World!", 0)
-  // }
+  "WACC" should "run valid/IO/print/print.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "print.wacc"))
+    runSucceeds(path, "Hello World!", 0)
+  }
 
-  // it should "run valid/IO/print/println.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "println.wacc"))
-  //   runSucceeds(path, "Hello World!\n", 0)
-  // }
+  it should "run valid/IO/print/println.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "println.wacc"))
+    runSucceeds(path, "Hello World!\n", 0)
+  }
 
 
-  // it should "run valid/IO/print/printInt.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "printInt.wacc"))
-  //   runSucceeds(path, "123", 0)
-  // }
+  it should "run valid/IO/print/printInt.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "printInt.wacc"))
+    runSucceeds(path, "123", 0)
+  }
 
-  // it should "run valid/IO/print/printBool.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "printBool.wacc"))
-  //   runSucceeds(path, "true", 0)
-  // }
+  it should "run valid/IO/print/printBool.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "printBool.wacc"))
+    runSucceeds(path, "true", 0)
+  }
 
-  // it should "run valid/IO/print/printChar.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "printChar.wacc"))
-  //   runSucceeds(path, "a", 0)
-  // }
+  it should "run valid/IO/print/printChar.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "printChar.wacc"))
+    runSucceeds(path, "a", 0)
+  }
 
 }

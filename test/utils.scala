@@ -104,9 +104,16 @@ object Utils {
     }
     val exeName = assemble(path)
     val exeCommand = inputs match {
-      case Some(inputList) => s"\"${inputList.mkString(" ")}\" | ./$exeName"
+      case Some(inputList) => {
+        // FOR HARDIV: should be in the format ./exeName <<< inputList.mkString("\n")
+        val inputString = inputList.mkString(" ")
+        s"./$exeName <<< $inputString"
+      }
       case _               => s"./$exeName"
     }
+    // Command being run
+    println(exeCommand)
+
     val exeReturn = exeCommand.!
     try {
       val exeOutput = exeCommand.!!

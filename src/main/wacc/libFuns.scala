@@ -117,7 +117,7 @@ class LibFunGenerator {
           OffsetRegLabel(IP, LabelAddress(dataName)),
           InstrSize.fullReg
         ),
-        CallInstr("print_string"),
+        CallInstr("prints"),
         Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
         CallPLT("exit")
       )

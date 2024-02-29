@@ -180,7 +180,8 @@ object X86IRGenerator {
             }
           }
         }
-        // need to have cases for pairs and array elements later
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // TODO: need to have cases for pairs and array elements later
       }
     }
     case IdentAsgn(typeNode, ident, expr) => {
@@ -314,9 +315,67 @@ object X86IRGenerator {
       ListBuffer()
     }
 
+    // TODO: Implement
     case Call(ident, args) => ???
     case Free(expr) => ???
-    case Read(lhs) => ???
+    case Read(lhs) => {
+      val instructions = ListBuffer[Instruction]().empty
+      // Should perform the same action as AsgnEq in a sense
+
+      // mov rax, r12
+      // mov rdi, rax
+      // call readi/readc
+      // mov r11, rax
+      // mov rax, r11
+      // mov r12, rax
+
+      StackMachine.offset(ident) match {
+        case Some((offset, fpchange)) => {
+          fpchange match {
+            case 0 => {
+              // mov rax, qword ptr [rbp - offset]
+              instructions += Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+            }
+            case _ => {
+              val setup = ListBuffer(
+                // add rsp, fpchange
+                AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                // pop rbp
+                PopRegisters(List(FP), InstrSize.fullReg)
+              )
+              setup ++ 
+              ListBuffer(
+                // mov rax, qword ptr [rbp - offset]
+                Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+              ) ++ 
+              ListBuffer(
+                // push rbp
+                PushRegisters(List(FP), InstrSize.fullReg),
+                // sub rsp, fpchange
+                SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                // mov rbp, rsp
+                Mov(FP, SP, InstrSize.fullReg)
+              )
+
+            }
+          }
+        }
+        case None => {
+          throw new RuntimeException("Variable not found in stack")
+        }
+      }
+
+      lhs.typeNode match {
+        case IntTypeNode() => {
+          lib.setReadIntFlag(true)
+          instructions += CallInstr("readi")
+        }
+        case CharTypeNode() => {
+          lib.setReadCharFlag(true)
+          instructions += CallInstr("readc")
+        }
+      }
+    }
   }
 
   def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {

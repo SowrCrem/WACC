@@ -31,6 +31,7 @@ class LibFunGenerator {
   private var printReferenceFlag: Boolean = false
   private var printLnFlag: Boolean = false
   private var mallocFlag: Boolean = false
+  
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
     */

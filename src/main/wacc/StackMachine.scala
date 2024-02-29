@@ -57,6 +57,13 @@ object StackMachine {
     None
   }
 
+  /**
+    * Add a new stack frame to the stack
+    *
+    * @param symbolTable The symbol table for the current scope
+    * @param opParamList The parameter list for the current scope if it is a function
+    * @return
+    */
   def addFrame(
       symbolTable: SymbolTable,
       opParamList: Option[ParamList]

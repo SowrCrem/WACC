@@ -5,11 +5,13 @@
  * The LibFunGenerator class provides methods for adding library functions to the IR based on flags set in the compiler.
  * It also includes methods for setting the flags and generating the IR for specific library functions such as printString,
  * printInt, printBool, printLn, and printChar.
+ * 
  *
  * The generated IR can be used as input for further compilation steps or code generation.
  */
 package wacc
 
+import Constants._
 import scala.collection.mutable._
 import parsley.internal.machine.instructions.Instr
 import parsley.internal.deepembedding.singletons.Offset
@@ -33,6 +35,9 @@ class LibFunGenerator {
   private var readCharFlag: Boolean = false
   private var readIntFlag: Boolean = false
   private var mallocFlag: Boolean = false
+  private var badCharFlag: Boolean = false
+  private var arrayLoad8Flag: Boolean = false
+  private var arrayStore8Flag: Boolean = false
   
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
@@ -40,10 +45,18 @@ class LibFunGenerator {
   def addLibFuns(): ListBuffer[Instruction] = {
 
     val libFuns = new ListBuffer[Instruction]()
-    libFuns ++= overflow.createErrMessageIR() ++ overflow.generateErrIR()
-    libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
+    libFuns ++= addMallocFunc()
+    libFuns ++= arrLoad8IR()
+    libFuns ++= arrStore8IR()
     libFuns ++= exitIR
+    // Place error messages here to avoid conflicts with other labels 
+    // (e.g. addMallocFunc sets outOfMemory flag)
+    libFuns ++= overflow.createErrMessageIR() ++ overflow.generateErrIR()
+    libFuns ++= badChar.createErrMessageIR() ++ badChar.generateErrIR()
+    libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
     libFuns ++= outOfMemory.createErrMessageIR() ++ outOfMemory.generateErrIR()
+    libFuns ++= nullDerefOrFree.createErrMessageIR() ++ nullDerefOrFree.generateErrIR()
+    libFuns ++= outOfBounds.generateOutOfBoundsErrIR
     libFuns ++= addIOFunc(printStringFlag, printDataIR("%.*s"), "printString")
     libFuns ++= addIOFunc(printIntFlag, printIntDataIR("%d"), "printInt")
     libFuns ++= addIOFunc(printBoolFlag, printBoolDataIR(), "printBool")
@@ -52,7 +65,6 @@ class LibFunGenerator {
     libFuns ++= addIOFunc(printPtrFlag, printPtrDataIR("%p"), "printPtr")
     libFuns ++= addIOFunc(readCharFlag, readCharDataIR(" %c"), "readChar")
     libFuns ++= addIOFunc(readIntFlag, readIntDataIR(" %d"), "readInt")
-    libFuns ++= addMallocFunc()
     libFuns
   }
   
@@ -138,7 +150,44 @@ class LibFunGenerator {
     val dataName = "_array_out_of_memory"
     val errMessage: String = "fatal error: out of memory\\n"
   }
-  
+  case object nullDerefOrFree extends ErrType {
+    val labelName = "_errNullDereferenceOrFree"
+    val dataName = "_null_dereference_or_free_string"
+    val errMessage: String = "fatal error: null pointer dereference or double free\\n"
+  }
+  case object outOfBounds extends ErrType {
+    val labelName = "_errOutOfBounds"
+    val dataName = "_array_out_of_bounds"
+    val errMessage: String = "fatal error: array index out of bounds\\n"
+
+    /**
+      * Generates the intermediate representation (IR) for the array index out of bounds error
+      */
+    def generateOutOfBoundsErrIR: List[Instruction] = {
+      createDataIRNoCounter(labelName, dataName) ++ 
+      List(
+        Label(labelName),
+        AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+        LoadEffectiveAddress(
+          Arg0,
+          OffsetRegLabel(IP, LabelAddress(dataName)),
+          InstrSize.fullReg
+        ),
+        Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+        CallPLT("printf"),
+        Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+        CallPLT("fflush"),
+        Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
+        CallPLT("exit")
+      )
+    }
+  }
+
+  case object badChar extends ErrType {
+    val labelName = "_errBadChar"
+    val dataName = "_bad_char_string"
+    val errMessage: String = "runtime error: invalid character, not ascii character\\n"
+  }
   /**
     * Sets the flag to print malloc assembly code
     * @param flag
@@ -153,12 +202,13 @@ class LibFunGenerator {
   */
   def addMallocFunc(): List[Instruction] = {
     if (mallocFlag) {
+      outOfMemory.setFlag(true)
       List(
         Label("_malloc"),
         PushRegisters(List(FP), InstrSize.fullReg),
         Mov(FP, SP, InstrSize.fullReg),
         AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
-        CallPLT("malloc"),
+        CallPLT("malloc"), 
         Cmp(Dest, Immediate32(0), InstrSize.fullReg),
         JumpIfCond(outOfMemory.labelName, InstrCond.equal),
         Mov(SP, FP, InstrSize.fullReg),
@@ -477,6 +527,56 @@ class LibFunGenerator {
       // mov rsp, rbp
       // pop rbp
       // ret
+    )
+  }
+
+  def setArrStore8Flag(flag: Boolean): Unit = {
+    arrayStore8Flag = flag
+  }
+
+  def arrStore8IR(): List[Instruction] = {
+    if (!arrayStore8Flag) {
+      return List.empty[Instruction]
+    }
+    outOfBounds.setFlag(true)
+    List(
+      Label("_arrStore8"),
+      PushRegisters(List(G0), InstrSize.fullReg),
+      Cmp(G1, Immediate32(0), InstrSize.halfReg),
+      ConditionalMov(Arg1, G1, InstrCond.lessThan, InstrSize.halfReg),
+      JumpIfCond(outOfBounds.labelName, InstrCond.lessThan),
+      Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.halfReg),
+      Cmp(G1, G0, InstrSize.halfReg),
+      ConditionalMov(Arg1, G1, InstrCond.greaterThanEqual, InstrSize.halfReg),
+      JumpIfCond(outOfBounds.labelName, InstrCond.greaterThanEqual),
+      Mov(ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.halfReg), Dest, InstrSize.halfReg),
+      PopRegisters(List(G0), InstrSize.fullReg),
+      ReturnInstr()
+    )
+  }
+
+  def setArrLoad8Flag(flag: Boolean): Unit = {
+    arrayLoad8Flag = flag
+  }
+
+  def arrLoad8IR(): List[Instruction] = {
+    if (!arrayLoad8Flag) {
+      return List.empty[Instruction]
+    }
+    outOfBounds.setFlag(true)
+    List(
+      Label("_arrLoad8"),
+      PushRegisters(List(G0), InstrSize.fullReg),
+      Cmp(G1, Immediate32(0), InstrSize.halfReg),
+      ConditionalMov(G1, G2, InstrCond.lessThan, InstrSize.halfReg),
+      JumpIfCond(outOfBounds.labelName, InstrCond.lessThan),
+      Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.halfReg),
+      Cmp(G1, G0, InstrSize.halfReg),
+      ConditionalMov(G1, G2, InstrCond.greaterThan, InstrSize.halfReg),
+      JumpIfCond(outOfBounds.labelName, InstrCond.greaterThan),
+      MovWithSignExtend(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.halfReg), InstrSize.halfReg, InstrSize.fullReg),
+      PopRegisters(List(G0), InstrSize.fullReg),
+      ReturnInstr()
     )
   }
 

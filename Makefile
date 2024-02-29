@@ -9,6 +9,9 @@ all:
 	scala-cli --power package . --server=false --jvm system --force -o wacc-compiler;
 	cd test && bash build.sh && cd ..
 
+make package:
+	scala-cli --power package . --server=false --jvm system --force -o wacc-compiler
+
 clean:
 	find . -type f -name "*.s" -delete
 	find . -maxdepth 1 -type f -not -name "*.*" -not -name "Makefile" -not -name "compile" -not -name ".git*" -delete

@@ -152,7 +152,10 @@ object SndNode extends ParserBridgePos1[Expr, SndNode]
 sealed trait LValue extends Expr
 
 
-case class ArrayElem(ident: Ident, eList: List[Expr])(val pos: (Int, Int)) extends LValue// list of expressions so we can have x[1][2][3] etc
+  // list of expressions so we can have x[1][2][3] etc
+case class ArrayElem(ident: Ident, eList: List[Expr])(val pos: (Int, Int)) extends LValue { 
+  typeNode = ident.typeNode
+}
 object ArrayElem extends ParserBridgePos2[Ident, List[Expr], ArrayElem]
 
 // Binary Operators
@@ -207,13 +210,21 @@ object Or extends ParserBridgePos2[Expr, Expr, BoolBinOp]
 
 sealed trait UnaryOp extends Expr
 
-case class Ord(expr: Expr)(val pos: (Int, Int)) extends UnaryOp 
+case class Ord(expr: Expr)(val pos: (Int, Int)) extends UnaryOp {
+  typeNode = IntTypeNode()(0, 0)
+}
 object Ord extends ParserBridgePos1[Expr, UnaryOp]
-case class Chr(expr: Expr)(val pos: (Int, Int)) extends UnaryOp
+case class Chr(expr: Expr)(val pos: (Int, Int)) extends UnaryOp  {
+  typeNode = CharTypeNode()(0, 0)
+}
 object Chr extends ParserBridgePos1[Expr, UnaryOp]
-case class Neg(expr: Expr)(val pos: (Int, Int)) extends UnaryOp
+case class Neg(expr: Expr)(val pos: (Int, Int)) extends UnaryOp {
+  typeNode = IntTypeNode()(0, 0)
+}
 object Neg extends ParserBridgePos1[Expr, UnaryOp]
-case class Not(expr: Expr)(val pos: (Int, Int)) extends UnaryOp
+case class Not(expr: Expr)(val pos: (Int, Int)) extends UnaryOp {
+  typeNode = BoolTypeNode()(0, 0)
+}
 object Not extends ParserBridgePos1[Expr, UnaryOp]
 case class Len(expr: Expr)(val pos: (Int, Int)) extends UnaryOp
 object Len extends ParserBridgePos1[Expr, UnaryOp]
@@ -291,7 +302,7 @@ case class ArrayTypeNode(elementType: TypeNode)(val pos: (Int, Int)) extends Pai
 
   override def toString: String = s"$elementType[]"
   var length: Int = 0
-  override val size: Int = 8
+  override val size: Int = 8 
 
 }
 object ArrayTypeNode extends ParserBridgePos1[TypeNode, ArrayTypeNode]

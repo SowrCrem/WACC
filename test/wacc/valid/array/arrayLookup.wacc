@@ -8,5 +8,7 @@
 
 begin
   int[] a = [43, 2, 18, 1] ;
-  println a[0]
+  int[] b = [2];
+  int[][] c = [a, b];
+  println c[0][1]
 end

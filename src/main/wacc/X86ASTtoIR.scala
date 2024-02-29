@@ -313,6 +313,10 @@ object X86IRGenerator {
     case Skip() => {
       ListBuffer()
     }
+
+    case Call(ident, args) => ???
+    case Free(expr) => ???
+    case Read(lhs) => ???
   }
 
   def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {

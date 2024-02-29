@@ -21,3 +21,4 @@ begin
     int ret = call f();
     println ret
 end
+ 

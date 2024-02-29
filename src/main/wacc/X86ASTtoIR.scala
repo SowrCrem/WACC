@@ -102,10 +102,9 @@ object X86IRGenerator {
     case prog @ Program(funcList, stat) => {
 
       val funcIR = new ListBuffer[Instruction]
+
       for (func <- funcList) {
-        // funcIR.appendAll(astToIR(func))
-        val funcBody = generateFunctionIR(func)
-        functionGenerator.addFunction(func.ident.value, func, funcBody)
+        functionGenerator.addFunction(func.ident.value, func, ListBuffer())
       }
 
       val ir = new ListBuffer[Instruction]
@@ -180,7 +179,8 @@ object X86IRGenerator {
             }
           }
         }
-        // need to have cases for pairs and array elements later
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // TODO: need to have cases for pairs and array elements later
       }
     }
     case IdentAsgn(typeNode, ident, expr) => {
@@ -195,6 +195,7 @@ object X86IRGenerator {
       //   ListBuffer[Instruction](DecrementStackPointerNB(varSize))
 
       // Step 2: Initialize the variable with the given expression
+      
       instructions ++= exprToIR(expr)
 
       // Step 3: Update StackMachine context with the new variable
@@ -314,12 +315,75 @@ object X86IRGenerator {
       ListBuffer()
     }
 
+    // TODO: Implement
     case Call(ident, args) => ???
     case Free(expr) => ???
-    case Read(lhs) => ???
+    case Read(lhs) => {
+      val instructions = ListBuffer[Instruction]().empty
+      
+      // for now
+      instructions ++= exprToIR(lhs)
+
+      // Should perform the same action as AsgnEq in a sense
+
+      // mov rax, r12
+      // mov rdi, rax
+      // call readi/readc
+      // mov r11, rax
+      // mov rax, r11
+      // mov r12, rax
+
+      // StackMachine.offset(lhs) match {
+      //   case Some((offset, fpchange)) => {
+      //     fpchange match {
+      //       case 0 => {
+      //         // mov rax, qword ptr [rbp - offset]
+      //         instructions += Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+      //       }
+      //       case _ => {
+      //         val setup = ListBuffer(
+      //           // add rsp, fpchange
+      //           AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+      //           // pop rbp
+      //           PopRegisters(List(FP), InstrSize.fullReg)
+      //         )
+      //         setup ++ 
+      //         ListBuffer(
+      //           // mov rax, qword ptr [rbp - offset]
+      //           Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+      //         ) ++ 
+      //         ListBuffer(
+      //           // push rbp
+      //           PushRegisters(List(FP), InstrSize.fullReg),
+      //           // sub rsp, fpchange
+      //           SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+      //           // mov rbp, rsp
+      //           Mov(FP, SP, InstrSize.fullReg)
+      //         )
+
+      //       }
+      //     }
+      //   }
+      //   case None => {
+      //     throw new RuntimeException("Variable not found in stack")
+      //   }
+      // }
+
+      // lhs.typeNode match {
+      //   case IntTypeNode() => {
+      //     lib.setReadIntFlag(true)
+      //     instructions += CallInstr("readi")
+      //   }
+      //   case CharTypeNode() => {
+      //     lib.setReadCharFlag(true)
+      //     instructions += CallInstr("readc")
+      //   }
+      // }
+    }
   }
 
   def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
+
     val func = expr.typeNode match {
       case StringTypeNode() => {
         lib.setPrintStringFlag(true)
@@ -339,7 +403,10 @@ object X86IRGenerator {
       }
       case _ => {
         // Must be Array || Error? || Pair
-        printf("Type printing: :" + expr.typeNode.toString())
+        // printf("Type printing: :" + expr.typeNode.toString())
+        if (expr.typeNode == null) {
+          printf("Type printing: :" + expr.toString())
+        }
         lib.setPrintPtrFlag(true)
         CallInstr("printp")
       }
@@ -489,14 +556,9 @@ object X86IRGenerator {
     }
     case Call(ident, paramList) => {
       val instructions = new ListBuffer[Instruction]().empty
-      val funcLabel = functionGenerator.getFunctionLabel(ident.value)
-      val functionNode = functionGenerator.getFunctionNode(funcLabel)
+      val functionNode = functionGenerator.getFunctionNode(ident.value)
       val handleParams = ListBuffer[Instruction]().empty
-      if (paramList.size > 0) {
-        handleParams ++= ListBuffer( 
-          DecrementStackPointerNB(paramList.size)
-        )
-      }
+      
       for (param <- paramList) {
         handleParams ++= exprToIR(param)
         handleParams ++= ListBuffer(
@@ -504,11 +566,36 @@ object X86IRGenerator {
         )
       }
 
-      val setupStack = StackMachine.addFrame(functionGenerator.getFunctionTable(funcLabel), Some(functionNode.paramList)) 
 
-      instructions ++= handleParams ++ setupStack ++ ListBuffer(
-        CallInstr(funcLabel)
-      ) ++ StackMachine.popFrame()
+
+      val incrementStackInstr = new ListBuffer[Instruction]().empty
+
+      if (paramList.size > 0) {
+        for (i <- 0 until paramList.size) {
+          incrementStackInstr ++= ListBuffer(
+          PopRegisters(List(G0), InstrSize.fullReg),
+        )
+        }
+      }
+
+      val setupStack = StackMachine.addFrame(
+        functionGenerator.getFunctionTable(ident.value),
+        Some(functionNode.paramList)
+      )
+
+      val funcBody = generateFunctionIR(functionNode)
+      functionGenerator.addFunction(functionNode.ident.value, functionNode, funcBody)
+      val popFrame = StackMachine.popFrame()
+
+      val body = functionGenerator.getFunctionBody(ident.value)
+
+      functionGenerator.addFunction(ident.value, functionNode, body)
+
+
+
+      instructions ++= handleParams ++  setupStack ++  ListBuffer(
+        CallInstr(ident.value)
+      )  ++ popFrame ++ incrementStackInstr
 
     }
   }

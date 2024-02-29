@@ -715,6 +715,7 @@ object X86IRGenerator {
     stringLiterals.clear()
     rodataDirectives.clear()
     lib.reset()
+    functionGenerator.reset()
     labelCounter = 0
   }
 

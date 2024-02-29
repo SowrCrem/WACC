@@ -9,7 +9,7 @@
 begin
   int f(int f) is
     return f
-  end
+  end 
 
   int x = call f(99);
   println x

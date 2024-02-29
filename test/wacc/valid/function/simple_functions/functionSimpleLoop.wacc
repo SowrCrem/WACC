@@ -9,9 +9,10 @@
 begin
   int f(int n) is
     int i = 0;
+    println n;
     while i < n do
       i = i + 1
-    done;
+    done; 
     return i
   end
   int x = call f(10) ;

@@ -72,7 +72,9 @@ object ParamList extends ParserBridgePos1[List[Param], ParamList]
 
 // Param (Extending Position)
 
-case class Param(typeNode: TypeNode, ident: Ident)(val pos: (Int, Int)) extends Position
+case class Param(typenode: TypeNode, ident: Ident)(val pos: (Int, Int)) extends Position with Expr  {
+  typeNode = typenode;
+}
 object Param extends ParserBridgePos2[TypeNode, Ident, Param]
 
 // Statements (Extending Position)

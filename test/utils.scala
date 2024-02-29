@@ -104,7 +104,7 @@ object Utils {
     }
     val exeName = assemble(path)
     val exeCommand = inputs match {
-      case Some(inputList) => s"\"${inputList.mkString(" ")}\" | ./$exeName"
+      case Some(inputList) => s"./$exeName <<< \"${inputList.mkString(" ")}\""
       case _               => s"./$exeName"
     }
     val exeReturn = exeCommand.!

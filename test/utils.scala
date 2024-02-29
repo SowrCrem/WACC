@@ -107,6 +107,9 @@ object Utils {
       case Some(inputList) => s"./$exeName <<< \"${inputList.mkString(" ")}\""
       case _               => s"./$exeName"
     }
+    // Command being run
+    println(exeCommand)
+
     val exeReturn = exeCommand.!
     try {
       val exeOutput = exeCommand.!!

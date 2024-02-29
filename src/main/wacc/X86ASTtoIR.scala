@@ -175,7 +175,7 @@ object X86IRGenerator {
 
             }
             case None => {
-              throw new RuntimeException("Variable not found in stack")
+              throw new RuntimeException(s"Variable ${ident} not found in stack")
             }
           }
         }
@@ -320,65 +320,71 @@ object X86IRGenerator {
     case Free(expr) => ???
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
-      
-      // for now
-      instructions ++= exprToIR(lhs)
 
-      // Should perform the same action as AsgnEq in a sense
+      val callReadLabel = lhs.typeNode match {
+        case IntTypeNode() => {
+          lib.setReadIntFlag(true)
+          CallInstr("readi")
+        }
+        case CharTypeNode() => {
+          lib.setReadCharFlag(true)
+          CallInstr("readc")
+        }
+      }
 
-      // mov rax, r12
-      // mov rdi, rax
-      // call readi/readc
-      // mov r11, rax
-      // mov rax, r11
-      // mov r12, rax
+      // Check lhs is an identifier
+      lhs match {
+        case Ident(ident) => {
+          // Find position in stack
+          StackMachine.offset(ident) match {
+            case Some((offset, fpchange)) => {
+              val readLogic = ListBuffer (
+                // mov rax, qword ptr [rbp - offset]
+                Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+                // mov rdi, rax
+                Mov(Arg0, Dest, InstrSize.fullReg),
+                // call _readi / _readc depending on lhs.typeNode
+                callReadLabel,
+                // mov qword ptr [rbp - offset], rax
+                Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+              )
 
-      // StackMachine.offset(lhs) match {
-      //   case Some((offset, fpchange)) => {
-      //     fpchange match {
-      //       case 0 => {
-      //         // mov rax, qword ptr [rbp - offset]
-      //         instructions += Mov(Dest, FPOffset(offset), InstrSize.fullReg)
-      //       }
-      //       case _ => {
-      //         val setup = ListBuffer(
-      //           // add rsp, fpchange
-      //           AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
-      //           // pop rbp
-      //           PopRegisters(List(FP), InstrSize.fullReg)
-      //         )
-      //         setup ++ 
-      //         ListBuffer(
-      //           // mov rax, qword ptr [rbp - offset]
-      //           Mov(Dest, FPOffset(offset), InstrSize.fullReg)
-      //         ) ++ 
-      //         ListBuffer(
-      //           // push rbp
-      //           PushRegisters(List(FP), InstrSize.fullReg),
-      //           // sub rsp, fpchange
-      //           SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
-      //           // mov rbp, rsp
-      //           Mov(FP, SP, InstrSize.fullReg)
-      //         )
-
-      //       }
-      //     }
-      //   }
-      //   case None => {
-      //     throw new RuntimeException("Variable not found in stack")
-      //   }
-      // }
-
-      // lhs.typeNode match {
-      //   case IntTypeNode() => {
-      //     lib.setReadIntFlag(true)
-      //     instructions += CallInstr("readi")
-      //   }
-      //   case CharTypeNode() => {
-      //     lib.setReadCharFlag(true)
-      //     instructions += CallInstr("readc")
-      //   }
-      // }
+              fpchange match {
+                case 0 => {
+                  // Use offset as start of stack
+                  instructions ++ readLogic
+                }
+                case _ => {
+                  val stackSetup = ListBuffer(
+                    // add rsp, fpchange
+                    AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    // pop rbp
+                    PopRegisters(List(FP), InstrSize.fullReg)
+                  )
+                  val reverseStackSetup = ListBuffer(
+                    // push rbp
+                    PushRegisters(List(FP), InstrSize.fullReg),
+                    // sub rsp, fpchange
+                    SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    // mov rbp, rsp
+                    Mov(FP, SP, InstrSize.fullReg)
+                  )
+                  
+                  instructions ++ stackSetup ++ readLogic ++ reverseStackSetup
+                }
+              }
+            }
+            case None => {
+              throw new RuntimeException(s"Variable ${ident} not found in stack")
+            }
+          }
+        }
+        case _ => {
+          // Message log for value should not reach this case
+          throw new RuntimeException("Value (type: " + lhs.typeNode.toString() +
+                                           ") should not reach this case")
+        }
+      }
     }
   }
 

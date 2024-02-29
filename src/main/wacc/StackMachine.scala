@@ -47,7 +47,7 @@ object StackMachine {
           printf(
             "found %s in frame with offset %d\n",
             name,
-            offset + totalOffset
+            offset + totalOffset + 8
           )
           return Some((offset + 8, totalOffset))
         }
@@ -175,14 +175,14 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
 
         /** offsets for function parameters are calculated by starting from the
           * end of the local variables and accounting for the space taken by the
-          * return address and the frame pointer (2 * 4 bytes), simulating the
+          * return address and the frame pointer (2 * 8 bytes), simulating the
           * typical layout of a stack frame in x86 where parameters are pushed
           * onto the stack in reverse order after local variables and control
           * information
           */
-        var currentOffset = localVarSize + 2 * 4
+        var currentOffset = 2 * 8
         for (p <- paramList.paramList.reverse) {
-          varMap.addOne(p.ident.value, currentOffset)
+          varMap.addOne(p.ident.value, -(currentOffset))
           currentOffset += p.typeNode.size
         }
 

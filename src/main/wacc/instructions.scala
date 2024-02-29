@@ -251,6 +251,10 @@ case class FPOffset(val offset: Int) extends Operand {
   def toIntelString(size: InstrSize): String = s"qword ptr [rbp - $offset]"
 }
 
+case class FPOffsetPlusReg(val offset: Int) extends Operand {
+  def toIntelString(size: InstrSize): String = s"qword ptr [rbp + $offset]"
+}
+
 case class LabelAddress(val label: String) extends Operand {
   def toIntelString(size: InstrSize): String = label
 }

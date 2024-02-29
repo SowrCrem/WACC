@@ -11,10 +11,6 @@ begin
   char a = 'a' ;
   int i = 99 ;
 
-  print a ;
-  print " is " ;
-  println ord a ;
-
   print i ;
   print " is " ;
   println chr i

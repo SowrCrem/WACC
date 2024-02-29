@@ -6,13 +6,8 @@
 
 begin
   int x = 42;
-  int y = 6;
-  int z = 7;
-  int a = 0;
   begin
-    x = 4;
-    a = 8;
-    z = 8
+    x = 0
   end;
-  exit a
+  exit x
 end

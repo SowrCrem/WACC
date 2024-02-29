@@ -1,3 +1,13 @@
+/**
+ * This file contains the implementation of the LibFunGenerator class, which is responsible for generating
+ * the intermediate representation (IR) for the library functions used in the WACC compiler.
+ *
+ * The LibFunGenerator class provides methods for adding library functions to the IR based on flags set in the compiler.
+ * It also includes methods for setting the flags and generating the IR for specific library functions such as printString,
+ * printInt, printBool, printLn, and printChar.
+ *
+ * The generated IR can be used as input for further compilation steps or code generation.
+ */
 package wacc
 
 import scala.collection.mutable._
@@ -20,95 +30,138 @@ class LibFunGenerator {
   private var printCharFlag: Boolean = false
   private var printReferenceFlag: Boolean = false
   private var printLnFlag: Boolean = false
-  private var overflowFlag: Boolean = false
-  private var divideByZeroFlag: Boolean = false
-
+  private var mallocFlag: Boolean = false
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
     */
   def addLibFuns(): ListBuffer[Instruction] = {
 
     val libFuns = new ListBuffer[Instruction]()
-    if (overflowFlag) {
-      val data = createDataErrOverflow()
-      libFuns ++= data ++ errOverflowIR()
-    }
-    if (divideByZeroFlag) {
-      val data = createDataDivZero()
-      libFuns ++= data ++ divZeroIR()
-    }
-    if (exitFlag) {
-      libFuns ++= exitIR
-    }
-    libFuns ++= addPrintFunc(
-      printStringFlag,
-      printDataIR("%.*s"),
-      "printString"
-    )
+    libFuns ++= overflow.createErrMessageIR() ++ overflow.generateErrIR()
+    libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
+    libFuns ++= exitIR
+    libFuns ++= outOfMemory.createErrMessageIR() ++ outOfMemory.generateErrIR()
+    libFuns ++= addPrintFunc(printStringFlag, printDataIR("%.*s"), "printString")
     libFuns ++= addPrintFunc(printIntFlag, printIntDataIR("%d"), "printInt")
     libFuns ++= addPrintFunc(printBoolFlag, printBoolDataIR(), "printBool")
     libFuns ++= addPrintFunc(printLnFlag, printlnDataIR(""), "printLn")
     libFuns ++= addPrintFunc(printCharFlag, printCharDataIR(), "printChar")
-
+    libFuns ++= addMallocFunc()
     libFuns
   }
+  
+  /** 
+    * A generic error type for the library functions
+    * note the generateErrIR method is generic and may need to be overridden
+    * 
+    * To define a new case object: 
+    * 1. Create a new case object that extends ErrType
+    * 2. Define the labelName, dataName, and errMessage fields
+    * 3. Override the generateErrIR method (optional, if the error handling is different from the default implementation)
+    * 
+    * See examples below for overflow, divideByZero, and outOfMemory
+  */
+  sealed abstract trait ErrType {
+    val labelName: String
+    val dataName: String
+    val errMessage: String
+    var printErrFlag = false
 
-  def setDivideByZeroFlag(flag: Boolean): Unit = {
-    divideByZeroFlag = flag
-  }
-
-  def createDataDivZero(): List[Instruction] = {
-    createDataIRNoCounter(
-      "fatal error: division or modulo by zero\\n",
-      "_divide_by_zero_string"
-    )
-  }
-
-  def divZeroIR(): List[Instruction] = {
-    setPrintStringFlag(true)
-    List(
-      Label("_errDivByZero"),
-      AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
-      LoadEffectiveAddress(
-        Arg0,
-        OffsetRegLabel(IP, LabelAddress("_divide_by_zero_string")),
-        InstrSize.fullReg
-      ),
-      CallInstr("print_string"),
-      Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
-      CallPLT("exit")
-    )
-  }
-
-  def setOverflowFlag(flag: Boolean): Unit = {
-    overflowFlag = flag
-  }
-
-  def createDataErrOverflow(): List[Instruction] = {
-    createDataIRNoCounter(
-      "fatal error: integer overflow or underflow occurred\\n",
-      "_overflow_string"
-    )
-  }
-
-  /** The intermediate representation for the overflow error function
-    *
-    * @return
+    /**
+      *  @return a bool indicating whether the assembly for this error should be printed
+      * (default is false)
     */
-  def errOverflowIR(): List[Instruction] = {
-    setPrintStringFlag(true)
-    List(
-      Label("_errOverflow"),
-      AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
-      LoadEffectiveAddress(
-        Arg0,
-        OffsetRegLabel(IP, LabelAddress("_overflow_string")),
-        InstrSize.fullReg
-      ),
-      CallInstr("print_string"),
-      Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
-      CallPLT("exit")
-    )
+    private def getFlag: Boolean = {
+      printErrFlag
+    }
+
+    /**
+      * Sets the flag for the error
+      * @param flag
+      */
+    def setFlag(flag: Boolean): Unit = {
+      printErrFlag = flag
+    }
+    
+    /**
+      * Generates the intermediate representation (IR) for the data section (i.e. error message) of the library functions
+      * @return an empty list if the error flag is not set, otherwise the IR for the data section as a list of instructions
+      */
+    def createErrMessageIR(): List[Instruction] = {
+      if (!getFlag) {
+        return List.empty[Instruction]
+      }
+      createDataIRNoCounter(errMessage, dataName)
+    }
+
+    /** 
+      * Generates the intermediate representation (IR) for the library functions
+      * @return an empty list if the error flag is not set, otherwise the IR for the library functions as a list of instructions
+    */
+    def generateErrIR(): List[Instruction] = {
+      if (!getFlag) {
+        return List.empty[Instruction]
+      }
+      setPrintStringFlag(true)
+      List(
+        Label(labelName),
+        AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+        LoadEffectiveAddress(
+          Arg0,
+          OffsetRegLabel(IP, LabelAddress(dataName)),
+          InstrSize.fullReg
+        ),
+        CallInstr("print_string"),
+        Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
+        CallPLT("exit")
+      )
+    }
+  }
+  case object overflow extends ErrType {
+    val labelName = "_errOverflow"
+    val dataName = "_overflow_string"
+    val errMessage: String = "fatal error: integer overflow or underflow occurred\\n"
+  }
+  case object divideByZero extends ErrType {
+    val labelName = "_errDivByZero"
+    val dataName = "_divide_by_zero_string"
+    val errMessage: String = "fatal error: division or modulo by zero\\n"
+  }
+  case object outOfMemory extends ErrType {
+    val labelName = "_errOutOfMemory"
+    val dataName = "_array_out_of_memory"
+    val errMessage: String = "fatal error: out of memory\\n"
+  }
+  
+  /**
+    * Sets the flag to print malloc assembly code
+    * @param flag
+    */
+  def setMallocFlag(flag: Boolean): Unit = {
+    mallocFlag = flag
+  }
+
+  /**
+    * Adds the malloc function to the IR based on the flag set in the compiler
+    * @return A list of instructions representing the malloc function
+  */
+  def addMallocFunc(): List[Instruction] = {
+    if (mallocFlag) {
+      List(
+        Label("_malloc"),
+        PushRegisters(List(FP), InstrSize.fullReg),
+        Mov(FP, SP, InstrSize.fullReg),
+        AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+        CallPLT("malloc"),
+        Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+        JumpIfCond(outOfMemory.labelName, InstrCond.equal),
+        Mov(SP, FP, InstrSize.fullReg),
+        PopRegisters(List(FP), InstrSize.fullReg),
+        ReturnInstr()
+      )
+    } else {
+      List.empty[Instruction]
+    }
   }
 
   /** Adds the print function to the IR based on the flag set in the compiler
@@ -138,8 +191,9 @@ class LibFunGenerator {
     exitFlag = flag
   }
 
-  /** The intermediate representation for the exit function
-    */
+  /**
+   * Generates the intermediate representation (IR) for the exit function
+   */
   def exitIR: List[Instruction] = List(
     Label("_exit"),
     PushRegisters(List(FP), InstrSize.fullReg),
@@ -151,11 +205,12 @@ class LibFunGenerator {
     ReturnInstr() // Restore frame pointer and return
   )
 
-  /** The intermediate representation creator for the print functions
-    * @param label
-    *   determines which print function to create
-    * @return
-    */
+  /**
+   * Generates the intermediate representation (IR) for creating the print functions
+   * @param label
+   *   determines which print function to create
+   * @return
+   */
   def createPrintIR(label: String): List[Instruction] = {
     def commonPrologue(labelName: String): List[Instruction] = List(
       Label(labelName),
@@ -186,8 +241,9 @@ class LibFunGenerator {
     printStringFlag = flag
   }
 
-  /** The intermediate representation for the print string function
-    */
+  /**
+   * Generates the intermediate representation (IR) for the print string function
+   */
   def printStringIR(): List[Instruction] = List(
     Mov(Arg2, Arg0, InstrSize.fullReg),
     Mov(Arg1, Reg32(Arg0, -4), InstrSize.halfReg),
@@ -206,8 +262,9 @@ class LibFunGenerator {
     printLnFlag = flag
   }
 
-  /** The intermediate representation for the print ln function
-    */
+  /**
+   * Generates the intermediate representation (IR) for the print ln function
+   */
   def printLnIR(): List[Instruction] = List(
     LoadEffectiveAddress(
       Arg0,
@@ -223,8 +280,9 @@ class LibFunGenerator {
     printIntFlag = flag
   }
 
-  /** The intermediate representation for the print int function
-    */
+  /**
+   * Generates the intermediate representation (IR) for the print int function
+   */
   def printIntIr(): List[Instruction] = List(
     Mov(Arg1, Arg0, InstrSize.fullReg),
     LoadEffectiveAddress(
@@ -242,8 +300,9 @@ class LibFunGenerator {
     printBoolFlag = flag
   }
 
-  /** The intermediate representation for the print bool function
-    */
+  /**
+   * Generates the intermediate representation (IR) for the print bool function
+   */
   def printBoolIr(): List[Instruction] = List(
     Cmp(Arg0, Immediate32(0), InstrSize.eigthReg),
     JumpIfCond("print_true", InstrCond.notEqual),
@@ -276,6 +335,9 @@ class LibFunGenerator {
     printCharFlag = flag
   }
 
+  /**
+   * Generates the intermediate representation (IR) for the print char function
+   */
   def printCharIR(): List[Instruction] = {
     List(
       Mov(Arg1, Arg0, InstrSize.eigthReg),
@@ -291,13 +353,13 @@ class LibFunGenerator {
     )
   }
 
-  /** The intermediate representation creator for the data section of library
-    * functions
-    * @param data
-    * @param labelPrefix
-    *   the prefix for the label
-    * @return
-    */
+  /**
+   * Generates the intermediate representation (IR) for the data section of library functions
+   * @param data
+   * @param labelPrefix
+   *   the prefix for the label
+   * @return
+   */
   def createDataIR(data: String, labelPrefix: String): List[Instruction] = {
     dataCounter += 1
     val label = s"${labelPrefix}_string${dataCounter}"

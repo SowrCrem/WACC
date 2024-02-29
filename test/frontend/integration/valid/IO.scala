@@ -28,6 +28,10 @@ class IO extends AnyFlatSpec {
     throwsNoError("valid/IO/print/multipleStringsAssignment.wacc")
   }
 
+  "valid - print tests: print.wacc" should "return exit code 0" in {
+    throwsNoError("valid/IO/print/print.wacc")
+  }
+
   "valid - print tests: print-backspace.wacc" should "return exit code 0" in {
     throwsNoError("valid/IO/print/print-backspace.wacc")
   }
@@ -36,16 +40,16 @@ class IO extends AnyFlatSpec {
     throwsNoError("valid/IO/print/printBool.wacc")
   }
 
+  "valid - print tests: printChar.wacc" should "return exit code 0" in {
+    throwsNoError("valid/IO/print/printChar.wacc")
+  }
+
   "valid - print tests: printCharArray.wacc" should "return exit code 0" in {
     throwsNoError("valid/IO/print/printCharArray.wacc")
   }
 
   "valid - print tests: printCharAsString.wacc" should "return exit code 0" in {
     throwsNoError("valid/IO/print/printCharAsString.wacc")
-  }
-
-  "valid - print tests: printChar.wacc" should "return exit code 0" in {
-    throwsNoError("valid/IO/print/printChar.wacc")
   }
 
   "valid - print tests: printEscChar.wacc" should "return exit code 0" in {
@@ -58,10 +62,6 @@ class IO extends AnyFlatSpec {
 
   "valid - print tests: println.wacc" should "return exit code 0" in {
     throwsNoError("valid/IO/print/println.wacc")
-  }
-
-  "valid - print tests: print.wacc" should "return exit code 0" in {
-    throwsNoError("valid/IO/print/print.wacc")
   }
 
   "valid - read tests: echoBigInt.wacc" should "return exit code 0" in {
@@ -88,12 +88,12 @@ class IO extends AnyFlatSpec {
     throwsNoError("valid/IO/read/echoPuncChar.wacc")
   }
 
-  "valid - read tests: readAtEof.wacc" should "return exit code 0" in {
-    throwsNoError("valid/IO/read/readAtEof.wacc")
-  }
-
   "valid - read tests: read.wacc" should "return exit code 0" in {
     throwsNoError("valid/IO/read/read.wacc")
+  }
+
+  "valid - read tests: readAtEof.wacc" should "return exit code 0" in {
+    throwsNoError("valid/IO/read/readAtEof.wacc")
   }
 
 }

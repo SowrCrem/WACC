@@ -219,7 +219,7 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
     println("Local variable size: " + localVarSize)
     println("Pushed argument size: " + pushedArgSize)
     println("Declared variables: " + declaredVars)
-    println("Variable map: " + varMap)
+    println("Variable map: " + varMap + "\n")
   }
 
 }

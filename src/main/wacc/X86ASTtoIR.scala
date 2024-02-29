@@ -315,26 +315,29 @@ object X86IRGenerator {
     val func = expr.typeNode match {
       case StringTypeNode() => {
         lib.setPrintStringFlag(true)
-        CallInstr("print_string")
+        CallInstr("prints")
       }
       case BoolTypeNode() => {
         lib.setPrintBoolFlag(true)
-        CallInstr("print_bool")
+        CallInstr("printb")
       }
       case CharTypeNode() => {
         lib.setPrintCharFlag(true)
-        CallInstr("print_char")
+        CallInstr("printc")
       }
       case IntTypeNode() => {
         lib.setPrintIntFlag(true)
-        CallInstr("print_int")
+        CallInstr("printi")
       }
       case _ => {
+        // Must be Array || Error? || Pair
         printf("Type printing: :" + expr.typeNode.toString())
-        CallInstr("print_reference")
+        lib.setPrintPtrFlag(true)
+        CallInstr("printp")
       }
 
     }
+    
     exprToIR(expr) ++= ListBuffer(
       DecrementStackPointerNB(8),
       PushRegisters(List(Dest), InstrSize.fullReg),
@@ -345,7 +348,7 @@ object X86IRGenerator {
       if (!println) {
         ListBuffer(func, IncrementStackPointerNB(8))
       } else {
-        ListBuffer(func, CallInstr("print_ln"), IncrementStackPointerNB(8))
+        ListBuffer(func, CallInstr("println"), IncrementStackPointerNB(8))
       }
     }
   }

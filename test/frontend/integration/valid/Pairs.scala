@@ -16,16 +16,16 @@ class Pairs extends AnyFlatSpec {
     throwsNoError("valid/pairs/checkRefPair.wacc")
   }
 
+  "valid - pairs tests: createPair.wacc" should "return exit code 0" in {
+    throwsNoError("valid/pairs/createPair.wacc")
+  }
+
   "valid - pairs tests: createPair02.wacc" should "return exit code 0" in {
     throwsNoError("valid/pairs/createPair02.wacc")
   }
 
   "valid - pairs tests: createPair03.wacc" should "return exit code 0" in {
     throwsNoError("valid/pairs/createPair03.wacc")
-  }
-
-  "valid - pairs tests: createPair.wacc" should "return exit code 0" in {
-    throwsNoError("valid/pairs/createPair.wacc")
   }
 
   "valid - pairs tests: createRefPair.wacc" should "return exit code 0" in {
@@ -40,16 +40,16 @@ class Pairs extends AnyFlatSpec {
     throwsNoError("valid/pairs/linkedList.wacc")
   }
 
+  "valid - pairs tests: nestedPair.wacc" should "return exit code 0" in {
+    throwsNoError("valid/pairs/nestedPair.wacc")
+  }
+
   "valid - pairs tests: nestedPairLeftAssign.wacc" should "return exit code 0" in {
     throwsNoError("valid/pairs/nestedPairLeftAssign.wacc")
   }
 
   "valid - pairs tests: nestedPairRightExtract.wacc" should "return exit code 0" in {
     throwsNoError("valid/pairs/nestedPairRightExtract.wacc")
-  }
-
-  "valid - pairs tests: nestedPair.wacc" should "return exit code 0" in {
-    throwsNoError("valid/pairs/nestedPair.wacc")
   }
 
   "valid - pairs tests: null.wacc" should "return exit code 0" in {
@@ -64,20 +64,20 @@ class Pairs extends AnyFlatSpec {
     throwsNoError("valid/pairs/pairExchangeArrayOk.wacc")
   }
 
-  "valid - pairs tests: printNullPair.wacc" should "return exit code 0" in {
-    throwsNoError("valid/pairs/printNullPair.wacc")
-  }
-
   "valid - pairs tests: printNull.wacc" should "return exit code 0" in {
     throwsNoError("valid/pairs/printNull.wacc")
   }
 
-  "valid - pairs tests: printPairOfNulls.wacc" should "return exit code 0" in {
-    throwsNoError("valid/pairs/printPairOfNulls.wacc")
+  "valid - pairs tests: printNullPair.wacc" should "return exit code 0" in {
+    throwsNoError("valid/pairs/printNullPair.wacc")
   }
 
   "valid - pairs tests: printPair.wacc" should "return exit code 0" in {
     throwsNoError("valid/pairs/printPair.wacc")
+  }
+
+  "valid - pairs tests: printPairOfNulls.wacc" should "return exit code 0" in {
+    throwsNoError("valid/pairs/printPairOfNulls.wacc")
   }
 
   "valid - pairs tests: readPair.wacc" should "return exit code 0" in {

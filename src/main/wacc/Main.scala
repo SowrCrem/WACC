@@ -12,24 +12,13 @@ import scala.annotation.varargs
 
 object Main {
 
-  val sep = java.io.File.separator
   var backendTests = false
 
   def setBackendTests(): Unit = backendTests = true
 
-  def inRootDir = new java.io.File("src").exists()
+  def ROOT_DIR = new java.io.File("src").exists()
 
-  def constructPath(paths: List[String]): String = paths.mkString(sep)
-
-  def parentDirPath(path: String): String = constructPath(List("..", path))
-
-  def getFilename(path: String): String = path.split(sep).last.split('.').head
-
-  def adaptedPath(path: String): String = {
-    var newPath = constructPath(List("test", "wacc", path))
-    if (!inRootDir) { newPath = parentDirPath(newPath) }
-    newPath
-  }
+  def parentDirPath(path: String): String = ".." + java.io.File.separator + path
 
   def main(args: Array[String]): Unit = {
     val exitCode = compile(args)
@@ -41,21 +30,10 @@ object Main {
     100
   }
 
-  def saveGeneratedCode(prog: Program, fileName: String = "X86Code"): Unit = {
-    val content = X86CodeGenerator.generate(prog)
-    var filename = fileName + ".s"
-    if (!inRootDir) { filename = parentDirPath(filename) }
-    val file = new java.io.File(filename)
-    val path = file.getAbsolutePath()
-    val writer = new PrintWriter(new java.io.FileOutputStream(file, false))
-    writer.write(content)
-    writer.close()
-  }
-
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
-        if (backendTests || inRootDir ) { saveGeneratedCode(prog, fileName) }
+        if (backendTests || ROOT_DIR ) {saveGeneratedCode(prog, fileName) }
         0
       }
       case Left(msg) => {
@@ -65,16 +43,29 @@ object Main {
     }
   }
 
+  def saveGeneratedCode(prog: Program, fileName: String = "X86Code"): Unit = {
+    val content = X86CodeGenerator.generate(prog)
+    var filename = fileName + ".s"
+    if (!ROOT_DIR) { filename = parentDirPath(filename) }
+    val file = new java.io.File(filename)
+    val path = file.getAbsolutePath()
+    val writer = new PrintWriter(new java.io.FileOutputStream(file, false)) // false to overwrite existing contents
+    writer.write(content)
+    writer.close()
+  }
+
   def compile(args: Array[String]): Int = synchronized(args.headOption match {
-    case Some(filepath) => {
-      val fileName = getFilename(filepath)
+    case Some(filename) => {
+      // val fileContent = ("cat " + filename).!!
+      // set a new val name to filename spliced - remove the .wacc extension and only take the substring from the end until the last slash
+      val fileName = filename.split(java.io.File.separator).last.split('.').head
       var fileContent = ""
       try {
-        fileContent = scala.io.Source.fromFile(filepath).mkString
+        fileContent = scala.io.Source.fromFile(filename).mkString
       } catch {
         case e: java.io.FileNotFoundException => {
           println("IO Error: File not found")
-          sys.exit(-1)
+          return -1
         }
       }
       parser.parse(fileContent) match {

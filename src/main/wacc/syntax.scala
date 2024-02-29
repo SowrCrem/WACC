@@ -124,7 +124,9 @@ object BeginEnd extends ParserBridgePos1[List[Stat], BeginEnd]
 sealed trait RValue 
 
 // Expr (Extending Position)
-sealed trait Expr extends Position with RValue
+sealed trait Expr extends Position with RValue {
+  var typeNode: TypeNode = null;
+}
 
 
 case class NewPair(fst: Expr, snd: Expr)(val pos: (Int, Int)) extends Expr
@@ -155,9 +157,15 @@ object ArrayElem extends ParserBridgePos2[Ident, List[Expr], ArrayElem]
 
 sealed trait BinOp extends Expr
 
-sealed trait IntBinOp extends BinOp
-sealed trait CompBinOp extends BinOp
-sealed trait BoolBinOp extends BinOp
+sealed trait IntBinOp extends BinOp {
+  typeNode = IntTypeNode()(0, 0)
+}
+sealed trait CompBinOp extends BinOp {
+  typeNode = BoolTypeNode()(0, 0)
+}
+sealed trait BoolBinOp extends BinOp {
+  typeNode = BoolTypeNode()(0, 0)
+}
 
 case class Mul(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp 
 object Mul extends ParserBridgePos2[Expr, Expr, IntBinOp] {
@@ -211,22 +219,33 @@ object Len extends ParserBridgePos1[Expr, UnaryOp]
 // Atoms (Extending Expr)
 sealed trait Atom extends Expr
 
-case class IntLiter(value: Int)(val pos: (Int, Int)) extends Atom
+case class IntLiter(value: Int)(val pos: (Int, Int)) extends Atom {
+  typeNode = IntTypeNode()(0, 0)
+}
 object IntLiter extends ParserBridgePos1[Int, IntLiter]
-case class BoolLiter(value: Boolean)(val pos: (Int, Int)) extends Atom
+case class BoolLiter(value: Boolean)(val pos: (Int, Int)) extends Atom {
+  typeNode = BoolTypeNode()(0, 0)
+}
 object BoolLiter extends ParserBridgePos1[Boolean, BoolLiter] {
   override def labels: List[String] = List("boolean")
 }
-case class CharLiter(value: Char)(val pos: (Int, Int)) extends Atom
+case class CharLiter(value: Char)(val pos: (Int, Int)) extends Atom {
+  typeNode = CharTypeNode()(0, 0)
+}
 object CharLiter extends ParserBridgePos1[Char, CharLiter]
-case class StringLiter(value: String)(val pos: (Int, Int)) extends Atom
+case class StringLiter(value: String)(val pos: (Int, Int)) extends Atom {
+  typeNode = StringTypeNode()(0, 0)
+}
 object StringLiter extends ParserBridgePos1[String, StringLiter]
 
-case class Brackets(expr: Expr)(val pos: (Int, Int)) extends Atom
+case class Brackets(expr: Expr)(val pos: (Int, Int)) extends Atom {
+  typeNode = expr.typeNode
+}
 object Brackets extends ParserBridgePos1[Expr, Brackets]
 case class Null()(val pos: (Int, Int)) extends Atom with LValue with PairElemTypeNode
 object Null extends ParserBridgePos0[Null]
-case class Ident(value: String)(val pos: (Int, Int)) extends Atom with LValue
+case class Ident(value: String)(val pos: (Int, Int)) extends Atom with LValue {
+}
 object Ident extends ParserBridgePos1[String, Ident]
 
 
@@ -239,14 +258,14 @@ trait TypeNode extends Position {
 sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode
 case class IntTypeNode()(val pos: (Int, Int)) extends BaseTypeNode {
   override def toString: String = "integer"
-  override val size: Int = 4
+  override val size: Int = 8
 }
 object IntTypeNode extends ParserBridgePos0[BaseTypeNode]
 
 case class BoolTypeNode()(val pos: (Int, Int)) extends BaseTypeNode {
   override def toString: String = "bool"
 
-  override val size: Int = 1
+  override val size: Int = 8
 
 }
 object BoolTypeNode extends ParserBridgePos0[BaseTypeNode]
@@ -254,14 +273,14 @@ object BoolTypeNode extends ParserBridgePos0[BaseTypeNode]
 case class CharTypeNode()(val pos: (Int, Int)) extends BaseTypeNode {
   override def toString: String = "char"
 
-  override val size: Int = 1
+  override val size: Int = 8
 }
 object CharTypeNode extends ParserBridgePos0[BaseTypeNode]
 
 case class StringTypeNode()(val pos: (Int, Int)) extends BaseTypeNode {
   override def toString: String = "string"
 
-  override val size: Int = 4
+  override val size: Int = 8
 }
 object StringTypeNode extends ParserBridgePos0[BaseTypeNode]
 
@@ -270,7 +289,7 @@ case class ArrayTypeNode(elementType: TypeNode)(val pos: (Int, Int)) extends Pai
 
   override def toString: String = s"$elementType[]"
   var length: Int = 0
-  override val size: Int = 4
+  override val size: Int = 8
 
 }
 object ArrayTypeNode extends ParserBridgePos1[TypeNode, ArrayTypeNode]

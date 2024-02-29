@@ -5,28 +5,9 @@ import scala.collection.mutable.ListBuffer
 import scala.annotation.tailrec
 import parsley.internal.machine.instructions.Pop
 
+/** Special Grade Cursed Object
+  */
 object StackMachine {
-
-  /** Stack simulated via stack object */
-  // val stackSim : Stack[VariableScope] = Stack()
-
-  // /** Index of the current stack frame */
-  // val frameIndex = 0
-
-  // /** size of stack */
-  // def stackSize: Int = stackSim.size
-
-  // val scratchRegisters = Stack(G0, G1, G2, G3)
-
-  // def pushToStack(variables : VariableScope, value : Int, size : Int): mutable.Buffer[Instruction] = {
-  //   /** @TODO */
-  //   val prefix = size match {
-  //     case 2 => ""
-  //     case 4 => "e"
-  //     case 8 => "r"
-  //   }
-  //   null
-  // }
 
   private var frames: List[StackFrame] = List().empty
 
@@ -45,7 +26,7 @@ object StackMachine {
 
   }
 
-  def offset(name: String): Option[Int] = {
+  def offset(name: String): Option[(Int, Int)] = {
 
     var totalOffset = 0
 
@@ -53,11 +34,23 @@ object StackMachine {
       println("No frames in stack")
     }
 
+    printf("Looking for %s in stack\n", name)
+    printStack()
+
     frames.reverse.foreach(frame => {
       frame.findVarOffset(name) match {
-        case -1     => { totalOffset += frameTotalSize(frame) 
-                          printf("not in this frame?")}
-        case offset => return Some(totalOffset + offset)
+        case -1 => {
+          totalOffset += (frameTotalSize(frame))
+          printf("not in this frame? totalOffset is now %d\n", totalOffset)
+        }
+        case offset => {
+          printf(
+            "found %s in frame with offset %d\n",
+            name,
+            offset + totalOffset
+          )
+          return Some((offset + 8, totalOffset))
+        }
       }
     })
 
@@ -79,7 +72,7 @@ object StackMachine {
     // List of instructions to decrement the stack pointer by the size of the local variables in the stack frame
     val decrementStackInstr = new ListBuffer[Instruction]().empty
 
-    var size = newFrame.localVarSize
+    var size = (newFrame.localVarSize / 8) + 1
 
     println("adding frame with size: " + size)
 
@@ -89,30 +82,23 @@ object StackMachine {
       size -= 1024
     }
 
-    if (size > 0) {
-      decrementStackInstr += DecrementStackPointerNB(size)
-    }
+    decrementStackInstr += DecrementStackPointerNB(size)
 
     // List of instructions to push the frame pointer onto the stack and set it to the stack pointer
-    ListBuffer(PushRegisters(List(FP))) ++ decrementStackInstr ++ ListBuffer(
-      Mov(FP, SP)
-    )
+    ListBuffer(PushRegisters(List(FP), InstrSize.fullReg)) ++ ListBuffer(Mov(FP, SP, InstrSize.fullReg)) ++ decrementStackInstr
 
   }
 
   def popFrame(): ListBuffer[Instruction] = {
 
-
     // List of instructions to increment the stack pointer by the size of the local variables in the stack frame
     val incrementStackInstr = new ListBuffer[Instruction]().empty
 
-    var size = frames.last.localVarSize
+    var size = (frames.last.localVarSize / 8) + 1
 
-    // Increment the stack pointer by the size of the local variables in the stack frame
-    // while (size > 1024) {
-    //   incrementStackInstr += IncrementStackPointerNB(1024)
-    //   size -= 1024
-    // }
+    printf("popping frame with size: %d\n", size)
+
+    frames.last.printFrame()
 
     if (size > 0) {
       incrementStackInstr += IncrementStackPointerNB(size)
@@ -121,15 +107,17 @@ object StackMachine {
     // Remove the last frame from the stack
     frames = frames.dropRight(1)
 
-    incrementStackInstr ++ ListBuffer(PopRegisters(List(FP)))
+    incrementStackInstr ++ ListBuffer(PopRegisters(List(FP), InstrSize.fullReg))
   }
 
   def printStack(): Unit = {
+    println("Printing stack --------------------")
     frames.reverse.foreach(frame => {
       println(">--------> Start Frame <--------<")
       frame.printFrame()
       println(">--------> End Frame <--------<")
     })
+    println("End of stack --------------------")
   }
 
 }
@@ -178,13 +166,13 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
         // if a parameter list is present, the current stack frame is that of a function
         isFunction = true
 
-        /**  
-          * offsets for function parameters are calculated by starting from the end of the
-          * local variables and accounting for the space taken by the return address and the
-          * frame pointer (2 * 4 bytes), simulating the typical layout of a stack frame in x86
-          * where parameters are pushed onto the stack in reverse order after local variables
-          * and control information
-        */
+        /** offsets for function parameters are calculated by starting from the
+          * end of the local variables and accounting for the space taken by the
+          * return address and the frame pointer (2 * 4 bytes), simulating the
+          * typical layout of a stack frame in x86 where parameters are pushed
+          * onto the stack in reverse order after local variables and control
+          * information
+          */
         var currentOffset = localVarSize + 2 * 4
         for (p <- paramList.paramList.reverse) {
           varMap.addOne(p.ident.value, currentOffset)
@@ -197,17 +185,15 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
   }
 
   def findVarOffset(name: String): Int = {
-    if (varMap.contains(name)) 
-    {
+    if (varMap.contains(name)) {
 
       return varMap(name)
     } else {
-      print("Variable not found in stack:" + name)
+      println("Variable not found in current frame:" + name + "\n")
       this.printFrame()
       return -1
     }
   }
-  
 
   // Debugging function to print the stack frame
   def printFrame(): Unit = {

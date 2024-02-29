@@ -81,6 +81,7 @@ chmod +x build.sh
 # Add the grandparent directory to the PATH and go to the parent directory
 export PATH="$(dirname "$(dirname "$PWD")"):$PATH"
 cd ..
+pwd
 scala-cli clean . 
 scala-cli compile .
 
@@ -136,7 +137,7 @@ echo "-----------------------------------"
 echo "All tests ran with overall exit code $exit_code."
 
 # Clean up
-make clean
+# make clean
 
 # Exit with the stored exit code
 exit $exit_code

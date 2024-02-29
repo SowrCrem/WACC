@@ -52,6 +52,10 @@ class RuntimeErr extends AnyFlatSpec {
     throwsNoError("valid/runtimeErr/integerOverflow/intmultOverflow.wacc")
   }
 
+  "valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {
+    throwsNoError("valid/runtimeErr/integerOverflow/intnegateOverflow.wacc")
+  }
+
   "valid - integerOverflow tests: intnegateOverflow2.wacc" should "return exit code 0" in {
     throwsNoError("valid/runtimeErr/integerOverflow/intnegateOverflow2.wacc")
   }
@@ -62,10 +66,6 @@ class RuntimeErr extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intnegateOverflow4.wacc" should "return exit code 0" in {
     throwsNoError("valid/runtimeErr/integerOverflow/intnegateOverflow4.wacc")
-  }
-
-  "valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {
-    throwsNoError("valid/runtimeErr/integerOverflow/intnegateOverflow.wacc")
   }
 
   "valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {

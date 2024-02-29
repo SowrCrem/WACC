@@ -1,6 +1,7 @@
 # the script will be run with one argument: path e.g. valid/basic/exit/exit-1.wacc
 
 # we compile "test/wacc" + path
+filename=$(basename $1 .wacc)
 ./compile "test/wacc/$1"
 
 # if compile exits with a code other than 0, then we output "wacc-compiler hasn't been found. running make"
@@ -8,8 +9,6 @@
 
 # then we cd .. and run ./filename
 # filename in this example would be exit-1
-
-filename=$(basename $1 .wacc)
 
 if [ $? -ne 0 ]; then
   echo "wacc-compiler hasn't been found. running make"

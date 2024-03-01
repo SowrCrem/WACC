@@ -74,9 +74,9 @@ for src in "${directories[@]}"; do
         for subdirectory in "$src"/*/; do
             subdirectory_name=$(basename "$subdirectory")
 
-        echo "source"
-        echo $subdirectory
-        echo ""
+        # echo "source"
+        # echo $subdirectory
+        # echo ""
 
             # Echo a new Scala file in the destination directory
             file_path_arg="${test_type}/${subdirectory_name^}.scala"

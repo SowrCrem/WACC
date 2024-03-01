@@ -41,6 +41,10 @@ class LibFunGenerator {
   def addLibFuns(): ListBuffer[Instruction] = {
 
     val libFuns = new ListBuffer[Instruction]()
+    libFuns ++= addMallocFunc()
+    libFuns ++= exitIR
+    // Place error messages here to avoid conflicts with other labels 
+    // (e.g. addMallocFunc sets outOfMemory flag)
     libFuns ++= overflow.createErrMessageIR() ++ overflow.generateErrIR()
     libFuns ++= badChar.createErrMessageIR() ++ badChar.generateErrIR()
     libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
@@ -55,8 +59,6 @@ class LibFunGenerator {
     libFuns ++= addIOFunc(printPtrFlag, printPtrDataIR("%p"), "printPtr")
     libFuns ++= addIOFunc(readCharFlag, readCharDataIR(" %c"), "readChar")
     libFuns ++= addIOFunc(readIntFlag, readIntDataIR(" %d"), "readInt")
-    libFuns ++= addMallocFunc()
-    libFuns ++= exitIR
     libFuns
   }
   
@@ -194,6 +196,7 @@ class LibFunGenerator {
   */
   def addMallocFunc(): List[Instruction] = {
     if (mallocFlag) {
+      outOfMemory.setFlag(true)
       List(
         Label("_malloc"),
         PushRegisters(List(FP), InstrSize.fullReg),

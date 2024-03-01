@@ -9,7 +9,6 @@
 
 begin
   int x = 1 ;
-  println x;
   begin
     x = 3 ; 
     bool z = true

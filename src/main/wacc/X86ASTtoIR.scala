@@ -223,15 +223,101 @@ object X86IRGenerator {
             }
           }
         }
-
-        case FstNode(ident) => {
+// fst p = 1;
+        case FstNode(identifier) => {
           // Null dereference check
           lib.nullDerefOrFree.setFlag(true)
-          ???
-
+          // Get the address to write into
+          // Get the expression to write
+          // Move the expression to the address
+          // Clean up
+          val instructions = exprToIR(rhs)
+          identifier match {
+            case Ident(ident) => {
+              StackMachine.offset(ident) match {
+                case Some((offset, fpchange)) => {
+                  fpchange match {
+                    case 0 => {
+                      instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                    }
+                    case _ => {
+                      val setup = ListBuffer(
+                        AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                        PopRegisters(List(FP), InstrSize.fullReg)
+                      )
+                        instructions ++= setup ++ ListBuffer(
+                        Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                      ) ++ ListBuffer(
+                        PushRegisters(List(FP), InstrSize.fullReg),
+                        SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                        Mov(FP, SP, InstrSize.fullReg)
+                      )
+                    }
+                  }
+                }
+                case None => {
+                  throw new RuntimeException(
+                    s"Variable ${ident} not found in stack"
+                  )
+                }
+              }
+            }
+            case _ => {
+              throw new RuntimeException(
+                "Value (type: " + identifier.typeNode.toString() +
+                  ") should not reach this case"
+              )
+            }
+          }
+          instructions
         }
-        case SndNode(ident) => {
-          ???
+        case SndNode(identifier) => {
+          // Null dereference check
+          lib.nullDerefOrFree.setFlag(true)
+          // Get the address to write into
+          // Get the expression to write
+          // Move the expression to the address
+          // Clean up
+          val instructions = exprToIR(rhs)
+          identifier match {
+            case Ident(ident) => {
+              StackMachine.offset(ident) match {
+                case Some((offset, fpchange)) => {
+                  fpchange match {
+                    case 0 => {
+                      instructions += Mov(FPOffset(offset), RegisterPtr(Dest, InstrSize.fullReg, MAX_REGSIZE),
+                       InstrSize.fullReg)
+                    }
+                    case _ => {
+                      val setup = ListBuffer(
+                        AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                        PopRegisters(List(FP), InstrSize.fullReg)
+                      )
+                        instructions ++= setup ++ ListBuffer(
+                        Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                      ) ++ ListBuffer(
+                        PushRegisters(List(FP), InstrSize.fullReg),
+                        SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                        Mov(FP, SP, InstrSize.fullReg)
+                      )
+                    }
+                  }
+                }
+                case None => {
+                  throw new RuntimeException(
+                    s"Variable ${ident} not found in stack"
+                  )
+                }
+              }
+            }
+            case _ => {
+              throw new RuntimeException(
+                "Value (type: " + identifier.typeNode.toString() +
+                  ") should not reach this case"
+              )
+            }
+          }
+          instructions
         }
 
         case ArrayElem(ident, eList) => {
@@ -390,6 +476,9 @@ object X86IRGenerator {
       lib.setPrintLnFlag(true)
       printToIR(expr, true)
     }
+    case Call(_, _) => {
+      ???
+    }
     case Exit(expr) => {
       lib.setExitFlag(true)
       exprToIR(expr) ++ ListBuffer(
@@ -471,7 +560,45 @@ object X86IRGenerator {
     case Skip() => {
       ListBuffer()
     }
-    case Free(expr) => ???
+    case Free(expr) => {
+      val instructions = ListBuffer[Instruction]().empty
+      var callInstr: ListBuffer[Instruction] = ListBuffer[Instruction]().empty
+      expr.typeNode match {
+        case ArrayTypeNode(_) => {
+          lib.setFreeArrayFlag(true)
+          callInstr += CallInstr("free")          
+        }
+        case PairTypeNode(_, _) => {
+          lib.setFreePairFlag(true)
+          callInstr += CallInstr("freepair")
+        }
+      }
+
+      expr match {
+        case Ident(ident) => {
+          StackMachine.offset(ident) match {
+            case Some((offset, fpchange)) => {
+              fpchange match {
+                case 0 => {
+                  // Use offset as start of stack
+                  instructions ++= ListBuffer(
+                    Mov(Arg0, G2, InstrSize.fullReg)
+                  )
+                
+                }
+              }
+            }
+            case None => {
+              throw new RuntimeException(
+                s"Variable ${ident} not found in stack"
+              )
+            }
+          }
+        }
+      }
+
+      instructions ++ callInstr
+    }
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
 
@@ -570,10 +697,9 @@ object X86IRGenerator {
         lib.setPrintStringFlag(true)
 
         val instructions = ListBuffer[Instruction]().empty
-        // Iterate through +8 x n times or some other way to printc each character maybe
-
-        // Would base pointer be set
-        // mov rdi, qword ptr [rbp - offset]
+          // Iterate through +8 x n times or some other way to printc each character maybe
+          // Would base pointer be set
+          // mov rdi, qword ptr [rbp - offset]
         instructions ++= ListBuffer(
           // mov r9, rdi
           Mov(Arg5, Arg0, InstrSize.fullReg)
@@ -641,16 +767,27 @@ object X86IRGenerator {
 
   // --------------- Expression IR Generation -------------------------------------//
 
-  def pairExprToIR(e: Expr): Buffer[Instruction] = e match {
+  def pairExprToIR(e: Expr, ptype : String) : Buffer[Instruction] = e match {
     case Ident(name) => {
       val instrs = ListBuffer[Instruction]().empty
       StackMachine.offset(name) match {
         case Some((offset, fpchange)) => {
+          val movElemAddress = ptype match {
+            case "Fst" => {
+              Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+            }
+            case "Snd" => {
+              Mov(Dest, FPOffset(offset - MAX_REGSIZE), InstrSize.fullReg)
+            }
+            case _ => {
+              throw new RuntimeException("Invalid pair type")
+            }
+          }
           fpchange match {
             case 0 => {
               instrs ++= ListBuffer(
-                Mov(Dest, FPOffset(offset), InstrSize.fullReg)
-              )
+                movElemAddress
+              )                  
             }
             case _ => {
 
@@ -663,7 +800,7 @@ object X86IRGenerator {
                 PopRegisters(List(FP), InstrSize.fullReg)
               )
               instrs ++= setup ++ ListBuffer(
-                Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+                movElemAddress,
                 PushRegisters(List(FP), InstrSize.fullReg),
                 SubInstr(
                   SP,
@@ -776,13 +913,13 @@ object X86IRGenerator {
         // mov rax, 0
         Mov(Dest, Immediate32(0), InstrSize.fullReg),
         // mov r12, rax
-        Mov(G2, Dest, InstrSize.fullReg)
+        Mov(G3, Dest, InstrSize.fullReg),
       )
       instructions
     }
 
-    case FstNode(e) => pairExprToIR(e)
-    case SndNode(e) => exprToIR(FstNode(e)(e.pos))
+    case f @ FstNode(e) => pairExprToIR(e, "Fst")
+    case s @ SndNode(e) => pairExprToIR(e, "Snd")
 
     case NewPair(fst, snd) => {
       lib.setMallocFlag(true)
@@ -801,8 +938,7 @@ object X86IRGenerator {
         // mov qword ptr [r11 + 8], rax
         Mov(RegisterPtr(G2, InstrSize.fullReg, 8), Dest, InstrSize.fullReg)
       )
-
-      instructions
+      instructions      
     }
 
     case ArrayElem(ident, eList) => { // x[0][1]
@@ -830,29 +966,6 @@ object X86IRGenerator {
                 )
               }
             }
-            // case _ => {
-            //   val setup = ListBuffer(
-            //     AddInstr(
-            //       SP,
-            //       Immediate32(fpchange + MAX_REGSIZE),
-            //       InstrSize.fullReg
-            //     ),
-            //     PopRegisters(List(FP), InstrSize.fullReg)
-            //   )
-            //   instructions ++= setup ++ ListBuffer(
-            //     Mov(Dest, FPOffset(offset), InstrSize.fullReg),
-            //     Mov(Arg5, Dest, InstrSize.fullReg),
-            //     PushRegisters(List(FP), InstrSize.fullReg),
-            //     SubInstr(
-            //       SP,
-            //       Immediate32(fpchange + MAX_REGSIZE),
-            //       InstrSize.fullReg
-            //     ),
-            //     Mov(FP, SP, InstrSize.fullReg),
-            //     CallInstr("arrLoad8"),
-            //     Mov(Dest, Arg5, InstrSize.fullReg)
-            //   )
-            // }
           }
         }
         case None => {

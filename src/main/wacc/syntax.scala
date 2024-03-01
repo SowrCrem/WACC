@@ -303,6 +303,9 @@ case class ArrayTypeNode(elementType: TypeNode)(val pos: (Int, Int)) extends Pai
   override def toString: String = s"$elementType[]"
   var length: Int = 0
   override val size: Int = 8 
+  def setLength(len: Int): Unit = {
+    length = len;
+  }
 
 }
 object ArrayTypeNode extends ParserBridgePos1[TypeNode, ArrayTypeNode]

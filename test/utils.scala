@@ -95,6 +95,10 @@ object Utils {
     runSucceeds(path, expOutput, expReturn, Some(inputs.mkString(" ")))
   }
 
+  def runSucceeds(path: String, expReturn: Int): Assertion = {
+    runSucceeds(path, "", expReturn)
+  }
+
   def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0, inputs: Option[String] = None): Assertion = synchronized {
     Main.setBackendTests()
     try {

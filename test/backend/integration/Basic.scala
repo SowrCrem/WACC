@@ -40,19 +40,21 @@ class Basic extends AnyFlatSpec with BeforeAndAfterEach {
 
   it should "run valid/basic/skip/comment.wacc" in {
     val path = constructPath(List("valid", "basic", "skip", "comment.wacc"))
-
-    runSucceeds("valid/basic/skip/comment.wacc")
+    runSucceeds(path)
   }
 
-  it should "run valid/basic/skip/commentEoF.wacc" in{
-    runSucceeds("valid/basic/skip/commentEoF.wacc")
+  it should "run valid/basic/skip/commentEoF.wacc" in {
+    val path = constructPath(List("valid", "basic", "skip", "commentEoF.wacc"))
+    runSucceeds(path)
   }
 
   it should "run valid/basic/skip/commentInLine.wacc" in {
-    runSucceeds("valid/basic/skip/commentInLine.wacc")
+    val path = constructPath(List("valid", "basic", "skip", "commentInLine.wacc"))
+    runSucceeds(path)
   }
 
   it should "run valid/basic/skip/skip.wacc" in {
-    runSucceeds("valid/basic/skip/skip.wacc")
+    val path = constructPath(List("valid", "basic", "skip", "skip.wacc"))
+    runSucceeds(path)
   }
 }

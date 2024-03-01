@@ -716,15 +716,26 @@ object X86IRGenerator {
 
   // --------------- Expression IR Generation -------------------------------------//
 
-  def pairExprToIR(e: Expr) : Buffer[Instruction] = e match {
+  def pairExprToIR(e: Expr, ptype : String) : Buffer[Instruction] = e match {
     case Ident(name) => {
       val instrs = ListBuffer[Instruction]().empty
       StackMachine.offset(name) match {
         case Some((offset, fpchange)) => {
+          val movElemAddress = ptype match {
+            case "Fst" => {
+              Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+            }
+            case "Snd" => {
+              Mov(Dest, FPOffset(offset - MAX_REGSIZE), InstrSize.fullReg)
+            }
+            case _ => {
+              throw new RuntimeException("Invalid pair type")
+            }
+          }
           fpchange match {
             case 0 => {
               instrs ++= ListBuffer(
-                Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+                movElemAddress
               )                  
             }
             case _ => {
@@ -734,7 +745,7 @@ object X86IRGenerator {
                 PopRegisters(List(FP), InstrSize.fullReg)
               )
               instrs ++= setup ++ ListBuffer(
-                Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+                movElemAddress,
                 PushRegisters(List(FP), InstrSize.fullReg),
                 SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
                 Mov(FP, SP, InstrSize.fullReg)
@@ -843,8 +854,8 @@ object X86IRGenerator {
       instructions
     }
 
-    case FstNode(e) => pairExprToIR(e)
-    case SndNode(e) => exprToIR(FstNode(e)(e.pos))
+    case f @ FstNode(e) => pairExprToIR(e, "Fst")
+    case s @ SndNode(e) => pairExprToIR(e, "Snd")
 
     case NewPair(fst, snd) => {
       lib.setMallocFlag(true)

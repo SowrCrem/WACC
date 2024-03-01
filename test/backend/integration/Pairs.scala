@@ -18,104 +18,104 @@ class Pairs extends AnyFlatSpec with BeforeAndAfterEach {
       X86IRGenerator.reset()
     }
 
-  // "WACC" should "run valid/pair/checkRefPair.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "checkRefPair.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  "WACC" should "run valid/pairs/checkRefPair.wacc" in {
+    val path = constructPath(List("valid", "pairs", "checkRefPair.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/createPair02.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "createPair02.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/createPair02.wacc" in {
+    val path = constructPath(List("valid", "pairs", "createPair02.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/createRefPair.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "createRefPair.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/createRefPair.wacc" in {
+    val path = constructPath(List("valid", "pairs", "createRefPair.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/linkedList.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "linkedList.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/linkedList.wacc" in {
+    val path = constructPath(List("valid", "pairs", "linkedList.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/nestedPairLeftAssign.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "nestedPairLeftAssign.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/nestedPairLeftAssign.wacc" in {
+    val path = constructPath(List("valid", "pairs", "nestedPairLeftAssign.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/null.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "null.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/null.wacc" in {
+    val path = constructPath(List("valid", "pairs", "null.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/pairarray.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "pairarray.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/pairarray.wacc" in {
+    val path = constructPath(List("valid", "pairs", "pairarray.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/printNullPair.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "printNullPair.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/printNullPair.wacc" in {
+    val path = constructPath(List("valid", "pairs", "printNullPair.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/printPairOfNulls.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "printPairOfNulls.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/printPairOfNulls.wacc" in {
+    val path = constructPath(List("valid", "pairs", "printPairOfNulls.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/writeFst.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "writeFst.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/writeFst.wacc" in {
+    val path = constructPath(List("valid", "pairs", "writeFst.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/createPair.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "createPair.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/createPair.wacc" in {
+    val path = constructPath(List("valid", "pairs", "createPair.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/createPair03.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "createPair03.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/createPair03.wacc" in {
+    val path = constructPath(List("valid", "pairs", "createPair03.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/free.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "free.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/free.wacc" in {
+    val path = constructPath(List("valid", "pairs", "free.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/nestedPair.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "nestedPair.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/nestedPair.wacc" in {
+    val path = constructPath(List("valid", "pairs", "nestedPair.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/nestedPairRightExtract.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "nestedPairRightExtract.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/nestedPairRightExtract.wacc" in {
+    val path = constructPath(List("valid", "pairs", "nestedPairRightExtract.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/pairExchangeArrayOk.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "pairExchangeArrayOk.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/pairExchangeArrayOk.wacc" in {
+    val path = constructPath(List("valid", "pairs", "pairExchangeArrayOk.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/printNull.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "printNull.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/printNull.wacc" in {
+    val path = constructPath(List("valid", "pairs", "printNull.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/printPair.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "printPair.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/printPair.wacc" in {
+    val path = constructPath(List("valid", "pairs", "printPair.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/readPair.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "readPair.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  it should "run valid/pairs/readPair.wacc" in {
+    val path = constructPath(List("valid", "pairs", "readPair.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
-  // it should "run valid/pair/writeSnd.wacc" in {
-  //   val path = constructPath(List("valid", "pair", "writeSnd.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }  
+  it should "run valid/pairs/writeSnd.wacc" in {
+    val path = constructPath(List("valid", "pairs", "writeSnd.wacc"))
+    runSucceeds(path, "", 0)
+  }  
   
 }

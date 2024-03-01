@@ -31,11 +31,11 @@ object X86IRGenerator {
         val label = s"string${stringLiterals.size}"
         rodataDirectives += Directive(s"int ${literal.length()}")
         // account for \0 \b \t \n \f \r \" \' \\
-        val escapedLiteral = literal
+        val escapedLiteral = (literal + "\\0")
           .replace("\\", "\\\\")
           .replace("\'", "\\\'")
           .replace("\"", "\\\"")
-          .replace("\u0000", "\\0")
+          // .replace("\u0000", "\\0")
           .replace("\b", "\\b")
           .replace("\t", "\\t")
           .replace("\n", "\\n")
@@ -191,6 +191,15 @@ object X86IRGenerator {
             }
           }
         }
+
+        case NewPair(fst, snd) => {
+          ???
+        }
+
+        case Null() => {
+          ???
+        }
+
         case ArrayElem(ident, eList) => {
           lib.setArrStore8Flag(true)
           lib.outOfBounds.setFlag(true)
@@ -241,6 +250,7 @@ object X86IRGenerator {
         // TODO: need to have cases for pairs and array elements later
       }
     }
+
     case IdentAsgn(typeNode, ident, expr) => {
 
       // Dynamically determine the size of the variable from the typeNode
@@ -250,8 +260,8 @@ object X86IRGenerator {
       val instructions = ListBuffer[Instruction]().empty
 
       // Step 2: Initialize the variable with the given expression
-      val arrInstructions = typeNode match {
-        case arr @ ArrayTypeNode(elem) => {
+      val preInstr = typeNode match {
+        case ArrayTypeNode(_) => {
           lib.setMallocFlag(true)
           lib.outOfMemory.setFlag(true)
 
@@ -271,16 +281,36 @@ object X86IRGenerator {
                   InstrSize.halfReg
                 ),
                 CallInstr("malloc"),
+                // I believe we use stack frame allocation for this
                 Mov(G2, Dest, InstrSize.fullReg),
                 AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg)
               )
 
             }
-            case _ => List()
+            case _ => ListBuffer[Instruction]().empty 
           }
 
         }
-        case _ => List()
+        case PairTypeNode(_, _) => {
+          expr match {
+            case NewPair(_, _) => {
+              List(
+                // mov edi, 16
+                Mov(
+                  Arg0,
+                  Immediate32(MAX_REGSIZE * 2),
+                  InstrSize.halfReg
+                ),
+                // call _malloc
+                CallInstr("malloc"),
+                // mov r11, rax
+                Mov(G2, Dest, InstrSize.fullReg) 
+              )
+            }
+            case _ => ListBuffer[Instruction]().empty
+          }
+        }
+        case _ => ListBuffer[Instruction]().empty
       }
 
       instructions ++= exprToIR(expr)
@@ -293,7 +323,7 @@ object X86IRGenerator {
           // instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
           fpchange match {
             case 0 => {
-              instructions.prependAll(arrInstructions)
+              instructions.prependAll(preInstr)
               instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
             }
             case _ => {
@@ -301,7 +331,7 @@ object X86IRGenerator {
                 AddInstr(SP, Immediate32(offset), InstrSize.fullReg),
                 PopRegisters(List(FP), InstrSize.fullReg)
               )
-              setup ++ arrInstructions ++ instructions ++ ListBuffer(
+              setup ++ preInstr ++ instructions ++ ListBuffer(
                 PushRegisters(List(FP), InstrSize.fullReg),
                 SubInstr(SP, Immediate32(offset), InstrSize.fullReg),
                 Mov(FP, SP, InstrSize.fullReg)
@@ -499,16 +529,24 @@ object X86IRGenerator {
         lib.setPrintIntFlag(true)
         CallInstr("printi")
       }
+      case ArrayTypeNode(CharTypeNode()) => {
+        val instructions = ListBuffer[Instruction]().empty
+
+        // Get array size: n = dword ptr (offset - 4) 
+
+        // Iterate through +8 x n times or some other way to printc each character maybe
+        
+        // Would base pointer be set
+        // mov rdi, qword ptr [rbp - offset]
+
+        lib.setPrintStringFlag(true)
+        CallInstr("prints")
+      }
       case _ => {
-        // Must be Array || Error? || Pair
-        // printf("Type printing: :" + expr.typeNode.toString())
-        // if (expr.typeNode == null) {
-        //   printf("Type printing: :" + expr.toString())
-        // }
+        // Must be Array (non char) || Error? || Pair
         lib.setPrintPtrFlag(true)
         CallInstr("printp")
       }
-
     }
 
     exprToIR(expr) ++= ListBuffer(
@@ -592,6 +630,31 @@ object X86IRGenerator {
         )
       )
     }
+
+    case NewPair(fst, snd) => {
+      lib.setMallocFlag(true)
+      lib.outOfMemory.setFlag(true)
+
+      def pairExprToIR(e: Expr) : Buffer[Instruction] = e match {
+        case _ => exprToIR(e)
+      } 
+      
+      val firstIR : Buffer[Instruction] = pairExprToIR(fst)
+      val secondIR : Buffer[Instruction] = pairExprToIR(fst)
+      
+      
+
+      val instructions = firstIR ++ ListBuffer[Instruction](
+        // mov qword ptr [r11], rax
+        Mov(RegisterPtr(G2, InstrSize.fullReg, 0), Dest, InstrSize.fullReg),
+      ) ++ secondIR ++ ListBuffer[Instruction](
+        // mov qword ptr [r11 + 8], rax
+        Mov(RegisterPtr(G2, InstrSize.fullReg, 8), Dest, InstrSize.fullReg)
+      )
+
+      instructions      
+    }
+
     case ArrayElem(ident, eList) => { // x[0][1]
       lib.setArrLoad8Flag(true)
       lib.outOfBounds.setFlag(true)
@@ -652,6 +715,7 @@ object X86IRGenerator {
       var offset: Int =
         0 // As we initially store the size of the array in the first 4 bytes
       val instructions: ListBuffer[Instruction] = ListBuffer(
+        // mov rax, entry.size
         Mov(Dest, Immediate32(entries.size), InstrSize.fullReg),
         Mov(
           RegisterPtr(G2, InstrSize.halfReg, (-1) * HALF_REGSIZE),

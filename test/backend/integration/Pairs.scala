@@ -13,10 +13,10 @@ import org.scalatest.matchers.should.Matchers._
 
 class Pairs extends AnyFlatSpec with BeforeAndAfterEach {
   
-    override protected def afterEach(): Unit = {
-      semanticChecker.reset()
-      X86IRGenerator.reset()
-    }
+  override protected def afterEach(): Unit = {
+    semanticChecker.reset()
+    X86IRGenerator.reset()
+  }
 
   "WACC" should "run valid/pairs/checkRefPair.wacc" in {
     val path = constructPath(List("valid", "pairs", "checkRefPair.wacc"))

@@ -192,7 +192,7 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
           */
         var currentOffset = 2 * 8
         for (p <- paramList.paramList.reverse) {
-          varMap.addOne(p.ident.value, -(currentOffset))
+          varMap.addOne(p.ident.value, -(currentOffset + Constants.MAX_REGSIZE))
           currentOffset += p.typeNode.size
         }
 

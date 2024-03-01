@@ -47,16 +47,16 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
 
       // ARRAYS NOT YET IMPLEMENTED
 
-  // it should "run valid/IO/print/printCharAsString.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "printCharAsString.wacc"))
-  //   val expectedOut = "foo\nbar"
-  //   runSucceeds(path, expectedOut, 0)
-  // }
+  it should "run valid/IO/print/printCharAsString.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "printCharAsString.wacc"))
+    val expectedOut = "foo\nbar"
+    runSucceeds(path, expectedOut, 0)
+  }
 
-  // it should "run valid/IO/print/printCharArray.wacc" in {
-  //   val path = constructPath(List("valid", "IO", "print", "printCharArray.wacc"))
-  //   runSucceeds(path, "hi!", 0)
-  // }
+  it should "run valid/IO/print/printCharArray.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "printCharArray.wacc"))
+    runSucceeds(path, "hi!", 0)
+  }
 
   it should "run valid/IO/print/printEscChar.wacc" in {
     val path = constructPath(List("valid", "IO", "print", "printEscChar.wacc"))

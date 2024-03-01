@@ -32,12 +32,12 @@ class RuntimeErr extends AnyFlatSpec {
     throwsNoError("valid/runtimeErr/badChar/tooBigChr.wacc")
   }
 
-  "valid - divideByZero tests: divZero.wacc" should "return exit code 0" in {
-    throwsNoError("valid/runtimeErr/divideByZero/divZero.wacc")
-  }
-
   "valid - divideByZero tests: divideByZero.wacc" should "return exit code 0" in {
     throwsNoError("valid/runtimeErr/divideByZero/divideByZero.wacc")
+  }
+
+  "valid - divideByZero tests: divZero.wacc" should "return exit code 0" in {
+    throwsNoError("valid/runtimeErr/divideByZero/divZero.wacc")
   }
 
   "valid - divideByZero tests: modByZero.wacc" should "return exit code 0" in {
@@ -48,20 +48,8 @@ class RuntimeErr extends AnyFlatSpec {
     throwsNoError("valid/runtimeErr/integerOverflow/intJustOverflow.wacc")
   }
 
-  "valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {
-    throwsNoError("valid/runtimeErr/integerOverflow/intUnderflow.wacc")
-  }
-
-  "valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {
-    throwsNoError("valid/runtimeErr/integerOverflow/intWayOverflow.wacc")
-  }
-
   "valid - integerOverflow tests: intmultOverflow.wacc" should "return exit code 0" in {
     throwsNoError("valid/runtimeErr/integerOverflow/intmultOverflow.wacc")
-  }
-
-  "valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {
-    throwsNoError("valid/runtimeErr/integerOverflow/intnegateOverflow.wacc")
   }
 
   "valid - integerOverflow tests: intnegateOverflow2.wacc" should "return exit code 0" in {
@@ -74,6 +62,18 @@ class RuntimeErr extends AnyFlatSpec {
 
   "valid - integerOverflow tests: intnegateOverflow4.wacc" should "return exit code 0" in {
     throwsNoError("valid/runtimeErr/integerOverflow/intnegateOverflow4.wacc")
+  }
+
+  "valid - integerOverflow tests: intnegateOverflow.wacc" should "return exit code 0" in {
+    throwsNoError("valid/runtimeErr/integerOverflow/intnegateOverflow.wacc")
+  }
+
+  "valid - integerOverflow tests: intUnderflow.wacc" should "return exit code 0" in {
+    throwsNoError("valid/runtimeErr/integerOverflow/intUnderflow.wacc")
+  }
+
+  "valid - integerOverflow tests: intWayOverflow.wacc" should "return exit code 0" in {
+    throwsNoError("valid/runtimeErr/integerOverflow/intWayOverflow.wacc")
   }
 
   "valid - nullDereference tests: freeNull.wacc" should "return exit code 0" in {

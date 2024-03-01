@@ -45,7 +45,8 @@ class Pairs extends AnyFlatSpec with BeforeAndAfterEach {
 
   it should "run valid/pairs/null.wacc" in {
     val path = constructPath(List("valid", "pairs", "null.wacc"))
-    runSucceeds(path, "", 0)
+    runSucceeds(path, "" +
+      "", 0)
   }
 
   it should "run valid/pairs/pairarray.wacc" in {
@@ -100,7 +101,7 @@ class Pairs extends AnyFlatSpec with BeforeAndAfterEach {
 
   it should "run valid/pairs/printNull.wacc" in {
     val path = constructPath(List("valid", "pairs", "printNull.wacc"))
-    runSucceeds(path, "", 0)
+    runSucceeds(path, "(nil)", 0)
   }
 
   it should "run valid/pairs/printPair.wacc" in {

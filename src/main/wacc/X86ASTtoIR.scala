@@ -192,11 +192,16 @@ object X86IRGenerator {
           }
         }
 
-        case NewPair(fst, snd) => {
+        case FstNode(ident) => {
+          // Null dereference check
+          lib.nullDerefOrFree.setFlag(true)
           ???
-        }
 
-        case Null() => {
+          
+          
+
+        }
+        case SndNode(ident) => {
           ???
         }
 
@@ -631,11 +636,54 @@ object X86IRGenerator {
       )
     }
 
+    case Null() => {
+      val instructions = ListBuffer[Instruction](
+        // mov rax, 0
+        Mov(Dest, Immediate32(0), InstrSize.fullReg),
+        // mov r12, rax
+        Mov(G2, Dest, InstrSize.fullReg),
+      )
+      instructions
+    }
+
     case NewPair(fst, snd) => {
       lib.setMallocFlag(true)
       lib.outOfMemory.setFlag(true)
 
+      // int[] a = [1,2,3]
+      // pair b = newpair(a, a)
       def pairExprToIR(e: Expr) : Buffer[Instruction] = e match {
+        case Ident(name) => {
+          val instrs = ListBuffer[Instruction]().empty
+          StackMachine.offset(name) match {
+            case Some((offset, fpchange)) => {
+              fpchange match {
+                case 0 => {
+                  instrs ++= ListBuffer(
+                    Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+                  )                  
+                }
+                case _ => {
+                  
+                  val setup = ListBuffer(
+                    AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                    PopRegisters(List(FP), InstrSize.fullReg)
+                  )
+                  instrs ++= setup ++ ListBuffer(
+                    Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+                    PushRegisters(List(FP), InstrSize.fullReg),
+                    SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                    Mov(FP, SP, InstrSize.fullReg)
+                  )                 
+                }
+              }
+            }
+            case None => {
+              throw new RuntimeException("Variable not found in stack")
+            }
+          }
+          instrs          
+        }
         case _ => exprToIR(e)
       } 
       

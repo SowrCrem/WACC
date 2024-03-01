@@ -309,4 +309,3 @@ case class Reg16(reg: Register) extends Operand {
 case class Reg8(reg: Register) extends Operand {
   def toIntelString(size: InstrSize): String = s"byte ptr [${reg.toIntelString(size)}]"
 }
-

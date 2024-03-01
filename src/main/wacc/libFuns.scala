@@ -42,8 +42,9 @@ class LibFunGenerator {
     val libFuns = new ListBuffer[Instruction]()
     libFuns ++= overflow.createErrMessageIR() ++ overflow.generateErrIR()
     libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
-    libFuns ++= exitIR
     libFuns ++= outOfMemory.createErrMessageIR() ++ outOfMemory.generateErrIR()
+    libFuns ++= nullDerefOrFree.createErrMessageIR() ++ nullDerefOrFree.generateErrIR()
+    libFuns ++= outOfBounds.generateOutOfBoundsErrIR
     libFuns ++= addIOFunc(printStringFlag, printDataIR("%.*s"), "printString")
     libFuns ++= addIOFunc(printIntFlag, printIntDataIR("%d"), "printInt")
     libFuns ++= addIOFunc(printBoolFlag, printBoolDataIR(), "printBool")
@@ -53,6 +54,7 @@ class LibFunGenerator {
     libFuns ++= addIOFunc(readCharFlag, readCharDataIR(" %c"), "readChar")
     libFuns ++= addIOFunc(readIntFlag, readIntDataIR(" %d"), "readInt")
     libFuns ++= addMallocFunc()
+    libFuns ++= exitIR
     libFuns
   }
   
@@ -137,6 +139,38 @@ class LibFunGenerator {
     val labelName = "_errOutOfMemory"
     val dataName = "_array_out_of_memory"
     val errMessage: String = "fatal error: out of memory\\n"
+  }
+  case object nullDerefOrFree extends ErrType {
+    val labelName = "_errNullDereferenceOrFree"
+    val dataName = "_null_dereference_or_free_string"
+    val errMessage: String = "fatal error: null pointer dereference or double free\\n"
+  }
+  case object outOfBounds extends ErrType {
+    val labelName = "_errOutOfBounds"
+    val dataName = "_array_out_of_bounds"
+    val errMessage: String = "fatal error: array index out of bounds\\n"
+
+    /**
+      * Generates the intermediate representation (IR) for the array index out of bounds error
+      */
+    def generateOutOfBoundsErrIR: List[Instruction] = {
+      createDataIRNoCounter(labelName, dataName) ++ 
+      List(
+        Label(labelName),
+        AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+        LoadEffectiveAddress(
+          Arg0,
+          OffsetRegLabel(IP, LabelAddress(dataName)),
+          InstrSize.fullReg
+        ),
+        Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+        CallPLT("printf"),
+        Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+        CallPLT("fflush"),
+        Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
+        CallPLT("exit")
+      )
+    }
   }
   
   /**

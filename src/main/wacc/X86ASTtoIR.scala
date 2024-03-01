@@ -415,7 +415,20 @@ object X86IRGenerator {
           fpchange match {
             case 0 => {
               instructions.prependAll(preInstr)
-              instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+              typeNode match {
+                case PairTypeNode(_,_) => {
+                  instructions ++= List(
+                    Mov(Dest, G2, InstrSize.fullReg),
+                    Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+                    JumpIfCond(lib.nullDerefOrFree.labelName, InstrCond.equal),
+                    Mov(Dest, RegisterPtr(Dest, InstrSize.fullReg, 0), InstrSize.fullReg),
+                    Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                  )
+                }
+                case _ => {
+                  instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                }
+              }
             }
             case _ => {
               val setup = ListBuffer(

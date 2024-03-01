@@ -12,28 +12,24 @@ import org.scalatest.matchers.should.Matchers._
 
 class Variables extends AnyFlatSpec {
 
-  "valid - variables tests: _VarNames.wacc" should "return exit code 0" in {
-    throwsNoError("valid/variables/_VarNames.wacc")
+  "valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" in {
+    throwsNoError("valid/variables/boolDeclaration2.wacc")
   }
 
   "valid - variables tests: boolDeclaration.wacc" should "return exit code 0" in {
     throwsNoError("valid/variables/boolDeclaration.wacc")
   }
 
-  "valid - variables tests: boolDeclaration2.wacc" should "return exit code 0" in {
-    throwsNoError("valid/variables/boolDeclaration2.wacc")
-  }
-
   "valid - variables tests: capCharDeclaration.wacc" should "return exit code 0" in {
     throwsNoError("valid/variables/capCharDeclaration.wacc")
   }
 
-  "valid - variables tests: charDeclaration.wacc" should "return exit code 0" in {
-    throwsNoError("valid/variables/charDeclaration.wacc")
-  }
-
   "valid - variables tests: charDeclaration2.wacc" should "return exit code 0" in {
     throwsNoError("valid/variables/charDeclaration2.wacc")
+  }
+
+  "valid - variables tests: charDeclaration.wacc" should "return exit code 0" in {
+    throwsNoError("valid/variables/charDeclaration.wacc")
   }
 
   "valid - variables tests: emptyStringDeclaration.wacc" should "return exit code 0" in {
@@ -66,6 +62,10 @@ class Variables extends AnyFlatSpec {
 
   "valid - variables tests: stringDeclaration.wacc" should "return exit code 0" in {
     throwsNoError("valid/variables/stringDeclaration.wacc")
+  }
+
+  "valid - variables tests: _VarNames.wacc" should "return exit code 0" in {
+    throwsNoError("valid/variables/_VarNames.wacc")
   }
 
   "valid - variables tests: zeroIntDeclaration.wacc" should "return exit code 0" in {

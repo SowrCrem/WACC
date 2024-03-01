@@ -149,8 +149,10 @@ object X86IRGenerator {
           None
         )
         val stats = for (s <- statList) yield statToIR(s)
+
+        val removeFrame = StackMachine.popFrame()
         if (table.dictionary.size > 0) {
-          addFrame ++ stats.flatten ++ StackMachine.popFrame()
+          addFrame ++ stats.flatten ++ removeFrame
         } else {
           stats.flatten
         }
@@ -455,12 +457,14 @@ object X86IRGenerator {
       val cond = exprToIR(expr)
       val body = {
         val table = whileNode.symbolTable
+        val setupStack = StackMachine.addFrame(
+          table,
+          None
+        )
         val loopStats = for (s <- stats) yield statToIR(s)
+        val popStack = StackMachine.popFrame()
         if (table.dictionary.size > 0) {
-          StackMachine.addFrame(
-            table,
-            None
-          ) ++ loopStats.flatten ++ StackMachine.popFrame()
+          setupStack ++ loopStats.flatten ++ popStack
         } else {
           loopStats.flatten
         }
@@ -481,23 +485,27 @@ object X86IRGenerator {
       val thenCase = {
         val table = ifNode.symbolTableTrue
         val trueStats = for (s <- trueCase) yield statToIR(s)
+        val setupStack = StackMachine.addFrame(
+          table,
+          None
+        )
+        val popStack = StackMachine.popFrame()
         if (table.dictionary.size > 0) {
-          StackMachine.addFrame(
-            table,
-            None
-          ) ++ trueStats.flatten ++ StackMachine.popFrame()
+          setupStack ++ trueStats.flatten ++ popStack
         } else {
           trueStats.flatten
         }
       }
       val elseCase = {
         val table = ifNode.symbolTableFalse
+        val setupStack = StackMachine.addFrame(
+          table,
+          None
+        )
         val falseStats = for (s <- falseCase) yield statToIR(s)
+        val popStack = StackMachine.popFrame()
         if (table.dictionary.size > 0) {
-          StackMachine.addFrame(
-            table,
-            None
-          ) ++ falseStats.flatten ++ StackMachine.popFrame()
+          setupStack ++ falseStats.flatten ++ popStack
         } else {
           falseStats.flatten
         }
@@ -521,10 +529,45 @@ object X86IRGenerator {
     case Skip() => {
       ListBuffer()
     }
+    case Free(expr) => {
+      val instructions = ListBuffer[Instruction]().empty
+      var callInstr: ListBuffer[Instruction] = ListBuffer[Instruction]().empty
+      expr.typeNode match {
+        case ArrayTypeNode(_) => {
+          lib.setFreeArrayFlag(true)
+          callInstr += CallInstr("free")          
+        }
+        case PairTypeNode(_, _) => {
+          lib.setFreePairFlag(true)
+          callInstr += CallInstr("freepair")
+        }
+      }
 
-    // TODO: Implement
-    case Call(ident, args) => ???
-    case Free(expr)        => ???
+      expr match {
+        case Ident(ident) => {
+          StackMachine.offset(ident) match {
+            case Some((offset, fpchange)) => {
+              fpchange match {
+                case 0 => {
+                  // Use offset as start of stack
+                  instructions ++= ListBuffer(
+                    Mov(Arg0, G2, InstrSize.fullReg)
+                  )
+                
+                }
+              }
+            }
+            case None => {
+              throw new RuntimeException(
+                s"Variable ${ident} not found in stack"
+              )
+            }
+          }
+        }
+      }
+
+      instructions ++ callInstr
+    }
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
 
@@ -752,6 +795,10 @@ object X86IRGenerator {
         JumpIfCond("_errBadChar", InstrCond.notEqual)
       )
     }
+    case Ord(char) => {
+      lib.overflow.setFlag(true)
+      exprToIR(char) 
+    }
     case IntLiter(value) => {
 
       val instructions = ListBuffer[Instruction]().empty
@@ -791,7 +838,7 @@ object X86IRGenerator {
         // mov rax, 0
         Mov(Dest, Immediate32(0), InstrSize.fullReg),
         // mov r12, rax
-        Mov(G2, Dest, InstrSize.fullReg),
+        Mov(G3, Dest, InstrSize.fullReg),
       )
       instructions
     }

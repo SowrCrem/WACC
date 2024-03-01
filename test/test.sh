@@ -70,7 +70,7 @@ run_tests() {
       fails+=("$line")
     elif [[ "$line" == *"IGNORE"* ]]; then
       ignoreds+=("$line")
-    elif [[ "$line" == *"PENDING"* ]]; then
+    elif [[ "$line" == *"pending"* ]]; then
       pendings+=("$line")
     fi
   done < <(scala-cli test . --test-only "test.$milestone.$type$part*")

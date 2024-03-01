@@ -104,11 +104,8 @@ object Utils {
     }
     val exeName = assemble(path)
     val exeCommand = inputs match {
-      case Some(inputStream) => {
-        val inputString = inputStream
-        s"./$exeName <<< $inputString"
-      }
-      case _               => s"./$exeName"
+      case Some(inputStream) => s"./$exeName <<< $inputStream"
+      case _                 => s"./$exeName"
     }
     // Command being run
     println("Running Command: " + exeCommand)

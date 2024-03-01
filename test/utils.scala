@@ -111,7 +111,7 @@ object Utils {
       case _               => s"./$exeName"
     }
     // Command being run
-    println(exeCommand)
+    println("Running Command: " + exeCommand)
 
     val exeReturn = exeCommand.!
     try {

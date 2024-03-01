@@ -29,7 +29,7 @@ begin
   char continue = 'Y' ;
   int buff = 0 ;
   while continue != 'N' do
-    print "Please input an integer: " ;
+    println "Please input an integer: " ;
     read buff ;
     print "echo input: " ;
     println buff ;

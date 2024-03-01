@@ -18,13 +18,22 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
-  //  HARDIV TRY FIX THIS FIRST (Just should run - hangs indefinitely right now)
+  // Tried to Fix - Still Hanging
 
-  "WACC" should "run valid/IO/read/read.wacc" ignore {
+  "WACC" should "run valid/IO/read/read.wacc" in {
+    pending
     val path = constructPath(List("valid", "IO", "read", "read.wacc"))
     val expectedOut = "3"
     val inputs = List("3")
-    runSucceedsWithInputs(path, inputs, expectedOut, 0)
+    runSucceedsWithInputs(path, inputs, expectedOut)
+  }
+
+  "WACC" should "run valid/IO/IOLoop.wacc" in {
+    pending
+    val path = constructPath(List("valid", "IO", "IOLoop.wacc"))
+    val expectedOut = "3"
+    val inputs = List("1", "Y", "2", "Y", "3", "Y", "4", "Y", "5", "Y", "142", "N")
+    runSucceedsWithInputs(path, inputs, expectedOut)
   }
 
   // echoBigInt.wacc  echoBigNegInt.wacc  echoChar.wacc  echoInt.wacc  echoNegInt.wacc  echoPuncChar.wacc  read.wacc  readAtEof.wacc

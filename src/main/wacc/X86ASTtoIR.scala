@@ -30,7 +30,17 @@ object X86IRGenerator {
       literal, {
         val label = s"string${stringLiterals.size}"
         rodataDirectives += Directive(s"int ${literal.length()}")
-        val escapedLiteral = literal.replace("\\", "\\\\").replace("\"", "\\\"")
+        // account for \0 \b \t \n \f \r \" \' \\
+        val escapedLiteral = literal
+          .replace("\u0000", "\\0")
+          .replace("\b", "\\b")
+          .replace("\t", "\\t")
+          .replace("\n", "\\n")
+          .replace("\f", "\\f")
+          .replace("\r", "\\r")
+          .replace("\"", "\\\"")
+          .replace("\'", "\\\'")
+          .replace("\\", "\\\\")
         rodataDirectives += Directive(s"$label: .asciz \"$escapedLiteral\"")
         label
       }

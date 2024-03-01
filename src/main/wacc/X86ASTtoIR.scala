@@ -191,18 +191,101 @@ object X86IRGenerator {
             }
           }
         }
-
-        case FstNode(ident) => {
+// fst p = 1;
+        case FstNode(identifier) => {
           // Null dereference check
           lib.nullDerefOrFree.setFlag(true)
-          ???
-
-          
-          
-
+          // Get the address to write into
+          // Get the expression to write
+          // Move the expression to the address
+          // Clean up
+          val instructions = exprToIR(rhs)
+          identifier match {
+            case Ident(ident) => {
+              StackMachine.offset(ident) match {
+                case Some((offset, fpchange)) => {
+                  fpchange match {
+                    case 0 => {
+                      instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                    }
+                    case _ => {
+                      val setup = ListBuffer(
+                        AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                        PopRegisters(List(FP), InstrSize.fullReg)
+                      )
+                        instructions ++= setup ++ ListBuffer(
+                        Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                      ) ++ ListBuffer(
+                        PushRegisters(List(FP), InstrSize.fullReg),
+                        SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                        Mov(FP, SP, InstrSize.fullReg)
+                      )
+                    }
+                  }
+                }
+                case None => {
+                  throw new RuntimeException(
+                    s"Variable ${ident} not found in stack"
+                  )
+                }
+              }
+            }
+            case _ => {
+              throw new RuntimeException(
+                "Value (type: " + identifier.typeNode.toString() +
+                  ") should not reach this case"
+              )
+            }
+          }
+          instructions
         }
-        case SndNode(ident) => {
-          ???
+        case SndNode(identifier) => {
+          // Null dereference check
+          lib.nullDerefOrFree.setFlag(true)
+          // Get the address to write into
+          // Get the expression to write
+          // Move the expression to the address
+          // Clean up
+          val instructions = exprToIR(rhs)
+          identifier match {
+            case Ident(ident) => {
+              StackMachine.offset(ident) match {
+                case Some((offset, fpchange)) => {
+                  fpchange match {
+                    case 0 => {
+                      instructions += Mov(FPOffset(offset), RegisterPtr(Dest, InstrSize.fullReg, MAX_REGSIZE),
+                       InstrSize.fullReg)
+                    }
+                    case _ => {
+                      val setup = ListBuffer(
+                        AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                        PopRegisters(List(FP), InstrSize.fullReg)
+                      )
+                        instructions ++= setup ++ ListBuffer(
+                        Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                      ) ++ ListBuffer(
+                        PushRegisters(List(FP), InstrSize.fullReg),
+                        SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                        Mov(FP, SP, InstrSize.fullReg)
+                      )
+                    }
+                  }
+                }
+                case None => {
+                  throw new RuntimeException(
+                    s"Variable ${ident} not found in stack"
+                  )
+                }
+              }
+            }
+            case _ => {
+              throw new RuntimeException(
+                "Value (type: " + identifier.typeNode.toString() +
+                  ") should not reach this case"
+              )
+            }
+          }
+          instructions
         }
 
         case ArrayElem(ident, eList) => {

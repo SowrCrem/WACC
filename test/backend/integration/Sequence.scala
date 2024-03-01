@@ -37,9 +37,19 @@ class Sequence extends AnyFlatSpec with BeforeAndAfterEach{
     runSucceeds(path)
   }
 
+  it should "run valid/sequence/exitSimple.wacc" in {
+    val path = constructPath(List("valid", "sequence", "exitSimple.wacc"))
+    runSucceeds(path, 42)
+  }
+
   it should "run valid/sequence/intAssignment.wacc" in {
     val path = constructPath(List("valid", "sequence", "intAssignment.wacc"))
-    runSucceeds(path, "", 20)
+    runSucceeds(path, 20)
+  }
+
+  it should "run valid/sequence/intLeadingZeros.wacc" ignore {
+    val path = constructPath(List("valid", "sequence", "intLeadingZeros.wacc"))
+    runSucceeds(path)
   }
 
   it should "run valid/sequence/stringAssignment.wacc" in {

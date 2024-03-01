@@ -20,52 +20,52 @@ class Loop extends AnyFlatSpec with BeforeAndAfterEach {
 
   it should "run valid/while/loopIntCondition.wacc" in {
       val path = constructPath(List("valid", "while", "loopIntCondition.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
   it should "run valid/while/loopCharCondition.wacc" in {
       val path = constructPath(List("valid", "while", "loopCharCondition.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
   it should "run valid/while/whileBasic.wacc" in {
       val path = constructPath(List("valid", "while", "whileBasic.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
   it should "run valid/while/whileFalse.wacc" in {
       val path = constructPath(List("valid", "while", "whileFalse.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
   it should "run valid/while/whileCount.wacc" in {
       val path = constructPath(List("valid", "while", "whileCount.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
   it should "run valid/while/rmStyleAdd.wacc" in {
       val path = constructPath(List("valid", "while", "rmStyleAdd.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
   it should "run valid/while/fibonacciFullIt.wacc" ignore {
       val path = constructPath(List("valid", "while", "fibonacciFullIt.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
   it should "run valid/while/fibonacciIterative.wacc" ignore {
       val path = constructPath(List("valid", "while", "fibonacciIterative.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
   it should "run valid/while rmStyleAddIO.wacc" ignore {
       val path = constructPath(List("valid", "while", "rmStyleAddIO.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
   it should "run valid/while/max.wacc" in {
       val path = constructPath(List("valid", "while", "max.wacc"))
-      runSucceeds(path, "Hello World!", 0)
+      runSucceeds(path)
   }
 
 }

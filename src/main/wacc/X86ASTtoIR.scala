@@ -590,6 +590,41 @@ object X86IRGenerator {
 
   // --------------- Expression IR Generation -------------------------------------//
 
+  def pairExprToIR(e: Expr) : Buffer[Instruction] = e match {
+    case Ident(name) => {
+      val instrs = ListBuffer[Instruction]().empty
+      StackMachine.offset(name) match {
+        case Some((offset, fpchange)) => {
+          fpchange match {
+            case 0 => {
+              instrs ++= ListBuffer(
+                Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+              )                  
+            }
+            case _ => {
+              
+              val setup = ListBuffer(
+                AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                PopRegisters(List(FP), InstrSize.fullReg)
+              )
+              instrs ++= setup ++ ListBuffer(
+                Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+                PushRegisters(List(FP), InstrSize.fullReg),
+                SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                Mov(FP, SP, InstrSize.fullReg)
+              )                 
+            }
+          }
+        }
+        case None => {
+          throw new RuntimeException("Variable not found in stack")
+        }
+      }
+      instrs          
+    }
+    case _ => exprToIR(e)
+  }
+
   // Never lhs
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
     case Brackets(expr) => {
@@ -665,50 +700,19 @@ object X86IRGenerator {
       instructions
     }
 
+    case FstNode(e) => pairExprToIR(e)
+    case SndNode(e) => exprToIR(FstNode(e)(e.pos))
+
     case NewPair(fst, snd) => {
       lib.setMallocFlag(true)
       lib.outOfMemory.setFlag(true)
 
       // int[] a = [1,2,3]
       // pair b = newpair(a, a)
-      def pairExprToIR(e: Expr) : Buffer[Instruction] = e match {
-        case Ident(name) => {
-          val instrs = ListBuffer[Instruction]().empty
-          StackMachine.offset(name) match {
-            case Some((offset, fpchange)) => {
-              fpchange match {
-                case 0 => {
-                  instrs ++= ListBuffer(
-                    Mov(Dest, FPOffset(offset), InstrSize.fullReg)
-                  )                  
-                }
-                case _ => {
-                  
-                  val setup = ListBuffer(
-                    AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
-                    PopRegisters(List(FP), InstrSize.fullReg)
-                  )
-                  instrs ++= setup ++ ListBuffer(
-                    Mov(Dest, FPOffset(offset), InstrSize.fullReg),
-                    PushRegisters(List(FP), InstrSize.fullReg),
-                    SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
-                    Mov(FP, SP, InstrSize.fullReg)
-                  )                 
-                }
-              }
-            }
-            case None => {
-              throw new RuntimeException("Variable not found in stack")
-            }
-          }
-          instrs          
-        }
-        case _ => exprToIR(e)
-      } 
       
-      val firstIR : Buffer[Instruction] = pairExprToIR(fst)
-      val secondIR : Buffer[Instruction] = pairExprToIR(fst)
-
+      val firstIR : Buffer[Instruction] = exprToIR(FstNode(fst)(fst.pos))
+      val secondIR : Buffer[Instruction] = exprToIR(SndNode(snd)(snd.pos))
+      
       val instructions = firstIR ++ ListBuffer[Instruction](
         // mov qword ptr [r11], rax
         Mov(RegisterPtr(G2, InstrSize.fullReg, 0), Dest, InstrSize.fullReg)
@@ -769,6 +773,9 @@ object X86IRGenerator {
             //   )
             // }
           }
+        }
+        case None => {
+          throw new RuntimeException("Variable not found in stack")
         }
       }
 

@@ -18,9 +18,10 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
-  // Tried to Fix - Still Hanging
+  // Tried to Fix - Still Hanging (Use ./run.sh filepath inputs to run instead - Command written as comments in each test)
 
   "WACC" should "run valid/IO/read/read.wacc" in {
+    // run.sh valid/IO/read/read.wacc 3
     pending
     val path = constructPath(List("valid", "IO", "read", "read.wacc"))
     val expectedOut = "3"
@@ -29,6 +30,7 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
   }
 
   "WACC" should "run valid/IO/IOLoop.wacc" in {
+    // run.sh valid/IO/IOLoop.wacc 1 Y 2 Y 3 Y 4 Y 5 Y 142 N
     pending
     val path = constructPath(List("valid", "IO", "IOLoop.wacc"))
     val expectedOut = "3"

@@ -12,12 +12,12 @@ import org.scalatest.matchers.should.Matchers._
 
 class Basic extends AnyFlatSpec {
 
-  "syntaxErr - basic tests: badComment.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/basic/badComment.wacc")
-  }
-
   "syntaxErr - basic tests: badComment2.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/syntaxErr/basic/badComment2.wacc")
+  }
+
+  "syntaxErr - basic tests: badComment.wacc" should "return exit code 100" in {
+    throwsSyntaxError("invalid/syntaxErr/basic/badComment.wacc")
   }
 
   "syntaxErr - basic tests: badEscape.wacc" should "return exit code 100" in {

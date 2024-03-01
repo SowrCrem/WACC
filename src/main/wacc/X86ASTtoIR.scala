@@ -228,40 +228,90 @@ object X86IRGenerator {
           // Null dereference check
           lib.nullDerefOrFree.setFlag(true)
           val rhsAsgn = exprToIR(rhs)
+          var instructions = rhsAsgn
           
-          val instructions = ListBuffer[Instruction]().empty
-          instructions ++= ListBuffer(
-            // cmp r12, 0
-            // je _errNull
-            Cmp(G2, Immediate32(0), InstrSize.fullReg),
-            JumpIfCond(lib.nullDerefOrFree.labelName, InstrCond.equal),
-
-            // mov rax, 1
-            // mov qword ptr [r12], rax
-            Mov(Dest, Immediate32(1), InstrSize.fullReg),
-            Mov(RegisterPtr(G2, InstrSize.fullReg, 0), Dest, InstrSize.fullReg)
-          )
-          
-          instructions ++ rhsAsgn
+          identifier match {
+            case Ident(ident) => {
+              StackMachine.offset(ident) match {
+                case Some((offset, fpchange)) => {
+                  fpchange match {
+                    case 0 => {
+                      instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                    }
+                    case _ => {
+                      val setup = ListBuffer(
+                        AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                        PopRegisters(List(FP), InstrSize.fullReg)
+                      )
+                        instructions ++= setup ++ ListBuffer(
+                        Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                      ) ++ ListBuffer(
+                        PushRegisters(List(FP), InstrSize.fullReg),
+                        SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                        Mov(FP, SP, InstrSize.fullReg)
+                      )
+                    }
+                  }
+                }
+                case None => {
+                  throw new RuntimeException(
+                    s"Variable ${ident} not found in stack"
+                  )
+                }
+              }
+            }
+            case _ => {
+              throw new RuntimeException(
+                "Value (type: " + identifier.typeNode.toString() +
+                  ") should not reach this case"
+              )
+            }
+          }
+          instructions
         }
-        case SndNode(ident) => {
+        case SndNode(identifier) => {
           lib.nullDerefOrFree.setFlag(true)
           val rhsAsgn = exprToIR(rhs)
-
-          val instructions = ListBuffer[Instruction]().empty
-          instructions ++= ListBuffer(
-            // cmp r12, 0
-            // je _errNull
-            Cmp(G2, Immediate32(0), InstrSize.fullReg),
-            JumpIfCond(lib.nullDerefOrFree.labelName, InstrCond.equal),
-
-            // mov rax, 1
-            // mov qword ptr [r12 + 8], rax
-            Mov(Dest, Immediate32(1), InstrSize.fullReg),
-            Mov(RegisterPtr(G2, InstrSize.fullReg, MAX_REGSIZE), Dest, InstrSize.fullReg)
-          )
+          var instructions = rhsAsgn
           
-          instructions ++ rhsAsgn
+          identifier match {
+            case Ident(ident) => {
+              StackMachine.offset(ident) match {
+                case Some((offset, fpchange)) => {
+                  fpchange match {
+                    case 0 => {
+                      instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                    }
+                    case _ => {
+                      val setup = ListBuffer(
+                        AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                        PopRegisters(List(FP), InstrSize.fullReg)
+                      )
+                        instructions ++= setup ++ ListBuffer(
+                        Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                      ) ++ ListBuffer(
+                        PushRegisters(List(FP), InstrSize.fullReg),
+                        SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                        Mov(FP, SP, InstrSize.fullReg)
+                      )
+                    }
+                  }
+                }
+                case None => {
+                  throw new RuntimeException(
+                    s"Variable ${ident} not found in stack"
+                  )
+                }
+              }
+            }
+            case _ => {
+              throw new RuntimeException(
+                "Value (type: " + identifier.typeNode.toString() +
+                  ") should not reach this case"
+              )
+            }
+          }
+          instructions
         }
 
         case ArrayElem(ident, eList) => {
@@ -389,7 +439,20 @@ object X86IRGenerator {
           fpchange match {
             case 0 => {
               instructions.prependAll(preInstr)
-              instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+              typeNode match {
+                case PairTypeNode(_,_) => {
+                  instructions ++= List(
+                    Mov(Dest, G2, InstrSize.fullReg),
+                    Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+                    JumpIfCond(lib.nullDerefOrFree.labelName, InstrCond.equal),
+                    Mov(Dest, RegisterPtr(Dest, InstrSize.fullReg, 0), InstrSize.fullReg),
+                    Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                  )
+                }
+                case _ => {
+                  instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                }
+              }
             }
             case _ => {
               val setup = ListBuffer(

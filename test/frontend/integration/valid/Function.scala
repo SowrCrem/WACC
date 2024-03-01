@@ -76,12 +76,12 @@ class Function extends AnyFlatSpec {
     throwsNoError("valid/function/simple_functions/functionReturnPair.wacc")
   }
 
-  "valid - simple_functions tests: functionSimple.wacc" should "return exit code 0" in {
-    throwsNoError("valid/function/simple_functions/functionSimple.wacc")
-  }
-
   "valid - simple_functions tests: functionSimpleLoop.wacc" should "return exit code 0" in {
     throwsNoError("valid/function/simple_functions/functionSimpleLoop.wacc")
+  }
+
+  "valid - simple_functions tests: functionSimple.wacc" should "return exit code 0" in {
+    throwsNoError("valid/function/simple_functions/functionSimple.wacc")
   }
 
   "valid - simple_functions tests: functionUpdateParameter.wacc" should "return exit code 0" in {
@@ -112,12 +112,12 @@ class Function extends AnyFlatSpec {
     throwsNoError("valid/function/simple_functions/punning.wacc")
   }
 
-  "valid - simple_functions tests: sameArgName.wacc" should "return exit code 0" in {
-    throwsNoError("valid/function/simple_functions/sameArgName.wacc")
-  }
-
   "valid - simple_functions tests: sameArgName2.wacc" should "return exit code 0" in {
     throwsNoError("valid/function/simple_functions/sameArgName2.wacc")
+  }
+
+  "valid - simple_functions tests: sameArgName.wacc" should "return exit code 0" in {
+    throwsNoError("valid/function/simple_functions/sameArgName.wacc")
   }
 
   "valid - simple_functions tests: sameNameAsVar.wacc" should "return exit code 0" in {

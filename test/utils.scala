@@ -92,10 +92,10 @@ object Utils {
   }
 
   def runSucceedsWithInputs(path: String, inputs: List[String], expOutput: String = "", expReturn: Int = 0): Assertion = {
-    runSucceeds(path, expOutput, expReturn, Some(inputs))
+    runSucceeds(path, expOutput, expReturn, Some(inputs.mkString(" ")))
   }
 
-  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0, inputs: Option[List[String]] = None): Assertion = synchronized {
+  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0, inputs: Option[String] = None): Assertion = synchronized {
     Main.setBackendTests()
     try {
       throwsNoError(path)
@@ -104,11 +104,14 @@ object Utils {
     }
     val exeName = assemble(path)
     val exeCommand = inputs match {
-      case Some(inputList) => s"./$exeName <<< \"${inputList.mkString(" ")}\""
+      case Some(inputStream) => {
+        val inputString = inputStream
+        s"./$exeName <<< $inputString"
+      }
       case _               => s"./$exeName"
     }
     // Command being run
-    println(exeCommand)
+    println("Running Command: " + exeCommand)
 
     val exeReturn = exeCommand.!
     try {

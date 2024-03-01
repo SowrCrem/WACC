@@ -437,8 +437,8 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
 
           positionl match {
             case ArrayTypeNode(elementType) =>
-              arrElem.typeNode = elementType
               // Check if all indices are integers
+
               val allIndicesAreInt = eList.forall(expr =>
                 check(expr, symbolTable, returnType) == Some(IntTypeNode()(position.pos))
               )
@@ -452,6 +452,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                 // For a single-dimensional array accessed once, return the element type.
                 // For multi-dimensional arrays or deeper accesses, we need to peel off the array layers accordingly.
                 if (eList.length == 1) {
+                  arrElem.typeNode = elementType
                   Some(elementType)
                 } else {
                   val arrType = eList.foldLeft(elementType)((acc, _) =>
@@ -468,6 +469,8 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                         t
                     }
                   )
+                  arrElem.typeNode = node
+
                   Some(node)
                 }
               }

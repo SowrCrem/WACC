@@ -37,6 +37,7 @@ class LibFunGenerator {
   private var mallocFlag: Boolean = false
   private var badCharFlag: Boolean = false
   private var arrayLoad8Flag: Boolean = false
+  private var arrayStore8Flag: Boolean = false
   
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
@@ -46,6 +47,7 @@ class LibFunGenerator {
     val libFuns = new ListBuffer[Instruction]()
     libFuns ++= addMallocFunc()
     libFuns ++= arrLoad8IR()
+    libFuns ++= arrStore8IR()
     libFuns ++= exitIR
     // Place error messages here to avoid conflicts with other labels 
     // (e.g. addMallocFunc sets outOfMemory flag)
@@ -528,6 +530,31 @@ class LibFunGenerator {
     )
   }
 
+  def setArrStore8Flag(flag: Boolean): Unit = {
+    arrayStore8Flag = flag
+  }
+
+  def arrStore8IR(): List[Instruction] = {
+    if (!arrayStore8Flag) {
+      return List.empty[Instruction]
+    }
+    outOfBounds.setFlag(true)
+    List(
+      Label("_arrStore8"),
+      PushRegisters(List(G0), InstrSize.fullReg),
+      Cmp(G1, Immediate32(0), InstrSize.halfReg),
+      ConditionalMov(Arg1, G1, InstrCond.lessThan, InstrSize.halfReg),
+      JumpIfCond(outOfBounds.labelName, InstrCond.lessThan),
+      Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.halfReg),
+      Cmp(G1, G0, InstrSize.halfReg),
+      ConditionalMov(Arg1, G1, InstrCond.greaterThanEqual, InstrSize.halfReg),
+      JumpIfCond(outOfBounds.labelName, InstrCond.greaterThanEqual),
+      Mov(ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.halfReg), Dest, InstrSize.halfReg),
+      PopRegisters(List(G0), InstrSize.fullReg),
+      ReturnInstr()
+    )
+  }
+
   def setArrLoad8Flag(flag: Boolean): Unit = {
     arrayLoad8Flag = flag
   }
@@ -539,7 +566,7 @@ class LibFunGenerator {
     outOfBounds.setFlag(true)
     List(
       Label("_arrLoad8"),
-      PushRegisters(List(G1), InstrSize.fullReg),
+      PushRegisters(List(G0), InstrSize.fullReg),
       Cmp(G1, Immediate32(0), InstrSize.halfReg),
       ConditionalMov(G1, G2, InstrCond.lessThan, InstrSize.halfReg),
       JumpIfCond(outOfBounds.labelName, InstrCond.lessThan),
@@ -548,7 +575,7 @@ class LibFunGenerator {
       ConditionalMov(G1, G2, InstrCond.greaterThan, InstrSize.halfReg),
       JumpIfCond(outOfBounds.labelName, InstrCond.greaterThan),
       MovWithSignExtend(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.halfReg), InstrSize.halfReg, InstrSize.fullReg),
-      PopRegisters(List(G1), InstrSize.fullReg),
+      PopRegisters(List(G0), InstrSize.fullReg),
       ReturnInstr()
     )
   }

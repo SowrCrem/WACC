@@ -152,7 +152,10 @@ object SndNode extends ParserBridgePos1[Expr, SndNode]
 sealed trait LValue extends Expr
 
 
-case class ArrayElem(ident: Ident, eList: List[Expr])(val pos: (Int, Int)) extends LValue// list of expressions so we can have x[1][2][3] etc
+  // list of expressions so we can have x[1][2][3] etc
+case class ArrayElem(ident: Ident, eList: List[Expr])(val pos: (Int, Int)) extends LValue { 
+  typeNode = ident.typeNode
+}
 object ArrayElem extends ParserBridgePos2[Ident, List[Expr], ArrayElem]
 
 // Binary Operators

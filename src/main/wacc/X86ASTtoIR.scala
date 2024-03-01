@@ -191,6 +191,52 @@ object X86IRGenerator {
             }
           }
         }
+        case ArrayElem(ident, eList) => {
+          lib.setArrStore8Flag(true)
+          lib.outOfBounds.setFlag(true)
+          lib.setArrLoad8Flag(true)
+          val instructions = ListBuffer[Instruction]().empty
+          val assignment = exprToIR(rhs)
+
+          StackMachine.offset(ident.value) match {
+            case Some((offset, fpchange)) => {
+              fpchange match {
+                case 0 => {
+                  instructions ++= ListBuffer(
+                    Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+                  )
+                  for (e <- eList.init) {
+                    instructions ++= ListBuffer(
+                      Mov(Arg5, Dest, InstrSize.fullReg)
+                    )
+                    instructions ++= exprToIR(e)
+                    instructions ++= ListBuffer(
+                      Mov(G1, Dest, InstrSize.halfReg),
+                      CallInstr("arrLoad8"),
+                      Mov(Dest, Arg5, InstrSize.fullReg)
+                    )
+                  }
+
+                  val lastExpr = exprToIR(eList.last)
+                  instructions ++= ListBuffer(
+                    Mov(Arg5, Dest, InstrSize.fullReg)
+                  ) ++ lastExpr ++ ListBuffer(
+                    Mov(G1, Dest, InstrSize.halfReg)
+                  ) ++ assignment ++ ListBuffer(
+                    CallInstr("arrStore8"),
+                  ) 
+                }
+              }
+            }
+            case None => {
+              throw new RuntimeException(
+                s"Variable ${ident} not found in stack"
+              )
+            }
+          }
+
+          instructions
+        }
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // TODO: need to have cases for pairs and array elements later
       }
@@ -567,7 +613,7 @@ object X86IRGenerator {
                 instructions ++= ListBuffer(
                   Mov(G1, Dest, InstrSize.halfReg),
                   CallInstr("arrLoad8"),
-                  Mov(Dest, Arg5, InstrSize.fullReg),
+                  Mov(Dest, Arg5, InstrSize.fullReg)
                 )
               }
             }

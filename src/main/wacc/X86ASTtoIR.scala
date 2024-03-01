@@ -390,7 +390,20 @@ object X86IRGenerator {
           fpchange match {
             case 0 => {
               instructions.prependAll(preInstr)
-              instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+              typeNode match {
+                case PairTypeNode(_,_) => {
+                  instructions ++= List(
+                    Mov(Dest, G2, InstrSize.fullReg),
+                    Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+                    JumpIfCond(lib.nullDerefOrFree.labelName, InstrCond.equal),
+                    Mov(Dest, RegisterPtr(Dest, InstrSize.fullReg, 0), InstrSize.fullReg),
+                    Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                  )
+                }
+                case _ => {
+                  instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                }
+              }
             }
             case _ => {
               val setup = ListBuffer(
@@ -523,12 +536,32 @@ object X86IRGenerator {
         case Ident(ident) => {
           StackMachine.offset(ident) match {
             case Some((offset, fpchange)) => {
+              instructions ++= ListBuffer(
+                Mov(Arg0, G2, InstrSize.fullReg)
+              )
               fpchange match {
                 case 0 => {
                   // Use offset as start of stack
-                  instructions ++= ListBuffer(
-                    Mov(Arg0, G2, InstrSize.fullReg)
+                }
+                case _ => {
+                  val stackSetup = ListBuffer(
+                    // add rsp, fpchange
+                    AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    // pop rbp
+                    PopRegisters(List(FP), InstrSize.fullReg)
                   )
+                  val reverseStackSetup = ListBuffer(
+                    // push rbp
+                    PushRegisters(List(FP), InstrSize.fullReg),
+                    // sub rsp, fpchange
+                    SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    // mov rbp, rsp
+                    Mov(FP, SP, InstrSize.fullReg)
+                  )
+
+                  instructions ++ stackSetup ++ ListBuffer(
+                    Mov(Arg0, G2, InstrSize.fullReg)
+                  ) ++ callInstr ++ reverseStackSetup
                 }
               }
             }
@@ -545,6 +578,8 @@ object X86IRGenerator {
     }
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
+      var fst = false
+      var snd = false
 
       val callReadLabel = lhs.typeNode match {
         case IntTypeNode() => {
@@ -606,6 +641,7 @@ object X86IRGenerator {
             }
           }
         }
+        // TODO: FST + SND 
         case _ => {
           // Message log for value should not reach this case
           throw new RuntimeException(
@@ -857,7 +893,7 @@ object X86IRGenerator {
         // mov rax, 0
         Mov(Dest, Immediate32(0), InstrSize.fullReg),
         // mov r12, rax
-        Mov(G3, Dest, InstrSize.fullReg),
+        Mov(G2, Dest, InstrSize.fullReg),
       )
       instructions
     }

@@ -431,11 +431,13 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       }
 
     // ARRAY ELEMENT
-    case ArrayElem(ident, eList) =>
+    case arrElem@ArrayElem(ident, eList) =>
       symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
         case Some(positionl) =>
+
           positionl match {
             case ArrayTypeNode(elementType) =>
+              arrElem.typeNode = elementType
               // Check if all indices are integers
               val allIndicesAreInt = eList.forall(expr =>
                 check(expr, symbolTable, returnType) == Some(IntTypeNode()(position.pos))

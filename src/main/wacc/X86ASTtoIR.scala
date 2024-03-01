@@ -118,14 +118,13 @@ object X86IRGenerator {
 
   def generateFunctionIR(func: Func): ListBuffer[Instruction] = {
 
-    
     val body = {
       val table = func.symbolTable
       val stats = for (s <- func.statList) yield statToIR(s)
       stats.flatten
     }
 
-    ListBuffer() ++ body 
+    ListBuffer() ++ body
 
   }
 
@@ -176,7 +175,9 @@ object X86IRGenerator {
 
             }
             case None => {
-              throw new RuntimeException(s"Variable ${ident} not found in stack")
+              throw new RuntimeException(
+                s"Variable ${ident} not found in stack"
+              )
             }
           }
         }
@@ -198,19 +199,30 @@ object X86IRGenerator {
           lib.setMallocFlag(true)
           lib.outOfMemory.setFlag(true)
 
-          /** Use G2 for array pointers for time being when assigning arrays
-            * as a special case of the calling convention.
-            * 
-            * NOTE: This will need to change for a register tracker implementation
-          */
-          List(
-            Mov(Arg0, Immediate32((arr.size + 1) * MAX_REGSIZE), InstrSize.halfReg),
-            CallInstr("malloc"),
-            Mov(G2, Dest, InstrSize.fullReg),
-            AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg),
-            Mov(Dest, Immediate32(arr.size), InstrSize.fullReg),
-            Mov(RegisterPtr(G2, InstrSize.halfReg, (-1) * HALF_REGSIZE), Dest, InstrSize.halfReg),
-          )
+          /** Use G2 for array pointers for time being when assigning arrays as
+            * a special case of the calling convention.
+            *
+            * NOTE: This will need to change for a register tracker
+            * implementation
+            */
+          expr match {
+            case ArrayLiter(arrayElements) => {
+              val arrSize = arrayElements.size
+              List(
+                Mov(
+                  Arg0,
+                  Immediate32((arrSize) * MAX_REGSIZE + HALF_REGSIZE),
+                  InstrSize.halfReg
+                ),
+                CallInstr("malloc"),
+                Mov(G2, Dest, InstrSize.fullReg),
+                AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg)
+              )
+
+            }
+            case _ => List()
+          }
+
         }
         case _ => List()
       }
@@ -337,7 +349,7 @@ object X86IRGenerator {
 
     // TODO: Implement
     case Call(ident, args) => ???
-    case Free(expr) => ???
+    case Free(expr)        => ???
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
 
@@ -358,7 +370,7 @@ object X86IRGenerator {
           // Find position in stack
           StackMachine.offset(ident) match {
             case Some((offset, fpchange)) => {
-              val readLogic = ListBuffer (
+              val readLogic = ListBuffer(
                 // mov rax, qword ptr [rbp - offset]
                 Mov(Dest, FPOffset(offset), InstrSize.fullReg),
                 // mov rdi, rax
@@ -389,20 +401,24 @@ object X86IRGenerator {
                     // mov rbp, rsp
                     Mov(FP, SP, InstrSize.fullReg)
                   )
-                  
+
                   instructions ++ stackSetup ++ readLogic ++ reverseStackSetup
                 }
               }
             }
             case None => {
-              throw new RuntimeException(s"Variable ${ident} not found in stack")
+              throw new RuntimeException(
+                s"Variable ${ident} not found in stack"
+              )
             }
           }
         }
         case _ => {
           // Message log for value should not reach this case
-          throw new RuntimeException("Value (type: " + lhs.typeNode.toString() +
-                                           ") should not reach this case")
+          throw new RuntimeException(
+            "Value (type: " + lhs.typeNode.toString() +
+              ") should not reach this case"
+          )
         }
       }
     }
@@ -438,7 +454,7 @@ object X86IRGenerator {
       }
 
     }
-    
+
     exprToIR(expr) ++= ListBuffer(
       DecrementStackPointerNB(8),
       PushRegisters(List(Dest), InstrSize.fullReg),
@@ -457,7 +473,6 @@ object X86IRGenerator {
   // --------------- Expression IR Generation -------------------------------------//
 
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
-
 
     case Brackets(expr) => {
       exprToIR(expr)
@@ -521,13 +536,83 @@ object X86IRGenerator {
         )
       )
     }
+    case ArrayElem(ident, eList) => {
+      lib.setArrLoad8Flag(true)
+      lib.outOfBounds.setFlag(true)
+      if (eList.size == 1) {
+        val instrs = exprToIR(eList.head)
+        instrs ++= ListBuffer(
+          Mov(G1, Dest, InstrSize.halfReg)
+        )
+
+
+        StackMachine.offset(ident.value) match {
+        
+          case Some((offset, fpchange)) => {
+            fpchange match {
+              case 0 => {
+                instrs ++= ListBuffer(
+                  Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+                  Mov(Arg5, Dest, InstrSize.fullReg),
+                  CallInstr("arrLoad8"), Mov(Dest, Arg5, InstrSize.fullReg)
+                )
+              }
+              case _ => {
+                val setup = ListBuffer(
+                  AddInstr(
+                    SP,
+                    Immediate32(fpchange + MAX_REGSIZE),
+                    InstrSize.fullReg
+                  ),
+                  PopRegisters(List(FP), InstrSize.fullReg)
+                )
+                instrs ++= setup ++ ListBuffer(
+                  Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+                  Mov(Arg5, Dest, InstrSize.fullReg),
+                  PushRegisters(List(FP), InstrSize.fullReg),
+                  SubInstr(
+                    SP,
+                    Immediate32(fpchange + MAX_REGSIZE),
+                    InstrSize.fullReg
+                  ),
+                  Mov(FP, SP, InstrSize.fullReg)
+                )
+              }
+
+
+              instrs ++ ListBuffer(CallInstr("arrLoad8"), Mov(Dest, Arg5, InstrSize.fullReg))
+
+            }
+          }
+          case None => {
+            throw new RuntimeException(
+              "Variable not found in stack: Array Element"
+            )
+          }
+        }
+      } else {
+        ListBuffer()
+      }
+    }
     case ArrayLiter(entries) => {
       // Assume special calling convention for array stores - r11 is used to store the array pointer
-      var offset : Int = 0 // As we initially store the size of the array in the first 4 bytes
-      val instructions : ListBuffer[Instruction] = ListBuffer()
+      var offset: Int =
+        0 // As we initially store the size of the array in the first 4 bytes
+      val instructions: ListBuffer[Instruction] = ListBuffer(
+        Mov(Dest, Immediate32(entries.size), InstrSize.fullReg),
+        Mov(
+          RegisterPtr(G2, InstrSize.halfReg, (-1) * HALF_REGSIZE),
+          Dest,
+          InstrSize.halfReg
+        )
+      )
       for (e <- entries) {
         instructions ++= exprToIR(e)
-        instructions += Mov(RegisterPtr(G2, InstrSize.halfReg, HALF_REGSIZE), Dest, InstrSize.halfReg)
+        instructions += Mov(
+          RegisterPtr(G2, InstrSize.halfReg, offset),
+          Dest,
+          InstrSize.halfReg
+        )
         offset += MAX_REGSIZE
       }
       instructions += Mov(Dest, G2, InstrSize.fullReg)
@@ -623,7 +708,7 @@ object X86IRGenerator {
       val instructions = new ListBuffer[Instruction]().empty
       val functionNode = functionGenerator.getFunctionNode(ident.value)
       val handleParams = ListBuffer[Instruction]().empty
-      
+
       for (param <- paramList) {
         handleParams ++= exprToIR(param)
         handleParams ++= ListBuffer(
@@ -631,15 +716,13 @@ object X86IRGenerator {
         )
       }
 
-
-
       val incrementStackInstr = new ListBuffer[Instruction]().empty
 
       if (paramList.size > 0) {
         for (i <- 0 until paramList.size) {
           incrementStackInstr ++= ListBuffer(
-          PopRegisters(List(G0), InstrSize.fullReg),
-        )
+            PopRegisters(List(G0), InstrSize.fullReg)
+          )
         }
       }
 
@@ -649,18 +732,20 @@ object X86IRGenerator {
       )
 
       val funcBody = generateFunctionIR(functionNode)
-      functionGenerator.addFunction(functionNode.ident.value, functionNode, funcBody)
+      functionGenerator.addFunction(
+        functionNode.ident.value,
+        functionNode,
+        funcBody
+      )
       val popFrame = StackMachine.popFrame()
 
       val body = functionGenerator.getFunctionBody(ident.value)
 
       functionGenerator.addFunction(ident.value, functionNode, body)
 
-
-
-      instructions ++= handleParams ++  setupStack ++  ListBuffer(
+      instructions ++= handleParams ++ setupStack ++ ListBuffer(
         CallInstr(ident.value)
-      )  ++ popFrame ++ incrementStackInstr
+      ) ++ popFrame ++ incrementStackInstr
 
     }
   }

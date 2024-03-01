@@ -16,7 +16,6 @@ sealed trait Instruction
 object InstrSize extends Enumeration {
 
   type InstrSize = Value
-
   val fullReg = Value(64)
   val halfReg = Value(32)
   val quarterReg = Value(16)
@@ -101,6 +100,7 @@ case class Orr(dest: Operand, src: Operand, operand: Operand, instrSize: InstrSi
 case class Mov(dest: Operand, operand: Operand, size: InstrSize) extends Instruction
 case class MovWithSignExtend(dest: Operand, operand: Operand, size1: InstrSize, size2: InstrSize)
     extends Instruction
+case class ConditionalMov(dest: Operand, src: Operand, cond: InstrCond, size: InstrSize) extends Instruction
 case class MovToPtr()
 case class Cmp(src: Operand, operand: Operand, size: InstrSize) extends Instruction
 case class Lea(dest: Operand, src: Operand, size: InstrSize) extends Instruction
@@ -306,6 +306,24 @@ case class RegisterPtr(val register: Register, val size : InstrSize, var offset 
     }
     s"$prefix ptr [${register.toIntelString(InstrSize.fullReg)} $operator $offset]"
   } 
+}
+
+case class ArrayAccessPtr(val reg1 : Register, val reg2: Register, var multiplier : Int, val ptrSize : InstrSize) extends Operand {
+  def toIntelString(unused: InstrSize.InstrSize): String = {
+    val prefix = ptrSize match {
+      case InstrSize.fullReg => "qword"
+      case InstrSize.halfReg => "dword"
+      case InstrSize.quarterReg => "word"
+      case InstrSize.eigthReg => "byte"
+    }
+    val operator = if (multiplier < 0) {
+      multiplier *= -1
+      "-"
+    } else {
+      "+"
+    }
+    s"$prefix ptr [${reg1.toIntelString(InstrSize.fullReg)} $operator ${multiplier}*${reg2.toIntelString(InstrSize.fullReg)}]"
+  }
 }
 
 case class FPOffsetPlusReg(val offset: Int) extends Operand {

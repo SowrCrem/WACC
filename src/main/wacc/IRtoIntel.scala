@@ -15,6 +15,7 @@ object X86CodeGenerator {
   def transInstr(instruction: Instruction) : List[String] = instruction match {
     case Mov(dest, operand, instrSize) => List(s"  mov ${dest.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
     case MovWithSignExtend(dest, operand, size1, size2) => List(s"  movsx ${dest.toIntelString(size1)}, ${operand.toIntelString(size2)}")
+    case ConditionalMov(dest, src, cond, instrSize) => List(s"  cmov${cond} ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case AddInstr(dest, src, instrSize) => List(s"  add ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case SubInstr(dest, src, instrSize) => List(s"  sub ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case MulInstr(dest, src, instrSize) => List(s"  imul ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
@@ -34,7 +35,7 @@ object X86CodeGenerator {
     case DecrementStackPointerNB(value) => List(s"  sub rsp, ${8*value}")
     case IncrementStackPointerNB(value) => List(s"  add rsp, ${8*value}")
     case DecrementStackPointer4B() => List(s"  sub rsp, 4")
-    case IncrementStackPointer4B() => List(s"  add rsp, 4")
+    case IncrementStackPointer4B() => List(s"  add rsp, 4") 
     case DecrementStackPointer8B() => List(s"  sub rsp, 64")
     case IncrementStackPointer8B() => List(s"  add rsp, 64")
     case TestInstr(dest, src, instrSize) => List(s"  test ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")

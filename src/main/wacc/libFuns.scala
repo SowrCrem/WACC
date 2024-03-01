@@ -5,11 +5,13 @@
  * The LibFunGenerator class provides methods for adding library functions to the IR based on flags set in the compiler.
  * It also includes methods for setting the flags and generating the IR for specific library functions such as printString,
  * printInt, printBool, printLn, and printChar.
+ * 
  *
  * The generated IR can be used as input for further compilation steps or code generation.
  */
 package wacc
 
+import Constants._
 import scala.collection.mutable._
 import parsley.internal.machine.instructions.Instr
 import parsley.internal.deepembedding.singletons.Offset
@@ -34,6 +36,7 @@ class LibFunGenerator {
   private var readIntFlag: Boolean = false
   private var mallocFlag: Boolean = false
   private var badCharFlag: Boolean = false
+  private var arrayLoad8Flag: Boolean = false
   
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
@@ -42,6 +45,7 @@ class LibFunGenerator {
 
     val libFuns = new ListBuffer[Instruction]()
     libFuns ++= addMallocFunc()
+    libFuns ++= arrLoad8IR()
     libFuns ++= exitIR
     // Place error messages here to avoid conflicts with other labels 
     // (e.g. addMallocFunc sets outOfMemory flag)
@@ -202,7 +206,7 @@ class LibFunGenerator {
         PushRegisters(List(FP), InstrSize.fullReg),
         Mov(FP, SP, InstrSize.fullReg),
         AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
-        CallPLT("malloc"),
+        CallPLT("malloc"), 
         Cmp(Dest, Immediate32(0), InstrSize.fullReg),
         JumpIfCond(outOfMemory.labelName, InstrCond.equal),
         Mov(SP, FP, InstrSize.fullReg),
@@ -521,6 +525,31 @@ class LibFunGenerator {
       // mov rsp, rbp
       // pop rbp
       // ret
+    )
+  }
+
+  def setArrLoad8Flag(flag: Boolean): Unit = {
+    arrayLoad8Flag = flag
+  }
+
+  def arrLoad8IR(): List[Instruction] = {
+    if (!arrayLoad8Flag) {
+      return List.empty[Instruction]
+    }
+    outOfBounds.setFlag(true)
+    List(
+      Label("_arrLoad8"),
+      PushRegisters(List(G1), InstrSize.fullReg),
+      Cmp(G1, Immediate32(0), InstrSize.halfReg),
+      ConditionalMov(G1, G2, InstrCond.lessThan, InstrSize.halfReg),
+      JumpIfCond(outOfBounds.labelName, InstrCond.lessThan),
+      Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.halfReg),
+      Cmp(G1, G0, InstrSize.halfReg),
+      ConditionalMov(G1, G2, InstrCond.greaterThan, InstrSize.halfReg),
+      JumpIfCond(outOfBounds.labelName, InstrCond.greaterThan),
+      MovWithSignExtend(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.halfReg), InstrSize.halfReg, InstrSize.fullReg),
+      PopRegisters(List(G1), InstrSize.fullReg),
+      ReturnInstr()
     )
   }
 

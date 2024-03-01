@@ -258,7 +258,7 @@ case object Arg5 extends ArgRegister {
 }
 
 case class FPOffset(val offset: Int) extends Operand {
-  def toIntelString(size: InstrSize): String = RegisterPtr(FP, InstrSize.fullReg, offset).toIntelString(size)
+  def toIntelString(size: InstrSize): String = RegisterPtr(FP, InstrSize.fullReg, -1 * offset).toIntelString(size)
 }
 
 /**

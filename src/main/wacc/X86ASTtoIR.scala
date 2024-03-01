@@ -148,9 +148,10 @@ object X86IRGenerator {
           table,
           None
         )
+        val removeFrame = StackMachine.popFrame()
         val stats = for (s <- statList) yield statToIR(s)
         if (table.dictionary.size > 0) {
-          addFrame ++ stats.flatten ++ StackMachine.popFrame()
+          addFrame ++ stats.flatten ++ removeFrame
         } else {
           stats.flatten
         }
@@ -372,12 +373,14 @@ object X86IRGenerator {
       val cond = exprToIR(expr)
       val body = {
         val table = whileNode.symbolTable
+        val setupStack = StackMachine.addFrame(
+          table,
+          None
+        )
         val loopStats = for (s <- stats) yield statToIR(s)
+        val popStack = StackMachine.popFrame()
         if (table.dictionary.size > 0) {
-          StackMachine.addFrame(
-            table,
-            None
-          ) ++ loopStats.flatten ++ StackMachine.popFrame()
+          setupStack ++ loopStats.flatten ++ popStack
         } else {
           loopStats.flatten
         }
@@ -398,23 +401,27 @@ object X86IRGenerator {
       val thenCase = {
         val table = ifNode.symbolTableTrue
         val trueStats = for (s <- trueCase) yield statToIR(s)
+        val setupStack = StackMachine.addFrame(
+          table,
+          None
+        )
+        val popStack = StackMachine.popFrame()
         if (table.dictionary.size > 0) {
-          StackMachine.addFrame(
-            table,
-            None
-          ) ++ trueStats.flatten ++ StackMachine.popFrame()
+          setupStack ++ trueStats.flatten ++ popStack
         } else {
           trueStats.flatten
         }
       }
       val elseCase = {
         val table = ifNode.symbolTableFalse
+        val setupStack = StackMachine.addFrame(
+          table,
+          None
+        )
         val falseStats = for (s <- falseCase) yield statToIR(s)
+        val popStack = StackMachine.popFrame()
         if (table.dictionary.size > 0) {
-          StackMachine.addFrame(
-            table,
-            None
-          ) ++ falseStats.flatten ++ StackMachine.popFrame()
+          setupStack ++ falseStats.flatten ++ popStack
         } else {
           falseStats.flatten
         }
@@ -438,9 +445,6 @@ object X86IRGenerator {
     case Skip() => {
       ListBuffer()
     }
-
-    // TODO: Implement
-    case Call(ident, args) => ???
     case Free(expr)        => ???
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
@@ -668,6 +672,10 @@ object X86IRGenerator {
         CheckMoveNotEqual(Arg1, Dest, InstrSize.fullReg),
         JumpIfCond("_errBadChar", InstrCond.notEqual)
       )
+    }
+    case Ord(char) => {
+      lib.overflow.setFlag(true)
+      exprToIR(char) 
     }
     case IntLiter(value) => {
 

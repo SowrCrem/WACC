@@ -99,6 +99,12 @@ class SimpleFunctions extends AnyFlatSpec with BeforeAndAfterEach {
     runSucceeds(path, "Hello World!", 0)
   }
 
+  // test/wacc/valid/function/simple_functions/asciiTable.wacc
+  it should "run valid/function/simple_functions/asciiTable.wacc" in {
+    val path = constructPath(List("valid", "function", "simple_functions", "asciiTable.wacc"))
+    runSucceeds(path, "Hello World!", 0)
+  }
+
 
   
 }

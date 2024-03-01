@@ -25,3 +25,4 @@ begin
   char r2 = call f(0, 0, 3, 5, 1, 3, 'b', false) ;
   println r2
 end
+ 

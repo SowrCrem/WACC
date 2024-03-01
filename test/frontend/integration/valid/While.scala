@@ -36,12 +36,12 @@ class While extends AnyFlatSpec {
     throwsNoError("valid/while/min.wacc")
   }
 
-  "valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {
-    throwsNoError("valid/while/rmStyleAdd.wacc")
-  }
-
   "valid - while tests: rmStyleAddIO.wacc" should "return exit code 0" in {
     throwsNoError("valid/while/rmStyleAddIO.wacc")
+  }
+
+  "valid - while tests: rmStyleAdd.wacc" should "return exit code 0" in {
+    throwsNoError("valid/while/rmStyleAdd.wacc")
   }
 
   "valid - while tests: whileBasic.wacc" should "return exit code 0" in {

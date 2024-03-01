@@ -56,7 +56,25 @@ run_tests() {
   fi
   echo "-----------------------------------"
   echo "Running $name tests"
-  scala-cli test . --test-only "test.$milestone.$type$part*"
+
+  # Initialize lists
+  fails=()
+  ignoreds=()
+  pendings=()
+
+  # Run the test command line by line
+  while IFS= read -r line
+  do
+    echo "$line"
+    if [[ "$line" == *"FAIL"* ]]; then
+      fails+=("$line")
+    elif [[ "$line" == *"IGNORE"* ]]; then
+      ignoreds+=("$line")
+    elif [[ "$line" == *"PENDING"* ]]; then
+      pendings+=("$line")
+    fi
+  done < <(scala-cli test . --test-only "test.$milestone.$type$part*")
+
   local result=$?
   if [ $result -ne 0 ]; then
     echo "-----------------------------------"
@@ -132,6 +150,44 @@ else if [ "$milestone" == "extension" ]; then
 fi
 fi
 fi
+
+# ...
+
+# Print failed tests
+if [ ${#fails[@]} -ne 0 ]; then
+echo "-----------------------------------"
+  echo "Failed tests:"
+  for fail in "${fails[@]}"; do
+    echo "$fail"
+  done
+fi
+
+# Print ignored tests
+if [ ${#ignoreds[@]} -ne 0 ]; then
+  echo "-----------------------------------"
+  echo "Ignored tests:"
+  for ignore in "${ignoreds[@]}"; do
+    echo "$ignore"
+  done
+fi
+
+# Print pending tests
+if [ ${#pendings[@]} -ne 0 ]; then
+  echo "-----------------------------------"
+  echo "Pending tests:"
+  for pending in "${pendings[@]}"; do
+    echo "$pending"
+  done
+fi
+
+echo "-----------------------------------"
+echo "All tests ran with overall exit code $exit_code."
+
+# Clean up
+# make clean
+
+# Exit with the stored exit code
+exit $exit_code
 
 echo "-----------------------------------"
 echo "All tests ran with overall exit code $exit_code."

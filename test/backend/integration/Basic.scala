@@ -10,7 +10,12 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers._
 
-class Basic extends AnyFlatSpec {
+class Basic extends AnyFlatSpec with BeforeAndAfterEach {
+
+  override def afterEach(): Unit = {
+    semanticChecker.reset()
+    X86IRGenerator.reset()
+  }
 
   "WACC" should "run valid/basic/exit/exit-1.wacc" in {
     val path = constructPath(List("valid", "basic", "exit", "exit-1.wacc"))

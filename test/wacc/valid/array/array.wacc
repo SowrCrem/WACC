@@ -10,7 +10,7 @@ begin
   int[] a = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ;
   int i = 0 ;
   while i < 10
-  do
+  do 
     a[i] = i ;
     i = i + 1
   done ;

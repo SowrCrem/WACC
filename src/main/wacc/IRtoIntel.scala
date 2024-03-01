@@ -37,6 +37,8 @@ object X86CodeGenerator {
     case IncrementStackPointer4B() => List(s"  add rsp, 4")
     case DecrementStackPointer8B() => List(s"  sub rsp, 64")
     case IncrementStackPointer8B() => List(s"  add rsp, 64")
+    case TestInstr(dest, src, instrSize) => List(s"  test ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case CheckMoveNotEqual(dest, src, instrSize) => List(s"  cmovne ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case LoadEffectiveAddress(dest, src, instrSize) => List(s"  lea ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case JumpIfCond(label, cond) => List(s"  j${cond} $label")
     case Jump(label) => List(s"  jmp $label")

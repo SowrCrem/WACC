@@ -71,6 +71,24 @@ case class DivInstr(
 ) extends Instruction
 
 
+case class TestInstr(
+    dest: Operand,
+    src: Operand,
+    instrSize: InstrSize
+) extends Instruction {
+  def toIntelString: String = s"test ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}"
+
+}
+
+case class CheckMoveNotEqual(
+    dest: Operand,
+    src: Operand,
+    instrSize: InstrSize
+) extends Instruction {
+  def toIntelString: String = s"cmovne ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}"
+
+}
+
 case class ConvertDoubleWordToQuadWord() extends Instruction
 
 case class AndInstr(dest: Operand, src: Operand, instrSize: InstrSize)
@@ -290,6 +308,10 @@ case class RegisterPtr(val register: Register, val size : InstrSize, var offset 
   } 
 }
 
+case class FPOffsetPlusReg(val offset: Int) extends Operand {
+  def toIntelString(size: InstrSize): String = s"qword ptr [rbp + $offset]"
+}
+
 case class LabelAddress(val label: String) extends Operand {
   def toIntelString(size: InstrSize): String = label
 }
@@ -329,6 +351,18 @@ case class Reg64(reg: Register) extends Operand {
   def toIntelString(size: InstrSize): String = s"qword ptr [${reg.toIntelString(size)}]"
 }
 
-case class Reg32(reg: Register, offset: Int) extends Operand {
+case class Reg32Offset(reg: Register, offset: Int) extends Operand {
   def toIntelString(size: InstrSize): String = s"dword ptr [${reg.toIntelString(InstrSize.fullReg)} + $offset]"
+}
+
+case class Reg32(reg: Register) extends Operand {
+  def toIntelString(size: InstrSize): String = s"dword ptr [${reg.toIntelString(InstrSize.fullReg)}]"
+}
+
+case class Reg16(reg: Register) extends Operand {
+  def toIntelString(size: InstrSize): String = s"word ptr [${reg.toIntelString(size)}]"
+}
+
+case class Reg8(reg: Register) extends Operand {
+  def toIntelString(size: InstrSize): String = s"byte ptr [${reg.toIntelString(size)}]"
 }

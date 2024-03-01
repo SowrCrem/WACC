@@ -19,4 +19,5 @@ fi
 
 gcc -o $filename -z noexecstack $filename.s
 
-./$filename
+# add the rest of the arguments after the first one after the below command
+echo "${@:2}" | ./$filename

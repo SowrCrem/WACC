@@ -595,7 +595,11 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           errors += new NotDefinedError(position, value)
           None
       }
-    case Brackets(expr) => check(expr, symbolTable, returnType)
+    case b@Brackets(expr) =>{
+      val x = check(expr, symbolTable, returnType)
+      b.typeNode = x.getOrElse(StringTypeNode()(position.pos))
+      x
+    }
     case Null()         => Some(Null()(position.pos))
     case Skip()         => None
     case _ =>

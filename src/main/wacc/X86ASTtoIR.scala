@@ -148,8 +148,9 @@ object X86IRGenerator {
           table,
           None
         )
-        val removeFrame = StackMachine.popFrame()
         val stats = for (s <- statList) yield statToIR(s)
+
+        val removeFrame = StackMachine.popFrame()
         if (table.dictionary.size > 0) {
           addFrame ++ stats.flatten ++ removeFrame
         } else {

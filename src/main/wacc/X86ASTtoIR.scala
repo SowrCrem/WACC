@@ -105,6 +105,54 @@ object X86IRGenerator {
     instructions
   }
 
+  def fstOrSndNode(identifier: Expr, rhs: Position, isFst: Boolean): Buffer[Instruction] = {
+    // Null dereference check
+    lib.nullDerefOrFree.setFlag(true)
+    // Get the address to write into
+    // Get the expression to write
+    // Move the expression to the address
+    // Clean up
+    val instructions = exprToIR(rhs)
+    identifier match {
+      case Ident(ident) => {
+        StackMachine.offset(ident) match {
+          case Some((offset, fpchange)) => {
+            fpchange match {
+              case 0 => {
+                instructions += Mov(FPOffset(offset), if (isFst) Dest else RegisterPtr(Dest, InstrSize.fullReg, MAX_REGSIZE), InstrSize.fullReg)
+              }
+              case _ => {
+                val setup = ListBuffer(
+                  AddInstr(SP, Immediate32(fpchange + (if (isFst) 8 else MAX_REGSIZE)), InstrSize.fullReg),
+                  PopRegisters(List(FP), InstrSize.fullReg)
+                )
+                instructions ++= setup ++ ListBuffer(
+                  Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                ) ++ ListBuffer(
+                  PushRegisters(List(FP), InstrSize.fullReg),
+                  SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                  Mov(FP, SP, InstrSize.fullReg)
+                )
+              }
+            }
+          }
+          case None => {
+            throw new RuntimeException(
+              s"Variable ${ident} not found in stack"
+            )
+          }
+        }
+      }
+      case _ => {
+        throw new RuntimeException(
+          "Value (type: " + identifier.typeNode.toString() +
+            ") should not reach this case"
+        )
+      }
+    }
+    instructions
+  }
+
   /** Converts the given AST to intermediate representation by recursively
     * traversing the AST and converting each node to a list of instructions in
     * the IR.
@@ -114,13 +162,10 @@ object X86IRGenerator {
     */
   def astToIR(position: Position): Buffer[Instruction] = position match {
     case prog @ Program(funcList, stat) => {
-
       val funcIR = new ListBuffer[Instruction]
-
       for (func <- funcList) {
         functionGenerator.addFunction(func.ident.value, func, ListBuffer())
       }
-
       val ir = new ListBuffer[Instruction]
       val statInstrs = for (s <- stat) yield statToIR(s)
       ir ++= statInstrs.flatten
@@ -144,9 +189,7 @@ object X86IRGenerator {
       stats.flatten
     }
     val popFrame = StackMachine.popFrame()
-
     // loop through body, if we see a return we need to add the popframe before it 
-
     var modifiedBody = ListBuffer[Instruction]()
     var foundReturn = false
 
@@ -157,15 +200,10 @@ object X86IRGenerator {
       }
       modifiedBody += instr
     }
-
     if (!foundReturn) {
       modifiedBody ++= popFrame
     }
-
-
     ListBuffer() ++ setupStack ++ modifiedBody
-
-
   }
 
   // ------- Statement IR Generation -----------------------------------------------//
@@ -202,14 +240,14 @@ object X86IRGenerator {
                 }
                 case _ => {
                   val setup = ListBuffer(
-                    AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                    AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
                     PopRegisters(List(FP), InstrSize.fullReg)
                   )
                   setup ++ instructions ++ ListBuffer(
                     Mov(FPOffset(offset), Dest, InstrSize.fullReg)
                   ) ++ ListBuffer(
                     PushRegisters(List(FP), InstrSize.fullReg),
-                    SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                    SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
                     Mov(FP, SP, InstrSize.fullReg)
                   )
                 }
@@ -368,7 +406,7 @@ object X86IRGenerator {
     case IdentAsgn(typeNode, ident, expr) => {
 
       // Dynamically determine the size of the variable from the typeNode
-      val varSize = typeNode.size / 8
+      val varSize = typeNode.size / MAX_REGSIZE
 
       // // Step 1: Allocate space on the stack based on the variable size
       val instructions = ListBuffer[Instruction]().empty
@@ -591,9 +629,6 @@ object X86IRGenerator {
               fpchange match {
                 case 0 => {
                   // Use offset as start of stack
-                  // instructions ++= ListBuffer(
-                  //   Mov(Arg0, G2, InstrSize.fullReg)
-                  // )
                 }
                 case _ => {
                   val stackSetup = ListBuffer(
@@ -705,6 +740,7 @@ object X86IRGenerator {
     }
   }
 
+
   def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
 
     val instr = expr.typeNode match {
@@ -741,7 +777,7 @@ object X86IRGenerator {
             SubInstr(SP, Immediate32(MAX_REGSIZE), InstrSize.fullReg),
             // push r9
             PushRegisters(List(Arg5), InstrSize.fullReg),
-            // mov rdi, qword ptr [r9 + 8]
+            // mov rdi, qword ptr [r9 + MAX_REGSIZE]
             Mov(
               Arg0,
               RegisterPtr(Arg5, InstrSize.fullReg, i * 8),
@@ -853,7 +889,6 @@ object X86IRGenerator {
     case _ => exprToIR(e)
   }
 
-  // Never lhs
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
     case Brackets(expr) => {
       exprToIR(expr)
@@ -967,7 +1002,7 @@ object X86IRGenerator {
         // mov qword ptr [r11], rax
         Mov(RegisterPtr(G2, InstrSize.fullReg, 0), Dest, InstrSize.fullReg)
       ) ++ secondIR ++ ListBuffer[Instruction](
-        // mov qword ptr [r11 + 8], rax
+        // mov qword ptr [r11 + MAX_REGSIZE], rax
         Mov(RegisterPtr(G2, InstrSize.fullReg, 8), Dest, InstrSize.fullReg)
       )
       instructions      

@@ -14,7 +14,7 @@ begin
   end
   bool b = true ;
   println b ;
-  b = call neg(b) ;
+  b = call neg(b) ; 
   println b ;
   b = call neg(b) ;
   b = call neg(b) ;

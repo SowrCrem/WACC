@@ -438,8 +438,35 @@ object X86IRGenerator {
 
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
 
+
     case Brackets(expr) => {
       exprToIR(expr)
+    }
+    case Not(expr) => {
+      exprToIR(expr) ++ ListBuffer(
+        Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+        SetByteIfCond(Dest, InstrCond.equal, InstrSize.eigthReg),
+        MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
+      )
+    }
+    case Neg(int) => {
+      lib.overflow.setFlag(true)
+      exprToIR(int) ++ ListBuffer(
+        PushRegisters(List(Dest), InstrSize.fullReg),
+        PopRegisters(List(G0), InstrSize.fullReg),
+        Mov(Dest, Immediate32(0), InstrSize.halfReg),
+        SubInstr(Dest, G0, InstrSize.halfReg),
+        JumpIfCond("_errOverflow", InstrCond.overflow),
+        MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.halfReg)
+      )
+    }
+    case Chr(int) => {
+      lib.badChar.setFlag(true)
+      exprToIR(int) ++ ListBuffer(
+        TestInstr(Dest, Immediate32(-128), InstrSize.fullReg),
+        CheckMoveNotEqual(Arg1, Dest, InstrSize.fullReg),
+        JumpIfCond("_errBadChar", InstrCond.notEqual)
+      )
     }
     case IntLiter(value) => {
 

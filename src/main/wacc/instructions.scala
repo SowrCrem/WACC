@@ -62,6 +62,24 @@ case class DivInstr(
 ) extends Instruction
 
 
+case class TestInstr(
+    dest: Operand,
+    src: Operand,
+    instrSize: InstrSize
+) extends Instruction {
+  def toIntelString: String = s"test ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}"
+
+}
+
+case class CheckMoveNotEqual(
+    dest: Operand,
+    src: Operand,
+    instrSize: InstrSize
+) extends Instruction {
+  def toIntelString: String = s"cmovne ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}"
+
+}
+
 case class ConvertDoubleWordToQuadWord() extends Instruction
 
 case class AndInstr(dest: Operand, src: Operand, instrSize: InstrSize)

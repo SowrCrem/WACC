@@ -207,13 +207,21 @@ object Or extends ParserBridgePos2[Expr, Expr, BoolBinOp]
 
 sealed trait UnaryOp extends Expr
 
-case class Ord(expr: Expr)(val pos: (Int, Int)) extends UnaryOp 
+case class Ord(expr: Expr)(val pos: (Int, Int)) extends UnaryOp {
+  typeNode = IntTypeNode()(0, 0)
+}
 object Ord extends ParserBridgePos1[Expr, UnaryOp]
-case class Chr(expr: Expr)(val pos: (Int, Int)) extends UnaryOp
+case class Chr(expr: Expr)(val pos: (Int, Int)) extends UnaryOp  {
+  typeNode = CharTypeNode()(0, 0)
+}
 object Chr extends ParserBridgePos1[Expr, UnaryOp]
-case class Neg(expr: Expr)(val pos: (Int, Int)) extends UnaryOp
+case class Neg(expr: Expr)(val pos: (Int, Int)) extends UnaryOp {
+  typeNode = IntTypeNode()(0, 0)
+}
 object Neg extends ParserBridgePos1[Expr, UnaryOp]
-case class Not(expr: Expr)(val pos: (Int, Int)) extends UnaryOp
+case class Not(expr: Expr)(val pos: (Int, Int)) extends UnaryOp {
+  typeNode = BoolTypeNode()(0, 0)
+}
 object Not extends ParserBridgePos1[Expr, UnaryOp]
 case class Len(expr: Expr)(val pos: (Int, Int)) extends UnaryOp
 object Len extends ParserBridgePos1[Expr, UnaryOp]

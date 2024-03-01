@@ -33,6 +33,7 @@ class LibFunGenerator {
   private var readCharFlag: Boolean = false
   private var readIntFlag: Boolean = false
   private var mallocFlag: Boolean = false
+  private var badCharFlag: Boolean = false
   
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
@@ -41,6 +42,7 @@ class LibFunGenerator {
 
     val libFuns = new ListBuffer[Instruction]()
     libFuns ++= overflow.createErrMessageIR() ++ overflow.generateErrIR()
+    libFuns ++= badChar.createErrMessageIR() ++ badChar.generateErrIR()
     libFuns ++= divideByZero.createErrMessageIR() ++ divideByZero.generateErrIR()
     libFuns ++= outOfMemory.createErrMessageIR() ++ outOfMemory.generateErrIR()
     libFuns ++= nullDerefOrFree.createErrMessageIR() ++ nullDerefOrFree.generateErrIR()
@@ -172,7 +174,12 @@ class LibFunGenerator {
       )
     }
   }
-  
+
+  case object badChar extends ErrType {
+    val labelName = "_errBadChar"
+    val dataName = "_bad_char_string"
+    val errMessage: String = "runtime error: invalid character, not ascii character\\n"
+  }
   /**
     * Sets the flag to print malloc assembly code
     * @param flag

@@ -73,6 +73,11 @@ class SimpleFunctions extends AnyFlatSpec with BeforeAndAfterEach {
       runSucceeds(path, "Hello World!", 0)
   }
 
+  it should "run valid/function/simple_functions/functionMultiReturns.wacc" in {
+    val path = constructPath(List("valid", "function", "simple_functions", "functionMultiReturns.wacc"))
+    runSucceeds(path, "Hello World!", 0)
+  }
+
   it should "run valid/function/simple_functions/sameNameAsVar.wacc" in {
     val path = constructPath(List("valid", "function", "simple_functions", "sameNameAsVar.wacc"))
     runSucceeds(path, "Hello World!", 0)
@@ -85,6 +90,12 @@ class SimpleFunctions extends AnyFlatSpec with BeforeAndAfterEach {
 
   it should "run valid/function/simple_functions/sameArgName2.wacc" in {
     val path = constructPath(List("valid", "function", "simple_functions", "sameArgName2.wacc"))
+    runSucceeds(path, "Hello World!", 0)
+  }
+
+
+  it should "run valid/function/simple_functions/manyArgumentsChar.wacc" in {
+    val path = constructPath(List("valid", "function", "simple_functions", "manyArgumentsChar.wacc"))
     runSucceeds(path, "Hello World!", 0)
   }
 

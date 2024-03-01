@@ -38,6 +38,8 @@ class LibFunGenerator {
   private var badCharFlag: Boolean = false
   private var arrayLoad8Flag: Boolean = false
   private var arrayStore8Flag: Boolean = false
+  private var freeArrayFlag: Boolean = false
+  private var freePairFlag: Boolean = false
   
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
@@ -46,6 +48,8 @@ class LibFunGenerator {
 
     val libFuns = new ListBuffer[Instruction]()
     libFuns ++= addMallocFunc()
+    libFuns ++= freeArrayIR()
+    libFuns ++= freePairIR()
     libFuns ++= arrLoad8IR()
     libFuns ++= arrStore8IR()
     libFuns ++= exitIR
@@ -576,6 +580,49 @@ class LibFunGenerator {
       JumpIfCond(outOfBounds.labelName, InstrCond.greaterThan),
       MovWithSignExtend(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.halfReg), InstrSize.halfReg, InstrSize.fullReg),
       PopRegisters(List(G0), InstrSize.fullReg),
+      ReturnInstr()
+    )
+  }
+
+  def setFreeArrayFlag(flag: Boolean): Unit = {
+    freeArrayFlag = flag
+  }
+
+  def freeArrayIR(): List[Instruction] = {
+    if (!freeArrayFlag) {
+      return List.empty[Instruction]
+    }
+    List(
+      Label("_free"),
+      PushRegisters(List(FP), InstrSize.fullReg),
+      Mov(FP, SP, InstrSize.fullReg),
+      AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+      CallPLT("free"),
+      Mov(SP, FP, InstrSize.fullReg),
+      PopRegisters(List(FP), InstrSize.fullReg),
+      ReturnInstr()
+    )
+  }
+
+  def setFreePairFlag(flag: Boolean): Unit = {
+    freePairFlag = flag
+  }
+
+  def freePairIR(): List[Instruction] = {
+    if (!freePairFlag) {
+      return List.empty[Instruction]
+    }
+    nullDerefOrFree.setFlag(true)
+    List(
+      Label("_freepair"),
+      PushRegisters(List(FP), InstrSize.fullReg),
+      Mov(FP, SP, InstrSize.fullReg),
+      AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+      Cmp(Arg0, Immediate32(0), InstrSize.fullReg),
+      JumpIfCond(nullDerefOrFree.labelName, InstrCond.equal),
+      CallPLT("free"),
+      Mov(SP, FP, InstrSize.fullReg),
+      PopRegisters(List(FP), InstrSize.fullReg),
       ReturnInstr()
     )
   }

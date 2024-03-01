@@ -438,10 +438,45 @@ object X86IRGenerator {
     case Skip() => {
       ListBuffer()
     }
+    case Free(expr) => {
+      val instructions = ListBuffer[Instruction]().empty
+      var callInstr: ListBuffer[Instruction] = ListBuffer[Instruction]().empty
+      expr.typeNode match {
+        case ArrayTypeNode(_) => {
+          lib.setFreeArrayFlag(true)
+          callInstr += CallInstr("free")          
+        }
+        case PairTypeNode(_, _) => {
+          lib.setFreePairFlag(true)
+          callInstr += CallInstr("freepair")
+        }
+      }
 
-    // TODO: Implement
-    case Call(ident, args) => ???
-    case Free(expr)        => ???
+      expr match {
+        case Ident(ident) => {
+          StackMachine.offset(ident) match {
+            case Some((offset, fpchange)) => {
+              fpchange match {
+                case 0 => {
+                  // Use offset as start of stack
+                  instructions ++= ListBuffer(
+                    Mov(Arg0, G2, InstrSize.fullReg)
+                  )
+                
+                }
+              }
+            }
+            case None => {
+              throw new RuntimeException(
+                s"Variable ${ident} not found in stack"
+              )
+            }
+          }
+        }
+      }
+
+      instructions ++ callInstr
+    }
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
 
@@ -708,7 +743,7 @@ object X86IRGenerator {
         // mov rax, 0
         Mov(Dest, Immediate32(0), InstrSize.fullReg),
         // mov r12, rax
-        Mov(G2, Dest, InstrSize.fullReg),
+        Mov(G3, Dest, InstrSize.fullReg),
       )
       instructions
     }

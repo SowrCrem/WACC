@@ -266,7 +266,7 @@ object X86IRGenerator {
 
       // Step 2: Initialize the variable with the given expression
       val preInstr = typeNode match {
-        case ArrayTypeNode(_) => {
+        case atn @ ArrayTypeNode(_) => {
           lib.setMallocFlag(true)
           lib.outOfMemory.setFlag(true)
 
@@ -279,6 +279,7 @@ object X86IRGenerator {
           expr match {
             case ArrayLiter(arrayElements) => {
               val arrSize = arrayElements.size
+              atn.setLength(arrSize)
               List(
                 Mov(
                   Arg0,
@@ -517,40 +518,58 @@ object X86IRGenerator {
 
   def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
 
-    val func = expr.typeNode match {
+    val instr = expr.typeNode match {
       case StringTypeNode() => {
         lib.setPrintStringFlag(true)
-        CallInstr("prints")
+        List(CallInstr("prints"))
       }
       case BoolTypeNode() => {
         lib.setPrintBoolFlag(true)
-        CallInstr("printb")
+        List(CallInstr("printb"))
       }
       case CharTypeNode() => {
         lib.setPrintCharFlag(true)
-        CallInstr("printc")
+        List(CallInstr("printc"))
       }
       case IntTypeNode() => {
         lib.setPrintIntFlag(true)
-        CallInstr("printi")
+        List(CallInstr("printi"))
       }
-      case ArrayTypeNode(CharTypeNode()) => {
-        val instructions = ListBuffer[Instruction]().empty
-
-        // Get array size: n = dword ptr (offset - 4) 
-
-        // Iterate through +8 x n times or some other way to printc each character maybe
-        
-        // Would base pointer be set
-        // mov rdi, qword ptr [rbp - offset]
-
+      case atn @ ArrayTypeNode(CharTypeNode()) => {
+        lib.setPrintCharFlag(true)
         lib.setPrintStringFlag(true)
-        CallInstr("prints")
+
+        val instructions = ListBuffer[Instruction]().empty
+          // Iterate through +8 x n times or some other way to printc each character maybe
+          
+          // Would base pointer be set
+          // mov rdi, qword ptr [rbp - offset]
+        instructions ++= ListBuffer(
+          // mov r9, rdi
+          Mov(Arg5, Arg0, InstrSize.fullReg)
+        )
+        for (i <- 0 to atn.length - 1) {
+          instructions ++= ListBuffer(
+            SubInstr(SP, Immediate32(MAX_REGSIZE), InstrSize.fullReg),
+            // push r9
+            PushRegisters(List(Arg5), InstrSize.fullReg),
+            // mov rdi, qword ptr [r9 + 8]
+            Mov(Arg0, RegisterPtr(Arg5, InstrSize.fullReg, i * 8), InstrSize.fullReg),
+            CallInstr("printc"),
+            // pop r9
+            PopRegisters(List(Arg5), InstrSize.fullReg),
+            AddInstr(SP, Immediate32(MAX_REGSIZE), InstrSize.fullReg),
+
+          )
+
+        }
+
+        instructions
       }
       case _ => {
         // Must be Array (non char) || Error? || Pair
         lib.setPrintPtrFlag(true)
-        CallInstr("printp")
+        List(CallInstr("printp"))
       }
     }
 
@@ -562,9 +581,9 @@ object X86IRGenerator {
       Mov(Arg0, Dest, InstrSize.fullReg)
     ) ++= {
       if (!println) {
-        ListBuffer(func, IncrementStackPointerNB(8))
+        instr ++ ListBuffer(IncrementStackPointerNB(8))
       } else {
-        ListBuffer(func, CallInstr("println"), IncrementStackPointerNB(8))
+        instr ++ ListBuffer(CallInstr("println"), IncrementStackPointerNB(8))
       }
     }
   }
@@ -604,10 +623,10 @@ object X86IRGenerator {
       instrs          
     }
     case _ => exprToIR(e)
-  } 
+  }
 
+  // Never lhs
   def exprToIR(expr: Position): Buffer[Instruction] = expr match {
-
     case Brackets(expr) => {
       exprToIR(expr)
     }
@@ -696,7 +715,7 @@ object X86IRGenerator {
       
       val instructions = firstIR ++ ListBuffer[Instruction](
         // mov qword ptr [r11], rax
-        Mov(RegisterPtr(G2, InstrSize.fullReg, 0), Dest, InstrSize.fullReg),
+        Mov(RegisterPtr(G2, InstrSize.fullReg, 0), Dest, InstrSize.fullReg)
       ) ++ secondIR ++ ListBuffer[Instruction](
         // mov qword ptr [r11 + 8], rax
         Mov(RegisterPtr(G2, InstrSize.fullReg, 8), Dest, InstrSize.fullReg)

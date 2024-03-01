@@ -28,12 +28,12 @@ class Pairs extends AnyFlatSpec {
     throwsSemanticError("invalid/semanticErr/pairs/mismatchedPair.wacc")
   }
 
-  "semanticErr - pairs tests: noPairCovariance.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/pairs/noPairCovariance.wacc")
-  }
-
   "semanticErr - pairs tests: nonMatchingPairs.wacc" should "return exit code 200" in {
     throwsSemanticError("invalid/semanticErr/pairs/nonMatchingPairs.wacc")
+  }
+
+  "semanticErr - pairs tests: noPairCovariance.wacc" should "return exit code 200" in {
+    throwsSemanticError("invalid/semanticErr/pairs/noPairCovariance.wacc")
   }
 
   "semanticErr - pairs tests: readUnknown.wacc" should "return exit code 200" in {

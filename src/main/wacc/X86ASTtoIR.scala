@@ -637,6 +637,19 @@ object X86IRGenerator {
         MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
       )
     }
+
+    case Len(expr) => {
+      lib.setPrintIntFlag(true)
+      lib.setPrintLnFlag(true)
+      val instructions : Buffer[Instruction] = exprToIR(expr)
+      instructions ++ ListBuffer(
+        MovWithSignExtend(Dest, RegisterPtr(Dest, InstrSize.halfReg, -1 * HALF_REGSIZE), InstrSize.fullReg, InstrSize.halfReg),
+        Mov(Arg0, Dest, InstrSize.halfReg),
+        CallInstr("printi"),
+        CallInstr("println")
+      )
+    }
+
     case Neg(int) => {
       lib.overflow.setFlag(true)
       exprToIR(int) ++ ListBuffer(

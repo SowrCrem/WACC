@@ -16,20 +16,16 @@ class Basic extends AnyFlatSpec {
     throwsNoError("valid/basic/exit/exit-1.wacc")
   }
 
-  "valid - exit tests: exitBasic.wacc" should "return exit code 0" in {
-    throwsNoError("valid/basic/exit/exitBasic.wacc")
-  }
-
   "valid - exit tests: exitBasic2.wacc" should "return exit code 0" in {
     throwsNoError("valid/basic/exit/exitBasic2.wacc")
   }
 
-  "valid - exit tests: exitWrap.wacc" should "return exit code 0" in {
-    throwsNoError("valid/basic/exit/exitWrap.wacc")
+  "valid - exit tests: exitBasic.wacc" should "return exit code 0" in {
+    throwsNoError("valid/basic/exit/exitBasic.wacc")
   }
 
-  "valid - skip tests: comment.wacc" should "return exit code 0" in {
-    throwsNoError("valid/basic/skip/comment.wacc")
+  "valid - exit tests: exitWrap.wacc" should "return exit code 0" in {
+    throwsNoError("valid/basic/exit/exitWrap.wacc")
   }
 
   "valid - skip tests: commentEoF.wacc" should "return exit code 0" in {
@@ -38,6 +34,10 @@ class Basic extends AnyFlatSpec {
 
   "valid - skip tests: commentInLine.wacc" should "return exit code 0" in {
     throwsNoError("valid/basic/skip/commentInLine.wacc")
+  }
+
+  "valid - skip tests: comment.wacc" should "return exit code 0" in {
+    throwsNoError("valid/basic/skip/comment.wacc")
   }
 
   "valid - skip tests: skip.wacc" should "return exit code 0" in {

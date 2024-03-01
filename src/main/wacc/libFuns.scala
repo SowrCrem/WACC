@@ -155,7 +155,7 @@ class LibFunGenerator {
     val errMessage: String = "fatal error: out of memory\\n"
   }
   case object nullDerefOrFree extends ErrType {
-    val labelName = "_errNullDereferenceOrFree"
+    val labelName = "_errNull"
     val dataName = "_null_dereference_or_free_string"
     val errMessage: String = "fatal error: null pointer dereference or double free\\n"
   }

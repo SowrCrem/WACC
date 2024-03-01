@@ -32,15 +32,15 @@ object X86IRGenerator {
         rodataDirectives += Directive(s"int ${literal.length()}")
         // account for \0 \b \t \n \f \r \" \' \\
         val escapedLiteral = literal
+          .replace("\\", "\\\\")
+          .replace("\'", "\\\'")
+          .replace("\"", "\\\"")
           .replace("\u0000", "\\0")
           .replace("\b", "\\b")
           .replace("\t", "\\t")
           .replace("\n", "\\n")
           .replace("\f", "\\f")
           .replace("\r", "\\r")
-          .replace("\"", "\\\"")
-          .replace("\'", "\\\'")
-          .replace("\\", "\\\\")
         rodataDirectives += Directive(s"$label: .asciz \"$escapedLiteral\"")
         label
       }
@@ -456,9 +456,9 @@ object X86IRGenerator {
       case _ => {
         // Must be Array || Error? || Pair
         // printf("Type printing: :" + expr.typeNode.toString())
-        if (expr.typeNode == null) {
-          printf("Type printing: :" + expr.toString())
-        }
+        // if (expr.typeNode == null) {
+        //   printf("Type printing: :" + expr.toString())
+        // }
         lib.setPrintPtrFlag(true)
         CallInstr("printp")
       }
@@ -546,63 +546,60 @@ object X86IRGenerator {
         )
       )
     }
-    case ArrayElem(ident, eList) => {
+    case ArrayElem(ident, eList) => { // x[0][1]
       lib.setArrLoad8Flag(true)
       lib.outOfBounds.setFlag(true)
-      if (eList.size == 1) {
-        val instrs = exprToIR(eList.head)
-        instrs ++= ListBuffer(
-          Mov(G1, Dest, InstrSize.halfReg)
-        )
 
+      val instructions: ListBuffer[Instruction] = ListBuffer()
 
-        StackMachine.offset(ident.value) match {
-        
-          case Some((offset, fpchange)) => {
-            fpchange match {
-              case 0 => {
-                instrs ++= ListBuffer(
-                  Mov(Dest, FPOffset(offset), InstrSize.fullReg),
-                  Mov(Arg5, Dest, InstrSize.fullReg),
-                  CallInstr("arrLoad8"), Mov(Dest, Arg5, InstrSize.fullReg)
+      StackMachine.offset(ident.value) match {
+        case Some((offset, fpchange)) => {
+          fpchange match {
+            case 0 => {
+
+              instructions ++= ListBuffer(
+                Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+              )
+
+              for (e <- eList) {
+                instructions ++= ListBuffer(Mov(Arg5, Dest, InstrSize.fullReg))
+                instructions ++= exprToIR(e)
+                instructions ++= ListBuffer(
+                  Mov(G1, Dest, InstrSize.halfReg),
+                  CallInstr("arrLoad8"),
+                  Mov(Dest, Arg5, InstrSize.fullReg),
                 )
               }
-              case _ => {
-                val setup = ListBuffer(
-                  AddInstr(
-                    SP,
-                    Immediate32(fpchange + MAX_REGSIZE),
-                    InstrSize.fullReg
-                  ),
-                  PopRegisters(List(FP), InstrSize.fullReg)
-                )
-                instrs ++= setup ++ ListBuffer(
-                  Mov(Dest, FPOffset(offset), InstrSize.fullReg),
-                  Mov(Arg5, Dest, InstrSize.fullReg),
-                  PushRegisters(List(FP), InstrSize.fullReg),
-                  SubInstr(
-                    SP,
-                    Immediate32(fpchange + MAX_REGSIZE),
-                    InstrSize.fullReg
-                  ),
-                  Mov(FP, SP, InstrSize.fullReg)
-                )
-              }
-
-
-              instrs ++ ListBuffer(CallInstr("arrLoad8"), Mov(Dest, Arg5, InstrSize.fullReg))
-
             }
-          }
-          case None => {
-            throw new RuntimeException(
-              "Variable not found in stack: Array Element"
-            )
+            // case _ => {
+            //   val setup = ListBuffer(
+            //     AddInstr(
+            //       SP,
+            //       Immediate32(fpchange + MAX_REGSIZE),
+            //       InstrSize.fullReg
+            //     ),
+            //     PopRegisters(List(FP), InstrSize.fullReg)
+            //   )
+            //   instructions ++= setup ++ ListBuffer(
+            //     Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+            //     Mov(Arg5, Dest, InstrSize.fullReg),
+            //     PushRegisters(List(FP), InstrSize.fullReg),
+            //     SubInstr(
+            //       SP,
+            //       Immediate32(fpchange + MAX_REGSIZE),
+            //       InstrSize.fullReg
+            //     ),
+            //     Mov(FP, SP, InstrSize.fullReg),
+            //     CallInstr("arrLoad8"),
+            //     Mov(Dest, Arg5, InstrSize.fullReg)
+            //   )
+            // }
           }
         }
-      } else {
-        ListBuffer()
       }
+
+      instructions
+
     }
     case ArrayLiter(entries) => {
       // Assume special calling convention for array stores - r11 is used to store the array pointer
@@ -619,9 +616,9 @@ object X86IRGenerator {
       for (e <- entries) {
         instructions ++= exprToIR(e)
         instructions += Mov(
-          RegisterPtr(G2, InstrSize.halfReg, offset),
+          RegisterPtr(G2, InstrSize.fullReg, offset),
           Dest,
-          InstrSize.halfReg
+          InstrSize.fullReg
         )
         offset += MAX_REGSIZE
       }

@@ -305,7 +305,7 @@ object X86IRGenerator {
           }
           instructions
         }
-
+        
         case ArrayElem(ident, eList) => {
           lib.setArrStore8Flag(true)
           lib.outOfBounds.setFlag(true)

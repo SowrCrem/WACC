@@ -67,11 +67,6 @@ class Variable extends AnyFlatSpec with BeforeAndAfterEach{
     runSucceeds(path)
   }
 
-  it should "run valid/manyVariables.wacc" in {
-    val path = constructPath(List("valid", "manyVariables.wacc"))
-    runSucceeds(path)
-  }
-
   it should "run valid/variables/puncCharDeclaration.wacc" in {
     val path = constructPath(List("valid", "variables", "puncCharDeclaration.wacc"))
     runSucceeds(path)

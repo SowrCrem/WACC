@@ -126,7 +126,10 @@ object X86IRGenerator {
     }
   }
 
-  def generateFunctionIR(func: Func): ListBuffer[Instruction] = {
+  def generateFunctionIR(func: Func, table: SymbolTable, paramList: ParamList): ListBuffer[Instruction] = {
+
+    val setupStack = StackMachine.addFrame(table, Some(paramList))
+
 
     val body = {
       val table = func.symbolTable
@@ -134,7 +137,21 @@ object X86IRGenerator {
       stats.flatten
     }
 
-    ListBuffer() ++ body
+    val popStack = StackMachine.popFrame()
+
+    var modifiedBody = ListBuffer[Instruction]()
+    var foundReturn = false
+
+
+    for (instr <- body) {
+      if (instr.isInstanceOf[ReturnInstr]) {
+        foundReturn = true
+        modifiedBody ++= popStack
+      }
+      modifiedBody += instr
+    }
+
+    ListBuffer() ++ setupStack ++ modifiedBody
 
   }
 
@@ -484,11 +501,11 @@ object X86IRGenerator {
       val cond = exprToIR(expr)
       val thenCase = {
         val table = ifNode.symbolTableTrue
-        val trueStats = for (s <- trueCase) yield statToIR(s)
         val setupStack = StackMachine.addFrame(
           table,
           None
         )
+        val trueStats = for (s <- trueCase) yield statToIR(s)
         val popStack = StackMachine.popFrame()
         if (table.dictionary.size > 0) {
           setupStack ++ trueStats.flatten ++ popStack
@@ -511,13 +528,13 @@ object X86IRGenerator {
         }
       }
       labelCounter += 1
-      cond ++ ListBuffer(
+      cond ++= ListBuffer(
         Cmp(Dest, Immediate32(0), InstrSize.fullReg),
         JumpIfCond(s"else${labelCounter}", InstrCond.equal)
-      ) ++ thenCase ++ ListBuffer(
+      ) ++= thenCase ++= ListBuffer(
         Jump(s"end${labelCounter}"),
         Label(s"else${labelCounter}")
-      ) ++ elseCase ++ ListBuffer(
+      ) ++= elseCase ++= ListBuffer(
         Label(s"end${labelCounter}")
       )
     }
@@ -527,7 +544,8 @@ object X86IRGenerator {
       )
     }
     case Skip() => {
-      ListBuffer()
+      ListBuffer(
+      )
     }
     case Free(expr) => {
       val instructions = ListBuffer[Instruction]().empty
@@ -970,14 +988,14 @@ object X86IRGenerator {
             }
             case _ => {
               val setup = ListBuffer(
-                AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
                 PopRegisters(List(FP), InstrSize.fullReg)
               )
               setup ++ ListBuffer(
                 Mov(Dest, FPOffset(offset), InstrSize.fullReg)
               ) ++ ListBuffer(
                 PushRegisters(List(FP), InstrSize.fullReg),
-                SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
                 Mov(FP, SP, InstrSize.fullReg)
               )
 
@@ -1048,6 +1066,8 @@ object X86IRGenerator {
       intBinOp(expr1, expr2, ArithmOperations.mod)
     }
     case Call(ident, paramList) => {
+
+
       val instructions = new ListBuffer[Instruction]().empty
       val functionNode = functionGenerator.getFunctionNode(ident.value)
       val handleParams = ListBuffer[Instruction]().empty
@@ -1069,28 +1089,24 @@ object X86IRGenerator {
         }
       }
 
-      val setupStack = StackMachine.addFrame(
-        functionGenerator.getFunctionTable(ident.value),
-        Some(functionNode.paramList)
-      )
 
-      //
+      if (!functionGenerator.isDefined(functionNode.ident.value)) {
 
-      val funcBody = generateFunctionIR(functionNode)
-      functionGenerator.addFunction(
-        functionNode.ident.value,
-        functionNode,
-        funcBody
-      )
-      val popFrame = StackMachine.popFrame()
+        functionGenerator.setDefined(functionNode.ident.value)
 
-      val body = functionGenerator.getFunctionBody(ident.value)
+        val funcBody = generateFunctionIR(functionNode, functionGenerator.getFunctionTable(ident.value), functionNode.paramList)
+        functionGenerator.addFunction(
+          functionNode.ident.value,
+          functionNode,
+          funcBody
+        )
 
-      functionGenerator.addFunction(ident.value, functionNode, body)
+        functionGenerator.addFunction(ident.value, functionNode, funcBody)
 
-      instructions ++= handleParams ++ setupStack ++ ListBuffer(
-        CallInstr(ident.value)
-      ) ++ popFrame ++ incrementStackInstr
+      }
+
+
+      instructions ++= handleParams += CallInstr(ident.value) ++= incrementStackInstr
 
     }
   }

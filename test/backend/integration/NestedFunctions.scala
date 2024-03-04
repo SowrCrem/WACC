@@ -18,10 +18,15 @@ class NestedFunctions extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
-  // "Wacc" should "run/valid/function/nested_functions/simpleRecursion.wacc" in {
-  //   val path = constructPath(List("valid", "function", "nested_functions", "simpleRecursion.wacc"))
-  //   runSucceeds(path, "", 0)
-  // }
+  "Wacc" should "run/valid/function/nested_functions/simpleRecursion.wacc" in {
+    val path = constructPath(List("valid", "function", "nested_functions", "simpleRecursion.wacc"))
+    runSucceeds(path, "", 0)
+  }
+
+  it should "run valid/function/nested_functions/printTriangle.wacc" in {
+    val path = constructPath(List("valid", "function", "nested_functions", "printTriangle.wacc"))
+    runSucceeds(path, "", 0)
+  }
 
   
 }

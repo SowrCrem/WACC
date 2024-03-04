@@ -12,8 +12,19 @@ object functionGenerator {
 
   private val labelsToFuncs = new HashMap[String, Func]()
 
+  private val funcDefined = new HashMap[String, Boolean]()
+
+  def isDefined(name: String): Boolean = {
+    funcDefined(name)
+  }
+
+  def setDefined(name: String): Unit = {
+    funcDefined.put(name, true)
+  }
+
   def addFunction(name: String, body: ListBuffer[Instruction]): Unit = {
     funcLabelsAndBody.put(name, body)
+    funcDefined.put(name, false)
   }
 
   def addFunction(
@@ -24,6 +35,7 @@ object functionGenerator {
     funcLabelsAndBody.put(name, body)
     labelsToTables.put(name, func.symbolTable)
     labelsToFuncs.put(name, func)
+    funcDefined.put(name, false)
   }
 
   def getFunctionNode(name: String): Func = {
@@ -60,6 +72,6 @@ object functionGenerator {
     funcLabelsAndBody.clear()
     labelsToFuncs.clear()
     labelsToTables.clear()
-
+    funcDefined.clear()
   }
 }

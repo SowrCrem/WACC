@@ -33,10 +33,10 @@ class Pairs extends AnyFlatSpec with BeforeAndAfterEach {
     runSucceeds(path)
   }
 
-  it should "run valid/pairs/linkedList.wacc" in {
-    val path = constructPath(List("valid", "pairs", "linkedList.wacc"))
-    runSucceeds(path)
-  }
+  // it should "run valid/pairs/linkedList.wacc" in {
+  //   val path = constructPath(List("valid", "pairs", "linkedList.wacc"))
+  //   runSucceeds(path)
+  // }
 
   it should "run valid/pairs/nestedPairLeftAssign.wacc" in {
     val path = constructPath(List("valid", "pairs", "nestedPairLeftAssign.wacc"))

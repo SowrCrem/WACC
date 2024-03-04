@@ -6,6 +6,7 @@ import ArithmOperations._
 import Constants._
 import parsley.internal.machine.instructions.Instr
 
+// TODO: Make this a class to avoid race conditions, and make attributes private
 object X86IRGenerator {
 
   /** The library function generator
@@ -48,7 +49,7 @@ object X86IRGenerator {
       }
     )
   }
-
+  // TODO: We can abstract generateIR by returning a list fo lists, with each ;sit corresponding to each 'section' of our assembly
   /** Generates the intermediate representation for the given AST
     * @param ast
     *   \- The AST of the program to be translated
@@ -262,6 +263,7 @@ object X86IRGenerator {
           }
         }
 // fst p = 1;
+        // TODO: Re-abstract Fst and Snd
         case FstNode(identifier) => {
           // Null dereference check
           lib.nullDerefOrFree.setFlag(true)
@@ -416,13 +418,14 @@ object X86IRGenerator {
         case atn @ ArrayTypeNode(_) => {
           lib.setMallocFlag(true)
           lib.outOfMemory.setFlag(true)
-
+          // TODO: Abstract the register names - why G2 specifically? These are magic registers
           /** Use G2 for array pointers for time being when assigning arrays as
             * a special case of the calling convention.
             *
             * NOTE: This will need to change for a register tracker
             * implementation
             */
+          // TODO: Don't have densified arrays - something about the sizes of strings and arrays
           expr match {
             case ArrayLiter(arrayElements) => {
               val arrSize = arrayElements.size
@@ -547,8 +550,10 @@ object X86IRGenerator {
           loopStats.flatten
         }
       }
+      // TODO: abstract this to next label
       labelCounter += 1
-
+      // TODO: abstract these to non-magic strings
+      // TODO: Have one list hat we add to instead of concatenatng multiple lists
       ListBuffer(Jump(s"cond${labelCounter}")) ++ ListBuffer(
         Label(s"while${labelCounter}")
       ) ++ body ++ ListBuffer(
@@ -667,7 +672,7 @@ object X86IRGenerator {
       val instructions = ListBuffer[Instruction]().empty
       var fst = false
       var snd = false
-
+      // TODO: Remove magic string usage
       val callReadLabel = lhs.typeNode match {
         case IntTypeNode() => {
           lib.setReadIntFlag(true)
@@ -763,7 +768,7 @@ object X86IRGenerator {
       case atn @ ArrayTypeNode(CharTypeNode()) => {
         lib.setPrintCharFlag(true)
         lib.setPrintStringFlag(true)
-
+        // TODO: Replace all isntances of this with ListBuffer.empty(Instruction)
         val instructions = ListBuffer[Instruction]().empty
           // Iterate through +8 x n times or some other way to printc each character maybe
           // Would base pointer be set
@@ -1195,7 +1200,8 @@ object X86IRGenerator {
       val body = functionGenerator.getFunctionBody(ident.value)
 
       functionGenerator.addFunction(ident.value, functionNode, body)
-
+      
+      // TODO: Use ++ with fixed-length lists instead of building intermediates
       instructions ++= handleParams ++ ListBuffer(
         CallInstr(ident.value)
       ) ++ incrementStackInstr

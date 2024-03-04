@@ -41,6 +41,7 @@ class LibFunGenerator {
   private var freeArrayFlag: Boolean = false
   private var freePairFlag: Boolean = false
   
+  // TODO: Render these as sets
   /** Adds the library functions to the IR based on flags set in the compiler
     * @return
     */
@@ -420,6 +421,8 @@ class LibFunGenerator {
     printPtrFlag = flag
   }
 
+
+  // TODO: Arg0 in Linux is edi, but in Windows is not - we want to compile for both at the same time, account for these
   /**
    * Generates the intermediate representation (IR) for the print pointer function 
    */
@@ -454,6 +457,7 @@ class LibFunGenerator {
     readCharFlag = flag
   }
 
+  // TODO: readIntIR and readCharIR are very similar, consider refactoring
   /**
    * Generates the intermediate representation (IR) for the read char function
    */

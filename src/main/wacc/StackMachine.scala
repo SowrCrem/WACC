@@ -8,6 +8,7 @@ import parsley.internal.machine.instructions.Pop
 /** Special Grade Cursed Object
   */
 object StackMachine {
+  // TODO: We can build the stack before code generation
 
   private var frames: List[StackFrame] = List().empty
 

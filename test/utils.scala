@@ -117,6 +117,7 @@ object Utils {
     val exeReturn = exeCommand.!
     try {
       val exeOutput = exeCommand.!!
+      // TODO: Use IO Streams for this isntead fo trying to compare strings
       // exeOutput shouldBe expOutput
       printf("\nTest-output: \n" + exeOutput)
     } catch {

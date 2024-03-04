@@ -98,6 +98,7 @@ case class Orr(dest: Operand, src: Operand, operand: Operand, instrSize: InstrSi
     extends Instruction
 
 case class Mov(dest: Operand, operand: Operand, size: InstrSize) extends Instruction
+// TODO: 64-bit can't be sign extended, so account for this
 case class MovWithSignExtend(dest: Operand, operand: Operand, size1: InstrSize, size2: InstrSize)
     extends Instruction
 case class ConditionalMov(dest: Operand, src: Operand, cond: InstrCond, size: InstrSize) extends Instruction

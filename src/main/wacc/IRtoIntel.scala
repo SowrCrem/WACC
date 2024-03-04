@@ -10,8 +10,10 @@ object X86CodeGenerator {
 
   def generate(program: Program): String = makeAssemblyIntel(X86IRGenerator.generateIR(program))
 
+  // TODO: use flatmap(), write directly to a file or an output stream, PrintBuffer or PrintWriter
   def makeAssemblyIntel(instrs: Buffer[Instruction]): String = instrs.map(transInstr).flatten.mkString("\n")
   
+  // TODO: Factor out the common strings
   def transInstr(instruction: Instruction) : List[String] = instruction match {
     case Mov(dest, operand, instrSize) => List(s"  mov ${dest.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
     case MovWithSignExtend(dest, operand, size1, size2) => List(s"  movsx ${dest.toIntelString(size1)}, ${operand.toIntelString(size2)}")

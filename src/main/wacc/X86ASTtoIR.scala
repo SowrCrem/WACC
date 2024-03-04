@@ -192,7 +192,7 @@ object X86IRGenerator {
                     AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
                     PopRegisters(List(FP), InstrSize.fullReg)
                   )
-                  setup ++ instructions ++ ListBuffer(
+                  instructions ++ setup ++ ListBuffer(
                     Mov(FPOffset(offset), Dest, InstrSize.fullReg)
                   ) ++ ListBuffer(
                     PushRegisters(List(FP), InstrSize.fullReg),
@@ -210,7 +210,6 @@ object X86IRGenerator {
             }
           }
         }
-// fst p = 1;
         case FstNode(identifier) => {
           // Null dereference check
           lib.nullDerefOrFree.setFlag(true)
@@ -315,8 +314,7 @@ object X86IRGenerator {
           val assignment = exprToIR(rhs)
 
           StackMachine.offset(ident.value) match {
-            case Some((offset, fpchange)) => {
-              fpchange match {
+            case Some((offset, fpchange)) => fpchange match {
                 case 0 => {
                   instructions ++= ListBuffer(
                     Mov(Dest, FPOffset(offset), InstrSize.fullReg)
@@ -342,7 +340,38 @@ object X86IRGenerator {
                     CallInstr("arrStore8"),
                   ) 
                 }
-              }
+                case _ => {
+                  val setup = ListBuffer(
+                        AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                        PopRegisters(List(FP), InstrSize.fullReg),
+                        Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+                        PushRegisters(List(FP), InstrSize.fullReg),
+                        SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
+                        Mov(FP, SP, InstrSize.fullReg)
+                      )
+
+                  for (e <- eList.init) {
+                    instructions ++= ListBuffer(
+                      Mov(Arg5, Dest, InstrSize.fullReg)
+                    )
+                    instructions ++= exprToIR(e)
+                    instructions ++= ListBuffer(
+                      Mov(G1, Dest, InstrSize.halfReg),
+                      CallInstr("arrLoad8"),
+                      Mov(Dest, Arg5, InstrSize.fullReg)
+                    )
+                  }
+                  val lastExpr = exprToIR(eList.last)
+                  instructions ++= ListBuffer(
+                    Mov(Arg5, Dest, InstrSize.fullReg)
+                  ) ++ lastExpr ++ ListBuffer(
+                    Mov(G1, Dest, InstrSize.halfReg)
+                  ) ++ assignment ++ ListBuffer(
+                    CallInstr("arrStore8"),
+                  )
+
+                  instructions.prependAll(setup)
+                }
             }
             case None => {
               throw new RuntimeException(
@@ -351,7 +380,6 @@ object X86IRGenerator {
             }
           }
 
-          instructions
         }
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // TODO: need to have cases for pairs and array elements later
@@ -434,14 +462,14 @@ object X86IRGenerator {
               instructions.prependAll(preInstr)
               instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
             }
-            case _ => {
+            case _ => { 
               val setup = ListBuffer(
-                AddInstr(SP, Immediate32(offset), InstrSize.fullReg),
+                AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
                 PopRegisters(List(FP), InstrSize.fullReg)
               )
               setup ++ preInstr ++ instructions ++ ListBuffer(
                 PushRegisters(List(FP), InstrSize.fullReg),
-                SubInstr(SP, Immediate32(offset), InstrSize.fullReg),
+                SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
                 Mov(FP, SP, InstrSize.fullReg)
               )
             }

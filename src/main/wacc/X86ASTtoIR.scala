@@ -1074,6 +1074,8 @@ object X86IRGenerator {
         Some(functionNode.paramList)
       )
 
+      //
+
       val funcBody = generateFunctionIR(functionNode)
       functionGenerator.addFunction(
         functionNode.ident.value,

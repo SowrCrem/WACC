@@ -193,7 +193,6 @@ object X86IRGenerator {
             }
           }
         }
-// fst p = 1;
         case FstNode(identifier) => {
           // Null dereference check
           lib.nullDerefOrFree.setFlag(true)

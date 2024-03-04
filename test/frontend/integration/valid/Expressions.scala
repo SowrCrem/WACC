@@ -80,10 +80,6 @@ class Expressions extends AnyFlatSpec {
     throwsNoError("valid/expressions/lessExpr.wacc")
   }
 
-  "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
-    throwsNoError("valid/expressions/longExpr.wacc")
-  }
-
   "valid - expressions tests: longExpr2.wacc" should "return exit code 0" in {
     throwsNoError("valid/expressions/longExpr2.wacc")
   }
@@ -92,12 +88,16 @@ class Expressions extends AnyFlatSpec {
     throwsNoError("valid/expressions/longExpr3.wacc")
   }
 
-  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
-    throwsNoError("valid/expressions/longSplitExpr.wacc")
+  "valid - expressions tests: longExpr.wacc" should "return exit code 0" in {
+    throwsNoError("valid/expressions/longExpr.wacc")
   }
 
   "valid - expressions tests: longSplitExpr2.wacc" should "return exit code 0" in {
     throwsNoError("valid/expressions/longSplitExpr2.wacc")
+  }
+
+  "valid - expressions tests: longSplitExpr.wacc" should "return exit code 0" in {
+    throwsNoError("valid/expressions/longSplitExpr.wacc")
   }
 
   "valid - expressions tests: minusExpr.wacc" should "return exit code 0" in {
@@ -156,20 +156,20 @@ class Expressions extends AnyFlatSpec {
     throwsNoError("valid/expressions/negExpr.wacc")
   }
 
-  "valid - expressions tests: notExpr.wacc" should "return exit code 0" in {
-    throwsNoError("valid/expressions/notExpr.wacc")
-  }
-
   "valid - expressions tests: notequalsExpr.wacc" should "return exit code 0" in {
     throwsNoError("valid/expressions/notequalsExpr.wacc")
   }
 
-  "valid - expressions tests: orExpr.wacc" should "return exit code 0" in {
-    throwsNoError("valid/expressions/orExpr.wacc")
+  "valid - expressions tests: notExpr.wacc" should "return exit code 0" in {
+    throwsNoError("valid/expressions/notExpr.wacc")
   }
 
   "valid - expressions tests: ordAndchrExpr.wacc" should "return exit code 0" in {
     throwsNoError("valid/expressions/ordAndchrExpr.wacc")
+  }
+
+  "valid - expressions tests: orExpr.wacc" should "return exit code 0" in {
+    throwsNoError("valid/expressions/orExpr.wacc")
   }
 
   "valid - expressions tests: plusExpr.wacc" should "return exit code 0" in {

@@ -961,29 +961,29 @@ object X86IRGenerator {
                 )
               }
             }
-            // case _ => {
-            //   val setup = ListBuffer(
-            //     AddInstr(
-            //       SP,
-            //       Immediate32(fpchange + MAX_REGSIZE),
-            //       InstrSize.fullReg
-            //     ),
-            //     PopRegisters(List(FP), InstrSize.fullReg)
-            //   )
-            //   instructions ++= setup ++ ListBuffer(
-            //     Mov(Dest, FPOffset(offset), InstrSize.fullReg),
-            //     Mov(Arg5, Dest, InstrSize.fullReg),
-            //     PushRegisters(List(FP), InstrSize.fullReg),
-            //     SubInstr(
-            //       SP,
-            //       Immediate32(fpchange + MAX_REGSIZE),
-            //       InstrSize.fullReg
-            //     ),
-            //     Mov(FP, SP, InstrSize.fullReg),
-            //     CallInstr("arrLoad8"),
-            //     Mov(Dest, Arg5, InstrSize.fullReg)
-            //   )
-            // }
+            case _ => {
+              val setup = ListBuffer(
+                AddInstr(
+                  SP,
+                  Immediate32(fpchange + MAX_REGSIZE),
+                  InstrSize.fullReg
+                ),
+                PopRegisters(List(FP), InstrSize.fullReg)
+              )
+              instructions ++= setup ++ ListBuffer(
+                Mov(Dest, FPOffset(offset), InstrSize.fullReg),
+                Mov(Arg5, Dest, InstrSize.fullReg),
+                PushRegisters(List(FP), InstrSize.fullReg),
+                SubInstr(
+                  SP,
+                  Immediate32(fpchange + MAX_REGSIZE),
+                  InstrSize.fullReg
+                ),
+                Mov(FP, SP, InstrSize.fullReg),
+                CallInstr("arrLoad8"),
+                Mov(Dest, Arg5, InstrSize.fullReg)
+              )
+            }
           }
         }
         case None => {

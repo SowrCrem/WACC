@@ -578,7 +578,7 @@ class LibFunGenerator {
       Cmp(G1, G0, InstrSize.halfReg),
       ConditionalMov(G1, G2, InstrCond.greaterThan, InstrSize.halfReg),
       JumpIfCond(outOfBounds.labelName, InstrCond.greaterThan),
-      MovWithSignExtend(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.halfReg), InstrSize.halfReg, InstrSize.fullReg),
+      Mov(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.fullReg), InstrSize.fullReg),
       PopRegisters(List(G0), InstrSize.fullReg),
       ReturnInstr()
     )

@@ -688,24 +688,24 @@ object X86IRGenerator {
     }
   }
 
-  def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
 
-    val instr = expr.typeNode match {
+  def matchPrintType(typeNode: TypeNode): ListBuffer[Instruction] = {
+    typeNode match {
       case StringTypeNode() => {
         lib.setPrintStringFlag(true)
-        List(CallInstr("prints"))
+        ListBuffer(CallInstr("prints"))
       }
       case BoolTypeNode() => {
         lib.setPrintBoolFlag(true)
-        List(CallInstr("printb"))
+        ListBuffer(CallInstr("printb"))
       }
       case CharTypeNode() => {
         lib.setPrintCharFlag(true)
-        List(CallInstr("printc"))
+        ListBuffer(CallInstr("printc"))
       }
       case IntTypeNode() => {
         lib.setPrintIntFlag(true)
-        List(CallInstr("printi"))
+        ListBuffer(CallInstr("printi"))
       }
       case atn @ ArrayTypeNode(CharTypeNode()) => {
         lib.setPrintCharFlag(true)
@@ -731,19 +731,31 @@ object X86IRGenerator {
             // pop r9
             PopRegisters(List(Arg5), InstrSize.fullReg),
             AddInstr(SP, Immediate32(MAX_REGSIZE), InstrSize.fullReg),
-
           )
-
         }
-
         instructions
       }
-      case _ => {
-        // Must be Array (non char) || Error? || Pair
-        lib.setPrintPtrFlag(true)
-        List(CallInstr("printp"))
+      case atn @ ArrayTypeNode(typeNode) => {
+        // atn can be a nested array type node, need to unwrap and get the inner
+        var node : TypeNode = atn
+        var arrType = atn.elementType
+
+        print("Arrays inner type is: " + arrType.toString())
+        
+        matchPrintType(arrType)
       }
+      case _ => {
+        // Must be Pair
+        lib.setPrintPtrFlag(true)
+        ListBuffer(CallInstr("printp"))
+      }
+    
     }
+  }
+
+  def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
+
+    val instr = matchPrintType(expr.typeNode)
 
     exprToIR(expr) ++= ListBuffer(
       DecrementStackPointerNB(8),

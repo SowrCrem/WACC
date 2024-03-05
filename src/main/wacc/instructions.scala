@@ -195,7 +195,7 @@ case object G2 extends GeneralRegister {
     case InstrSize.eigthReg   => "r11b"
   }
 }
-case object G3 extends GeneralRegister {
+case object R12 extends GeneralRegister {
   def toIntelString(size: InstrSize): String = size match {
     case InstrSize.fullReg    => "r12"
     case InstrSize.halfReg    => "r12d"
@@ -203,7 +203,7 @@ case object G3 extends GeneralRegister {
     case InstrSize.eigthReg   => "r12b"
   }
 }
-case object G4 extends GeneralRegister {
+case object IntReg extends GeneralRegister {
   def toIntelString(size: InstrSize): String = size match {
     case InstrSize.fullReg    => "r13"
     case InstrSize.halfReg    => "r13d"
@@ -211,7 +211,7 @@ case object G4 extends GeneralRegister {
     case InstrSize.eigthReg   => "r13b"
   }
 }
-case object G5 extends GeneralRegister {
+case object CharReg extends GeneralRegister {
   def toIntelString(size: InstrSize): String = size match {
     case InstrSize.fullReg    => "r14"
     case InstrSize.halfReg    => "r14d"

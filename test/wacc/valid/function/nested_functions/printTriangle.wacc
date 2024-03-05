@@ -29,5 +29,6 @@ begin
     return 0
   end
 
+  println "whipee";
   int s = call f(8)
 end

@@ -62,7 +62,7 @@ object Main {
         fileContent = scala.io.Source.fromFile(filename).mkString
       } catch {
         case e: java.io.FileNotFoundException => {
-          println("IO Error: File not found")
+          println("IO Error: File not found") 
           return -1
         }
       }

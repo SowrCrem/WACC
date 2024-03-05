@@ -78,8 +78,7 @@ class Scope extends AnyFlatSpec with BeforeAndAfterEach {
       runSucceeds(path)
   }
 
-  it should "run valid/scope/scopeWhileRedefine.wacc" ignore {
-      // INFINITE LOOPS - ONLY UNIGNORE AND PUSH IF WORKING
+  it should "run valid/scope/scopeWhileRedefine.wacc" in {
       val path = constructPath(List("valid", "scope", "scopeWhileRedefine.wacc"))
       runSucceeds(path)
   }

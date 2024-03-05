@@ -18,6 +18,7 @@ class Pairs extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
+  // DOESN'T WORK
   "WACC" should "run valid/pairs/checkRefPair.wacc" in {
     val path = constructPath(List("valid", "pairs", "checkRefPair.wacc"))
     runSucceeds(path)
@@ -28,26 +29,30 @@ class Pairs extends AnyFlatSpec with BeforeAndAfterEach {
     runSucceeds(path)
   }
 
+  // Somehow works
   it should "run valid/pairs/createRefPair.wacc" in {
     val path = constructPath(List("valid", "pairs", "createRefPair.wacc"))
     runSucceeds(path)
   }
 
-  // it should "run valid/pairs/linkedList.wacc" in {
-  //   val path = constructPath(List("valid", "pairs", "linkedList.wacc"))
-  //   runSucceeds(path)
-  // }
+  // Remove ignore once everything else passes
+  it should "run valid/pairs/linkedList.wacc" ignore {
+    val path = constructPath(List("valid", "pairs", "linkedList.wacc"))
+    runSucceeds(path)
+  }
 
   it should "run valid/pairs/nestedPairLeftAssign.wacc" in {
     val path = constructPath(List("valid", "pairs", "nestedPairLeftAssign.wacc"))
     runSucceeds(path)
   }
 
+  // Printp already handles
   it should "run valid/pairs/null.wacc" in {
     val path = constructPath(List("valid", "pairs", "null.wacc"))
     runSucceeds(path)
   }
 
+  // 
   it should "run valid/pairs/pairarray.wacc" in {
     val path = constructPath(List("valid", "pairs", "pairarray.wacc"))
     runSucceeds(path)
@@ -108,7 +113,7 @@ class Pairs extends AnyFlatSpec with BeforeAndAfterEach {
     runSucceeds(path)
   }
 
-  it should "run valid/pairs/readPair.wacc" ignore {
+  it should "run valid/pairs/readPair.wacc" in {
     val path = constructPath(List("valid", "pairs", "readPair.wacc"))
     runSucceeds(path)
   }

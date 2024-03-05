@@ -20,6 +20,10 @@ class Function extends AnyFlatSpec {
     throwsSemanticError("invalid/semanticErr/function/doubleArgDef.wacc")
   }
 
+  "semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" in {
+    throwsSemanticError("invalid/semanticErr/function/funcVarAccess.wacc")
+  }
+
   "semanticErr - function tests: functionAssign.wacc" should "return exit code 200" in {
     throwsSemanticError("invalid/semanticErr/function/functionAssign.wacc")
   }
@@ -54,10 +58,6 @@ class Function extends AnyFlatSpec {
 
   "semanticErr - function tests: functionUnderArgs.wacc" should "return exit code 200" in {
     throwsSemanticError("invalid/semanticErr/function/functionUnderArgs.wacc")
-  }
-
-  "semanticErr - function tests: funcVarAccess.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/function/funcVarAccess.wacc")
   }
 
   "semanticErr - function tests: invalidReturnsBranched.wacc" should "return exit code 200" in {

@@ -1,12 +1,6 @@
 package wacc
 import scala.collection.mutable.{Map, Stack}
 import scala.annotation.tailrec
-
-/* TODOs:
-   [ ] Somehow store link between parent and child STs; or scopes
-   [ ] exitScope is not used at all (unnecessary function)
-
-   */
  
 class SymbolTable(val parent: Option[SymbolTable]) {
 

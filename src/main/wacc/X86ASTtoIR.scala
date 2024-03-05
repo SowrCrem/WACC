@@ -386,7 +386,7 @@ object X86IRGenerator {
       }
     }
 
-    case IdentAsgn(typeNode, ident, expr) => {
+    case IdentAsgn(typeNode, ident, rhs) => {
 
       // Dynamically determine the size of the variable from the typeNode
       val varSize = typeNode.size / 8
@@ -397,8 +397,8 @@ object X86IRGenerator {
       // Step 2: Initialize the variable with the given expression
       val preInstr = typeNode match {
         case atn @ ArrayTypeNode(_) => {
-          lib.setMallocFlag(true)
-          lib.outOfMemory.setFlag(true)
+          // lib.setMallocFlag(true)
+          // lib.outOfMemory.setFlag(true)
 
           /** Use G2 for array pointers for time being when assigning arrays as
             * a special case of the calling convention.
@@ -406,20 +406,19 @@ object X86IRGenerator {
             * NOTE: This will need to change for a register tracker
             * implementation
             */
-          expr match {
+          rhs match {
             case ArrayLiter(arrayElements) => {
               val arrSize = arrayElements.size
               atn.setLength(arrSize)
               List(
-                Mov(
-                  Arg0,
-                  Immediate32((arrSize) * MAX_REGSIZE + HALF_REGSIZE),
-                  InstrSize.halfReg
-                ),
-                CallInstr("malloc"),
-                // I believe we use stack frame allocation for this
-                Mov(G2, Dest, InstrSize.fullReg),
-                AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg)
+                // Mov(
+                //   Arg0,
+                //   Immediate32((arrSize) * MAX_REGSIZE + HALF_REGSIZE),
+                //   InstrSize.halfReg
+                // ),
+                // CallInstr("malloc"),
+                // Mov(G2, Dest, InstrSize.fullReg),
+                // AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg)
               )
 
             }
@@ -427,8 +426,10 @@ object X86IRGenerator {
           }
 
         }
+        // If lhs is a pairtype node of any types
         case PairTypeNode(_, _) => {
-          expr match {
+          rhs match {
+            // Dynamically allocate memory for the pair (16 Bytes)
             case NewPair(_, _) => {
               List(
                 // mov edi, 16
@@ -443,13 +444,13 @@ object X86IRGenerator {
                 Mov(G2, Dest, InstrSize.fullReg) 
               )
             }
-            case _ => ListBuffer[Instruction]().empty
+            case _ => ListBuffer.empty
           }
         }
         case _ => ListBuffer[Instruction]().empty
       }
 
-      instructions ++= exprToIR(expr)
+      instructions ++= exprToIR(rhs)
 
       // Step 3: Update StackMachine context with the new variable
       StackMachine.putVarOnStack(ident.value)
@@ -467,7 +468,10 @@ object X86IRGenerator {
                 AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
                 PopRegisters(List(FP), InstrSize.fullReg)
               )
-              setup ++ preInstr ++ instructions ++ ListBuffer(
+              instructions ++= setup
+              instructions ++= preInstr
+              instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+              instructions ++= ListBuffer(
                 PushRegisters(List(FP), InstrSize.fullReg),
                 SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
                 Mov(FP, SP, InstrSize.fullReg)
@@ -581,6 +585,8 @@ object X86IRGenerator {
       expr.typeNode match {
         case ArrayTypeNode(_) => {
           lib.setFreeArrayFlag(true)
+          // Decrement the pointer to the start of the array
+          callInstr += SubInstr(Arg0, Immediate32(HALF_REGSIZE), InstrSize.fullReg)
           callInstr += CallInstr("free")          
         }
         case PairTypeNode(_, _) => {
@@ -599,7 +605,30 @@ object X86IRGenerator {
                   instructions ++= ListBuffer(
                     Mov(Arg0, G2, InstrSize.fullReg)
                   )
-                
+                  instructions ++= callInstr
+                }
+                case _ => {
+                  val stackSetup = ListBuffer(
+                    // add rsp, fpchange
+                    AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    // pop rbp
+                    PopRegisters(List(FP), InstrSize.fullReg)
+                  )
+                  val reverseStackSetup = ListBuffer(
+                    // push rbp
+                    PushRegisters(List(FP), InstrSize.fullReg),
+                    // sub rsp, fpchange
+                    SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                    // mov rbp, rsp
+                    Mov(FP, SP, InstrSize.fullReg)
+                  )
+
+                  instructions ++= stackSetup
+                  instructions ++= ListBuffer(
+                    Mov(Arg0, G2, InstrSize.fullReg)
+                  ) 
+                  instructions ++= callInstr 
+                  instructions ++= reverseStackSetup
                 }
               }
             }
@@ -612,7 +641,7 @@ object X86IRGenerator {
         }
       }
 
-      instructions ++ callInstr
+      instructions
     }
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
@@ -688,52 +717,43 @@ object X86IRGenerator {
     }
   }
 
-
   def matchPrintType(typeNode: TypeNode): ListBuffer[Instruction] = {
     typeNode match {
       case StringTypeNode() => {
         lib.setPrintStringFlag(true)
-        ListBuffer(CallInstr("prints"))
+        ListBuffer(
+          Mov(Arg0, Dest, InstrSize.fullReg),
+          CallInstr("prints")
+        )
       }
       case BoolTypeNode() => {
         lib.setPrintBoolFlag(true)
-        ListBuffer(CallInstr("printb"))
+        ListBuffer(
+          Mov(Arg0, Dest, InstrSize.fullReg),
+          CallInstr("printb")
+        )
       }
       case CharTypeNode() => {
         lib.setPrintCharFlag(true)
-        ListBuffer(CallInstr("printc"))
+        ListBuffer(
+          Mov(Arg0, Dest, InstrSize.fullReg),
+          CallInstr("printc")
+        )
       }
       case IntTypeNode() => {
         lib.setPrintIntFlag(true)
-        ListBuffer(CallInstr("printi"))
-      }
-      case atn @ ArrayTypeNode(CharTypeNode()) => {
-        lib.setPrintCharFlag(true)
-        lib.setPrintStringFlag(true)
-
-        val instructions = ListBuffer[Instruction]().empty
-          // Iterate through +8 x n times or some other way to printc each character maybe
-          
-          // Would base pointer be set
-          // mov rdi, qword ptr [rbp - offset]
-        instructions ++= ListBuffer(
-          // mov r9, rdi
-          Mov(Arg5, Arg0, InstrSize.fullReg)
+        ListBuffer(
+          Mov(Arg0, Dest, InstrSize.fullReg),
+          CallInstr("printi")
         )
-        for (i <- 0 to atn.length - 1) {
-          instructions ++= ListBuffer(
-            SubInstr(SP, Immediate32(MAX_REGSIZE), InstrSize.fullReg),
-            // push r9
-            PushRegisters(List(Arg5), InstrSize.fullReg),
-            // mov rdi, qword ptr [r9 + 8]
-            Mov(Arg0, RegisterPtr(Arg5, InstrSize.fullReg, i * 8), InstrSize.fullReg),
-            CallInstr("printc"),
-            // pop r9
-            PopRegisters(List(Arg5), InstrSize.fullReg),
-            AddInstr(SP, Immediate32(MAX_REGSIZE), InstrSize.fullReg),
-          )
-        }
-        instructions
+      }
+      // TODO: Fix once char arrays stored at 1 byte buffer
+      case atn @ ArrayTypeNode(CharTypeNode()) => {
+        lib.setPrintStringFlag(true)
+        ListBuffer(
+          Mov(Arg0, G2, InstrSize.fullReg),
+          CallInstr("prints")
+        )
       }
       case atn @ ArrayTypeNode(typeNode) => {
         // atn can be a nested array type node, need to unwrap and get the inner
@@ -747,29 +767,31 @@ object X86IRGenerator {
       case _ => {
         // Must be Pair
         lib.setPrintPtrFlag(true)
-        ListBuffer(CallInstr("printp"))
+        ListBuffer(
+          Mov(Arg0, G2, InstrSize.fullReg),
+          CallInstr("printp")
+        )
       }
-    
     }
   }
-
+  
   def printToIR(expr: Expr, println: Boolean): Buffer[Instruction] = {
 
-    val instr = matchPrintType(expr.typeNode)
+    val instructions = ListBuffer[Instruction]().empty
+    val printCall = matchPrintType(expr.typeNode)
 
-    exprToIR(expr) ++= ListBuffer(
+    instructions ++= exprToIR(expr) 
+    instructions ++= ListBuffer(
       DecrementStackPointerNB(8),
-      PushRegisters(List(Dest), InstrSize.fullReg),
-      PopRegisters(List(Dest), InstrSize.fullReg),
-      Mov(Dest, Dest, InstrSize.fullReg),
-      Mov(Arg0, Dest, InstrSize.fullReg)
-    ) ++= {
-      if (!println) {
-        instr ++ ListBuffer(IncrementStackPointerNB(8))
-      } else {
-        instr ++ ListBuffer(CallInstr("println"), IncrementStackPointerNB(8))
-      }
+      // Mov(Arg0, Dest, InstrSize.fullReg) --> might not need this
+    ) 
+    instructions ++= printCall
+    if (println) {
+      instructions ++= ListBuffer(CallInstr("println"))
     }
+    instructions ++= ListBuffer(
+      IncrementStackPointerNB(8)
+    )
   }
 
   // --------------- Expression IR Generation -------------------------------------//
@@ -907,7 +929,7 @@ object X86IRGenerator {
         // mov rax, 0
         Mov(Dest, Immediate32(0), InstrSize.fullReg),
         // mov r12, rax
-        Mov(G3, Dest, InstrSize.fullReg),
+        Mov(G2, Dest, InstrSize.fullReg),
       )
       instructions
     }
@@ -917,20 +939,28 @@ object X86IRGenerator {
 
     case NewPair(fst, snd) => {
       lib.setMallocFlag(true)
-      lib.outOfMemory.setFlag(true)
 
       // int[] a = [1,2,3]
       // pair b = newpair(a, a)
+
+      val instructions = Buffer[Instruction]().empty
       
       val firstIR : Buffer[Instruction] = exprToIR(FstNode(fst)(fst.pos))
       val secondIR : Buffer[Instruction] = exprToIR(SndNode(snd)(snd.pos))
       
-      val instructions = firstIR ++ ListBuffer[Instruction](
+      instructions ++= firstIR 
+      instructions ++= ListBuffer[Instruction](
         // mov qword ptr [r11], rax
         Mov(RegisterPtr(G2, InstrSize.fullReg, 0), Dest, InstrSize.fullReg)
-      ) ++ secondIR ++ ListBuffer[Instruction](
+      ) 
+      instructions ++= secondIR 
+      instructions ++= ListBuffer[Instruction](
         // mov qword ptr [r11 + 8], rax
-        Mov(RegisterPtr(G2, InstrSize.fullReg, 8), Dest, InstrSize.fullReg)
+        Mov(RegisterPtr(G2, InstrSize.fullReg, 8), Dest, InstrSize.fullReg),
+        // mov rax, r11 --> store the address of the pair in rax
+        Mov(Dest, G2, InstrSize.fullReg),
+        // mov r12, rax --> store the address of the pair in r12
+        Mov(G2, Dest, InstrSize.fullReg)
       )
 
       instructions      
@@ -998,8 +1028,18 @@ object X86IRGenerator {
       // Assume special calling convention for array stores - r11 is used to store the array pointer
       var offset: Int =
         0 // As we initially store the size of the array in the first 4 bytes
+
+      lib.setMallocFlag(true)      
       val instructions: ListBuffer[Instruction] = ListBuffer(
-        // mov rax, entry.size
+        Mov(
+          Arg0,
+          Immediate32((entries.size) * MAX_REGSIZE + HALF_REGSIZE),
+          InstrSize.halfReg
+        ),
+        CallInstr("malloc"),
+        Mov(G2, Dest, InstrSize.fullReg),
+        Mov(G2, G2, InstrSize.fullReg),
+        AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg),
         Mov(Dest, Immediate32(entries.size), InstrSize.fullReg),
         Mov(
           RegisterPtr(G2, InstrSize.halfReg, (-1) * HALF_REGSIZE),
@@ -1014,7 +1054,14 @@ object X86IRGenerator {
           Dest,
           InstrSize.fullReg
         )
-        offset += MAX_REGSIZE
+        e.typeNode match {
+          case CharTypeNode() => {
+            offset += BYTE
+          }
+          case _ => {
+            offset += MAX_REGSIZE
+          }
+        }
       }
       instructions += Mov(Dest, G2, InstrSize.fullReg)
       instructions

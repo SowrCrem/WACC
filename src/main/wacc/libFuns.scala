@@ -168,22 +168,26 @@ class LibFunGenerator {
       * Generates the intermediate representation (IR) for the array index out of bounds error
       */
     def generateOutOfBoundsErrIR: List[Instruction] = {
-      createDataIRNoCounter(labelName, dataName) ++ 
-      List(
-        Label(labelName),
-        AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
-        LoadEffectiveAddress(
-          Arg0,
-          OffsetRegLabel(IP, LabelAddress(dataName)),
-          InstrSize.fullReg
-        ),
-        Mov(Dest, Immediate32(0), InstrSize.eigthReg),
-        CallPLT("printf"),
-        Mov(Arg0, Immediate32(0), InstrSize.fullReg),
-        CallPLT("fflush"),
-        Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
-        CallPLT("exit")
-      )
+      if (arrayLoad8Flag || arrayStore8Flag) {
+        createDataIRNoCounter(labelName, dataName) ++ 
+        List(
+          Label(labelName),
+          AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+          LoadEffectiveAddress(
+            Arg0,
+            OffsetRegLabel(IP, LabelAddress(dataName)),
+            InstrSize.fullReg
+          ),
+          Mov(Dest, Immediate32(0), InstrSize.eigthReg),
+          CallPLT("printf"),
+          Mov(Arg0, Immediate32(0), InstrSize.fullReg),
+          CallPLT("fflush"),
+          Mov(Arg0, Immediate32(-1), InstrSize.eigthReg),
+          CallPLT("exit")
+        )
+      } else {
+        List.empty[Instruction]
+      } 
     }
   }
 
@@ -198,6 +202,7 @@ class LibFunGenerator {
     */
   def setMallocFlag(flag: Boolean): Unit = {
     mallocFlag = flag
+    outOfMemory.setFlag(true)
   }
 
   /**
@@ -206,7 +211,6 @@ class LibFunGenerator {
   */
   def addMallocFunc(): List[Instruction] = {
     if (mallocFlag) {
-      outOfMemory.setFlag(true)
       List(
         Label("_malloc"),
         PushRegisters(List(FP), InstrSize.fullReg),
@@ -606,13 +610,13 @@ class LibFunGenerator {
 
   def setFreePairFlag(flag: Boolean): Unit = {
     freePairFlag = flag
+    nullDerefOrFree.setFlag(true)
   }
 
   def freePairIR(): List[Instruction] = {
     if (!freePairFlag) {
       return List.empty[Instruction]
     }
-    nullDerefOrFree.setFlag(true)
     List(
       Label("_freepair"),
       PushRegisters(List(FP), InstrSize.fullReg),

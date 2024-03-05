@@ -22,4 +22,4 @@ begin
   done ;
   print x;
   println y
-end
+end 

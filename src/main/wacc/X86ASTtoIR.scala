@@ -259,9 +259,11 @@ object X86IRGenerator {
           case _ => {
             goToVarStackAddress(fpchange, MAX_REGSIZE) match {
               case (setupStack, restoreStack) => {
-                instrs.prependAll(setupStack) 
-                instrs ++= moveInstr
-                instrs ++= restoreStack
+                val instructions = ListBuffer[Instruction]().empty
+                instructions.prependAll(setupStack)
+                instructions ++= moveInstr
+                instructions ++= restoreStack
+                instrs ++= instructions
               }
               case _ => throw new RuntimeException("Invalid return from attempt to find variable in stack")
             }
@@ -1134,21 +1136,17 @@ object X86IRGenerator {
     val expr2IR = exprToIR(expr2)
 
     val leftPrecedence = expr1IR ++ ListBuffer(
-      DecrementStackPointerNB(2),
       PushRegisters(List(Dest), InstrSize.fullReg)
     ) ++ expr2IR ++ ListBuffer(
       Mov(G2, Dest, InstrSize.fullReg),
       PopRegisters(List(G1), InstrSize.fullReg),
-      IncrementStackPointerNB(2)
     )
 
     val rightPrecedence = expr2IR ++ ListBuffer(
-      DecrementStackPointerNB(2),
       PushRegisters(List(Dest), InstrSize.fullReg)
     ) ++ expr1IR ++ ListBuffer(
       Mov(G2, Dest, InstrSize.fullReg),
       PopRegisters(List(G1), InstrSize.fullReg),
-      IncrementStackPointerNB(2)
     )
 
     expr2 match {

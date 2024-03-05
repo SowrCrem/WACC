@@ -73,7 +73,7 @@ class Scope extends AnyFlatSpec with BeforeAndAfterEach {
       runSucceeds(path)
   }
 
-  it should "run valid/scope/scopeWhileNested.wacc" ignore {
+  it should "run valid/scope/scopeWhileNested.wacc" in {
       val path = constructPath(List("valid", "scope", "scopeWhileNested.wacc"))
       runSucceeds(path)
   }

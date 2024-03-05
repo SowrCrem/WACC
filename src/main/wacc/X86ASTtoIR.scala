@@ -363,9 +363,6 @@ object X86IRGenerator {
     case IdentAsgn(typeNode, ident, expr) => {
       val asgnType = AsgnType.Declare
 
-      // Dynamically determine the size of the variable from the typeNode
-      val varSize = typeNode.size / 8
-
       // // Step 1: Allocate space on the stack based on the variable size
       val instructions = ListBuffer[Instruction]().empty
 
@@ -431,8 +428,7 @@ object X86IRGenerator {
       StackMachine.putVarOnStack(ident.value)
       //Can abstract stackmachine.offset part of the function
       // can abstract Som
-      findingVarOnStackIR(ident.value, instructions, asgnType)
-      instructions
+      findingVarOnStackIR(ident.value, instructions, Reassign)
     }
     case Print(expr) => {
       printToIR(expr, false)

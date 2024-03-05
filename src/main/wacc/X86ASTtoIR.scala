@@ -138,6 +138,62 @@ object X86IRGenerator {
 
   }
 
+  // ------- Stack Machine Abstraction -------------------------------------------//
+
+
+  /**
+    * Moves the stack pointer to the address of the variable
+    * 
+    * @param fpchange The change in the frame pointer
+    * @return The list of instructions to move the stack pointer to the address of the variable
+    */
+  def goToVarStackAddress(fpchange : Int) : ListBuffer[Instruction] = {
+    goToVarStackAddress(fpchange, 0)
+  }
+
+  /**
+    * Moves the stack pointer to the address of the variable
+    * 
+    * @param fpchange The change in the frame pointer
+    * @param offset The offset of the variable within the frame (taken from the start of the next frame)
+    * @return
+    */
+  def goToVarStackAddress(fpchange : Int, offset : Int) : ListBuffer[Instruction] = {
+    ListBuffer(
+      AddInstr(SP, Immediate32(fpchange + offset), InstrSize.fullReg),
+      PopRegisters(List(FP), InstrSize.fullReg)
+    )
+  } 
+
+  /**
+    * Restores the stack to the previous state
+    *
+    * @param fpchange The change in the frame pointer
+    * @return The list of instructions to restore the stack to the previous state
+    */
+  def restoreStack(fpchange : Int) : ListBuffer[Instruction] = {
+    restoreStack(fpchange, 0)
+  }
+
+  /**
+    * Restores the stack to the previous state
+    *
+    * @param fpchange The change in the frame pointer
+    * @param offset The offset of the variable within the frame (taken from the start of the next frame)
+    * @return
+    */
+  def restoreStack(fpchange : Int, offset: Int) : ListBuffer[Instruction] = {
+    ListBuffer(
+      PushRegisters(List(FP), InstrSize.fullReg),
+      SubInstr(SP, Immediate32(fpchange + offset), InstrSize.fullReg),
+      Mov(FP, SP, InstrSize.fullReg)
+    )
+  }
+  def findingVarOnStackIR(ident: Ident) : ListBuffer[Instruction] = {
+    //
+    return null
+  }
+
   // ------- Statement IR Generation -----------------------------------------------//
 
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
@@ -171,10 +227,7 @@ object X86IRGenerator {
                   instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
                 }
                 case _ => {
-                  val setup = ListBuffer(
-                    AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
-                    PopRegisters(List(FP), InstrSize.fullReg)
-                  )
+                  val setup = goToVarStackAddress(fpchange, MAX_REGSIZE)
                   setup ++ instructions ++ ListBuffer(
                     Mov(FPOffset(offset), Dest, InstrSize.fullReg)
                   ) ++ ListBuffer(
@@ -211,10 +264,7 @@ object X86IRGenerator {
                       instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
                     }
                     case _ => {
-                      val setup = ListBuffer(
-                        AddInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
-                        PopRegisters(List(FP), InstrSize.fullReg)
-                      )
+                      val setup = goToVarStackAddress(fpchange, MAX_REGSIZE)
                         instructions ++= setup ++ ListBuffer(
                         Mov(FPOffset(offset), Dest, InstrSize.fullReg)
                       ) ++ ListBuffer(
@@ -259,10 +309,7 @@ object X86IRGenerator {
                        InstrSize.fullReg)
                     }
                     case _ => {
-                      val setup = ListBuffer(
-                        AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
-                        PopRegisters(List(FP), InstrSize.fullReg)
-                      )
+                      val setup = goToVarStackAddress(fpchange, MAX_REGSIZE)
                         instructions ++= setup ++ ListBuffer(
                         Mov(FPOffset(offset), Dest, InstrSize.fullReg)
                       ) ++ ListBuffer(
@@ -408,7 +455,8 @@ object X86IRGenerator {
 
       // Step 3: Update StackMachine context with the new variable
       StackMachine.putVarOnStack(ident.value)
-
+      //Can abstract stackmachine.offset part of the function
+      // can abstract Som
       StackMachine.offset(ident.value) match {
         case Some((offset, fpchange)) => {
           // instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
@@ -418,10 +466,7 @@ object X86IRGenerator {
               instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
             }
             case _ => {
-              val setup = ListBuffer(
-                AddInstr(SP, Immediate32(offset), InstrSize.fullReg),
-                PopRegisters(List(FP), InstrSize.fullReg)
-              )
+              val setup = goToVarStackAddress(fpchange)
               setup ++ preInstr ++ instructions ++ ListBuffer(
                 PushRegisters(List(FP), InstrSize.fullReg),
                 SubInstr(SP, Immediate32(offset), InstrSize.fullReg),
@@ -605,20 +650,8 @@ object X86IRGenerator {
                   instructions ++ readLogic
                 }
                 case _ => {
-                  val stackSetup = ListBuffer(
-                    // add rsp, fpchange
-                    AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
-                    // pop rbp
-                    PopRegisters(List(FP), InstrSize.fullReg)
-                  )
-                  val reverseStackSetup = ListBuffer(
-                    // push rbp
-                    PushRegisters(List(FP), InstrSize.fullReg),
-                    // sub rsp, fpchange
-                    SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
-                    // mov rbp, rsp
-                    Mov(FP, SP, InstrSize.fullReg)
-                  )
+                  val stackSetup = goToVarStackAddress(fpchange)
+                  val reverseStackSetup = restoreStack(fpchange)
 
                   instructions ++ stackSetup ++ readLogic ++ reverseStackSetup
                 }
@@ -740,16 +773,9 @@ object X86IRGenerator {
             }
             case _ => {
               
-              val setup = ListBuffer(
-                AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
-                PopRegisters(List(FP), InstrSize.fullReg)
-              )
-              instrs ++= setup ++ ListBuffer(
-                movElemAddress,
-                PushRegisters(List(FP), InstrSize.fullReg),
-                SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
-                Mov(FP, SP, InstrSize.fullReg)
-              )                 
+              val setup = goToVarStackAddress(fpchange, MAX_REGSIZE)
+              instrs ++= setup ++ ListBuffer(movElemAddress)                 
+              instrs ++= restoreStack(fpchange, MAX_REGSIZE)
             }
           }
         }
@@ -970,14 +996,14 @@ object X86IRGenerator {
             }
             case _ => {
               val setup = ListBuffer(
-                AddInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
                 PopRegisters(List(FP), InstrSize.fullReg)
               )
               setup ++ ListBuffer(
-                Mov(Dest, FPOffset(offset), InstrSize.fullReg)
+                Mov(Dest, FPOffset(fpchange + MAX_REGSIZE), InstrSize.fullReg)
               ) ++ ListBuffer(
                 PushRegisters(List(FP), InstrSize.fullReg),
-                SubInstr(SP, Immediate32(fpchange), InstrSize.fullReg),
+                SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
                 Mov(FP, SP, InstrSize.fullReg)
               )
 

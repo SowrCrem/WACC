@@ -5,8 +5,19 @@ import InstrCond._
 import ArithmOperations._
 import Constants._
 import parsley.internal.machine.instructions.Instr
+import java.security.Identity
+import scala.collection.immutable.ListMapBuilder
+
+
 
 object X86IRGenerator {
+
+  object AsgnType extends Enumeration {
+    type AsgnType = Value
+    val Reassign, Declare, Retrieve = Value
+  }
+
+  import AsgnType._
 
   /** The library function generator
     */
@@ -145,9 +156,9 @@ object X86IRGenerator {
     * Moves the stack pointer to the address of the variable
     * 
     * @param fpchange The change in the frame pointer
-    * @return The list of instructions to move the stack pointer to the address of the variable
+    * @return a pair of instruction lists - (a) to move the stack pointer to the address of the variable and (b) to restore the stack to the previous state
     */
-  def goToVarStackAddress(fpchange : Int) : ListBuffer[Instruction] = {
+  def goToVarStackAddress(fpchange : Int) : (ListBuffer[Instruction], ListBuffer[Instruction]) = {
     goToVarStackAddress(fpchange, 0)
   }
 
@@ -156,42 +167,92 @@ object X86IRGenerator {
     * 
     * @param fpchange The change in the frame pointer
     * @param offset The offset of the variable within the frame (taken from the start of the next frame)
-    * @return
+    * @return a pair of instruction lists - (a) to move the stack pointer to the address of the variable and (b) to restore the stack to the previous state
     */
-  def goToVarStackAddress(fpchange : Int, offset : Int) : ListBuffer[Instruction] = {
-    ListBuffer(
+  def goToVarStackAddress(fpchange : Int, offset : Int) : (ListBuffer[Instruction], ListBuffer[Instruction]) = {
+    (ListBuffer(
       AddInstr(SP, Immediate32(fpchange + offset), InstrSize.fullReg),
       PopRegisters(List(FP), InstrSize.fullReg)
-    )
-  } 
-
-  /**
-    * Restores the stack to the previous state
-    *
-    * @param fpchange The change in the frame pointer
-    * @return The list of instructions to restore the stack to the previous state
-    */
-  def restoreStack(fpchange : Int) : ListBuffer[Instruction] = {
-    restoreStack(fpchange, 0)
-  }
-
-  /**
-    * Restores the stack to the previous state
-    *
-    * @param fpchange The change in the frame pointer
-    * @param offset The offset of the variable within the frame (taken from the start of the next frame)
-    * @return
-    */
-  def restoreStack(fpchange : Int, offset: Int) : ListBuffer[Instruction] = {
+    ), 
     ListBuffer(
       PushRegisters(List(FP), InstrSize.fullReg),
       SubInstr(SP, Immediate32(fpchange + offset), InstrSize.fullReg),
       Mov(FP, SP, InstrSize.fullReg)
+    ))
+  } 
+
+  /**
+    * Finds the variable in the current frame given the offset
+    * 
+    * @param offset The offset of the variable within the frame
+    * @return The list of instructions to find the variable in current frame and move it to the destination register
+    */
+  def findVarInCurrFrame(offset: Int) : ListBuffer[Instruction] = {
+    ListBuffer(
+      Mov(Dest, FPOffset(offset), InstrSize.fullReg)
     )
   }
-  def findingVarOnStackIR(ident: Ident) : ListBuffer[Instruction] = {
-    //
-    return null
+
+  def moveExprToAddress(offset : Int) : ListBuffer[Instruction] = {
+    ListBuffer(
+      Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+    )
+  }
+
+  /**
+    * Assigns the value in variable provided to equal the value in the destination register (updates the stack)
+    *
+    * @param ident The identifier of the variable
+    * @return The list of instructions to assign the value in the destination register to the variable
+    */
+  def findingVarOnStackIR(ident : String, asgnType : AsgnType) : ListBuffer[Instruction] = {
+    findingVarOnStackIR(ident, ListBuffer[Instruction](), asgnType)
+  }
+
+
+  /**
+    * Given a variable, find it in the stack, complete a set of instructions using the variable and push the variable back onto the stack
+    *
+    * @param ident The identifier of the variable
+    * @param instrs The list of instructions to append to
+    * @return The list of instructions to find the variable in the stack and complete the set of instructions using the variable
+  */
+  def findingVarOnStackIR(ident: String, instrs : ListBuffer[Instruction], asgnType : AsgnType) : ListBuffer[Instruction] = {
+    findingVarOnStackIR(ident, instrs, 0, asgnType)
+  }
+
+
+  /**
+    * Given a variable, find it in the stack, complete a set of instructions using the variable and push the variable back onto the stack
+    *
+    * @param ident The identifier of the variable
+    * @param instrs The list of instructions to append to
+    * @param extraOffset The extra offset to add to the variable in the variable's frame
+    * @return The list of instructions to find the variable in the stack and complete the set of instructions using the variable
+    */
+  def findingVarOnStackIR(ident: String, instrs : ListBuffer[Instruction], extraOffset : Int, asgnType : AsgnType) : ListBuffer[Instruction] = {
+    StackMachine.offset(ident) match {
+      case Some((offset, fpchange)) => {
+        val moveInstr = asgnType match {
+          case Reassign => moveExprToAddress(offset - extraOffset)
+          case (Declare | Retrieve) => findVarInCurrFrame(offset - extraOffset)
+        }
+        fpchange match {
+          case 0 => instrs ++= moveInstr
+          case _ => {
+            goToVarStackAddress(fpchange, MAX_REGSIZE) match {
+              case (setupStack, restoreStack) => {
+                instrs.prependAll(setupStack) 
+                instrs ++= moveInstr
+                instrs ++= restoreStack
+              }
+              case _ => throw new RuntimeException("Invalid return from attempt to find variable in stack")
+            }
+          }
+        }
+      }
+      case None => throw new RuntimeException(s"Variable ${ident} not found in stack")
+    }
   }
 
   // ------- Statement IR Generation -----------------------------------------------//
@@ -217,122 +278,33 @@ object X86IRGenerator {
     }
 
     case AsgnEq(lhs, rhs) => {
+      val asgnType = AsgnType.Reassign
       lhs match {
         case Ident(ident) => {
           val instructions = exprToIR(rhs)
-          StackMachine.offset(ident) match {
-            case Some((offset, fpchange)) => {
-              fpchange match {
-                case 0 => {
-                  instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-                }
-                case _ => {
-                  val setup = goToVarStackAddress(fpchange, MAX_REGSIZE)
-                  setup ++ instructions ++ ListBuffer(
-                    Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-                  ) ++ ListBuffer(
-                    PushRegisters(List(FP), InstrSize.fullReg),
-                    SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
-                    Mov(FP, SP, InstrSize.fullReg)
-                  )
-                }
-              }
-
-            }
-            case None => {
-              throw new RuntimeException(
-                s"Variable ${ident} not found in stack"
-              )
-            }
-          }
+          findingVarOnStackIR(ident, instructions, asgnType)       
         }
-// fst p = 1;
+        // Null dereference check
+        // Get the address to write into
+        // Get the expression to write
+        // Move the expression to the address
+        // Clean up
         case FstNode(identifier) => {
-          // Null dereference check
           lib.nullDerefOrFree.setFlag(true)
-          // Get the address to write into
-          // Get the expression to write
-          // Move the expression to the address
-          // Clean up
           val instructions = exprToIR(rhs)
           identifier match {
-            case Ident(ident) => {
-              StackMachine.offset(ident) match {
-                case Some((offset, fpchange)) => {
-                  fpchange match {
-                    case 0 => {
-                      instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-                    }
-                    case _ => {
-                      val setup = goToVarStackAddress(fpchange, MAX_REGSIZE)
-                        instructions ++= setup ++ ListBuffer(
-                        Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-                      ) ++ ListBuffer(
-                        PushRegisters(List(FP), InstrSize.fullReg),
-                        SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
-                        Mov(FP, SP, InstrSize.fullReg)
-                      )
-                    }
-                  }
-                }
-                case None => {
-                  throw new RuntimeException(
-                    s"Variable ${ident} not found in stack"
-                  )
-                }
-              }
-            }
-            case _ => {
-              throw new RuntimeException(
-                "Value (type: " + identifier.typeNode.toString() +
-                  ") should not reach this case"
-              )
-            }
+            case Ident(ident) => instructions ++= findingVarOnStackIR(ident, asgnType)
+            case _ => throw new RuntimeException("Value (type: " + identifier.typeNode.toString() + ") should not reach this case")
           }
           instructions
         }
+
         case SndNode(identifier) => {
-          // Null dereference check
           lib.nullDerefOrFree.setFlag(true)
-          // Get the address to write into
-          // Get the expression to write
-          // Move the expression to the address
-          // Clean up
           val instructions = exprToIR(rhs)
           identifier match {
-            case Ident(ident) => {
-              StackMachine.offset(ident) match {
-                case Some((offset, fpchange)) => {
-                  fpchange match {
-                    case 0 => {
-                      instructions += Mov(FPOffset(offset), RegisterPtr(Dest, InstrSize.fullReg, MAX_REGSIZE),
-                       InstrSize.fullReg)
-                    }
-                    case _ => {
-                      val setup = goToVarStackAddress(fpchange, MAX_REGSIZE)
-                        instructions ++= setup ++ ListBuffer(
-                        Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-                      ) ++ ListBuffer(
-                        PushRegisters(List(FP), InstrSize.fullReg),
-                        SubInstr(SP, Immediate32(fpchange + 8), InstrSize.fullReg),
-                        Mov(FP, SP, InstrSize.fullReg)
-                      )
-                    }
-                  }
-                }
-                case None => {
-                  throw new RuntimeException(
-                    s"Variable ${ident} not found in stack"
-                  )
-                }
-              }
-            }
-            case _ => {
-              throw new RuntimeException(
-                "Value (type: " + identifier.typeNode.toString() +
-                  ") should not reach this case"
-              )
-            }
+            case Ident(ident) => instructions ++= findingVarOnStackIR(ident, ListBuffer[Instruction](), MAX_REGSIZE, asgnType)
+            case _ => throw new RuntimeException("Value (type: " + identifier.typeNode.toString() + ") should not reach this case")
           }
           instructions
         }
@@ -389,6 +361,7 @@ object X86IRGenerator {
     }
 
     case IdentAsgn(typeNode, ident, expr) => {
+      val asgnType = AsgnType.Declare
 
       // Dynamically determine the size of the variable from the typeNode
       val varSize = typeNode.size / 8
@@ -452,36 +425,13 @@ object X86IRGenerator {
       }
 
       instructions ++= exprToIR(expr)
+      instructions.prependAll(preInstr)
 
       // Step 3: Update StackMachine context with the new variable
       StackMachine.putVarOnStack(ident.value)
       //Can abstract stackmachine.offset part of the function
       // can abstract Som
-      StackMachine.offset(ident.value) match {
-        case Some((offset, fpchange)) => {
-          // instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-          fpchange match {
-            case 0 => {
-              instructions.prependAll(preInstr)
-              instructions += Mov(FPOffset(offset), Dest, InstrSize.fullReg)
-            }
-            case _ => {
-              val setup = goToVarStackAddress(fpchange)
-              setup ++ preInstr ++ instructions ++ ListBuffer(
-                PushRegisters(List(FP), InstrSize.fullReg),
-                SubInstr(SP, Immediate32(offset), InstrSize.fullReg),
-                Mov(FP, SP, InstrSize.fullReg)
-              )
-            }
-          }
-        }
-        case None => {
-          throw new RuntimeException(
-            "Variable not found in stack: Identifier Assignment"
-          )
-        }
-      }
-
+      findingVarOnStackIR(ident.value, instructions, asgnType)
       instructions
     }
     case Print(expr) => {
@@ -650,10 +600,16 @@ object X86IRGenerator {
                   instructions ++ readLogic
                 }
                 case _ => {
-                  val stackSetup = goToVarStackAddress(fpchange)
-                  val reverseStackSetup = restoreStack(fpchange)
-
-                  instructions ++ stackSetup ++ readLogic ++ reverseStackSetup
+                  goToVarStackAddress(fpchange) match {
+                    case (setup, restore) => {
+                      instructions ++= setup ++ readLogic ++ restore
+                    }
+                    case _ => {
+                      throw new RuntimeException(
+                        s"Variable ${ident} not found in stack"
+                      )
+                    }
+                  }
                 }
               }
             }
@@ -749,47 +705,30 @@ object X86IRGenerator {
 
   // --------------- Expression IR Generation -------------------------------------//
 
-  def pairExprToIR(e: Expr, ptype : String) : Buffer[Instruction] = e match {
-    case Ident(name) => {
-      val instrs = ListBuffer[Instruction]().empty
-      StackMachine.offset(name) match {
-        case Some((offset, fpchange)) => {
-          val movElemAddress = ptype match {
-            case "Fst" => {
-              Mov(Dest, FPOffset(offset), InstrSize.fullReg)
-            }
-            case "Snd" => {
-              Mov(Dest, FPOffset(offset - MAX_REGSIZE), InstrSize.fullReg)
-            }
-            case _ => {
-              throw new RuntimeException("Invalid pair type")
-            }
+  def pairExprToIR(e: Expr, ptype : String) : ListBuffer[Instruction] = {
+    val asgnType = AsgnType.Retrieve
+    e match {
+      case Ident(name) => {
+        val instrs = ListBuffer.empty[Instruction]
+        instrs ++= (ptype match {
+          case "Fst" => {
+            findingVarOnStackIR(name, ListBuffer(), asgnType)
           }
-          fpchange match {
-            case 0 => {
-              instrs ++= ListBuffer(
-                movElemAddress
-              )                  
-            }
-            case _ => {
-              
-              val setup = goToVarStackAddress(fpchange, MAX_REGSIZE)
-              instrs ++= setup ++ ListBuffer(movElemAddress)                 
-              instrs ++= restoreStack(fpchange, MAX_REGSIZE)
-            }
+          case "Snd" => {
+            findingVarOnStackIR(name, ListBuffer(), MAX_REGSIZE, asgnType)
           }
-        }
-        case None => {
-          throw new RuntimeException("Variable not found in stack")
-        }
+          case _ => {
+            throw new RuntimeException("Invalid pair type")
+          }
+        })
+        instrs          
       }
-      instrs          
+      case _ => exprToIR(e)
     }
-    case _ => exprToIR(e)
   }
 
   // Never lhs
-  def exprToIR(expr: Position): Buffer[Instruction] = expr match {
+  def exprToIR(expr: Position): ListBuffer[Instruction] = expr match {
     case Brackets(expr) => {
       exprToIR(expr)
     }
@@ -804,7 +743,7 @@ object X86IRGenerator {
     case Len(expr) => {
       lib.setPrintIntFlag(true)
       lib.setPrintLnFlag(true)
-      val instructions : Buffer[Instruction] = exprToIR(expr)
+      val instructions : ListBuffer[Instruction] = exprToIR(expr)
       instructions ++ ListBuffer(
         MovWithSignExtend(Dest, RegisterPtr(Dest, InstrSize.halfReg, -1 * HALF_REGSIZE), InstrSize.fullReg, InstrSize.halfReg),
         Mov(Arg0, Dest, InstrSize.halfReg),
@@ -890,8 +829,8 @@ object X86IRGenerator {
       // int[] a = [1,2,3]
       // pair b = newpair(a, a)
       
-      val firstIR : Buffer[Instruction] = exprToIR(FstNode(fst)(fst.pos))
-      val secondIR : Buffer[Instruction] = exprToIR(SndNode(snd)(snd.pos))
+      val firstIR : ListBuffer[Instruction] = exprToIR(FstNode(fst)(fst.pos))
+      val secondIR : ListBuffer[Instruction] = exprToIR(SndNode(snd)(snd.pos))
       
       val instructions = firstIR ++ ListBuffer[Instruction](
         // mov qword ptr [r11], rax
@@ -915,9 +854,7 @@ object X86IRGenerator {
           fpchange match {
             case 0 => {
 
-              instructions ++= ListBuffer(
-                Mov(Dest, FPOffset(offset), InstrSize.fullReg)
-              )
+              instructions ++= findVarInCurrFrame(offset)
 
               for (e <- eList) {
                 instructions ++= ListBuffer(Mov(Arg5, Dest, InstrSize.fullReg))
@@ -929,29 +866,6 @@ object X86IRGenerator {
                 )
               }
             }
-            // case _ => {
-            //   val setup = ListBuffer(
-            //     AddInstr(
-            //       SP,
-            //       Immediate32(fpchange + MAX_REGSIZE),
-            //       InstrSize.fullReg
-            //     ),
-            //     PopRegisters(List(FP), InstrSize.fullReg)
-            //   )
-            //   instructions ++= setup ++ ListBuffer(
-            //     Mov(Dest, FPOffset(offset), InstrSize.fullReg),
-            //     Mov(Arg5, Dest, InstrSize.fullReg),
-            //     PushRegisters(List(FP), InstrSize.fullReg),
-            //     SubInstr(
-            //       SP,
-            //       Immediate32(fpchange + MAX_REGSIZE),
-            //       InstrSize.fullReg
-            //     ),
-            //     Mov(FP, SP, InstrSize.fullReg),
-            //     CallInstr("arrLoad8"),
-            //     Mov(Dest, Arg5, InstrSize.fullReg)
-            //   )
-            // }
           }
         }
         case None => {
@@ -988,32 +902,7 @@ object X86IRGenerator {
       instructions
     }
     case Ident(ident) => {
-      StackMachine.offset(ident) match {
-        case Some((offset, fpchange)) => {
-          fpchange match {
-            case 0 => {
-              ListBuffer(Mov(Dest, FPOffset(offset), InstrSize.fullReg))
-            }
-            case _ => {
-              val setup = ListBuffer(
-                AddInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
-                PopRegisters(List(FP), InstrSize.fullReg)
-              )
-              setup ++ ListBuffer(
-                Mov(Dest, FPOffset(fpchange + MAX_REGSIZE), InstrSize.fullReg)
-              ) ++ ListBuffer(
-                PushRegisters(List(FP), InstrSize.fullReg),
-                SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
-                Mov(FP, SP, InstrSize.fullReg)
-              )
-
-            }
-          }
-        }
-        case None => {
-          throw new RuntimeException("Variable not found in stack")
-        }
-      }
+      findingVarOnStackIR(ident, AsgnType.Retrieve)
     }
     case Equals(expr1, expr2) => {
       compBinOp(expr1, expr2, InstrCond.equal)
@@ -1119,7 +1008,7 @@ object X86IRGenerator {
     }
   }
 
-  def binOpSetup(expr1: Expr, expr2: Expr): Buffer[Instruction] = {
+  def binOpSetup(expr1: Expr, expr2: Expr): ListBuffer[Instruction] = {
     val expr1IR = exprToIR(expr1)
     val expr2IR = exprToIR(expr2)
 
@@ -1154,21 +1043,13 @@ object X86IRGenerator {
 
   }
 
-  def intBinOp(
-      expr1: Expr,
-      expr2: Expr,
-      operation: ArithmOperations
-  ): Buffer[Instruction] = {
+  def intBinOp(expr1: Expr, expr2: Expr, operation: ArithmOperations): ListBuffer[Instruction] = {
     val setup = binOpSetup(expr1, expr2)
     setup ++= ListBuffer(
       Mov(Dest, G1, InstrSize.halfReg)
     )
 
-    def generalOp(
-        operation: ArithmOperations,
-        jumpLabel: String,
-        cond: InstrCond
-    ) = {
+    def generalOp(operation: ArithmOperations, jumpLabel: String, cond: InstrCond) = {
       lib.overflow.setFlag(true)
       val instr = operation match {
         case ArithmOperations.add => AddInstr(Dest, G2, InstrSize.halfReg)
@@ -1220,7 +1101,7 @@ object X86IRGenerator {
 
   }
 
-  def compBinOp(expr1: Expr, expr2: Expr, comparison: InstrCond) = {
+  def compBinOp(expr1: Expr, expr2: Expr, comparison: InstrCond) : ListBuffer[Instruction] = {
     val setup = binOpSetup(expr1, expr2)
     setup ++= ListBuffer(
       Cmp(G1, G2, InstrSize.fullReg),

@@ -184,9 +184,14 @@ case class Mod(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
 object Mod extends ParserBridgePos2[Expr, Expr, IntBinOp]
 case class Plus(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
 object Plus extends ParserBridgePos2[Expr, Expr, IntBinOp]
+// Binary Operators
 case class Minus(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
 object Minus extends ParserBridgePos2[Expr, Expr, IntBinOp]
-
+case class BinAnd(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
+object BinAnd extends ParserBridgePos2[Expr, Expr, IntBinOp]
+case class BinOr(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
+object BinOr extends ParserBridgePos2[Expr, Expr, IntBinOp]
+// End of Binary Operators
 case class GreaterThan(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends CompBinOp
 object GreaterThan extends ParserBridgePos2[Expr, Expr, CompBinOp]
 case class GreaterThanEq(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends CompBinOp
@@ -199,7 +204,6 @@ case class Equals(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends CompBinOp
 object Equals extends ParserBridgePos2[Expr, Expr, CompBinOp]
 case class NotEquals(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends CompBinOp
 object NotEquals extends ParserBridgePos2[Expr, Expr, CompBinOp]
-
 case class And(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends BoolBinOp
 object And extends ParserBridgePos2[Expr, Expr, BoolBinOp]
 case class Or(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends BoolBinOp

@@ -89,6 +89,17 @@ object lexer {
       "%" -> Label(
         label="arithmetic operator"
       ),
+      // Binary Operators
+      "~" -> Label(
+        label="binary operator"
+      ),
+      "&" -> Label(
+        label="binary operator"
+      ),
+      "|" -> Label(
+        label="binary operator"
+      ),
+      // End of Binary Operators
       "ord" -> Label(
         label="unary operator"
       ),

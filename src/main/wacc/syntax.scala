@@ -7,6 +7,7 @@ import parsley.position._
 import parsley.ap._
 import parsley.syntax.zipped
 import parsley.errors.combinator.ErrorMethods
+import scala.collection.mutable.HashMap
 
 
 trait Position {
@@ -59,13 +60,18 @@ case class MACROFN(name : Ident, identList : MacroArgs)(val pos: (Int, Int)) ext
 object MACROFN extends ParserBridgePos2[Ident, MacroArgs, MACROFN]
 case class MacroArgs(identList: List[Ident])(val pos: (Int, Int)) extends Position
 object MacroArgs extends ParserBridgePos1[List[Ident], MacroArgs]
-case class MACRO(name : String, value : List[MacroValue])(val pos: (Int, Int)) extends Position
-object MACRO extends ParserBridgePos2[String, List[MacroValue], MACRO]
+case class DEF_MACRO(name : String, values : MacroValues)(val pos: (Int, Int)) extends Position
+object DEF_MACRO extends ParserBridgePos2[String, MacroValues, DEF_MACRO]
+
+case class MacroValues(mvs: List[MacroValue])(val pos: (Int, Int)) extends Stat
+object MacroValues extends ParserBridgePos1[List[MacroValue], MacroValues]
 
 // Program (Extending Position)
 
 case class Program(funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) extends Position {
   var symbolTable: SymbolTable  = new SymbolTable(None);
+
+
 }
 object Program extends ParserBridgePos2[List[Func], List[Stat], Program]
 

@@ -49,6 +49,10 @@ object Utils {
   def parseSucceeds(input: String, expected: List[Stat]): Assertion =
     parser.parse("begin " + input + " end") shouldBe Success(Program(List(), expected)(pos))
 
+  def parseSucceeds(macroInputs : String, programInput : String, expected : List[Stat]): Assertion =
+    
+    parser.parse(macroInputs + " begin " + programInput + " end") shouldBe Success(Program(List(), expected)(pos))
+
   def parseSucceeds(input: String, expected: Expr): Assertion =
     parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), List(Exit(expected)(pos)))(pos))
 

@@ -21,15 +21,15 @@ class parseAtoms extends AnyFlatSpec {
     parseSucceeds("+123", IntLiter(123)(pos))
   }
 
-  it should "parse signed negative int literals" ignore {
-    parseSucceeds("-123", Neg(IntLiter(123)(pos))(pos))
+  it should "parse signed negative int literals" in {
+    parseSucceeds("-123", IntLiter(-123)(pos))
   }
 
   it should "parse maximum signed int literals" in {
     parseSucceeds("2147483647", IntLiter(2147483647)(pos))
   }
 
-  it should "parse minimum signed int literals" ignore {
+  it should "parse minimum signed int literals" in {
     parseSucceeds("-2147483648", IntLiter(-2147483648)(pos))
   }
 

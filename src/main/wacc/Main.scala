@@ -68,8 +68,10 @@ object Main {
       }
       parser.parse(fileContent) match {
         case Success(prog) => prog match {
-          case Program(funcList, _) => parser.validFunctions(funcList) match {
-            case true  => semanticCheck(prog, fileName)
+          case prog@Program(funcList, _) => parser.validFunctions(funcList) match {
+            case true  => {
+              semanticCheck(prog, fileName)
+            }
             case false => syntaxError("Non-terminating branches found")
           }
           case _ => syntaxError("Program is not Well-Formed")

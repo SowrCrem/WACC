@@ -27,6 +27,7 @@ import parsley.character.oneOf
 import scala.collection.mutable
 
 object parser {
+  val macroMap = new mutable.HashMap[Parsley[String], Parsley[MacroValues]]()
 
   // -- Expression Parsers ----------------------------------------- //
   lazy val arrayelemParser: Parsley[Expr] =
@@ -153,11 +154,20 @@ object parser {
     AsgnEq(assignLhs, "=" ~> assignRhs)
   }
 
+  // val macroAtom : Parsley[Stat] = {
+  //   val x = "~" ~> atomic(string)
+  //   printf("Macro: %s\n", macroMap.toString())
+  //   macroMap.get(x) match {
+  //     case Some(m) => m
+  //     case None => throw new Exception("Macro not found")
+  //   }
+  // }
+
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser | asgnEqParser |
       readParser | freeParser | returnParser |
       exitParser | printParser | printlnParser |
-      ifParser | whileParser | beginParser
+      ifParser | whileParser | beginParser // | macroAtom
   }
 
 
@@ -176,26 +186,30 @@ object parser {
     Func(typeParser, identifierParser,"(" ~> paramListParser <~ ")", "is" ~> stmtParser <~ "end")
 
   // -- Macro Parser ----------------------------------------------- //
-  val macroMap = new mutable.HashMap[Parsley[String], Parsley[List[MacroValue]]]()
   
-  val macroValueParser: Parsley[List[MacroValue]] = many(atomic(funcParser)) | stmtParser | many(exprParser)
+  val macroValueParser: Parsley[List[MacroValue]] = some(atomic(funcParser)) | stmtParser | some(exprParser)
 
-  val macroParser: Parsley[MACRO] = {
-    val macroName = "DEF" ~> atomic(ident) <~ ":="
-    val macroValue = macroValueParser <~ "END_DEF"
+  val macroParser: Parsley[DEF_MACRO] = {
+    val macroName = "DEF" ~> atomic(string) <~ ":="
+    val macroValue = MacroValues(macroValueParser <~ "END_DEF")
     macroMap.put(macroName, macroValue)
-    MACRO(macroName, macroValue)
+    DEF_MACRO(macroName, macroValue)
   }
   
   // -- Program Parser --------------------------------------------- //
-  val program: Parsley[Program] = Program(macroParser ~> "begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
-
+  val program: Parsley[Program] = {
+    Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
+  }
 
 
   // -- Parser ---------------------------------------------------- //
-  val parser = fully(program)
+  val parser = {
+    fully(program)
+  }
 
-  def parse(input: String): Result[String, Program] = parser.parse(input)
+  def parse(input: String): Result[String, Program] = {
+    parser.parse(input)
+  }
 
   // -- AST Validation -------------------------------------------- //
   def validEndingStatement(stmts: List[Stat]): Boolean = {
@@ -216,4 +230,5 @@ object parser {
       }
     )
   }
+  
 }

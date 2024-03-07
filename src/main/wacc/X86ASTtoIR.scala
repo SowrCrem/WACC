@@ -189,10 +189,10 @@ object X86IRGenerator {
     val setupStack = StackMachine.addFrame(table, Some(paramList))
 
 
-    val setupStack = StackMachine.addFrame(
-      table,
-      Some(paramList)
-    )
+    // val setupStack = StackMachine.addFrame(
+    //   table,
+    //   Some(paramList)
+    // )
     var body = {
       val table = func.symbolTable
       val stats = for (s <- func.statList) yield statToIR(s)
@@ -619,7 +619,8 @@ object X86IRGenerator {
       )
     }
     case r@Return(expr) => {
-      generateReturnIR(r)
+      // generateReturnIR(r)
+      ListBuffer()
     }
     case Skip() => {
       ListBuffer(

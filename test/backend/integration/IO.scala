@@ -20,8 +20,8 @@ class IO extends AnyFlatSpec with BeforeAndAfterEach {
 
   // Print Tests --------------------------------------------------------------------------------------------
 
-  it should "run valid/IO/print/multipleStringAssignment.wacc" in {
-    val path = constructPath(List("valid", "IO", "print", "multipleStringAssignment.wacc"))
+  it should "run valid/IO/print/multipleStringsAssignment.wacc" in {
+    val path = constructPath(List("valid", "IO", "print", "multipleStringsAssignment.wacc"))
     val expectedOut = "s1 is Hi\ns2 is Hello\nThey are not the same string.\nNow make s1 = s2" +
                       "\ns1 is Hello\ns2 is Hello\nThey are the same string."
     runSucceeds(path, expectedOut)

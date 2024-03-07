@@ -3,15 +3,6 @@ package wacc
 import wacc.Errors._
 import scala.collection.mutable.ListBuffer
 
-/* TODO:
-   [ ] Add semantic information to AST nodes, or enrich symbol table entry
-   
-   [ ] For array checking, use more efficient type checking to match on the outer dimensions and move inwards rather than iterative through entire structure
-
-   [ ] Refactor check (not necessary); add comments
-   
-   */
-
 class TypeChecker(var initialSymbolTable: SymbolTable) {
 
   var errors: ListBuffer[SemanticError] = ListBuffer()
@@ -21,7 +12,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
 
     if (errors.isEmpty) {
       Right(initialSymbolTable)
-    } else {
+    } else { 
       Left(errors)
     } 
   
@@ -120,7 +111,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       exprType match {
         // See if the type of the expression matches the type of the variable
         case Some(t) if t == typeNode => {
-          ident.typeNode = symbol
+          symbol = ident.typeNode
           symbolTable.add(ident.value, symbol)
           None
         }
@@ -152,20 +143,22 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                 case _      => false
               }
               if (xCompat && yCompat) {
-                ident.typeNode = symbol
+                symbol = ident.typeNode //= symbol
                 symbolTable.add(ident.value, symbol)
                 None
               } else {
                 errors += new TypeMismatchError(
                   position, 
-                  typeNode.toString(), exprType.getOrElse("none").toString())
+                  typeNode.toString(), exprType.getOrElse("none").toString()
+                )
               }
             }
           }
         
         case _ =>
           if (
-            (typeNode == StringTypeNode()(position.pos) && exprType == Some(
+            (typeNode == ArrayTypeNode(StringTypeNode()(position.pos))(position.pos) && 
+            exprType == Some(
               ArrayTypeNode(CharTypeNode()(position.pos))(position.pos)
             ))
           ) {
@@ -177,7 +170,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
               rvalue != Null()(position.pos) && 
               exprType.getOrElse(None) != Null()(position.pos)) {
               errors += new TypeMismatchError(position, 
-                typeNode.toString(), exprType.getOrElse("none").toString())
+                typeNode.toString(), exprType.getOrElse(" none1").toString())
             } else {
               ident.typeNode = symbol
               symbolTable.add(ident.value, symbol)
@@ -193,6 +186,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     case AsgnEq(lhs, rhs) =>
       val lhsType = check(lhs, symbolTable, returnType)
       val rhsType = check(rhs, symbolTable, returnType)
+
       if (
         lhsType != rhsType && !compatiblePairTypes(
           lhsType.getOrElse(IntLiter(0)(position.pos)),
@@ -216,6 +210,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
               None
           }
         }
+        
         case _ => None
       }
 
@@ -269,7 +264,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     // PRINT STATEMENTS
     case Print(expr) =>
       val exprType = check(expr, symbolTable, returnType)
-      println("Print tried to print " + exprType.getOrElse("none").toString())
       exprType match {
         case Some(t) =>
           None
@@ -412,7 +406,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           None
       }
 
-    // FIRST PAIR ELEMENT from NEWPAIR
+    // FIRST PAIR ELEMENT of expr
     case FstNode(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(PairTypeNode(fst, _)) => Some(fst)
@@ -421,7 +415,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           None
       }
 
-    // SECOND PAIR ELEMENT from NEWPAIR
+    // SECOND PAIR ELEMENT of expr
     case SndNode(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(PairTypeNode(_, snd)) => Some(snd)
@@ -470,8 +464,9 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                     }
                   )
                   arrElem.typeNode = node
-
-                  Some(node)
+                  printf("arr type is %s at linenumber %s\n", node, position.pos.toString())
+                  printf("node is %s at linenumber %s\n", node, position.pos.toString())
+                  Some(arrType)
                 }
               }
             case _ =>

@@ -85,7 +85,7 @@ object Utils {
     if (!Main.ROOT_DIR) { exePath = Main.parentDirPath(exePath) }
     var assembledPath = exeName
     if (!Main.ROOT_DIR) { assembledPath = Main.parentDirPath(assembledPath) }
-    val gccCommand = s"gcc -no-pie -o " + s"$assembledPath -z noexecstack " + s"$exePath"
+    val gccCommand = s"gcc -o " + s"$assembledPath -z noexecstack " + s"$exePath"
     gccCommand.!
     "pwd".!
     assembledPath

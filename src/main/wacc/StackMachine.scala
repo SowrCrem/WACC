@@ -60,6 +60,8 @@ object StackMachine {
             name,
             offset + totalOffset + 8
           )
+
+          
           return Some((offset + 8, totalOffset))
         }
       }
@@ -169,6 +171,7 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
       if (typenode.isParam) {
         declaredVars += name
         pushedArgSize += typenode.size
+        localVarSize += typenode.size
       } else {
         if (!typenode.isInstanceOf[Func]) {
           varMap += (name -> localVarSize)
@@ -191,7 +194,7 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
           * onto the stack in reverse order after local variables and control
           * information
           */
-        var currentOffset = 2 * 8
+        var currentOffset = 2 * 8 + 8
         for (p <- paramList.paramList.reverse) {
           varMap.addOne(p.ident.value, -(currentOffset + Constants.MAX_REGSIZE))
           currentOffset += p.typeNode.size

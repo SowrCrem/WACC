@@ -27,6 +27,7 @@ import parsley.character.oneOf
 
 object parser {
 
+  // -- Expression Parsers ----------------------------------------- //
   lazy val arrayelemParser: Parsley[Expr] =
     ArrayElem(Ident(lexer.ident), some("[" ~> exprParser <~ "]"))
   lazy val intParser: Parsley[Expr] = IntLiter(lexer.integer)
@@ -34,7 +35,7 @@ object parser {
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
   lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string)
   lazy val identifierParser: Parsley[Ident] = Ident(lexer.ident)
-  lazy val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
+  lazy val bracketsParser: functionParsley[Expr] = Brackets("(" ~> exprParser <~ ")")
   lazy val digit = oneOf('0' to '9')
 
   lazy val atoms =
@@ -175,6 +176,10 @@ object parser {
 
   // -- Program Parser --------------------------------------------- //
   val program: Parsley[Program] = Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
+
+  // -- Macro Parser ----------------------------------------------- //
+  val macroParser: Parsley[MACRO] = ??? // MACRO("DEF" ~> atomic(ident) <~ "=" ~> atomic(ident))
+  | 
 
   // -- Parser ---------------------------------------------------- //
   val parser = fully(program)

@@ -53,6 +53,14 @@ trait ParserBridgePos4[-A, -B, -C, -D, +E] extends ParserSingletonBridgePos[(A, 
 }
 
 
+/* Case classes in AST to represent macros */
+case class MACROFN(name : Ident, identList : MacroArgs)(val pos: (Int, Int)) extends Position
+object MACROFN extends ParserBridgePos2[Ident, MacroArgs, MACROFN]
+case class MacroArgs(identList: List[Ident])(val pos: (Int, Int)) extends Position
+object MacroArgs extends ParserBridgePos1[List[Ident], MacroArgs]
+case class MACRO(name : String)(val pos: (Int, Int)) extends Position
+object MACRO extends ParserBridgePos1[String, MACRO]
+
 // Program (Extending Position)
 
 case class Program(funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) extends Position {

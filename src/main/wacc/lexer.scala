@@ -89,6 +89,12 @@ object lexer {
       "%" -> Label(
         label="arithmetic operator"
       ),
+      ":=" -> Label(
+        label="assignment operator"
+      ),
+      "=" -> Label(
+        label="assignment operator"
+      ),
       "ord" -> Label(
         label="unary operator"
       ),
@@ -167,6 +173,12 @@ object lexer {
       "null" -> Label(
         label="null"
       ),
+      "DEF" -> Label(
+        label="macro definition"
+      ),
+      "~" -> Label(
+        label="macro expansion"
+      ),
     )
   }
 
@@ -230,7 +242,9 @@ object lexer {
         "snd",
         "true",
         "false",
-        "null"
+        "null",
+        "DEF",
+        "~"
       ),
       hardOperators = Set(
         "*",
@@ -249,7 +263,8 @@ object lexer {
         "==",
         "!=",
         "&&",
-        "||"
+        "||",
+        ":="
       ),
       caseSensitive = true
     )

@@ -162,7 +162,7 @@ class parseTypes extends AnyFlatSpec {
     parser.parse(
       "begin int[] a = [1,2,3,4]; bool[] b = [true, false]; pair(int[], bool[]) x = newpair(a, b) end"
     ) shouldBe Success(
-      Program(
+      Program(List(),
         List(),
         List(
           IdentAsgn(

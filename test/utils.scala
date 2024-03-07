@@ -32,7 +32,7 @@ object Utils {
 
     def checkSucceedsStats(statList: List[Stat]): Assertion = checkSucceeds(List(), statList)
 
-    def checkSucceeds(funcList: List[Func], statList: List[Stat]): Assertion = checkSucceeds(Program(funcList, statList)(pos))
+    def checkSucceeds(funcList: List[Func], statList: List[Stat]): Assertion = checkSucceeds(Program(List(), funcList, statList)(pos))
 
     def checkSucceeds(node: Position): Assertion = noException should be thrownBy typeChecker.check(node)
 
@@ -47,14 +47,14 @@ object Utils {
   def parseSucceeds(input: String, expected: Stat): Assertion = parseSucceeds(input, List(expected))
 
   def parseSucceeds(input: String, expected: List[Stat]): Assertion =
-    parser.parse("begin " + input + " end") shouldBe Success(Program(List(), expected)(pos))
+    parser.parse("begin " + input + " end") shouldBe Success(Program(List(), List(), expected)(pos))
 
   def parseSucceeds(macroInputs : String, programInput : String, expected : List[Stat]): Assertion =
     
-    parser.parse(macroInputs + " begin " + programInput + " end") shouldBe Success(Program(List(), expected)(pos))
+    parser.parse(macroInputs + " begin " + programInput + " end") shouldBe Success(Program(List(), List(), expected)(pos))
 
   def parseSucceeds(input: String, expected: Expr): Assertion =
-    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), List(Exit(expected)(pos)))(pos))
+    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), List(), List(Exit(expected)(pos)))(pos))
 
   def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
     case "" => parser.parse("begin exit " + input + " end") should matchPattern {

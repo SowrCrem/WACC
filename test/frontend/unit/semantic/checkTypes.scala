@@ -212,7 +212,7 @@ class checkTypes extends SemanticUnitTester {
   // Tests for Programs -------------------------------------------------------------------------------------------------
 
   it should "accept fully-formed programs" in {
-    val position = Program(
+    val position = Program(List(),
       List(
         Func(
           IntTypeNode()(pos),

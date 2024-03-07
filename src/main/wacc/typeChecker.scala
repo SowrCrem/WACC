@@ -25,7 +25,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       returnType: Option[TypeNode]
   ): Option[TypeNode] = position match {
     // PROGRAMS
-    case prog@Program(funcList, statList) => //checkProgram(position, funcList, stat)
+    case prog@Program(_, funcList, statList) => //checkProgram(position, funcList, stat)
       {
 
 

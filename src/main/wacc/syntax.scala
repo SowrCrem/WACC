@@ -66,14 +66,17 @@ object DEF_MACRO extends ParserBridgePos2[String, MacroValues, DEF_MACRO]
 case class MacroValues(mvs: List[MacroValue])(val pos: (Int, Int)) extends Stat
 object MacroValues extends ParserBridgePos1[List[MacroValue], MacroValues]
 
+
+case class MacroApplication (name: String)(val pos: (Int, Int)) extends Stat
+object MacroApplication extends ParserBridgePos1[String, MacroApplication]
 // Program (Extending Position)
 
-case class Program(funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) extends Position {
+case class Program(macroList: List[DEF_MACRO] ,funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) extends Position {
   var symbolTable: SymbolTable  = new SymbolTable(None);
 
 
 }
-object Program extends ParserBridgePos2[List[Func], List[Stat], Program]
+object Program extends ParserBridgePos3[List[DEF_MACRO], List[Func], List[Stat], Program]
 
 case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, statList: List[Stat])(val pos: (Int, Int)) extends MacroValue with TypeNode {
   var symbolTable: SymbolTable = new SymbolTable(None);

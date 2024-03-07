@@ -95,7 +95,7 @@ object parser {
   lazy val baseType: Parsley[BaseTypeNode] =
     IntTypeNode <# "int"| BoolTypeNode <# "bool" | CharTypeNode <# "char" | 
     StringTypeNode <# "string"
-
+ 
   lazy val arrayTypeParser: Parsley[ArrayTypeNode] = 
     chain.postfix1(baseType <|> pairType)(ArrayTypeNode <# ("[" <~> "]"))
 
@@ -154,20 +154,15 @@ object parser {
     AsgnEq(assignLhs, "=" ~> assignRhs)
   }
 
-  // val macroAtom : Parsley[Stat] = {
-  //   val x = "~" ~> atomic(string)
-  //   printf("Macro: %s\n", macroMap.toString())
-  //   macroMap.get(x) match {
-  //     case Some(m) => m
-  //     case None => throw new Exception("Macro not found")
-  //   }
-  // }
+  val macroAtom : Parsley[Stat] = {
+    MacroApplication("~" ~> atomic(string))
+  }
 
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser | asgnEqParser |
       readParser | freeParser | returnParser |
       exitParser | printParser | printlnParser |
-      ifParser | whileParser | beginParser // | macroAtom
+      ifParser | whileParser | beginParser | macroAtom
   }
 
 
@@ -198,7 +193,7 @@ object parser {
   
   // -- Program Parser --------------------------------------------- //
   val program: Parsley[Program] = {
-    Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
+    Program(many(atomic(macroParser)), "begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
   }
 
 

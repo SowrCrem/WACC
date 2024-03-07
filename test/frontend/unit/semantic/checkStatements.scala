@@ -201,7 +201,7 @@ class checkStatements extends SemanticUnitTester {
 
   it should "reject return with statement after" in {
     checkFails(
-      Program(
+      Program(List(),
         List(Func(IntTypeNode()(pos), Ident("f")(pos), ParamList(List())(pos), List(Return(IntLiter(1)(pos))(pos)))(pos)),
         List(Return(IntLiter(1)(pos))(pos), Skip()(pos))
       )(pos),
@@ -253,7 +253,7 @@ class checkStatements extends SemanticUnitTester {
   }
 
   it should "reject multiple skips" ignore {
-    checkFails(Program(
+    checkFails(Program(List(),
       List(Func(IntTypeNode()(pos), Ident("f")(pos), ParamList(List())(pos), List(Return(IntLiter(1)(pos))(pos)))(pos)),
       List(Skip()(pos), Skip()(pos))
     )(pos),

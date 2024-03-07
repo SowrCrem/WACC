@@ -68,8 +68,9 @@ object Main {
       }
       parser.parse(fileContent) match {
         case Success(prog) => prog match {
-          case prog@Program(funcList, _) => parser.validFunctions(funcList) match {
+          case prog@Program(macroList, funcList, _) => parser.validFunctions(funcList) match {
             case true  => {
+              val macroedProgram = MacroExpander.expandMacros(prog)
               semanticCheck(prog, fileName)
             }
             case false => syntaxError("Non-terminating branches found")

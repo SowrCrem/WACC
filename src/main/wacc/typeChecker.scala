@@ -12,7 +12,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
 
     if (errors.isEmpty) {
       Right(initialSymbolTable)
-    } else {
+    } else { 
       Left(errors)
     } 
   
@@ -186,6 +186,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     case AsgnEq(lhs, rhs) =>
       val lhsType = check(lhs, symbolTable, returnType)
       val rhsType = check(rhs, symbolTable, returnType)
+
       if (
         lhsType != rhsType && !compatiblePairTypes(
           lhsType.getOrElse(IntLiter(0)(position.pos)),
@@ -209,6 +210,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
               None
           }
         }
+        
         case _ => None
       }
 
@@ -462,8 +464,9 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
                     }
                   )
                   arrElem.typeNode = node
-
-                  Some(node)
+                  printf("arr type is %s at linenumber %s\n", node, position.pos.toString())
+                  printf("node is %s at linenumber %s\n", node, position.pos.toString())
+                  Some(arrType)
                 }
               }
             case _ =>

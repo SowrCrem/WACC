@@ -20,7 +20,7 @@ class Array extends AnyFlatSpec with BeforeAndAfterEach {
 
   "WACC" should "run valid/array/array.wacc" in {
     val path = constructPath(List("valid", "array", "array.wacc"))
-    runSucceeds(path)
+    runSucceeds(path) 
   }
 
   it should "run valid/array/arrayBasic.wacc" in {

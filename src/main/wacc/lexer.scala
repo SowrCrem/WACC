@@ -179,6 +179,9 @@ object lexer {
       "~" -> Label(
         label="macro expansion"
       ),
+      "END_DEF" -> Label(
+        label="macro definition"
+      ),
     )
   }
 
@@ -244,7 +247,8 @@ object lexer {
         "false",
         "null",
         "DEF",
-        "~"
+        "~",
+        "END_DEF",
       ),
       hardOperators = Set(
         "*",

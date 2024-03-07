@@ -52,14 +52,15 @@ trait ParserBridgePos4[-A, -B, -C, -D, +E] extends ParserSingletonBridgePos[(A, 
     override final def con(pos: (Int, Int)): (A, B, C, D) => E = this.apply(_, _, _, _)(pos)
 }
 
+sealed trait MacroValue extends Position
 
 /* Case classes in AST to represent macros */
 case class MACROFN(name : Ident, identList : MacroArgs)(val pos: (Int, Int)) extends Position
 object MACROFN extends ParserBridgePos2[Ident, MacroArgs, MACROFN]
 case class MacroArgs(identList: List[Ident])(val pos: (Int, Int)) extends Position
 object MacroArgs extends ParserBridgePos1[List[Ident], MacroArgs]
-case class MACRO(name : String)(val pos: (Int, Int)) extends Position
-object MACRO extends ParserBridgePos1[String, MACRO]
+case class MACRO(name : String, value : List[MacroValue])(val pos: (Int, Int)) extends Position
+object MACRO extends ParserBridgePos2[String, List[MacroValue], MACRO]
 
 // Program (Extending Position)
 
@@ -68,7 +69,7 @@ case class Program(funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) 
 }
 object Program extends ParserBridgePos2[List[Func], List[Stat], Program]
 
-case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, statList: List[Stat])(val pos: (Int, Int)) extends Position with TypeNode {
+case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, statList: List[Stat])(val pos: (Int, Int)) extends MacroValue with TypeNode {
   var symbolTable: SymbolTable = new SymbolTable(None);
 }
 object Func extends ParserBridgePos4[TypeNode, Ident, ParamList, List[Stat], Func]
@@ -86,7 +87,7 @@ case class Param(typenode: TypeNode, ident: Ident)(val pos: (Int, Int)) extends 
 object Param extends ParserBridgePos2[TypeNode, Ident, Param]
 
 // Statements (Extending Position)
-sealed trait Stat extends Position
+sealed trait Stat extends MacroValue
 
 case class Skip()(val pos: (Int, Int)) extends Stat
 object Skip extends ParserBridgePos0[Stat]
@@ -134,7 +135,7 @@ object BeginEnd extends ParserBridgePos1[List[Stat], BeginEnd]
 sealed trait RValue 
 
 // Expr (Extending Position)
-sealed trait Expr extends Position with RValue {
+sealed trait Expr extends MacroValue with RValue {
   var typeNode: TypeNode = null;
 }
 

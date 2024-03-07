@@ -24,6 +24,7 @@ import parsley.character.noneOf
 import parsley.{Success, Failure}
 import scala.sys.process._
 import parsley.character.oneOf
+import scala.collection.mutable
 
 object parser {
 
@@ -35,7 +36,7 @@ object parser {
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
   lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string)
   lazy val identifierParser: Parsley[Ident] = Ident(lexer.ident)
-  lazy val bracketsParser: functionParsley[Expr] = Brackets("(" ~> exprParser <~ ")")
+  lazy val bracketsParser: Parsley[Expr] = Brackets("(" ~> exprParser <~ ")")
   lazy val digit = oneOf('0' to '9')
 
   lazy val atoms =
@@ -174,12 +175,22 @@ object parser {
   val funcParser: Parsley[Func] = 
     Func(typeParser, identifierParser,"(" ~> paramListParser <~ ")", "is" ~> stmtParser <~ "end")
 
-  // -- Program Parser --------------------------------------------- //
-  val program: Parsley[Program] = Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
-
   // -- Macro Parser ----------------------------------------------- //
-  val macroParser: Parsley[MACRO] = ??? // MACRO("DEF" ~> atomic(ident) <~ "=" ~> atomic(ident))
-  | 
+  val macroMap = new mutable.HashMap[Parsley[String], Parsley[List[MacroValue]]]()
+  
+  val macroValueParser: Parsley[List[MacroValue]] = many(atomic(funcParser)) | stmtParser | many(exprParser)
+
+  val macroParser: Parsley[MACRO] = {
+    val macroName = "DEF" ~> atomic(ident) <~ ":="
+    val macroValue = macroValueParser <~ "END_DEF"
+    macroMap.put(macroName, macroValue)
+    MACRO(macroName, macroValue)
+  }
+  
+  // -- Program Parser --------------------------------------------- //
+  val program: Parsley[Program] = Program(macroParser ~> "begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
+
+
 
   // -- Parser ---------------------------------------------------- //
   val parser = fully(program)

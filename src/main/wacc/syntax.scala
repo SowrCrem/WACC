@@ -136,6 +136,11 @@ object NewPair extends ParserBridgePos2[Expr, Expr, NewPair]
 case class Call(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat
 object Call extends ParserBridgePos2[Ident, List[Expr], Call]
 
+/* EXTENSION - Void Types */
+case class CallVoid(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat
+object CallVoid extends ParserBridgePos2[Ident, List[Expr], CallVoid]
+
+
 case class ArrayLiter(exprList: List[Expr])(val pos: (Int, Int)) extends Expr  
 object ArrayLiter extends ParserBridgePos1[List[Expr], ArrayLiter]
 
@@ -279,7 +284,7 @@ trait TypeNode extends Position {
   val size = 0;
 }
 
-sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode
+sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode with FuncTypeNode
 case class IntTypeNode()(val pos: (Int, Int)) extends BaseTypeNode {
   override def toString: String = "integer"
   override val size: Int = 8
@@ -333,3 +338,13 @@ case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode)(val pos: (
 
 }
 object PairTypeNode extends ParserBridgePos2[PairElemTypeNode, PairElemTypeNode, PairTypeNode]
+
+/* EXTENSION - Void Types */
+
+sealed trait FuncTypeNode extends TypeNode
+
+case class VoidTypeNode()(val pos: (Int, Int)) extends TypeNode with FuncTypeNode {
+  override def toString: String = "void"
+  override val size: Int = 0
+}
+object VoidTypeNode extends ParserBridgePos0[VoidTypeNode]

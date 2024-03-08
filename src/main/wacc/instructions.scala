@@ -90,10 +90,8 @@ case class CheckMoveNotEqual(
 
 case class ConvertDoubleWordToQuadWord() extends Instruction
 
-case class AndInstr(dest: Operand, src: Operand, instrSize: InstrSize)
-    extends Instruction
-case class OrInstr(dest: Operand, src: Operand, instrSize: InstrSize)
-    extends Instruction
+case class AndInstr(dest: Operand, src: Operand, instrSize: InstrSize) extends Instruction
+case class OrInstr(dest: Operand, src: Operand, instrSize: InstrSize) extends Instruction
 case class NotInstr(dest: Operand, instrSize: InstrSize) extends Instruction
 case class Eor(dest: Operand, src: Operand, operand: Operand, instrSize: InstrSize)
     extends Instruction

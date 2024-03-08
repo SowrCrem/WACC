@@ -1,0 +1,17 @@
+# bitwise NOT of two integers
+
+# Output:
+# Hello!
+#
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+  void sayHello() is
+    print "Hello!"
+  end
+  call sayHello()
+end

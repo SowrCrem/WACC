@@ -619,6 +619,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     case Skip()         => None
     case _ =>
       println("Type checking not implemented for " + position)
+      errors += new NotDefinedError(position, "Type checking not implemented for " + position)
       None
   }
 

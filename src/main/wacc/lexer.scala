@@ -118,6 +118,9 @@ object lexer {
       ";" -> Label(
         label="semicolon"
       ),
+      "void" -> Label(
+        label="type"
+      ),
       "int" -> Label(
         label="type"
       ),

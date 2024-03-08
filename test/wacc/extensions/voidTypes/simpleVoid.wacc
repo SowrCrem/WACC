@@ -11,7 +11,7 @@
 
 begin
   void sayHello() is
-    print "Hello!"
+    println "Hello!"
   end
   call sayHello()
 end

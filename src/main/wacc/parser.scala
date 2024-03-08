@@ -109,10 +109,7 @@ object parser {
     VoidTypeNode <# "void"
 
   lazy val typeParser: Parsley[TypeNode] =
-    atomic(arrayTypeParser) | baseTypeParser | pairTypeParser
-
-  lazy val funcTypeParser: Parsley[FuncTypeNode] = 
-    baseTypeParser | voidTypeParser
+    atomic(arrayTypeParser) | baseTypeParser | pairTypeParser | voidTypeParser
 
   // -- Statement Parsers ----------------------------------------- //
 
@@ -183,7 +180,7 @@ object parser {
   // -- Function Parser -------------------------------------------- //
 
   val funcParser: Parsley[Func] = 
-    Func(funcTypeParser, identifierParser,"(" ~> paramListParser <~ ")", "is" ~> stmtParser <~ "end")
+    Func(typeParser, identifierParser,"(" ~> paramListParser <~ ")", "is" ~> stmtParser <~ "end")
 
   // -- Program Parser --------------------------------------------- //
   val program: Parsley[Program] = Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")

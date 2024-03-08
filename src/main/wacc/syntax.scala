@@ -284,7 +284,7 @@ trait TypeNode extends Position {
   val size = 0;
 }
 
-sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode with FuncTypeNode
+sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode
 case class IntTypeNode()(val pos: (Int, Int)) extends BaseTypeNode {
   override def toString: String = "integer"
   override val size: Int = 8
@@ -341,9 +341,7 @@ object PairTypeNode extends ParserBridgePos2[PairElemTypeNode, PairElemTypeNode,
 
 /* EXTENSION - Void Types */
 
-sealed trait FuncTypeNode extends TypeNode
-
-case class VoidTypeNode()(val pos: (Int, Int)) extends TypeNode with FuncTypeNode {
+case class VoidTypeNode()(val pos: (Int, Int)) extends TypeNode {
   override def toString: String = "void"
   override val size: Int = 0
 }

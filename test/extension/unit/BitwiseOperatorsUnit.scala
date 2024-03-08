@@ -18,8 +18,8 @@ class BitwiseOperatorsUnit extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
-  "WACC" should "parse valid/extensions/bitwise-operators/andExprBitwise.wacc" in {
-    val path = constructPath(List("valid", "extensions", "bitwise-operators", "andExprBitwise.wacc"))
+  "WACC" should "parse extensions/bitwise-operators/andExprBitwise.wacc" in {
+    val path = constructPath(List("extensions", "bitwise-operators", "andExprBitwise.wacc"))
     parsesWithoutSyntaxError(path)
   }
 }

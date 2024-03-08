@@ -1,0 +1,20 @@
+# bitwise and of two integers
+
+# Output:
+# 5
+# 1
+#
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+  int a = 5;
+  int b = 3;
+  int result = a & a;
+  println result;
+  int result2 = a & b;
+  println result2;
+end

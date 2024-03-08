@@ -1,8 +1,8 @@
-# bitwise AND of two integers
+# bitwise NOT of two integers
 
 # Output:
-# 5
-# 1
+# -6
+# 2
 #
 
 # Exit:
@@ -11,8 +11,8 @@
 # Program:
 
 begin
-  int result = 5 & 5;
+  int result = ~5;
   println result;
-  int result2 = 5 & 3;
+  int result2 = ~ -3;
   println result2
 end

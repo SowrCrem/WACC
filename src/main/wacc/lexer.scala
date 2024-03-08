@@ -260,7 +260,10 @@ object lexer {
         "==",
         "!=",
         "&&",
-        "||"
+        "||",
+        "&",
+        "|",
+        "~"
       ),
       caseSensitive = true
     )

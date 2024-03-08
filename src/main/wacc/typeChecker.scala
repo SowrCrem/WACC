@@ -482,15 +482,19 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
 
     // BINARY OPERATIONS
     case Mul(lhs, rhs) =>
-      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
+      checkIntsBinOp(position, lhs, rhs, symbolTable, returnType)
     case Div(lhs, rhs) =>
-      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
+      checkIntsBinOp(position, lhs, rhs, symbolTable, returnType)
     case Mod(lhs, rhs) =>
-      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
+      checkIntsBinOp(position, lhs, rhs, symbolTable, returnType)
     case Plus(lhs, rhs) =>
-      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
+      checkIntsBinOp(position, lhs, rhs, symbolTable, returnType)
     case Minus(lhs, rhs) =>
-      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
+      checkIntsBinOp(position, lhs, rhs, symbolTable, returnType)
+    case BitAnd(lhs, rhs) =>
+      checkIntsBinOp(position, lhs, rhs, symbolTable, returnType)
+    case BitOr(lhs, rhs) =>
+      checkIntsBinOp(position, lhs, rhs, symbolTable, returnType)
     case GreaterThan(lhs, rhs) =>
       checkCompBinOp(position, lhs, rhs, symbolTable, returnType)
     case GreaterThanEq(lhs, rhs) =>
@@ -540,6 +544,17 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             "bool", check(expr, symbolTable, returnType).getOrElse("none").toString())
           None
       }
+    case BitNot(expr) => {
+      check(expr, symbolTable, returnType) match {
+        case Some(IntTypeNode()) => Some(IntTypeNode()(position.pos))
+        case _ => {
+          // Expected integer
+          errors += new TypeMismatchError(position, 
+            "int", check(expr, symbolTable, returnType).getOrElse("none").toString())
+          None
+        }
+      }
+    }
     case Neg(expr) =>
       check(expr, symbolTable, returnType) match {
         case Some(IntTypeNode()) => Some(IntTypeNode()(position.pos))
@@ -669,7 +684,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     }
   }
 
-  def checkArithmBinOp(
+  def checkIntsBinOp(
       position: Position,
       lhs: Expr,
       rhs: Expr,

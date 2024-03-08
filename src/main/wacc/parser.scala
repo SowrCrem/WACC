@@ -40,7 +40,7 @@ object parser {
   lazy val atoms =
     atomic(arrayelemParser) | 
     intParser | boolParser | charParser | stringParser |
-      identifierParser | bracketsParser
+      identifierParser | bracketsParser 
 
   // -- Pair Parser ----------------------------------------------- //
 
@@ -68,11 +68,14 @@ object parser {
     Ops(Prefix)(Len <# "len"),
     Ops(Prefix)(Ord <# "ord"),
     Ops(Prefix)(Chr <# "chr"),
+    Ops(Prefix)(BitNot <# "~"),
     Ops(InfixL)(Mul <# "*"),
     Ops(InfixL)(Div <# "/"),
     Ops(InfixL)(Mod <# "%"),
     Ops(InfixL)(Plus <# "+"),
     Ops(InfixL)(Minus <# "-"),
+    Ops(InfixL)(BitAnd <# "&"),
+    Ops(InfixL)(BitOr <# "|"),
     Ops(InfixN)(GreaterThan <# ">"),
     Ops(InfixN)(GreaterThanEq <# ">="),
     Ops(InfixN)(LessThan <# "<"),

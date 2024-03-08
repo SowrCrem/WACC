@@ -1150,9 +1150,27 @@ object X86IRGenerator {
     case Mod(expr1, expr2) => {
       intBinOp(expr1, expr2, ArithmOperations.mod)
     }
+    // Bitwise operators
+    case BitAnd(expr1, expr2) => {
+      val setup = binOpSetup(expr1, expr2)
+      setup ++= ListBuffer(
+        Mov(Dest, G1, InstrSize.fullReg),
+        AndInstr(Dest, G2, InstrSize.fullReg)
+      )
+    }
+    case BitOr(expr1, expr2) => {
+      val setup = binOpSetup(expr1, expr2)
+      setup ++= ListBuffer(
+        Mov(Dest, G1, InstrSize.fullReg),
+        OrInstr(Dest, G2, InstrSize.fullReg)
+      )
+    }
+    case BitNot(expr) => {
+      exprToIR(expr) ++ ListBuffer(
+        NotInstr(Dest, InstrSize.fullReg)
+      )
+    }
     case Call(ident, paramList) => {
-
-
       val instructions = new ListBuffer[Instruction]().empty
       val functionNode = functionGenerator.getFunctionNode(ident.value)
       val handleParams = ListBuffer[Instruction]().empty

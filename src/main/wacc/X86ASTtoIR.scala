@@ -619,8 +619,7 @@ object X86IRGenerator {
       )
     }
     case r@Return(expr) => {
-      // generateReturnIR(r)
-      ListBuffer()
+      generateReturnIR(r)
     }
     case Skip() => {
       ListBuffer(
@@ -760,6 +759,23 @@ object X86IRGenerator {
               ") should not reach this case"
           )
         }
+      }
+    }
+  }
+
+  def generateReturnIR(stat: Stat): Buffer[Instruction] = {
+    val instructions = ListBuffer[Instruction]().empty
+    stat match {
+      case Return(expr) => {
+        instructions ++= exprToIR(expr)
+        instructions ++= ListBuffer(
+          ReturnInstr()
+        )
+      }
+      case _ => {
+        throw new RuntimeException(
+          "This function should only be called on return statements"
+        )
       }
     }
   }

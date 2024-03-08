@@ -54,6 +54,7 @@ object Main {
     writer.close()
   }
 
+  // TODO: REMOVE MAGIC NUMBERS nd Deal with any general uncaught exceptions with a top-level try
   def compile(args: Array[String]): Int = synchronized(args.headOption match {
     case Some(filename) => {
       val fileName = filename.split(java.io.File.separator).last.split('.').head

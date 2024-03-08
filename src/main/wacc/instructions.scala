@@ -92,12 +92,16 @@ case class ConvertDoubleWordToQuadWord() extends Instruction
 
 case class AndInstr(dest: Operand, src: Operand, instrSize: InstrSize)
     extends Instruction
+case class OrInstr(dest: Operand, src: Operand, instrSize: InstrSize)
+    extends Instruction
+case class NotInstr(dest: Operand, instrSize: InstrSize) extends Instruction
 case class Eor(dest: Operand, src: Operand, operand: Operand, instrSize: InstrSize)
     extends Instruction
 case class Orr(dest: Operand, src: Operand, operand: Operand, instrSize: InstrSize)
     extends Instruction
 
 case class Mov(dest: Operand, operand: Operand, size: InstrSize) extends Instruction
+// TODO: 64-bit can't be sign extended, so account for this
 case class MovWithSignExtend(dest: Operand, operand: Operand, size1: InstrSize, size2: InstrSize)
     extends Instruction
 case class ConditionalMov(dest: Operand, src: Operand, cond: InstrCond, size: InstrSize) extends Instruction

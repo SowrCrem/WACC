@@ -23,6 +23,8 @@ object X86IRGenerator {
     */
   val lib: LibFunGenerator = new LibFunGenerator()
 
+  val mainReturn = true
+
   val regTracker = new RegisterTracker
 
   val stringLiterals: Map[String, String] = Map()
@@ -57,7 +59,7 @@ object X86IRGenerator {
       }
     )
   }
-
+  // TODO: We can abstract generateIR by returning a list fo lists, with each ;sit corresponding to each 'section' of our assembly
   /** Generates the intermediate representation for the given AST
     * @param ast
     *   \- The AST of the program to be translated
@@ -114,6 +116,54 @@ object X86IRGenerator {
     instructions
   }
 
+  def fstOrSndNode(identifier: Expr, rhs: Position, isFst: Boolean): Buffer[Instruction] = {
+    // Null dereference check
+    lib.nullDerefOrFree.setFlag(true)
+    // Get the address to write into
+    // Get the expression to write
+    // Move the expression to the address
+    // Clean up
+    val instructions = exprToIR(rhs)
+    identifier match {
+      case Ident(ident) => {
+        StackMachine.offset(ident) match {
+          case Some((offset, fpchange)) => {
+            fpchange match {
+              case 0 => {
+                instructions += Mov(FPOffset(offset), if (isFst) Dest else RegisterPtr(Dest, InstrSize.fullReg, MAX_REGSIZE), InstrSize.fullReg)
+              }
+              case _ => {
+                val setup = ListBuffer(
+                  AddInstr(SP, Immediate32(fpchange + (if (isFst) 8 else MAX_REGSIZE)), InstrSize.fullReg),
+                  PopRegisters(List(FP), InstrSize.fullReg)
+                )
+                instructions ++= setup ++ ListBuffer(
+                  Mov(FPOffset(offset), Dest, InstrSize.fullReg)
+                ) ++ ListBuffer(
+                  PushRegisters(List(FP), InstrSize.fullReg),
+                  SubInstr(SP, Immediate32(fpchange + MAX_REGSIZE), InstrSize.fullReg),
+                  Mov(FP, SP, InstrSize.fullReg)
+                )
+              }
+            }
+          }
+          case None => {
+            throw new RuntimeException(
+              s"Variable ${ident} not found in stack"
+            )
+          }
+        }
+      }
+      case _ => {
+        throw new RuntimeException(
+          "Value (type: " + identifier.typeNode.toString() +
+            ") should not reach this case"
+        )
+      }
+    }
+    instructions
+  }
+
   /** Converts the given AST to intermediate representation by recursively
     * traversing the AST and converting each node to a list of instructions in
     * the IR.
@@ -123,13 +173,10 @@ object X86IRGenerator {
     */
   def astToIR(position: Position): Buffer[Instruction] = position match {
     case prog @ Program(funcList, stat) => {
-
       val funcIR = new ListBuffer[Instruction]
-
       for (func <- funcList) {
         functionGenerator.addFunction(func.ident.value, func, ListBuffer())
       }
-
       val ir = new ListBuffer[Instruction]
       val statInstrs = for (s <- stat) yield statToIR(s)
       ir ++= statInstrs.flatten
@@ -142,7 +189,11 @@ object X86IRGenerator {
     val setupStack = StackMachine.addFrame(table, Some(paramList))
 
 
-    val body = {
+    // val setupStack = StackMachine.addFrame(
+    //   table,
+    //   Some(paramList)
+    // )
+    var body = {
       val table = func.symbolTable
       val stats = for (s <- func.statList) yield statToIR(s)
       stats.flatten
@@ -443,7 +494,7 @@ object X86IRGenerator {
               )
 
             }
-            case _ => ListBuffer[Instruction]().empty 
+            case _ => ListBuffer[Instruction]().empty
           }
 
         }
@@ -462,7 +513,7 @@ object X86IRGenerator {
                 // call _malloc
                 CallInstr("malloc"),
                 // mov r11, rax
-                Mov(G2, Dest, InstrSize.fullReg) 
+                Mov(G2, Dest, InstrSize.fullReg)
               )
             }
             case _ => ListBuffer.empty
@@ -487,6 +538,9 @@ object X86IRGenerator {
       lib.setPrintLnFlag(true)
       printToIR(expr, true)
     }
+    case Call(_, _) => {
+      ???
+    }
     case Exit(expr) => {
       lib.setExitFlag(true)
       exprToIR(expr) ++ ListBuffer(
@@ -510,8 +564,10 @@ object X86IRGenerator {
           loopStats.flatten
         }
       }
+      // TODO: abstract this to next label
       labelCounter += 1
-
+      // TODO: abstract these to non-magic strings
+      // TODO: Have one list hat we add to instead of concatenatng multiple lists
       ListBuffer(Jump(s"cond${labelCounter}")) ++ ListBuffer(
         Label(s"while${labelCounter}")
       ) ++ body ++ ListBuffer(
@@ -562,10 +618,9 @@ object X86IRGenerator {
         Label(s"end${labelCounter}")
       )
     }
-    case Return(expr) => {
-      exprToIR(expr) ++ ListBuffer(
-        ReturnInstr()
-      )
+    case r@Return(expr) => {
+      // generateReturnIR(r)
+      ListBuffer()
     }
     case Skip() => {
       ListBuffer(
@@ -591,6 +646,9 @@ object X86IRGenerator {
         case Ident(ident) => {
           StackMachine.offset(ident) match {
             case Some((offset, fpchange)) => {
+              instructions ++= ListBuffer(
+                Mov(Arg0, G2, InstrSize.fullReg)
+              )
               fpchange match {
                 case 0 => {
                   // Use offset as start of stack
@@ -637,7 +695,9 @@ object X86IRGenerator {
     }
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
-
+      var fst = false
+      var snd = false
+      // TODO: Remove magic string usage
       val callReadLabel = lhs.typeNode match {
         case IntTypeNode() => {
           lib.setReadIntFlag(true)
@@ -692,6 +752,7 @@ object X86IRGenerator {
             }
           }
         }
+        // TODO: FST + SND 
         case _ => {
           // Message log for value should not reach this case
           throw new RuntimeException(
@@ -822,7 +883,12 @@ object X86IRGenerator {
       lib.setPrintLnFlag(true)
       val instructions : ListBuffer[Instruction] = exprToIR(expr)
       instructions ++ ListBuffer(
-        MovWithSignExtend(Dest, RegisterPtr(Dest, InstrSize.halfReg, -1 * HALF_REGSIZE), InstrSize.fullReg, InstrSize.halfReg),
+        MovWithSignExtend(
+          Dest,
+          RegisterPtr(Dest, InstrSize.halfReg, -1 * HALF_REGSIZE),
+          InstrSize.fullReg,
+          InstrSize.halfReg
+        ),
         Mov(Arg0, Dest, InstrSize.halfReg),
         CallInstr("printi"),
         CallInstr("println")
@@ -850,7 +916,7 @@ object X86IRGenerator {
     }
     case Ord(char) => {
       lib.overflow.setFlag(true)
-      exprToIR(char) 
+      exprToIR(char)
     }
     case IntLiter(value) => {
 
@@ -922,7 +988,6 @@ object X86IRGenerator {
         // mov r12, rax --> store the address of the pair in r12
         Mov(G2, Dest, InstrSize.fullReg)
       )
-
       instructions      
     }
 
@@ -1085,9 +1150,27 @@ object X86IRGenerator {
     case Mod(expr1, expr2) => {
       intBinOp(expr1, expr2, ArithmOperations.mod)
     }
+    // Bitwise operators
+    case BitAnd(expr1, expr2) => {
+      val setup = binOpSetup(expr1, expr2)
+      setup ++= ListBuffer(
+        Mov(Dest, G1, InstrSize.fullReg),
+        AndInstr(Dest, G2, InstrSize.fullReg)
+      )
+    }
+    case BitOr(expr1, expr2) => {
+      val setup = binOpSetup(expr1, expr2)
+      setup ++= ListBuffer(
+        Mov(Dest, G1, InstrSize.fullReg),
+        OrInstr(Dest, G2, InstrSize.fullReg)
+      )
+    }
+    case BitNot(expr) => {
+      exprToIR(expr) ++ ListBuffer(
+        NotInstr(Dest, InstrSize.fullReg)
+      )
+    }
     case Call(ident, paramList) => {
-
-
       val instructions = new ListBuffer[Instruction]().empty
       val functionNode = functionGenerator.getFunctionNode(ident.value)
       val handleParams = ListBuffer[Instruction]().empty

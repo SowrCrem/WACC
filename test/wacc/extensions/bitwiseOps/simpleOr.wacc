@@ -1,0 +1,18 @@
+# bitwise OR of two integers
+
+# Output:
+# 5
+# 7
+#
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+  int result = 5 | 5;
+  println result;
+  int result2 = 5 | 3;
+  println result2
+end

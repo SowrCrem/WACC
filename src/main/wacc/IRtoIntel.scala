@@ -10,8 +10,10 @@ object X86CodeGenerator {
 
   def generate(program: Program): String = makeAssemblyIntel(X86IRGenerator.generateIR(program))
 
+  // TODO: use flatmap(), write directly to a file or an output stream, PrintBuffer or PrintWriter
   def makeAssemblyIntel(instrs: Buffer[Instruction]): String = instrs.map(transInstr).flatten.mkString("\n")
   
+  // TODO: Factor out the common strings
   def transInstr(instruction: Instruction) : List[String] = instruction match {
     case Mov(dest, operand, instrSize) => List(s"  mov ${dest.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")
     case MovWithSignExtend(dest, operand, size1, size2) => List(s"  movsx ${dest.toIntelString(size1)}, ${operand.toIntelString(size2)}")
@@ -21,6 +23,8 @@ object X86CodeGenerator {
     case MulInstr(dest, src, instrSize) => List(s"  imul ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case DivInstr(dest, src, instrSize) => List(s"  idiv ${src.toIntelString(instrSize)}")
     case AndInstr(dest, src, instrSize) => List(s"  and ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case OrInstr(dest, src, instrSize) => List(s"  or ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case NotInstr(dest, instrSize) => List(s"  not ${dest.toIntelString(instrSize)}")
     case Eor(dest, src, operand, instrSize) => List(s"  eor ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case Orr(dest, src, operand, instrSize) => List(s"  orr ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case Cmp(src, operand, instrSize) => List(s"  cmp ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")

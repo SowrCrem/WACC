@@ -186,7 +186,6 @@ case class Plus(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
 object Plus extends ParserBridgePos2[Expr, Expr, IntBinOp]
 case class Minus(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
 object Minus extends ParserBridgePos2[Expr, Expr, IntBinOp]
-
 case class GreaterThan(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends CompBinOp
 object GreaterThan extends ParserBridgePos2[Expr, Expr, CompBinOp]
 case class GreaterThanEq(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends CompBinOp
@@ -199,7 +198,6 @@ case class Equals(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends CompBinOp
 object Equals extends ParserBridgePos2[Expr, Expr, CompBinOp]
 case class NotEquals(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends CompBinOp
 object NotEquals extends ParserBridgePos2[Expr, Expr, CompBinOp]
-
 case class And(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends BoolBinOp
 object And extends ParserBridgePos2[Expr, Expr, BoolBinOp]
 case class Or(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends BoolBinOp
@@ -228,6 +226,19 @@ case class Not(expr: Expr)(val pos: (Int, Int)) extends UnaryOp {
 object Not extends ParserBridgePos1[Expr, UnaryOp]
 case class Len(expr: Expr)(val pos: (Int, Int)) extends UnaryOp
 object Len extends ParserBridgePos1[Expr, UnaryOp]
+
+/* EXTENSION - Bitwise Operators */
+
+// Bitwise Operators
+case class BitAnd(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
+object BitAnd extends ParserBridgePos2[Expr, Expr, IntBinOp]
+case class BitOr(lhs: Expr, rhs: Expr)(val pos: (Int, Int)) extends IntBinOp
+object BitOr extends ParserBridgePos2[Expr, Expr, IntBinOp]
+case class BitNot(expr: Expr)(val pos: (Int, Int)) extends UnaryOp {
+  typeNode = IntTypeNode()(0, 0)
+}
+object BitNot extends ParserBridgePos1[Expr, UnaryOp]
+// End of Bitwise Operators
 
 // Atoms (Extending Expr)
 sealed trait Atom extends Expr

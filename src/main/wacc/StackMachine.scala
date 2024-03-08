@@ -8,6 +8,7 @@ import parsley.internal.machine.instructions.Pop
 /** Special Grade Cursed Object
   */
 object StackMachine {
+  // TODO: We can build the stack before code generation
 
   private var frames: List[StackFrame] = List().empty
 
@@ -195,7 +196,7 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
           */
         var currentOffset = 2 * 8 + 8
         for (p <- paramList.paramList.reverse) {
-          varMap.addOne(p.ident.value, -(currentOffset))
+          varMap.addOne(p.ident.value, -(currentOffset + Constants.MAX_REGSIZE))
           currentOffset += p.typeNode.size
         }
 

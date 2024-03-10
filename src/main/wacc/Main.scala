@@ -65,7 +65,8 @@ object Main {
       val fileName = filename.split(java.io.File.separator).last.split('.').head
       var fileContent = ""
       try {
-        fileContent = scala.io.Source.fromFile(filename).mkString
+        val fileBuffer = scala.io.Source.fromFile(filename)
+        fileContent = try fileBuffer.mkString finally fileBuffer.close()
       } catch {
         case e: java.io.FileNotFoundException => {
           println("IO Error: File not found") 

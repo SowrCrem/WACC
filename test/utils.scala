@@ -52,6 +52,9 @@ object Utils {
   def parseSucceeds(input: String, expected: Expr): Assertion =
     parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), List(Exit(expected)(pos)))(pos))
 
+  def parseSucceeds(macroInputs : String, programInput : String, expected : List[Stat]): Assertion =
+    parser.parse(macroInputs + " begin " + programInput + " end") shouldBe Success(Program(List(), expected)(pos))
+
   def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
     case "" => parser.parse("begin exit " + input + " end") should matchPattern {
       case Failure(_) => // Match on any Failure

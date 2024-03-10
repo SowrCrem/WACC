@@ -9,7 +9,7 @@ object macroPreProcessor {
   val definePattern: Regex = """~DEF (\w+) (.+)""".r
   val macroUsagePattern: String => Regex = macroName => raw"\b$macroName\b".r
 
-  def preprocess(sourceCode: String): String = {
+  def preprocess(sourceCode: String): Either[String, String] = {
     // Extract macro definitions from the source code
     val macros = definePattern
       .findAllMatchIn(sourceCode)
@@ -20,7 +20,7 @@ object macroPreProcessor {
       macroUsagePattern(name).replaceAllIn(code, replacement)
     }
 
-    x
+    Right(x)
   }
 
   val testinputOne : String = "~DEF MACRO_1 = 5 \n begin println MACRO_1 end"

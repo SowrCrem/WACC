@@ -10,10 +10,15 @@ import scala.annotation.varargs
    [ ] Remove magic numbers   
 */
 
+
 object Main {
-
+  
   var backendTests = false
-
+  val EXIT_SUCCESS = 0
+  val SYNTAX_ERR_CODE = 100
+  val SEMANTIC_ERR_CODE = 200
+  val UNDEFINED_EXIT = -1
+  
   def setBackendTests(): Unit = backendTests = true
 
   def ROOT_DIR = new java.io.File("src").exists()
@@ -27,18 +32,18 @@ object Main {
 
   def syntaxError(msg: String = ""): Int = {
     println("Syntax analysis output: " + msg)
-    100
+    SYNTAX_ERR_CODE
   }
 
   def semanticCheck(prog: Program, fileName: String): Int = {
     semanticChecker.check(prog) match {
       case Right(exitCode) => {
         if (backendTests || ROOT_DIR ) {saveGeneratedCode(prog, fileName) }
-        0
+        EXIT_SUCCESS
       }
       case Left(msg) => {
         println("Semantic analysis output: \n" + msg)
-        200
+        SEMANTIC_ERR_CODE
       }
     }
   }
@@ -64,23 +69,29 @@ object Main {
       } catch {
         case e: java.io.FileNotFoundException => {
           println("IO Error: File not found") 
-          return -1
+          return UNDEFINED_EXIT
         }
       }
-      parser.parse(fileContent) match {
-        case Success(prog) => prog match {
-          case Program(funcList, _) => parser.validFunctions(funcList) match {
-            case true  => semanticCheck(prog, fileName)
-            case false => syntaxError("Non-terminating branches found")
+      macroPreProcessor.preprocess(fileContent) match {
+        case Right(macroSubstitutedFileContent) => {
+          fileContent = macroSubstitutedFileContent
+          parser.parse(fileContent) match {
+            case Success(prog) => prog match {
+              case Program(funcList, _) => parser.validFunctions(funcList) match {
+                case true  => semanticCheck(prog, fileName)
+                case false => syntaxError("Non-terminating branches found")
+              }
+              case _ => syntaxError("Program is not Well-Formed")
+            }
+            case Failure(msg) => syntaxError(msg)
           }
-          case _ => syntaxError("Program is not Well-Formed")
         }
-        case Failure(msg) => syntaxError(msg)
+        case Left(msg) => syntaxError(msg)
       }
     }
     case None => {
       println("IO Error: No file path provided")
-      -1
+      UNDEFINED_EXIT
     }
   })
 }

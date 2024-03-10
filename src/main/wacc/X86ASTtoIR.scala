@@ -25,8 +25,6 @@ object X86IRGenerator {
 
   val mainReturn = true
 
-  val regTracker = new RegisterTracker
-
   val stringLiterals: Map[String, String] = Map()
   var rodataDirectives: ListBuffer[Directive] = ListBuffer()
 

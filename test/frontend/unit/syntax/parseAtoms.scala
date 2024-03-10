@@ -1,9 +1,10 @@
 package test.frontend.unit.syntax
 
-import wacc._
+import wacc.Main
 import test.Utils._
 import java.lang.StringBuilder
 import parsley.{Failure, Result, Success}
+import wacc._
 import org.scalactic.{Fail, Bool}
 import org.scalatest.compatible.Assertion
 import org.scalatest.flatspec.AnyFlatSpec

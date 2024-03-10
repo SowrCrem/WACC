@@ -1,6 +1,6 @@
 // package test.backend.unit
 
-// import wacc._
+// import wacc.Main
 // import test.Utils._
 // import parsley.{Failure, Result, Success}
 // import org.scalactic.Bool

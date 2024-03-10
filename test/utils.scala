@@ -1,5 +1,6 @@
 package test
 
+import wacc.Main
 import wacc._
 import sys.process._
 import parsley.{Failure, Result, Success}

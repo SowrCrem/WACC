@@ -1,5 +1,6 @@
 package test.extension.integration
 
+import wacc.Main
 import wacc._
 import test.Utils._
 import org.scalactic.Bool

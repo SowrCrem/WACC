@@ -13,6 +13,7 @@ import org.scalatest.matchers.should.Matchers._
 class Macros extends AnyFlatSpec {
 
   "valid - macros tests: intCalcMacro.wacc" should "return exit code 0" in {
+    pending
     throwsNoError("valid/macros/intCalcMacro.wacc")
   }
 

@@ -9,10 +9,18 @@ import org.scalatest.Pending
 import org.scalatest.compatible.Assertion
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
+import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterAll
+import wacc.semanticChecker
+import org.scalatest.BeforeAndAfterEach
 
-class Lazy extends AnyFlatSpec {
+class Lazy extends AnyFlatSpec with BeforeAndAfterEach {
 
-  "valid - lazy tests: lazyDoesntCookTheCodebase.wacc" should "return exit code 0" in {
+  override protected def afterEach(): Unit = {
+    semanticChecker.reset()
+  }
+
+  "valid - lazy tests: lazyDoesntCookTheCodebase.wacc" should "return exit code 0" in { 
     throwsNoError("valid/lazy/lazyDoesntCookTheCodebase.wacc")
   }
 
@@ -35,5 +43,5 @@ class Lazy extends AnyFlatSpec {
   "valid - lazy tests: superLazy.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/superLazy.wacc")
   }
-
+ 
 }

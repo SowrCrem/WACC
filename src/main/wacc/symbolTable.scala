@@ -7,9 +7,16 @@ class SymbolTable(val parent: Option[SymbolTable]) {
   var dictionary: Map[String, TypeNode] = Map()
   var children: List[SymbolTable] = List()
 
+  var LazyVars: List[String] = List()
+
   // Add identity and position node into dictionary
   def add(identName: String, position: TypeNode): Unit = {
     dictionary.addOne(identName, position)
+  }
+
+  def addLazyVar(identName: String): Unit = {
+    LazyVars = LazyVars :+ identName
+    printf("Added %s to lazy vars\n", identName)
   }
 
   // Look up name in symbol table and maybe return position

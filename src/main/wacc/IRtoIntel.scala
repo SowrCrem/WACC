@@ -20,7 +20,12 @@ object X86CodeGenerator {
     case SubInstr(dest, src, instrSize) => List(s"  sub ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case MulInstr(dest, src, instrSize) => List(s"  imul ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case DivInstr(dest, src, instrSize) => List(s"  idiv ${src.toIntelString(instrSize)}")
+    
+    /* EXTENSION - Bitwise Operators */
     case AndInstr(dest, src, instrSize) => List(s"  and ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case OrInstr(dest, src, instrSize) => List(s"  or ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
+    case NotInstr(dest, instrSize) => List(s"  not ${dest.toIntelString(instrSize)}")
+
     case Eor(dest, src, operand, instrSize) => List(s"  eor ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case Orr(dest, src, operand, instrSize) => List(s"  orr ${dest.toIntelString(instrSize)}, ${src.toIntelString(instrSize)}")
     case Cmp(src, operand, instrSize) => List(s"  cmp ${src.toIntelString(instrSize)}, ${operand.toIntelString(instrSize)}")

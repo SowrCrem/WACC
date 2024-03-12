@@ -107,7 +107,7 @@ class Function extends AnyFlatSpec with BeforeAndAfterEach {
   it should "run valid/function/nested_functions/fibonacciFullRec.wacc" ignore {
     val path = constructPath(List("valid", "function", "nested_functions", "fibonacciFullRec.wacc"))
     runSucceeds(path)
-  } 
+  }
 
   it should "run valid/function/nested_functions/fibonacciRecursive.wacc" ignore {
     val path = constructPath(List("valid", "function", "nested_functions", "fibonacciRecursive.wacc"))

@@ -9,5 +9,4 @@
 *target/
 *.txt
 *.s
-*.wacc
 wacc-compiler

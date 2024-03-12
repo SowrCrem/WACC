@@ -6,8 +6,8 @@
 
 begin
     int func() is 
-        println "in func"
-        return 42;
+        println "in func";
+        return 42
     end
     lazy int x = call func();
     println "should be before in func";

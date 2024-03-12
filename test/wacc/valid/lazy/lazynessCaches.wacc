@@ -7,6 +7,6 @@ begin
     int b = 1;
     lazy int a = b;
     println a;
-    int b = 6;
+    b = 6;
     println a 
 end

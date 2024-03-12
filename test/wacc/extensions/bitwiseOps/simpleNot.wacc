@@ -1,0 +1,18 @@
+# bitwise NOT of two integers
+
+# Output:
+# -6
+# 2
+#
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+  int result = ~5;
+  println result;
+  int result2 = ~ -3;
+  println result2
+end

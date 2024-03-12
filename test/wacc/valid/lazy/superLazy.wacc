@@ -1,0 +1,15 @@
+# output
+# should be before in func
+# in func
+# 42
+
+
+begin
+    int func() is 
+        println "in func"
+        return 42;
+    end
+    lazy int x = call func();
+    println "should be before in func";
+    println x 
+end

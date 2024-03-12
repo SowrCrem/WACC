@@ -1,0 +1,12 @@
+# output
+# 1
+# 1
+
+
+begin 
+    int b = 1;
+    lazy int a = b;
+    println a;
+    int b = 6;
+    println a 
+end

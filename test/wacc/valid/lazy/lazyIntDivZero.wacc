@@ -1,0 +1,4 @@
+begin
+    lazy int x = 1/0;
+    println x # expecting runtime error
+end 

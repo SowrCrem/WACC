@@ -249,7 +249,11 @@ object lexer {
         "==",
         "!=",
         "&&",
-        "||"
+        "||",
+        /* EXTENSION - Bitwise Operators */
+        "&",
+        "|",
+        "~",
       ),
       caseSensitive = true
     )

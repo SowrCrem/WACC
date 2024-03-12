@@ -83,14 +83,9 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           None
       }
     }
-    case LazyStat(pos) => {
-      pos.setLazy()
-      check(pos, symbolTable, returnType)
-    }
-    // VARIABLE DECLARATIONS
-    case i@IdentAsgn(typeNode, ident, rvalue) => {
 
-      
+    // VARIABLE DECLARATIONS
+    case IdentAsgn(typeNode, ident, rvalue) => {
       
       // Check rvalue (expr)
       val exprType = check(rvalue, symbolTable, returnType)
@@ -181,13 +176,8 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
               symbolTable.add(ident.value, symbol)
               None
             }
-          } 
+          }
         
-      } 
-
-      if (i.isLazy) {
-        symbolTable.addLazyVar(ident.value)
-
       }
       None
     }
@@ -586,6 +576,22 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             "int", check(expr, symbolTable, returnType).getOrElse("none").toString())
           None
       }
+
+    /* EXTENSION - Bitwise Operators */
+    case BitAnd(lhs, rhs) =>
+      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
+    case BitOr(lhs, rhs) =>
+      checkArithmBinOp(position, lhs, rhs, symbolTable, returnType)
+    case BitNot(expr) =>
+      check(expr, symbolTable, returnType) match {
+        case Some(IntTypeNode()) => Some(IntTypeNode()(position.pos))
+        case _ =>
+          // Expected int
+          errors += new TypeMismatchError(position, 
+            "int", check(expr, symbolTable, returnType).getOrElse("none").toString())
+          None
+      }
+
     case IntLiter(_)    => Some(IntTypeNode()(position.pos))
     case CharLiter(_)   => Some(CharTypeNode()(position.pos))
     case BoolLiter(_)   => Some(BoolTypeNode()(position.pos))

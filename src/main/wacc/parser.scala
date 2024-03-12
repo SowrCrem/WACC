@@ -68,11 +68,15 @@ object parser {
     Ops(Prefix)(Len <# "len"),
     Ops(Prefix)(Ord <# "ord"),
     Ops(Prefix)(Chr <# "chr"),
+    Ops(Prefix)(BitNot <# "~"),
     Ops(InfixL)(Mul <# "*"),
     Ops(InfixL)(Div <# "/"),
     Ops(InfixL)(Mod <# "%"),
     Ops(InfixL)(Plus <# "+"),
     Ops(InfixL)(Minus <# "-"),
+    /* EXTENSION - Bitwise Operators */
+    Ops(InfixL)(BitAnd <# "&"),
+    Ops(InfixL)(BitOr <# "|"),
     Ops(InfixN)(GreaterThan <# ">"),
     Ops(InfixN)(GreaterThanEq <# ">="),
     Ops(InfixN)(LessThan <# "<"),
@@ -151,13 +155,8 @@ object parser {
     AsgnEq(assignLhs, "=" ~> assignRhs)
   }
 
-  lazy val lazyStatParser : Parsley[Stat] = {
-    val lazyStat = LazyStat("lazy" ~> statAtoms)
-    lazyStat
-  }
-
   val statAtoms: Parsley[Stat] = {
-    skipParser | identAsgnParser | lazyStatParser | asgnEqParser |
+    skipParser | identAsgnParser | asgnEqParser |
       readParser | freeParser | returnParser |
       exitParser | printParser | printlnParser |
       ifParser | whileParser | beginParser

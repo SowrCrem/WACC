@@ -407,9 +407,7 @@ object X86IRGenerator {
         // TODO: need to have cases for pairs and array elements later
       }
     }
-    case LazyStat(pos) => {
-      statToIR(pos)
-    }
+
     case IdentAsgn(typeNode, ident, rhs) => {
 
       val asgnType = Reassign
@@ -1060,6 +1058,26 @@ object X86IRGenerator {
         MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.eigthReg)
       )
     }
+
+    /* EXTENSION - Bitwise Operators */
+    case BitAnd(expr1, expr2) => {
+      val setup = binOpSetup(expr1, expr2)
+      setup ++= ListBuffer(
+        Mov(Dest, G1, InstrSize.fullReg),
+        AndInstr(Dest, G2, InstrSize.fullReg)
+      )
+    }
+    case BitOr(expr1, expr2) => {
+      val setup = binOpSetup(expr1, expr2)
+      setup ++= ListBuffer(
+        Mov(Dest, G1, InstrSize.fullReg),
+        OrInstr(Dest, G2, InstrSize.fullReg)
+      )
+    }
+    case BitNot(expr) => {
+      exprToIR(expr) += NotInstr(Dest, InstrSize.fullReg)
+    }
+
     case GreaterThan(expr1, expr2) => {
       compBinOp(expr1, expr2, InstrCond.greaterThan)
     }

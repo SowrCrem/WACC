@@ -2,18 +2,25 @@ package wacc
 import scala.collection.mutable
 import scala.collection.mutable.Stack
 import scala.collection.mutable.ListBuffer
+import scala.collection.immutable
 import scala.annotation.tailrec
 import parsley.internal.machine.instructions.Pop
+import java.util.HashMap
 
 /** Special Grade Cursed Object
   */
 object StackMachine {
   // TODO: We can build the stack before code generation
-
+  
   private var frames: List[StackFrame] = List().empty
+  private val lazyMap : HashMap[String, Int] = new HashMap[String, Int]()
 
   def putVarOnStack(name: String): Unit = {
-    frames.last.declaredVars += name
+    if (frames.last.sTable.isLazyVar(name)) {
+        lazyMap.put(name, frames.last.localVarSize)
+    } else {
+      frames.last.declaredVars += name
+    }
   }
 
   private def frameTotalSize(frame: StackFrame): Int = {
@@ -151,6 +158,8 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
   // The size of the local variables in the stack frame
   var localVarSize: Int = 0
 
+  val sTable = symbolTable
+  
   // The size of the parameters in the stack frame
   var pushedArgSize = 0
 

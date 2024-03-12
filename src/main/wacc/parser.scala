@@ -155,8 +155,13 @@ object parser {
     AsgnEq(assignLhs, "=" ~> assignRhs)
   }
 
+  lazy val lazyStatParser : Parsley[Stat] = {
+    val lazyStat = LazyStat("lazy" ~> statAtoms)
+    lazyStat
+  }
+
   val statAtoms: Parsley[Stat] = {
-    skipParser | identAsgnParser | asgnEqParser |
+    skipParser | identAsgnParser |lazyStatParser|  asgnEqParser |
       readParser | freeParser | returnParser |
       exitParser | printParser | printlnParser |
       ifParser | whileParser | beginParser

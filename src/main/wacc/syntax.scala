@@ -65,6 +65,15 @@ case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, statList
 }
 object Func extends ParserBridgePos4[TypeNode, Ident, ParamList, List[Stat], Func]
 
+// Lazy Stat
+
+case class LazyStat(stat: Stat)(val pos: (Int, Int)) extends Stat{
+  var symbolTable: SymbolTable = new SymbolTable(None);
+}
+object LazyStat extends ParserBridgePos1[Stat, LazyStat]
+
+
+
 // Param-List (Extending Position)
 
 case class ParamList(paramList: List[Param])(val pos: (Int, Int)) extends Position
@@ -78,7 +87,13 @@ case class Param(typenode: TypeNode, ident: Ident)(val pos: (Int, Int)) extends 
 object Param extends ParserBridgePos2[TypeNode, Ident, Param]
 
 // Statements (Extending Position)
-sealed trait Stat extends Position
+sealed trait Stat extends Position {
+  var isLazy: Boolean = false
+
+  def setLazy(): Unit = {
+    isLazy = true;
+  }
+}
 
 case class Skip()(val pos: (Int, Int)) extends Stat
 object Skip extends ParserBridgePos0[Stat]

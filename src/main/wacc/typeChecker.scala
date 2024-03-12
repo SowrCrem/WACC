@@ -83,9 +83,13 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           None
       }
     }
+    case LazyStat(pos) => {
+      pos.setLazy()
+      check(pos, symbolTable, returnType)
+    }
 
     // VARIABLE DECLARATIONS
-    case IdentAsgn(typeNode, ident, rvalue) => {
+    case i@IdentAsgn(typeNode, ident, rvalue) => {
       
       // Check rvalue (expr)
       val exprType = check(rvalue, symbolTable, returnType)
@@ -178,6 +182,10 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             }
           }
         
+      }
+
+      if (i.isLazy) {
+        symbolTable.addLazyVar(ident.value)
       }
       None
     }

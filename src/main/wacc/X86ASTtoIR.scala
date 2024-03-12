@@ -249,10 +249,10 @@ object X86IRGenerator {
     */
   def findingVarOnStackIR(ident: String, instrs : ListBuffer[Instruction], extraOffset : Int, asgnType : AsgnType) : ListBuffer[Instruction] = {
     StackMachine.offset(ident) match {
-      case Some((offset, fpchange)) => {
+      case (Some((offset, fpchange)), true) => {
         val moveInstr = asgnType match {
-          case Reassign => moveExprToAddress(offset - extraOffset)
-          case (Declare | Retrieve) => findVarInCurrFrame(offset - extraOffset)
+          case (Declare | Reassign) => moveExprToAddress(offset - extraOffset)
+          case Retrieve => findVarInCurrFrame(offset - extraOffset)
         }
         fpchange match {
           case 0 => instrs ++= moveInstr
@@ -270,7 +270,10 @@ object X86IRGenerator {
           }
         }
       }
-      case None => throw new RuntimeException(s"Variable ${ident} not found in stack")
+      case (Some((offset, fpchange)), false) => {
+        ???
+      }
+      case _ => throw new RuntimeException(s"Variable ${ident} not found in stack")
     }
   }
 
@@ -336,7 +339,7 @@ object X86IRGenerator {
           val assignment = exprToIR(rhs)
 
           StackMachine.offset(ident.value) match {
-            case Some((offset, fpchange)) => fpchange match {
+            case (Some((offset, fpchange)), true) => fpchange match {
                 case 0 => {
                   instructions ++= ListBuffer(
                     Mov(Dest, FPOffset(offset), InstrSize.fullReg)
@@ -395,7 +398,10 @@ object X86IRGenerator {
                   instructions.prependAll(setup)
                 }
             }
-            case None => {
+            case (Some((offset, fpchange)), false) => {
+              ???
+            }
+            case _ => {
               throw new RuntimeException(
                 s"Variable ${ident} not found in stack"
               )
@@ -411,6 +417,7 @@ object X86IRGenerator {
       statToIR(pos)
     }
     case IdentAsgn(typeNode, ident, rhs) => {
+
 
       val asgnType = Reassign
 
@@ -592,7 +599,7 @@ object X86IRGenerator {
       expr match {
         case Ident(ident) => {
           StackMachine.offset(ident) match {
-            case Some((offset, fpchange)) => {
+            case (Some((offset, fpchange)), true) => {
               fpchange match {
                 case 0 => {
                   // Use offset as start of stack
@@ -626,7 +633,10 @@ object X86IRGenerator {
                 }
               }
             }
-            case None => {
+            case (Some((offset, fpchange)), false) => {
+              ???
+            }
+            case _ => {
               throw new RuntimeException(
                 s"Variable ${ident} not found in stack"
               )
@@ -656,7 +666,7 @@ object X86IRGenerator {
         case Ident(ident) => {
           // Find position in stack
           StackMachine.offset(ident) match {
-            case Some((offset, fpchange)) => {
+            case (Some((offset, fpchange)), true) => {
               val readLogic = ListBuffer(
                 // mov rax, qword ptr [rbp - offset]
                 Mov(Dest, FPOffset(offset), InstrSize.fullReg),
@@ -687,7 +697,10 @@ object X86IRGenerator {
                 }
               }
             }
-            case None => {
+            case (Some((offset, fpchange)), false) => {
+              ???
+            }
+            case _ => {
               throw new RuntimeException(
                 s"Variable ${ident} not found in stack"
               )
@@ -935,7 +948,7 @@ object X86IRGenerator {
       val instructions: ListBuffer[Instruction] = ListBuffer()
 
       StackMachine.offset(ident.value) match {
-        case Some((offset, fpchange)) => {
+        case (Some((offset, fpchange)), true) => {
           fpchange match {
             case 0 => {
 
@@ -976,7 +989,10 @@ object X86IRGenerator {
             }
           }
         }
-        case None => {
+        case (Some((offset, fpchange)), false) => {
+          ???
+        }
+        case _ => {
           throw new RuntimeException("Variable not found in stack")
         }
       }

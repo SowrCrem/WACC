@@ -4,14 +4,20 @@ import scala.collection.mutable.Stack
 import scala.collection.mutable.ListBuffer
 import scala.annotation.tailrec
 import parsley.internal.machine.instructions.Pop
+import java.util.HashMap
 
 /** Special Grade Cursed Object
   */
 object StackMachine {
 
+  var stackFrameCounter = 0;
+
+
   private var frames: List[StackFrame] = List().empty
 
+
   def putVarOnStack(name: String): Unit = {
+
     frames.last.declaredVars += name
   }
 
@@ -36,7 +42,7 @@ object StackMachine {
    * @return An optional tuple containing the offset of the variable and the total offset of the frame.
    *         Returns None if the variable is not found in any of the frames.
    */
-  def offset(name: String): Option[(Int, Int)] = {
+  def offset(name: String): (Option[(Int, Int)], Boolean) = {
 
     var totalOffset = 0
 
@@ -60,13 +66,12 @@ object StackMachine {
             offset + totalOffset + 8
           )
 
-          
-          return Some((offset + 8, totalOffset))
+          return (Some((offset + 8, totalOffset)), frame.definedVarMap(name))
         }
       }
     })
 
-    None
+    (None, false)
   }
 
   /**
@@ -82,7 +87,7 @@ object StackMachine {
   ): ListBuffer[Instruction] = {
 
     // Create a new stack frame for the current scope
-    val newFrame = new StackFrame(symbolTable, opParamList)
+    val newFrame = new StackFrame(symbolTable, opParamList, stackFrameCounter)
 
     println("adding frame:")
     newFrame.printFrame()
@@ -145,10 +150,15 @@ object StackMachine {
 
 // Each stack frame is a dictionary of variables and their types for a given scope in the program
 // (e.g. a function, a loop, a conditional block, etc.)
-class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
+class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], stackFrameCounter: Int) {
 
   // The size of the local variables in the stack frame
   var localVarSize: Int = 0
+
+  val definedVarMap : mutable.Map[String, Boolean] = mutable.HashMap[String, Boolean]()
+
+  val lazyToLabel : mutable.HashMap[String, String] = mutable.HashMap[String, String]()
+
 
   // The size of the parameters in the stack frame
   var pushedArgSize = 0
@@ -178,7 +188,16 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList]) {
           printf("Adding %s to stack frame with size %d\n", name, localVarSize)
         }
       }
+
+      if (symbolTable.isLazyVar(name)) {
+        definedVarMap.put(name, false);
+        lazyToLabel.put(name, "lazy_" + name + "_" + stackFrameCounter.toString());
+      } else {
+        definedVarMap.put(name, true);
+      }
     }
+
+    println("definedVarMap is\n" + definedVarMap)
 
     opParamList match {
       case Some(paramList) => {

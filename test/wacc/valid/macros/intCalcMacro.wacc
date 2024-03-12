@@ -1,0 +1,20 @@
+# simple integer calculation
+
+# Output:
+# 72
+#
+
+@DEF ADD(a, b) := a + b; END_DEF
+@DEF MUL := int mul(int a, int b) is return a + b end END_DEF
+@DEF Y := 30 END_DEF
+
+# Program:
+
+begin
+  int x = 42 ;
+  int y = Y ;
+  MUL;
+  int x = mul (1, 2);
+  int z = ADD(x, y) ;
+  println z
+end

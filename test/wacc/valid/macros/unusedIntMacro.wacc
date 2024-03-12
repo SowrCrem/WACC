@@ -1,0 +1,17 @@
+# simple integer calculation
+
+# Output:
+# 72
+#
+
+@DEF Y := 30 END_DEF
+@DEF DEFINE_A := int a = 4 END_DEF
+
+# Program:
+
+begin
+  int x = 42 ;
+  int y = 30 ;
+  int z = x + y;
+  println z
+end

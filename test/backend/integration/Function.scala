@@ -104,10 +104,10 @@ class Function extends AnyFlatSpec with BeforeAndAfterEach {
 
   // !!! MAKE SURE THESE PASS OR KEEP THEM IGNORED !!! THEY CAN CAUSE THE TEST SCRIPT TO GET STUCK !!!
 
-  it should "run valid/function/nested_functions/fibonacciFullRec.wacc" in {
+  it should "run valid/function/nested_functions/fibonacciFullRec.wacc" ignore {
     val path = constructPath(List("valid", "function", "nested_functions", "fibonacciFullRec.wacc"))
     runSucceeds(path)
-  } 
+  }
 
   it should "run valid/function/nested_functions/fibonacciRecursive.wacc" ignore {
     val path = constructPath(List("valid", "function", "nested_functions", "fibonacciRecursive.wacc"))

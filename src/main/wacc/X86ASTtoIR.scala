@@ -407,9 +407,7 @@ object X86IRGenerator {
         // TODO: need to have cases for pairs and array elements later
       }
     }
-    case LazyStat(pos) => {
-      statToIR(pos)
-    }
+
     case IdentAsgn(typeNode, ident, rhs) => {
 
       val asgnType = Reassign

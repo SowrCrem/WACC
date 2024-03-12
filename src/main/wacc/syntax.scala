@@ -78,17 +78,10 @@ case class Param(typenode: TypeNode, ident: Ident)(val pos: (Int, Int)) extends 
 object Param extends ParserBridgePos2[TypeNode, Ident, Param]
 
 // Statements (Extending Position)
-sealed trait Stat extends Position {
-  var isLazy: Boolean = false
-
-  def setLazy(): Unit = {
-    isLazy = true;
-  }
-}
+sealed trait Stat extends Position
 
 case class Skip()(val pos: (Int, Int)) extends Stat
 object Skip extends ParserBridgePos0[Stat]
-
 case class IdentAsgn (typeNode: TypeNode, ident: Ident, rvalue: Position)(val pos: (Int, Int)) extends Stat
 object IdentAsgn extends ParserBridgePos3[TypeNode, Ident, Position, IdentAsgn]
 case class AsgnEq(lhs: Position, rhs: Position)(val pos: (Int, Int)) extends Stat
@@ -128,16 +121,6 @@ case class BeginEnd(stats: List[Stat])(val pos: (Int, Int)) extends Stat {
   var symbolTable: SymbolTable = new SymbolTable(None);
 }
 object BeginEnd extends ParserBridgePos1[List[Stat], BeginEnd]
-
-case class LazyStat(stat: Stat)(val pos: (Int, Int)) extends Stat{
-  var symbolTable: SymbolTable = new SymbolTable(None);
-}
-object LazyStat extends ParserBridgePos1[Stat, LazyStat]
-
-
-case class LazyVarDecl(typenode: TypeNode, ident: Ident, expr: Position)(val pos: (Int, Int)) extends Stat
-
-object LazyVarDecl extends ParserBridgePos3[TypeNode, Ident, Position, LazyVarDecl]
 
 // RValue 
 sealed trait RValue 

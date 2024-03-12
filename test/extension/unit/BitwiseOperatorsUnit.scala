@@ -1,4 +1,4 @@
-package test.backend.integration
+package test.backend.unit
 
 import wacc._
 import test.Utils._
@@ -18,8 +18,18 @@ class BitwiseOperatorsUnit extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
-  "WACC" should "parse extensions/bitwise-operators/andExprBitwise.wacc" in {
-    val path = constructPath(List("extensions", "bitwise-operators", "andExprBitwise.wacc"))
+  "WACC" should "parse extensions/bitwise_operators/simpleAnd.wacc" in {
+    val path = constructPath(List("extensions", "bitwise_operators", "simpleAnd.wacc"))
+    parsesWithoutSyntaxError(path)
+  }
+
+  it should "parse extensions/bitwise_operators/simpleOr.wacc" in {
+    val path = constructPath(List("extensions", "bitwise_operators", "simpleOr.wacc"))
+    parsesWithoutSyntaxError(path)
+  }
+
+  it should "parse extensions/bitwise_operators/simpleNot.wacc" in {
+    val path = constructPath(List("extensions", "bitwise_operators", "simpleNot.wacc"))
     parsesWithoutSyntaxError(path)
   }
 }

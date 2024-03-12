@@ -128,6 +128,22 @@ object Utils {
     exeReturn shouldBe expReturn
   }
 
+  def parsesWithoutSyntaxError(path: String): Assertion = {
+    exitsWithoutCode(path, 100)
+  }
+
+  private def exitsWithoutCode(path: String, code: Int): Assertion = synchronized({
+    // check if getExitCode doesn't throw any error. If it does, fail saying Main.compile threw an error
+    val exitCode = code
+    try {
+      val exitCode = getExitCode(path)
+    } catch {
+      case e: Throwable => fail("Compilation Error: Main.compile threw an error: " + e.getMessage)
+    }
+    println("Exit Code: " + exitCode)
+    exitCode should not be code
+  })
+
   private def exitsWithCode(path: String, code: Int): Assertion = synchronized({
     val exitCode = getExitCode(path)
     println("Exit Code: " + exitCode + " Expected: " + code)

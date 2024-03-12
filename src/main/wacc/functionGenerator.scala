@@ -55,17 +55,12 @@ object functionGenerator {
   }
 
   def generateFunctionCode(): ListBuffer[Instruction] = {
-
     val code = new ListBuffer[Instruction]()
     for ((label, body) <- funcLabelsAndBody) {
-    
-
       code += Label("_" + label)
       code ++= body
-     
     }
     code
-
   }
 
   def reset(): Unit = {

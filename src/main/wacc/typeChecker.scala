@@ -391,9 +391,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           errors += new ArgNumError(position, expected.length, argList.length)
           false
         }
-        println("1")
         val argTypes = argList.map(arg => check(arg, symbolTable, returnType))
-        println("2")
 
         argTypes.zip(expected).forall { 
           case (argType, expectedType) => 
@@ -405,9 +403,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         case Some(Func(typeNode, _, paramList, _)) =>
           val expectedTypes = paramList.paramList.map(_.typeNode)
           if (checkArgList(args, expectedTypes)) {
-            println("3")
-            println(args)
-            println(expectedTypes)
             None
           } else {
             // Expected types do not match actual types

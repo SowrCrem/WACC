@@ -20,10 +20,12 @@ class VoidTypes extends AnyFlatSpec with BeforeAndAfterEach {
 
   "WACC" should "compile extensions/voidTypes/simpleVoid.wacc" in {
     val path = constructPath(List("extensions", "voidTypes", "simpleVoid.wacc"))
-    // runSucceeds(path, "Hello!")
-    parsesWithoutSyntaxError(path)
-       semanticChecker.reset()
-    X86IRGenerator.reset()
-    parsesWithoutSemanticError(path)
+    runSucceeds(path)
   }
+
+  it should "compile extensions/voidTypes/voidWithParams.wacc" in {
+    val path = constructPath(List("extensions", "voidTypes", "voidWithParams.wacc"))
+    runSucceeds(path)
+  }
+
 }

@@ -187,12 +187,7 @@ object X86IRGenerator {
   def generateFunctionIR(func: Func, table: SymbolTable, paramList: ParamList): ListBuffer[Instruction] = {
 
     val setupStack = StackMachine.addFrame(table, Some(paramList))
-
-
-    // val setupStack = StackMachine.addFrame(
-    //   table,
-    //   Some(paramList)
-    // )
+    
     var body = {
       val table = func.symbolTable
       val stats = for (s <- func.statList) yield statToIR(s)
@@ -204,7 +199,6 @@ object X86IRGenerator {
     var modifiedBody = ListBuffer[Instruction]()
     var foundReturn = false
 
-
     for (instr <- body) {
       if (instr.isInstanceOf[ReturnInstr]) {
         foundReturn = true
@@ -213,7 +207,12 @@ object X86IRGenerator {
       modifiedBody += instr
     }
 
-    ListBuffer() ++ setupStack ++ modifiedBody
+    if (foundReturn) {
+      ListBuffer() ++ setupStack ++ modifiedBody
+    } else {
+      // Account for void functions with no returns
+      ListBuffer() ++ setupStack ++ modifiedBody ++ popStack
+    }
 
   }
 
@@ -531,16 +530,15 @@ object X86IRGenerator {
       // can abstract Som
       findingVarOnStackIR(ident.value, instructions, Reassign)
     }
+    
     case Print(expr) => {
       printToIR(expr, false)
     }
+    
     case Println(expr) => {
-      lib.setPrintLnFlag(true)
       printToIR(expr, true)
     }
-    case Call(_, _) => {
-      ???
-    }
+
     case Exit(expr) => {
       lib.setExitFlag(true)
       exprToIR(expr) ++ ListBuffer(
@@ -548,6 +546,7 @@ object X86IRGenerator {
         CallInstr("exit")
       )
     }
+
     case whileNode @ While(expr, stats) => {
       val cond = exprToIR(expr)
       val body = {
@@ -577,6 +576,7 @@ object X86IRGenerator {
         JumpIfCond(s"while${labelCounter}", InstrCond.notEqual)
       )
     }
+
     case ifNode @ If(expr, trueCase, falseCase) => {
       val cond = exprToIR(expr)
       val thenCase = {
@@ -618,13 +618,16 @@ object X86IRGenerator {
         Label(s"end${labelCounter}")
       )
     }
-    case r@Return(expr) => {
+    
+    case r@Return(_) => {
       generateReturnIR(r)
     }
+
     case Skip() => {
       ListBuffer(
       )
     }
+
     case Free(expr) => {
       val instructions = ListBuffer[Instruction]().empty
       var callInstr: ListBuffer[Instruction] = ListBuffer[Instruction]().empty
@@ -689,9 +692,9 @@ object X86IRGenerator {
           }
         }
       }
-
       instructions
     }
+
     case Read(lhs) => {
       val instructions = ListBuffer[Instruction]().empty
       var fst = false
@@ -751,7 +754,6 @@ object X86IRGenerator {
             }
           }
         }
-        // TODO: FST + SND 
         case _ => {
           // Message log for value should not reach this case
           throw new RuntimeException(
@@ -760,6 +762,51 @@ object X86IRGenerator {
           )
         }
       }
+    }
+
+    /* EXTENSION - Void Types */
+    case CallVoid(ident, paramList) => {
+      val instructions = new ListBuffer[Instruction]().empty
+      val functionNode = functionGenerator.getFunctionNode(ident.value)
+      
+      val handleParams = ListBuffer[Instruction]().empty
+      for (param <- paramList) {
+        handleParams ++= exprToIR(param)
+        handleParams ++= ListBuffer(
+          PushRegisters(List(Dest), InstrSize.fullReg)
+        )
+      }
+
+      val incrementStackInstr = new ListBuffer[Instruction]().empty
+      if (paramList.size > 0) {
+        for (i <- 0 until paramList.size) {
+          incrementStackInstr ++= ListBuffer(
+            PopRegisters(List(G0), InstrSize.fullReg)
+          )
+        }
+      }
+
+      if (!functionGenerator.isDefined(functionNode.ident.value)) {
+        functionGenerator.setDefined(functionNode.ident.value)
+
+        val funcBody = generateFunctionIR(
+          functionNode, 
+          functionGenerator.getFunctionTable(ident.value), 
+          functionNode.paramList
+        )
+
+        functionGenerator.addFunction(
+          functionNode.ident.value,
+          functionNode,
+          funcBody
+        )
+
+        functionGenerator.addFunction(ident.value, functionNode, funcBody)
+      }
+
+      instructions ++= handleParams 
+      instructions += CallInstr(ident.value)
+      instructions ++= incrementStackInstr
     }
   }
 
@@ -810,7 +857,6 @@ object X86IRGenerator {
           CallInstr("printi")
         )
       }
-      // TODO: Fix once char arrays stored at 1 byte buffer
       case atn @ ArrayTypeNode(CharTypeNode()) => {
         lib.setPrintStringFlag(true)
         ListBuffer(
@@ -819,16 +865,14 @@ object X86IRGenerator {
         )
       }
       case atn @ ArrayTypeNode(typeNode) => {
-        // atn can be a nested array type node, need to unwrap and get the inner
         var node : TypeNode = atn
         var arrType = atn.elementType
 
-        print("Arrays inner type is: " + arrType.toString())
+        // print("Arrays inner type is: " + arrType.toString())
         
         matchPrintType(arrType)
       }
-      case _ => {
-        // Must be Pair
+      case _ => {    // Must be Pair
         lib.setPrintPtrFlag(true)
         ListBuffer(
           Mov(Arg0, G2, InstrSize.fullReg),
@@ -844,17 +888,20 @@ object X86IRGenerator {
     val printCall = matchPrintType(expr.typeNode)
 
     instructions ++= exprToIR(expr) 
-    instructions ++= ListBuffer(
-      DecrementStackPointerNB(8),
-      // Mov(Arg0, Dest, InstrSize.fullReg) --> might not need this
-    ) 
+    // instructions ++= ListBuffer(
+    //   DecrementStackPointerNB(8),
+    //   // Mov(Arg0, Dest, InstrSize.fullReg) --> might not need this
+    // ) 
     instructions ++= printCall
     if (println) {
+      lib.setPrintLnFlag(true)
       instructions ++= ListBuffer(CallInstr("println"))
+    } else {
+      instructions
     }
-    instructions ++= ListBuffer(
-      IncrementStackPointerNB(8)
-    )
+    // instructions ++= ListBuffer(
+    //   IncrementStackPointerNB(8)
+    // )
   }
 
   // --------------- Expression IR Generation -------------------------------------//
@@ -1208,9 +1255,7 @@ object X86IRGenerator {
         }
       }
 
-
       if (!functionGenerator.isDefined(functionNode.ident.value)) {
-
         functionGenerator.setDefined(functionNode.ident.value)
 
         val funcBody = generateFunctionIR(functionNode, functionGenerator.getFunctionTable(ident.value), functionNode.paramList)
@@ -1224,9 +1269,7 @@ object X86IRGenerator {
 
       }
 
-
       instructions ++= handleParams += CallInstr(ident.value) ++= incrementStackInstr
-
     }
   }
 

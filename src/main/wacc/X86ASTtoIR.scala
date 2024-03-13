@@ -255,7 +255,7 @@ object X86IRGenerator {
     */
   def findingVarOnStackIR(ident: String, instrs : ListBuffer[Instruction], extraOffset : Int, asgnType : AsgnType) : ListBuffer[Instruction] = {
     StackMachine.offset(ident) match {
-      case (Some((offset, fpchange)), true) => {
+      case (Some((offset, fpchange)), true, frame) => {
         val moveInstr = asgnType match {
           case (Declare | Reassign) => moveExprToAddress(offset - extraOffset)
           case Retrieve => findVarInCurrFrame(offset - extraOffset)
@@ -276,8 +276,14 @@ object X86IRGenerator {
           }
         }
       }
-      case (Some((offset, fpchange)), false) => {
-        ???
+      case (Some((offset, fpchange)), false, frame) => {
+
+        asgnType match {
+          case (Declare) => {
+            printf("LAZZYYY")
+          }
+        }
+        ListBuffer()
       }
       case _ => throw new RuntimeException(s"Variable ${ident} not found in stack")
     }
@@ -286,6 +292,10 @@ object X86IRGenerator {
   // ------- Statement IR Generation -----------------------------------------------//
 
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
+    case LazyStat(pos) => {
+      val instructions = statToIR(pos)
+      instructions
+    }
     case be @ BeginEnd(statList) => {
       val body = {
         val table = be.symbolTable
@@ -345,7 +355,7 @@ object X86IRGenerator {
           val assignment = exprToIR(rhs)
 
           StackMachine.offset(ident.value) match {
-            case (Some((offset, fpchange)), true) => fpchange match {
+            case (Some((offset, fpchange)), true, _) => fpchange match {
                 case 0 => {
                   instructions ++= ListBuffer(
                     Mov(Dest, FPOffset(offset), InstrSize.fullReg)
@@ -404,7 +414,7 @@ object X86IRGenerator {
                   instructions.prependAll(setup)
                 }
             }
-            case (Some((offset, fpchange)), false) => {
+            case (Some((offset, fpchange)), false, _) => {
               ???
             }
             case _ => {
@@ -420,10 +430,10 @@ object X86IRGenerator {
       }
     }
 
-    case IdentAsgn(typeNode, ident, rhs) => {
+    case i@IdentAsgn(typeNode, ident, rhs) => {
 
 
-      val asgnType = Reassign
+      val asgnType = Declare
 
       // // Step 1: Allocate space on the stack based on the variable size
       val instructions = ListBuffer[Instruction]().empty
@@ -431,8 +441,6 @@ object X86IRGenerator {
       // Step 2: Initialize the variable with the given expression
       val preInstr = typeNode match {
         case atn @ ArrayTypeNode(_) => {
-          // lib.setMallocFlag(true)
-          // lib.outOfMemory.setFlag(true)
 
           /** Use G2 for array pointers for time being when assigning arrays as
             * a special case of the calling convention.
@@ -444,17 +452,7 @@ object X86IRGenerator {
             case ArrayLiter(arrayElements) => {
               val arrSize = arrayElements.size
               atn.setLength(arrSize)
-              List(
-                // Mov(
-                //   Arg0,
-                //   Immediate32((arrSize) * MAX_REGSIZE + HALF_REGSIZE),
-                //   InstrSize.halfReg
-                // ),
-                // CallInstr("malloc"),
-                // Mov(G2, Dest, InstrSize.fullReg),
-                // AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg)
-              )
-
+              List()
             }
             case _ => ListBuffer[Instruction]().empty 
           }
@@ -487,11 +485,14 @@ object X86IRGenerator {
       instructions ++= exprToIR(rhs)
       instructions.prependAll(preInstr)
 
-      // Step 3: Update StackMachine context with the new variable
-      StackMachine.putVarOnStack(ident.value)
-      //Can abstract stackmachine.offset part of the function
-      // can abstract Som
-      findingVarOnStackIR(ident.value, instructions, Reassign)
+        // Step 3: Update StackMachine context with the new variable
+        StackMachine.putVarOnStack(ident.value)
+        //Can abstract stackmachine.offset part of the function
+        // can abstract Som
+        findingVarOnStackIR(ident.value, instructions, Declare)
+      
+
+    
     }
     case Print(expr) => {
       printToIR(expr, false)
@@ -602,7 +603,7 @@ object X86IRGenerator {
       expr match {
         case Ident(ident) => {
           StackMachine.offset(ident) match {
-            case (Some((offset, fpchange)), true) => {
+            case (Some((offset, fpchange)), true, _) => {
               fpchange match {
                 case 0 => {
                   // Use offset as start of stack
@@ -636,7 +637,7 @@ object X86IRGenerator {
                 }
               }
             }
-            case (Some((offset, fpchange)), false) => {
+            case (Some((offset, fpchange)), false, _) => {
               ???
             }
             case _ => {
@@ -669,7 +670,7 @@ object X86IRGenerator {
         case Ident(ident) => {
           // Find position in stack
           StackMachine.offset(ident) match {
-            case (Some((offset, fpchange)), true) => {
+            case (Some((offset, fpchange)), true, _ ) => {
               val readLogic = ListBuffer(
                 // mov rax, qword ptr [rbp - offset]
                 Mov(Dest, FPOffset(offset), InstrSize.fullReg),
@@ -700,7 +701,7 @@ object X86IRGenerator {
                 }
               }
             }
-            case (Some((offset, fpchange)), false) => {
+            case (Some((offset, fpchange)), false, _) => {
               ???
             }
             case _ => {
@@ -998,7 +999,7 @@ object X86IRGenerator {
       val instructions: ListBuffer[Instruction] = ListBuffer()
 
       StackMachine.offset(ident.value) match {
-        case (Some((offset, fpchange)), true) => {
+        case (Some((offset, fpchange)), true, _) => {
           fpchange match {
             case 0 => {
 
@@ -1039,7 +1040,7 @@ object X86IRGenerator {
             }
           }
         }
-        case (Some((offset, fpchange)), false) => {
+        case (Some((offset, fpchange)), false, _) => {
           ???
         }
         case _ => {

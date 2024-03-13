@@ -42,7 +42,7 @@ object StackMachine {
    * @return An optional tuple containing the offset of the variable and the total offset of the frame.
    *         Returns None if the variable is not found in any of the frames.
    */
-  def offset(name: String): (Option[(Int, Int)], Boolean) = {
+  def offset(name: String): (Option[(Int, Int)], Boolean, StackFrame) = {
 
     var totalOffset = 0
 
@@ -66,12 +66,12 @@ object StackMachine {
             offset + totalOffset + 8
           )
 
-          return (Some((offset + 8, totalOffset)), frame.definedVarMap(name))
+          return (Some((offset + 8, totalOffset)), frame.definedVarMap(name), frame)
         }
       }
     })
 
-    (None, false)
+    (None, false, null)
   }
 
   /**

@@ -12,6 +12,8 @@ import scala.collection.immutable.ListMapBuilder
 
 object X86IRGenerator {
 
+
+
   object AsgnType extends Enumeration {
     type AsgnType = Value
     val Reassign, Declare, Retrieve = Value
@@ -24,6 +26,8 @@ object X86IRGenerator {
   val lib: LibFunGenerator = new LibFunGenerator()
 
   val regTracker = new RegisterTracker
+
+  val lazyLabelToInstruction : Map[String, List[Instruction]] = new HashMap[String, List[Instruction]]()
 
   val stringLiterals: Map[String, String] = Map()
   var rodataDirectives: ListBuffer[Directive] = ListBuffer()
@@ -101,15 +105,36 @@ object X86IRGenerator {
     instructions += Mov(
       Dest,
       Immediate32(0),
-      InstrSize.fullReg
+      InstrSize.fullReg  mov rax, 1
+  push rax
+  mov rax, 0
+  mov r11, rax
+  pop r10
+  mov eax, r10d
+  cmp r11, 0
+  je _errDivByZero
+  cdq
+  idiv r11d
+  movsx rax, eax
+  mov qword ptr [rbp - 8], rax
     ) // Return 0 if no exit function
     instructions ++= List(
       ReturnInstr()
     )
 
+
+    // add lazy labels to instructions
+
+    for ((label, instrs) <- lazyLabelToInstruction) {
+      instructions ++= ListBuffer(
+        Label(label)
+      ) ++= instrs
+    }
+
     instructions ++= lib.addLibFuns()
 
     instructions ++= functionGenerator.generateFunctionCode()
+
 
     instructions
   }
@@ -297,7 +322,12 @@ object X86IRGenerator {
           case (Declare) => {
             printf("LAZZYYY")
 
-            // frame.lazyToLabel
+            val generateVarIR : ListBuffer[Instruction] = processInstructions(asgnType, offset, extraOffset, fpchange, instrs)
+            val label = s"lazy_${ident}${StackMachine.stackFrameCounter}"
+            val lazyInstructions = generateVarIR
+            lazyLabelToInstruction.addOne(label, lazyInstructions.toList)
+            frame.addLazyIRLabel(ident, label, lazyInstructions)
+            ListBuffer()
           }
         }
         ListBuffer()
@@ -506,10 +536,7 @@ object X86IRGenerator {
         StackMachine.putVarOnStack(ident.value)
         //Can abstract stackmachine.offset part of the function
         // can abstract Som
-        findingVarOnStackIR(ident.value, instructions, Declare)
-      
-
-    
+        findingVarOnStackIR(ident.value, instructions, asgnType)
     }
     case Print(expr) => {
       printToIR(expr, false)

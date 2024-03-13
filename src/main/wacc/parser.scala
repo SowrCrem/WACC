@@ -169,7 +169,6 @@ object parser {
   val callVoidParser: Parsley[Stat] = 
     CallVoid("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
 
-
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser |lazyStatParser|  asgnEqParser |
       readParser | freeParser | returnParser |

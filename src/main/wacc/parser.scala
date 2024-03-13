@@ -162,18 +162,13 @@ object parser {
     AsgnEq(assignLhs, "=" ~> assignRhs)
   }
 
-<<<<<<< HEAD
   lazy val lazyStatParser : Parsley[Stat] = {
     val lazyStat = LazyStat("lazy" ~> statAtoms)
     lazyStat
   }
-=======
   val callVoidParser: Parsley[Stat] = 
     CallVoid("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
->>>>>>> updated-void-types
 
-  val callVoidParser: Parsley[Stat] = 
-    CallVoid("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
 
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser |lazyStatParser|  asgnEqParser |

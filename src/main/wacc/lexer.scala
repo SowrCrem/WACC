@@ -107,6 +107,12 @@ object lexer {
       ";" -> Label(
         label="semicolon"
       ),
+
+      /* EXTENSION - Void Types */
+      "void" -> Label(
+        label="type"
+      ),
+      
       "int" -> Label(
         label="type"
       ),

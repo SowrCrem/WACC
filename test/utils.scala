@@ -132,11 +132,15 @@ object Utils {
     exitsWithoutCode(path, 100)
   }
 
+  def parsesWithoutSemanticError(path: String): Assertion = {
+    exitsWithoutCode(path, 200)
+  }
+
   private def exitsWithoutCode(path: String, code: Int): Assertion = synchronized({
     // check if getExitCode doesn't throw any error. If it does, fail saying Main.compile threw an error
-    val exitCode = code
+    var exitCode = code
     try {
-      val exitCode = getExitCode(path)
+      exitCode = getExitCode(path)
     } catch {
       case e: Throwable => fail("Compilation Error: Main.compile threw an error: " + e.getMessage)
     }

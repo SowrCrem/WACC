@@ -377,6 +377,52 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           errors += new NotDefinedError(position, ident.value)
           None
       }
+      
+    /* EXTENSION - Void Types */
+    case CallVoid(ident, args) => {
+      def checkArgList(
+          argList: List[Expr],
+          expected: List[TypeNode]
+      ): Boolean = {
+        // Check if the number of arguments matches the number of parameters
+        if (argList.length != expected.length) {
+          errors += new ArgNumError(position, expected.length, argList.length)
+          false
+        }
+        // println("1")
+        val argTypes = argList.map(arg => check(arg, symbolTable, returnType))
+        // println("2")
+
+        argTypes.zip(expected).forall { 
+          case (argType, expectedType) => 
+            argType == Some(expectedType) || argType == Some(Null()(position.pos))
+        }
+      }
+
+      symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
+        case Some(Func(typeNode, _, paramList, _)) =>
+          val expectedTypes = paramList.paramList.map(_.typeNode)
+          if (checkArgList(args, expectedTypes)) {
+            // println("3")
+            // println(args)
+            // println(expectedTypes)
+            None
+          } else {
+            // Expected types do not match actual types
+            var argTypes = args.map(arg => check(arg, symbolTable, returnType))
+            errors += new ArgTypeError(position, 
+              expectedTypes.map(_.toString()).mkString(", "), 
+              argTypes.map(_.getOrElse("none").toString()).mkString(", ")
+            )
+            None
+          }
+        case _ =>
+          // Function identifier not found
+          errors += new NotDefinedError(position, ident.value)
+          None
+      }
+    }
+
     
     // ARRAY LITERAL
     case ArrayLiter(exprList) =>
@@ -620,6 +666,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     case Skip()         => None
     case _ =>
       println("Type checking not implemented for " + position)
+      errors += new NotDefinedError(position, "Type checking not implemented for " + position)
       None
   }
 

@@ -68,15 +68,20 @@ object parser {
     Ops(Prefix)(Len <# "len"),
     Ops(Prefix)(Ord <# "ord"),
     Ops(Prefix)(Chr <# "chr"),
+    
+    /* EXTENSION - Bitwise Operators */
     Ops(Prefix)(BitNot <# "~"),
+    
     Ops(InfixL)(Mul <# "*"),
     Ops(InfixL)(Div <# "/"),
     Ops(InfixL)(Mod <# "%"),
     Ops(InfixL)(Plus <# "+"),
     Ops(InfixL)(Minus <# "-"),
+
     /* EXTENSION - Bitwise Operators */
     Ops(InfixL)(BitAnd <# "&"),
     Ops(InfixL)(BitOr <# "|"),
+    
     Ops(InfixN)(GreaterThan <# ">"),
     Ops(InfixN)(GreaterThanEq <# ">="),
     Ops(InfixN)(LessThan <# "<"),
@@ -93,21 +98,23 @@ object parser {
 
   // -- Type Parsers ---------------------------------------------- //
 
-  lazy val baseType: Parsley[BaseTypeNode] =
+  lazy val baseTypeParser: Parsley[BaseTypeNode] =
     IntTypeNode <# "int"| BoolTypeNode <# "bool" | CharTypeNode <# "char" | 
     StringTypeNode <# "string"
 
   lazy val arrayTypeParser: Parsley[ArrayTypeNode] = 
-    chain.postfix1(baseType <|> pairType)(ArrayTypeNode <# ("[" <~> "]"))
+    chain.postfix1(baseTypeParser <|> pairTypeParser)(ArrayTypeNode <# ("[" <~> "]"))
 
   lazy val pairElemTypeParser: Parsley[PairElemTypeNode] =
-    atomic(arrayTypeParser) | baseType | Null <# "pair"
+    atomic(arrayTypeParser) | baseTypeParser | Null <# "pair"
 
-  lazy val pairType: Parsley[PairTypeNode] = 
+  lazy val pairTypeParser: Parsley[PairTypeNode] = 
     PairTypeNode("pair" ~> "(" ~> pairElemTypeParser <~ ",", pairElemTypeParser <~ ")")
 
+  lazy val voidTypeParser: Parsley[VoidTypeNode] = VoidTypeNode <# "void"
+
   lazy val typeParser: Parsley[TypeNode] =
-    atomic(arrayTypeParser) | baseType | pairType
+    atomic(arrayTypeParser) | baseTypeParser | pairTypeParser | voidTypeParser
 
   // -- Statement Parsers ----------------------------------------- //
 
@@ -155,11 +162,14 @@ object parser {
     AsgnEq(assignLhs, "=" ~> assignRhs)
   }
 
+  val callVoidParser: Parsley[Stat] = 
+    CallVoid("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
+
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser | asgnEqParser |
       readParser | freeParser | returnParser |
       exitParser | printParser | printlnParser |
-      ifParser | whileParser | beginParser
+      ifParser | whileParser | beginParser | callVoidParser
   }
 
 
@@ -186,6 +196,15 @@ object parser {
   def parse(input: String): Result[String, Program] = parser.parse(input)
 
   // -- AST Validation -------------------------------------------- //
+  def noReturnStatements(stmts: List[Stat]): Boolean = 
+    stmts.forall(stmt => stmt match {
+      case Return(_)     => false
+      case If(_, s1, s2) => noReturnStatements(s1) && noReturnStatements(s2)
+      case While(_, s)   => noReturnStatements(s)
+      case BeginEnd(s)   => noReturnStatements(s)
+      case _             => true
+    })
+
   def validEndingStatement(stmts: List[Stat]): Boolean = {
     stmts.last match {
       case Return(_)          => true
@@ -200,7 +219,12 @@ object parser {
   def validFunctions(funcs: List[Func]): Boolean = {
     funcs.forall(func => 
       func match {
-        case Func(_, _, _, stmts) => validEndingStatement(stmts)
+        case Func(funcType, _, _, stmts) => {
+          funcType match {
+            case VoidTypeNode() => noReturnStatements(stmts)
+            case _              => validEndingStatement(stmts)
+          }
+        }
       }
     )
   }

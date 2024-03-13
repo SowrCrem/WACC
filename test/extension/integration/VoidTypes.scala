@@ -28,13 +28,11 @@ class VoidTypes extends AnyFlatSpec with BeforeAndAfterEach {
     runSucceeds(path)
   }
 
-  it should "not parse extensions/void_types/invalidVoidSyntax.wacc" in {
+  it should "fail parsing extensions/void_types/invalidVoidSyntax.wacc" in {
     val path = constructPath(List("extensions", "void_types", "invalidVoidSyntax.wacc"))
     throwsSyntaxError(path)
   }
 
   // TODO: Add more tests for void types
-
-  //
 
 }

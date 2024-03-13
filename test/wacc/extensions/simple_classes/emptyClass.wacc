@@ -1,0 +1,16 @@
+# empty class implementation
+
+# Output:
+#
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+	class empty is
+    public constructor
+	end
+  println "Parses class inclusion correctly"
+end

@@ -162,7 +162,13 @@ object X86IRGenerator {
       modifiedBody += instr
     }
 
-    ListBuffer() ++ setupStack ++ modifiedBody
+    // ListBuffer() ++ setupStack ++ modifiedBody
+    if (foundReturn) {
+      ListBuffer() ++ setupStack ++ modifiedBody
+    } else {
+      // Account for void functions with no returns
+      ListBuffer() ++ setupStack ++ modifiedBody ++ popStack
+    }
 
   }
 
@@ -491,7 +497,6 @@ object X86IRGenerator {
       printToIR(expr, false)
     }
     case Println(expr) => {
-      lib.setPrintLnFlag(true)
       printToIR(expr, true)
     }
     case Exit(expr) => {
@@ -714,6 +719,52 @@ object X86IRGenerator {
         }
       }
     }
+
+    /* EXTENSION - Void Types */
+    case CallVoid(ident, paramList) => {
+      val instructions = new ListBuffer[Instruction]().empty
+      val functionNode = functionGenerator.getFunctionNode(ident.value)
+      
+      val handleParams = ListBuffer[Instruction]().empty
+      for (param <- paramList) {
+        handleParams ++= exprToIR(param)
+        handleParams ++= ListBuffer(
+          PushRegisters(List(Dest), InstrSize.fullReg)
+        )
+      }
+
+      val incrementStackInstr = new ListBuffer[Instruction]().empty
+      if (paramList.size > 0) {
+        for (i <- 0 until paramList.size) {
+          incrementStackInstr ++= ListBuffer(
+            PopRegisters(List(G0), InstrSize.fullReg)
+          )
+        }
+      }
+
+      if (!functionGenerator.isDefined(functionNode.ident.value)) {
+        functionGenerator.setDefined(functionNode.ident.value)
+
+        val funcBody = generateFunctionIR(
+          functionNode, 
+          functionGenerator.getFunctionTable(ident.value), 
+          functionNode.paramList
+        )
+
+        functionGenerator.addFunction(
+          functionNode.ident.value,
+          functionNode,
+          funcBody
+        )
+
+        functionGenerator.addFunction(ident.value, functionNode, funcBody)
+      }
+
+      instructions ++= handleParams 
+      instructions += CallInstr(ident.value)
+      instructions ++= incrementStackInstr
+    }
+
   }
 
   def matchPrintType(typeNode: TypeNode): ListBuffer[Instruction] = {
@@ -786,6 +837,7 @@ object X86IRGenerator {
     ) 
     instructions ++= printCall
     if (println) {
+      lib.setPrintLnFlag(true)
       instructions ++= ListBuffer(CallInstr("println"))
     }
     instructions ++= ListBuffer(
@@ -1122,8 +1174,6 @@ object X86IRGenerator {
       intBinOp(expr1, expr2, ArithmOperations.mod)
     }
     case Call(ident, paramList) => {
-
-
       val instructions = new ListBuffer[Instruction]().empty
       val functionNode = functionGenerator.getFunctionNode(ident.value)
       val handleParams = ListBuffer[Instruction]().empty

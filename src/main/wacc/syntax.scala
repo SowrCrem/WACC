@@ -151,6 +151,10 @@ object NewPair extends ParserBridgePos2[Expr, Expr, NewPair]
 case class Call(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat
 object Call extends ParserBridgePos2[Ident, List[Expr], Call]
 
+/* EXTENSION - Void Types */
+case class CallVoid(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat
+object CallVoid extends ParserBridgePos2[Ident, List[Expr], CallVoid]
+
 case class ArrayLiter(exprList: List[Expr])(val pos: (Int, Int)) extends Expr  
 object ArrayLiter extends ParserBridgePos1[List[Expr], ArrayLiter]
 
@@ -296,6 +300,14 @@ trait TypeNode extends Position {
 }
 
 sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode
+
+/* EXTENSION - Void Types */
+case class VoidTypeNode()(val pos: (Int, Int)) extends TypeNode {
+  override def toString: String = "void"
+  override val size: Int = 0
+}
+object VoidTypeNode extends ParserBridgePos0[VoidTypeNode]
+
 case class IntTypeNode()(val pos: (Int, Int)) extends BaseTypeNode {
   override def toString: String = "integer"
   override val size: Int = 8

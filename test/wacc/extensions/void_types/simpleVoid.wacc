@@ -1,0 +1,17 @@
+# simple void function call
+
+# Output:
+# Hello!
+#
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+  void sayHello() is
+    println "Hello!"
+  end
+  call sayHello()
+end

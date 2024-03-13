@@ -1,0 +1,20 @@
+# void function call with parameters
+
+# Output:
+# Hello Vivian!
+#
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+  void printName(string name) is
+    print "Hello ";
+    print name;
+    println "!"
+  end
+  string name = "Vivian";
+  call printName(name)
+end

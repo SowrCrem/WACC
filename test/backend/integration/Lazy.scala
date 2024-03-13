@@ -53,6 +53,6 @@ class Lazy extends AnyFlatSpec with BeforeAndAfterEach {
     val path = constructPath(List("valid", "lazy", "lazyDoesntCookTheCodebase.wacc"))
     runSucceeds(path, "", 0)
   }
-
+  
 
 }

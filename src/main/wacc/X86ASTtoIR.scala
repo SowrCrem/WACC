@@ -244,6 +244,33 @@ object X86IRGenerator {
     findingVarOnStackIR(ident, instrs, 0, asgnType)
   }
 
+  def processInstructions(
+    asgnType: AsgnType,
+    offset: Int,
+    extraOffset: Int,
+    fpchange: Int,
+    instrs: ListBuffer[Instruction])
+  : ListBuffer[Instruction] = {
+    val moveInstr = asgnType match {
+      case (Declare | Reassign) => moveExprToAddress(offset - extraOffset)
+      case Retrieve => findVarInCurrFrame(offset - extraOffset)
+    }
+    fpchange match {
+      case 0 => instrs ++= moveInstr
+      case _ => {
+        goToVarStackAddress(fpchange, MAX_REGSIZE) match {
+          case (setupStack, restoreStack) => {
+            val instructions = ListBuffer[Instruction]().empty
+            instructions.prependAll(setupStack)
+            instructions ++= moveInstr
+            instructions ++= restoreStack
+            instrs ++= instructions
+          }
+          case _ => throw new RuntimeException("Invalid return from attempt to find variable in stack")
+        }
+      }
+    }
+  }
 
   /**
     * Given a variable, find it in the stack, complete a set of instructions using the variable and push the variable back onto the stack
@@ -256,31 +283,21 @@ object X86IRGenerator {
   def findingVarOnStackIR(ident: String, instrs : ListBuffer[Instruction], extraOffset : Int, asgnType : AsgnType) : ListBuffer[Instruction] = {
     StackMachine.offset(ident) match {
       case (Some((offset, fpchange)), true, frame) => {
-        val moveInstr = asgnType match {
-          case (Declare | Reassign) => moveExprToAddress(offset - extraOffset)
-          case Retrieve => findVarInCurrFrame(offset - extraOffset)
-        }
-        fpchange match {
-          case 0 => instrs ++= moveInstr
-          case _ => {
-            goToVarStackAddress(fpchange, MAX_REGSIZE) match {
-              case (setupStack, restoreStack) => {
-                val instructions = ListBuffer[Instruction]().empty
-                instructions.prependAll(setupStack)
-                instructions ++= moveInstr
-                instructions ++= restoreStack
-                instrs ++= instructions
-              }
-              case _ => throw new RuntimeException("Invalid return from attempt to find variable in stack")
-            }
-          }
-        }
+        processInstructions(
+          asgnType,
+          offset,
+          extraOffset,
+          fpchange,
+          instrs
+        )
       }
       case (Some((offset, fpchange)), false, frame) => {
 
         asgnType match {
           case (Declare) => {
             printf("LAZZYYY")
+
+            // frame.lazyToLabel
           }
         }
         ListBuffer()

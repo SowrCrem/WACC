@@ -1,0 +1,4 @@
+begin 
+    lazy int x = 2;
+    println x
+end

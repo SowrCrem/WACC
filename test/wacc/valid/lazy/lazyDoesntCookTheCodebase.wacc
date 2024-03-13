@@ -29,7 +29,7 @@ begin
 
   println "The first 20 fibonacci numbers are:" ;
   print "0, " ;
-  int result = call fibonacci(19, true) ;
+  int result = call fibonacci(20, true) ;
   print result ;
   println "..."
 end

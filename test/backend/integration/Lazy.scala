@@ -23,5 +23,36 @@ class Lazy extends AnyFlatSpec with BeforeAndAfterEach {
     runSucceeds(path, "", 0)
   }
 
+  it should "run valid/lazy/lazyInt2.wacc" in {
+    val path = constructPath(List("valid", "lazy", "lazyInt2.wacc"))
+
+    runSucceeds(path, "", 0)
+  }
+
+  it should "run valid/lazy/lazyIntUsed.wacc" in {
+    val path = constructPath(List("valid", "lazy", "lazyIntUsed.wacc"))
+    runSucceeds(path, "", 0)
+  }
+
+  it should "run valid/lazy/lazynessCaches.wacc" in {
+    val path = constructPath(List("valid", "lazy", "lazynessCaches.wacc"))
+    runSucceeds(path, "", 0)
+  }
+
+  it should "run valid/lazy/lazyIntDivZero.wacc" in {
+    val path = constructPath(List("valid", "lazy", "lazyIntDivZero.wacc"))
+    runSucceeds(path, "", 255)
+  }
+
+  it should "run valid/lazy/superLazy.wacc" in {
+    val path = constructPath(List("valid", "lazy", "superLazy.wacc"))
+    runSucceeds(path, "", 0)
+  }
+
+  it should "run valid/lazy/lazyDoesntCookTheCodebase.wacc" in {
+    val path = constructPath(List("valid", "lazy", "lazyDoesntCookTheCodebase.wacc"))
+    runSucceeds(path, "", 0)
+  }
+
 
 }

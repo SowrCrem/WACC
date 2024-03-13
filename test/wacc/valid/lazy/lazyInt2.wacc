@@ -1,4 +1,4 @@
 begin 
     lazy int x = 1/0;
     lazy int y = 1 + x
-end
+end 

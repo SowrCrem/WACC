@@ -222,6 +222,25 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], var s
     }
   }
 
+  def setDefined(name: String): Unit = {
+    if (!definedVarMap.contains(name)) {
+      println("Variable not found in current frame:" + name + "\n")
+      this.printFrame()
+      throw new Exception("Variable not found in current frame")
+    }
+    definedVarMap.put(name, true)
+  }
+
+  /**
+    * Get the label and the IR for a lazy variable
+    *
+    * @param name The name of the lazy variable
+    * @return A tuple containing the label and the IR for the lazy variable
+    */
+  def getLazyIRLabel(name: String): (String, ListBuffer[Instruction]) = {
+    lazyToLabel(name)
+  }
+
 
   def addLazyIRLabel(name: String, label: String, ir: ListBuffer[Instruction]): Unit = {
     lazyToLabel.addOne(name, (label, ir))

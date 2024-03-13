@@ -105,18 +105,7 @@ object X86IRGenerator {
     instructions += Mov(
       Dest,
       Immediate32(0),
-      InstrSize.fullReg  mov rax, 1
-  push rax
-  mov rax, 0
-  mov r11, rax
-  pop r10
-  mov eax, r10d
-  cmp r11, 0
-  je _errDivByZero
-  cdq
-  idiv r11d
-  movsx rax, eax
-  mov qword ptr [rbp - 8], rax
+      InstrSize.fullReg 
     ) // Return 0 if no exit function
     instructions ++= List(
       ReturnInstr()
@@ -127,14 +116,15 @@ object X86IRGenerator {
 
     for ((label, instrs) <- lazyLabelToInstruction) {
       instructions ++= ListBuffer(
-        Label(label)
-      ) ++= instrs
+        Label(s"_${label}")
+      ) ++= instrs ++= ListBuffer(
+        ReturnInstr()
+      )
     }
 
     instructions ++= lib.addLibFuns()
 
     instructions ++= functionGenerator.generateFunctionCode()
-
 
     instructions
   }
@@ -320,8 +310,6 @@ object X86IRGenerator {
 
         asgnType match {
           case (Declare) => {
-            printf("LAZZYYY")
-
             val generateVarIR : ListBuffer[Instruction] = processInstructions(asgnType, offset, extraOffset, fpchange, instrs)
             val label = s"lazy_${ident}${StackMachine.stackFrameCounter}"
             val lazyInstructions = generateVarIR
@@ -329,8 +317,30 @@ object X86IRGenerator {
             frame.addLazyIRLabel(ident, label, lazyInstructions)
             ListBuffer()
           }
+          case (Retrieve) => {
+            val label = frame.getLazyIRLabel(ident)._1
+            // if we are in an inner scope we need to move the frame pointer and stack pointer back to the original 
+            // scope before we can execute the lazy instructions
+            frame.setDefined(ident)
+            fpchange match {
+              case 0 => {
+                instrs ++= ListBuffer(CallInstr(label))
+              }
+              case change => {
+                goToVarStackAddress(fpchange, MAX_REGSIZE) match {
+                  case (setupStack, restoreStack) => {
+                    val instructions = ListBuffer[Instruction]().empty
+                    instructions.prependAll(setupStack)
+                    instructions ++= ListBuffer(CallInstr(label))
+                    instructions ++= restoreStack
+                    instrs ++= instructions
+                  }
+                  case _ => throw new RuntimeException("Invalid return from attempt to find variable in stack")
+                }
+              }
+            }
+          }
         }
-        ListBuffer()
       }
       case _ => throw new RuntimeException(s"Variable ${ident} not found in stack")
     }
@@ -1365,6 +1375,7 @@ object X86IRGenerator {
     stringLiterals.clear()
     rodataDirectives.clear()
     lib.reset()
+    lazyLabelToInstruction.clear()
     functionGenerator.reset()
     labelCounter = 0
   }

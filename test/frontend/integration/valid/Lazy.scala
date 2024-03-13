@@ -24,6 +24,10 @@ class Lazy extends AnyFlatSpec {
     throwsNoError("valid/lazy/lazyIntDivZero.wacc")
   }
 
+  "valid - lazy tests: lazyIntUsed.wacc" should "return exit code 0" in {
+    throwsNoError("valid/lazy/lazyIntUsed.wacc")
+  }
+
   "valid - lazy tests: lazyInt.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/lazyInt.wacc")
   }

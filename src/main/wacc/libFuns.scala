@@ -76,11 +76,11 @@ class LibFunGenerator {
     * Maps a string defining an exception to an error type
     */
   val exceptionToErrType: Map[String, String] = Map(
-    "OverflowError" -> "overflow",
-    "DivideByZeroError" -> "divideByZero",
-    "OutOfMemoryError" -> "outOfMemory",
-    "NullDereferenceError" -> "nullDerefOrFree",
-    "ArrayOutOfBoundsError" -> "outOfBounds"
+    overflow.exceptionName -> overflow.labelName,
+    divideByZero.exceptionName -> divideByZero.labelName,
+    outOfMemory.exceptionName -> outOfMemory.labelName,
+    nullDerefOrFree.exceptionName -> nullDerefOrFree.labelName,
+    outOfBounds.exceptionName -> outOfBounds.labelName,
   )
 
   /** 
@@ -99,6 +99,7 @@ class LibFunGenerator {
     val dataName: String
     val errMessage: String
     var printErrFlag = false
+    val exceptionName : String
 
     def getJumpLabel: String = {
       StackMachine.getExceptionLabelName(labelName)
@@ -158,26 +159,31 @@ class LibFunGenerator {
     val labelName = "_errOverflow"
     val dataName = "_overflow_string"
     val errMessage: String = "fatal error: integer overflow or underflow occurred\\n"
+    val exceptionName: String = "OverflowError"
   }
   case object divideByZero extends ErrType {
     val labelName = "_errDivByZero"
     val dataName = "_divide_by_zero_string"
     val errMessage: String = "fatal error: division or modulo by zero\\n"
+    val exceptionName: String = "DivByZeroError"
   }
   case object outOfMemory extends ErrType {
     val labelName = "_errOutOfMemory"
     val dataName = "_array_out_of_memory"
     val errMessage: String = "fatal error: out of memory\\n"
+    val exceptionName: String = "OutOfMemoryError"
   }
   case object nullDerefOrFree extends ErrType {
     val labelName = "_errNullDereferenceOrFree"
     val dataName = "_null_dereference_or_free_string"
     val errMessage: String = "fatal error: null pointer dereference or double free\\n"
+    val exceptionName: String = "NullDereferenceError"
   }
   case object outOfBounds extends ErrType {
     val labelName = "_errOutOfBounds"
     val dataName = "_array_out_of_bounds"
     val errMessage: String = "fatal error: array index out of bounds\\n"
+    val exceptionName: String = "ArrayIndexOutOfBoundsError"
 
     /**
       * Generates the intermediate representation (IR) for the array index out of bounds error
@@ -210,6 +216,7 @@ class LibFunGenerator {
     val labelName = "_errBadChar"
     val dataName = "_bad_char_string"
     val errMessage: String = "runtime error: invalid character, not ascii character\\n"
+    val exceptionName: String = "BadCharError"
   }
   /**
     * Sets the flag to print malloc assembly code

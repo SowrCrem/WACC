@@ -31,7 +31,6 @@ object X86IRGenerator {
 
   val stringLiterals: Map[String, String] = Map()
   var rodataDirectives: ListBuffer[Directive] = ListBuffer()
-  val catchBlocks: ListBuffer[ListBuffer[Instruction]] = ListBuffer()
   var labelCounter: Int = 0
 
   /** Adds a string literal to the rodata section of the assembly code
@@ -120,11 +119,6 @@ object X86IRGenerator {
       ) ++= instrs ++= ListBuffer(
         ReturnInstr()
       )
-    }
-
-    // Add Catch Blocks
-    for (block <- catchBlocks) {
-      instructions ++= block
     }
 
     // Add the library functions
@@ -358,6 +352,18 @@ object X86IRGenerator {
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
     case tc@TryCatchStat(tryStmts, catches) => {
       val exceptionMap = new HashMap[String, Label]()
+      val endTryLabelName = s"end_try_${labelCounter}"
+      val catchBlocks: ListBuffer[ListBuffer[Instruction]] = ListBuffer()
+              /*    trystmststj ..
+          *   jmpcond catch1
+          *   truyskc
+          *   jmpcond catch2
+          *   catch1
+          *   jmp end
+          *   catch2
+          *   jmp end
+          *   end
+         */
       for (c <- catches) {
         val table = c.symbolTable
         val addFrame = StackMachine.addFrame(
@@ -369,6 +375,7 @@ object X86IRGenerator {
         catchStats ++= addFrame
         c.stats.foreach(s => catchStats ++= statToIR(s))
         catchStats ++= StackMachine.popFrame()
+        catchStats += Jump(endTryLabelName)
         catchBlocks += catchStats
         val excName = lib.exceptionToErrType.get(c.exception.exception)
         if (excName.isDefined) {
@@ -381,7 +388,10 @@ object X86IRGenerator {
       )
       StackMachine.setExceptionMap(exceptionMap)
       tryStmts.foreach(s => instructions ++= statToIR(s))
-      instructions ++= StackMachine.popFrame()
+      val popFrame = StackMachine.popFrame()
+      instructions ++= popFrame ++= ListBuffer(Jump(endTryLabelName))
+      catchBlocks.foreach(c => instructions += c.headOption.getOrElse(throw new RuntimeException("problem")) ++= popFrame ++= c.tail)
+      instructions += Label(endTryLabelName)
       instructions
     }
     case LazyStat(pos) => {

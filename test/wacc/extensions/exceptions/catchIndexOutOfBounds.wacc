@@ -1,0 +1,14 @@
+# Output
+# Caught Index Out Of Bounds
+
+begin 
+  int[] arr = [1,2,3,4,5];
+  try {
+    println arr[7];
+    exit -1
+  } catch (Exception: ArrayIndexOutOfBounds) {
+    println "Caught Index Out Of Bounds"
+  } catch (Exception: OutOfMemoryError) {
+    println "out of memory"
+  }
+end

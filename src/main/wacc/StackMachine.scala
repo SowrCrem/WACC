@@ -44,11 +44,19 @@ object StackMachine {
     * @return
     */
   def getExceptionLabelName(exceptionName: String): String = {
-    exceptionName
-    // frames.last.catchExceptions.get(exceptionName) match {
-    //   case Some(label) => label.name
-    //   case None => exceptionName
-    // }
+    println(exceptionName)
+    if (frames.isEmpty) {
+      println("No frames in stack")
+      exceptionName
+    } else {
+      frames.last.catchExceptions.get(exceptionName) match {
+        case Some(label) => {
+          println(label.name)
+          label.name
+        }
+        case None => exceptionName
+      }
+    }
   }
 
 

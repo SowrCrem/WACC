@@ -173,9 +173,17 @@ object lexer {
       "null" -> Label(
         label="null"
       ),
+      /* EXTENSION - Lazy Evaluation */
       "lazy" -> Label(
         label="lazy declaration"
       ),
+      /* EXTENSION - Exceptions */
+      "try" -> Label(
+        label="try block"
+      ),
+      "catch" -> Label(
+        label="catch block"
+      )
     )
   }
 

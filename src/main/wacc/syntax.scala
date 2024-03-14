@@ -66,12 +66,33 @@ case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, statList
 object Func extends ParserBridgePos4[TypeNode, Ident, ParamList, List[Stat], Func]
 
 // Lazy Stat
-
 case class LazyStat(stat: Stat)(val pos: (Int, Int)) extends Stat{
   var symbolTable: SymbolTable = new SymbolTable(None);
 }
 object LazyStat extends ParserBridgePos1[Stat, LazyStat]
 
+/* Exceptions Node (for try catch block)*/
+case class ExceptionType(exception: String)(val pos: (Int, Int)) extends Expr
+object ExceptionType extends ParserBridgePos1[String, ExceptionType]
+
+/* Catch Block */
+case class CatchStmt(exception: ExceptionType, stats: List[Stat])(val pos: (Int, Int)) extends Position {
+  var symbolTable: SymbolTable = new SymbolTable(None);
+}
+object CatchStmt extends ParserBridgePos2[ExceptionType, List[Stat], CatchStmt]
+
+/**
+  * @AaronTomThomas should I be declaring a new symbol table inside LazyStat? 
+  * (would assume so since it's a different scope?)
+  *
+  * @param stat
+  * @param pos
+  */
+//Try-catching Stat
+case class TryCatchStat(tryStats: List[Stat], catchStats: CatchStmt)(val pos: (Int, Int)) extends Stat {
+  var symbolTable: SymbolTable = new SymbolTable(None);
+}
+object TryCatchStat extends ParserBridgePos2[List[Stat], CatchStmt, TryCatchStat]
 
 
 // Param-List (Extending Position)

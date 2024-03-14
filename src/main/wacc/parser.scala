@@ -169,6 +169,14 @@ object parser {
   val callVoidParser: Parsley[Stat] = 
     CallVoid("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
 
+  val exceptionParser : Parsley[ExceptionType] = 
+    ExceptionType("Exception" ~> ":" ~> lexer.string)
+  
+  val catchParser : Parsley[CatchStmt] = 
+    CatchStmt("catch" ~> "(" ~> exceptionParser <~ ")", "{" ~> stmtParser <~ "}")
+
+  val tryCatchParser : Parsley[Stat] = 
+    TryCatchStat("try" ~> "{" ~> stmtParser <~ "}", catchParser)
 
   val statAtoms: Parsley[Stat] = {
     skipParser | identAsgnParser |lazyStatParser|  asgnEqParser |

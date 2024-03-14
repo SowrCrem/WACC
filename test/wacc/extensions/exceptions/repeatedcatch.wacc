@@ -1,0 +1,13 @@
+# Exit Code:
+# 200
+
+begin
+  try {
+    int x = 1;
+    println x
+  } catch (Exception: DivByZeroError) {
+    println "1/0 is undefined"
+  } catch (Exception: DivByZeroError) {
+    println "exception already caught"
+  }
+end

@@ -21,6 +21,14 @@ object Errors {
     override def getErrMessage() = ("Already defined: ", Seq(message))
   }
 
+  // For repeated catches of the same exception
+  class ExceptionAlreadyCaughtError(
+    position: Position, 
+    val message: String
+  ) extends SemanticError(position, Seq(message)) {
+    override def getErrMessage() = ("Exception already caught: ", Seq("Exception already caught: ", message))
+  }
+
   // Given expected type and actual type
   class TypeMismatchError(
     position: Position, 

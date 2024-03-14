@@ -89,10 +89,10 @@ object CatchStmt extends ParserBridgePos2[ExceptionType, List[Stat], CatchStmt]
   * @param pos
   */
 //Try-catching Stat
-case class TryCatchStat(tryStats: List[Stat], catchStats: CatchStmt)(val pos: (Int, Int)) extends Stat {
+case class TryCatchStat(tryStats: List[Stat], catchStats: List[CatchStmt])(val pos: (Int, Int)) extends Stat {
   var symbolTable: SymbolTable = new SymbolTable(None);
 }
-object TryCatchStat extends ParserBridgePos2[List[Stat], CatchStmt, TryCatchStat]
+object TryCatchStat extends ParserBridgePos2[List[Stat], List[CatchStmt], TryCatchStat]
 
 
 // Param-List (Extending Position)

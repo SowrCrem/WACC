@@ -349,6 +349,22 @@ object X86IRGenerator {
   // ------- Statement IR Generation -----------------------------------------------//
 
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
+    case TryCatchStat(tryStmts, catches) => {
+      val catchBlocks = ListBuffer[ListBuffer[Instruction]]()
+      for (c <- catches) {
+        val table = c.symbolTable
+        val addFrame = StackMachine.addFrame(
+          table,
+          None
+        )
+        // val catchStats = for (s <- c.stats) yield statToIR(s)
+        
+      }
+        
+      // val instructions = statToIR(tryStmts)
+      // instructions
+      ???
+    }
     case LazyStat(pos) => {
       val instructions = statToIR(pos)
       instructions

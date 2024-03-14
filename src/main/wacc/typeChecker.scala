@@ -2,6 +2,8 @@ package wacc
 
 import wacc.Errors._
 import scala.collection.mutable.ListBuffer
+import java.util.HashSet
+import scala.collection.mutable
 
 class TypeChecker(var initialSymbolTable: SymbolTable) {
 
@@ -82,6 +84,23 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         case None => errors += new NotDefinedError(position, ident.value)
           None
       }
+    }
+    case TryCatchStat(tryStmts, catches) => {
+      val newSymbolTable = symbolTable.enterScope()
+      tryStmts.foreach(stat => check(stat, newSymbolTable, None))
+      val caughtExceptions : mutable.Set[ExceptionType] = mutable.Set()
+      catches.foreach {
+        case CatchStmt(exception, catchStmts) => {
+          val newSymbolTable = symbolTable.enterScope()
+          if (caughtExceptions.contains(exception)) {
+            errors += new AlreadyDefinedError(position, exception.exception)
+          } else {
+            caughtExceptions += exception
+          }
+          catchStmts.foreach(stat => check(stat, newSymbolTable, None))
+        }
+      }
+      None
     }
     case LazyStat(pos) => {
       pos.setLazy()

@@ -176,7 +176,7 @@ object parser {
     CatchStmt("catch" ~> "(" ~> exceptionParser <~ ")", "{" ~> stmtParser <~ "}")
 
   val tryCatchParser : Parsley[Stat] = 
-    TryCatchStat("try" ~> "{" ~> stmtParser <~ "}", catchParser)
+    TryCatchStat("try" ~> "{" ~> stmtParser <~ "}", many(catchParser))
 
   val statAtoms: Parsley[Stat] = {
     skipParser | tryCatchParser | identAsgnParser |lazyStatParser|  asgnEqParser |

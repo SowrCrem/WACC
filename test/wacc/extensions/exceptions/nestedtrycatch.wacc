@@ -1,0 +1,16 @@
+begin
+  try {
+    int x = 1;
+    println x ;
+    try {
+      int y = 1/0
+    } catch (Exception: DivByZeroError) {
+      println "1/0 is undefined"
+    } ;
+    println "continuing"
+  } catch (Exception: DivByZeroError) {
+    println "1/0 is undefined"
+  } catch (Exception: OutOfBoundsError) {
+    println "should never reach this case"
+  }
+end

@@ -12,6 +12,10 @@ import org.scalatest.matchers.should.Matchers._
 
 class Lazy extends AnyFlatSpec {
 
+  "valid - lazy tests: evaluationDivByZeroFails.wacc" should "return exit code 0" in {
+    throwsNoError("valid/lazy/evaluationDivByZeroFails.wacc")
+  }
+
   "valid - lazy tests: lazyDoesntCookTheCodebase.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/lazyDoesntCookTheCodebase.wacc")
   }
@@ -35,6 +39,10 @@ class Lazy extends AnyFlatSpec {
   "valid - lazy tests: lazynessCaches.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/lazynessCaches.wacc")
   }
+
+  // "valid - lazy tests: lazyPair.wacc" should "return exit code 0" in {
+  //   throwsNoError("valid/lazy/lazyPair.wacc")
+  // }
 
   "valid - lazy tests: superLazy.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/superLazy.wacc")

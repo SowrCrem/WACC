@@ -72,6 +72,17 @@ class LibFunGenerator {
     libFuns
   }
   
+  /**
+    * Maps a string defining an exception to an error type
+    */
+  val exceptionToErrType: Map[String, String] = Map(
+    "OverflowError" -> "overflow",
+    "DivideByZeroError" -> "divideByZero",
+    "OutOfMemoryError" -> "outOfMemory",
+    "NullDereferenceError" -> "nullDerefOrFree",
+    "ArrayOutOfBoundsError" -> "outOfBounds"
+  )
+
   /** 
     * A generic error type for the library functions
     * note the generateErrIR method is generic and may need to be overridden
@@ -88,6 +99,10 @@ class LibFunGenerator {
     val dataName: String
     val errMessage: String
     var printErrFlag = false
+
+    def getJumpLabel: String = {
+      StackMachine.getExceptionLabelName(labelName)
+    }
 
     /**
       *  @return a bool indicating whether the assembly for this error should be printed
@@ -218,7 +233,7 @@ class LibFunGenerator {
         AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
         CallPLT("malloc"), 
         Cmp(Dest, Immediate32(0), InstrSize.fullReg),
-        JumpIfCond(outOfMemory.labelName, InstrCond.equal),
+        JumpIfCond(outOfMemory.getJumpLabel, InstrCond.equal),
         Mov(SP, FP, InstrSize.fullReg),
         PopRegisters(List(FP), InstrSize.fullReg),
         ReturnInstr()
@@ -552,11 +567,11 @@ class LibFunGenerator {
       PushRegisters(List(G0), InstrSize.fullReg),
       Cmp(G1, Immediate32(0), InstrSize.halfReg),
       ConditionalMov(Arg1, G1, InstrCond.lessThan, InstrSize.halfReg),
-      JumpIfCond(outOfBounds.labelName, InstrCond.lessThan),
+      JumpIfCond(outOfBounds.getJumpLabel, InstrCond.lessThan),
       Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.halfReg),
       Cmp(G1, G0, InstrSize.halfReg),
       ConditionalMov(Arg1, G1, InstrCond.greaterThanEqual, InstrSize.halfReg),
-      JumpIfCond(outOfBounds.labelName, InstrCond.greaterThanEqual),
+      JumpIfCond(outOfBounds.getJumpLabel, InstrCond.greaterThanEqual),
       Mov(ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.halfReg), Dest, InstrSize.halfReg),
       PopRegisters(List(G0), InstrSize.fullReg),
       ReturnInstr()
@@ -577,11 +592,11 @@ class LibFunGenerator {
       PushRegisters(List(G0), InstrSize.fullReg),
       Cmp(G1, Immediate32(0), InstrSize.halfReg),
       ConditionalMov(G1, G2, InstrCond.lessThan, InstrSize.halfReg),
-      JumpIfCond(outOfBounds.labelName, InstrCond.lessThan),
+      JumpIfCond(outOfBounds.getJumpLabel, InstrCond.lessThan),
       Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.halfReg),
       Cmp(G1, G0, InstrSize.halfReg),
       ConditionalMov(G1, G2, InstrCond.greaterThan, InstrSize.halfReg),
-      JumpIfCond(outOfBounds.labelName, InstrCond.greaterThan),
+      JumpIfCond(outOfBounds.getJumpLabel, InstrCond.greaterThan),
       Mov(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.fullReg), InstrSize.fullReg),
       PopRegisters(List(G0), InstrSize.fullReg),
       ReturnInstr()
@@ -623,7 +638,7 @@ class LibFunGenerator {
       Mov(FP, SP, InstrSize.fullReg),
       AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
       Cmp(Arg0, Immediate32(0), InstrSize.fullReg),
-      JumpIfCond(nullDerefOrFree.labelName, InstrCond.equal),
+      JumpIfCond(nullDerefOrFree.getJumpLabel, InstrCond.equal),
       CallPLT("free"),
       Mov(SP, FP, InstrSize.fullReg),
       PopRegisters(List(FP), InstrSize.fullReg),

@@ -81,13 +81,6 @@ case class CatchStmt(exception: ExceptionType, stats: List[Stat])(val pos: (Int,
 }
 object CatchStmt extends ParserBridgePos2[ExceptionType, List[Stat], CatchStmt]
 
-/**
-  * @AaronTomThomas should I be declaring a new symbol table inside LazyStat? 
-  * (would assume so since it's a different scope?)
-  *
-  * @param stat
-  * @param pos
-  */
 //Try-catching Stat
 case class TryCatchStat(tryStats: List[Stat], catchStats: List[CatchStmt])(val pos: (Int, Int)) extends Stat {
   var symbolTable: SymbolTable = new SymbolTable(None);

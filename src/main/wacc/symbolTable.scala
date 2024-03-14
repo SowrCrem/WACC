@@ -1,13 +1,15 @@
 package wacc
 import scala.collection.mutable.{Map, Stack}
 import scala.annotation.tailrec
+import scala.collection.mutable.HashSet
+import scala.collection.mutable
  
 class SymbolTable(val parent: Option[SymbolTable]) {
 
   var dictionary: Map[String, TypeNode] = Map()
   var children: List[SymbolTable] = List()
-
   var LazyVars: Set[String] = Set()
+
 
   // Add identity and position node into dictionary
   def add(identName: String, position: TypeNode): Unit = {

@@ -85,12 +85,12 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           None
       }
     }
-    case TryCatchStat(tryStmts, catches) => {
+    case tryStat@TryCatchStat(tryStmts, catches) => {
       val newSymbolTable = symbolTable.enterScope()
       tryStmts.foreach(stat => check(stat, newSymbolTable, None))
       val caughtExceptions : mutable.Set[ExceptionType] = mutable.Set()
       catches.foreach {
-        case CatchStmt(exception, catchStmts) => {
+        case catchStat@CatchStmt(exception, catchStmts) => {
           val newSymbolTable = symbolTable.enterScope()
           if (caughtExceptions.contains(exception)) {
             errors += new AlreadyDefinedError(position, exception.exception)
@@ -98,8 +98,11 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             caughtExceptions += exception
           }
           catchStmts.foreach(stat => check(stat, newSymbolTable, None))
+          catchStat.symbolTable = newSymbolTable
         }
+        case _ => errors += new NotDefinedError(position, "Catch statement")
       }
+      tryStat.symbolTable = newSymbolTable
       None
     }
     case LazyStat(pos) => {

@@ -31,7 +31,7 @@ object X86IRGenerator {
 
   val stringLiterals: Map[String, String] = Map()
   var rodataDirectives: ListBuffer[Directive] = ListBuffer()
-
+  val catchBlocks: ListBuffer[ListBuffer[Instruction]] = ListBuffer()
   var labelCounter: Int = 0
 
   /** Adds a string literal to the rodata section of the assembly code
@@ -122,8 +122,15 @@ object X86IRGenerator {
       )
     }
 
+    // Add Catch Blocks
+    for (block <- catchBlocks) {
+      instructions ++= block
+    }
+
+    // Add the library functions
     instructions ++= lib.addLibFuns()
 
+    // Add the rodata directives
     instructions ++= functionGenerator.generateFunctionCode()
 
     instructions
@@ -349,21 +356,33 @@ object X86IRGenerator {
   // ------- Statement IR Generation -----------------------------------------------//
 
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
-    case TryCatchStat(tryStmts, catches) => {
-      val catchBlocks = ListBuffer[ListBuffer[Instruction]]()
+    case tc@TryCatchStat(tryStmts, catches) => {
+      val exceptionMap = new HashMap[String, Label]()
       for (c <- catches) {
         val table = c.symbolTable
         val addFrame = StackMachine.addFrame(
           table,
           None
         )
-        // val catchStats = for (s <- c.stats) yield statToIR(s)
-        
+        val label = Label(s"catch_${c.exception.exception}_${StackMachine.stackFrameCounter}")
+        val catchStats : ListBuffer[Instruction] = ListBuffer(label) 
+        catchStats ++= addFrame
+        c.stats.foreach(s => catchStats ++= statToIR(s))
+        catchStats ++= StackMachine.popFrame()
+        catchBlocks += catchStats
+        val excName = lib.exceptionToErrType.get(c.exception.exception)
+        if (excName.isDefined) {
+          exceptionMap.addOne(excName.get -> label)
+        }
       }
-        
-      // val instructions = statToIR(tryStmts)
-      // instructions
-      ???
+      val instructions : ListBuffer[Instruction] = StackMachine.addFrame(
+        tc.symbolTable,
+        None
+      )
+      StackMachine.setExceptionMap(exceptionMap)
+      tryStmts.foreach(s => instructions ++= statToIR(s))
+      instructions ++= StackMachine.popFrame()
+      instructions
     }
     case LazyStat(pos) => {
       val instructions = statToIR(pos)
@@ -972,7 +991,7 @@ object X86IRGenerator {
         PopRegisters(List(G0), InstrSize.fullReg),
         Mov(Dest, Immediate32(0), InstrSize.halfReg),
         SubInstr(Dest, G0, InstrSize.halfReg),
-        JumpIfCond("_errOverflow", InstrCond.overflow),
+        JumpIfCond(lib.overflow.getJumpLabel, InstrCond.overflow),
         MovWithSignExtend(Dest, Dest, InstrSize.fullReg, InstrSize.halfReg)
       )
     }
@@ -981,7 +1000,7 @@ object X86IRGenerator {
       exprToIR(int) ++ ListBuffer(
         TestInstr(Dest, Immediate32(-128), InstrSize.fullReg),
         CheckMoveNotEqual(Arg1, Dest, InstrSize.fullReg),
-        JumpIfCond("_errBadChar", InstrCond.notEqual)
+        JumpIfCond(lib.badChar.getJumpLabel, InstrCond.notEqual)
       )
     }
     case Ord(char) => {
@@ -1342,11 +1361,11 @@ object X86IRGenerator {
 
     operation match {
       case ArithmOperations.add =>
-        generalOp(operation, s"_errOverflow", InstrCond.overflow)
+        generalOp(operation, lib.overflow.getJumpLabel, InstrCond.overflow)
       case ArithmOperations.sub =>
-        generalOp(operation, s"_errOverflow", InstrCond.overflow)
+        generalOp(operation, lib.overflow.getJumpLabel, InstrCond.overflow)
       case ArithmOperations.mul =>
-        generalOp(operation, s"_errOverflow", InstrCond.overflow)
+        generalOp(operation, lib.overflow.getJumpLabel, InstrCond.overflow)
       case ArithmOperations.div | ArithmOperations.mod => {
         lib.divideByZero.setFlag(true)
         setup ++= ListBuffer(
@@ -1355,7 +1374,7 @@ object X86IRGenerator {
             Immediate32(0),
             InstrSize.fullReg
           ), // Check for divide by zero
-          JumpIfCond(s"_errDivByZero", InstrCond.equal),
+          JumpIfCond(lib.divideByZero.getJumpLabel, InstrCond.equal),
           ConvertDoubleWordToQuadWord(),
           DivInstr(Dest, G2, InstrSize.halfReg)
         )

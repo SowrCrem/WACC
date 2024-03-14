@@ -1,0 +1,10 @@
+# Output
+# Success!
+
+begin
+  try {
+    int x = 1/0
+  } catch (Exception: DivByZeroError) {
+    println "Success!"
+  }
+end

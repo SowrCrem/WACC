@@ -17,6 +17,41 @@ object StackMachine {
   private var frames: List[StackFrame] = List().empty
 
 
+  /**
+    * Get the current stack frame
+    *
+    * @return
+    */
+  def getCurrentFrame(): StackFrame = {
+    frames.last
+  }
+
+  /**
+    * Adds an exception to the current stack frame
+    * 
+    * @param exceptionName The name of the exception to be caught
+    * @param label The label to jump to when the exception is caught
+    * @return
+  */
+  def setExceptionMap(exceptionMap : mutable.HashMap[String, Label]): Unit = {
+    frames.last.catchExceptions ++= exceptionMap
+  }
+
+  /**
+    * Adds an exception to the current stack frame
+    * 
+    * @param exceptionName
+    * @return
+    */
+  def getExceptionLabelName(exceptionName: String): String = {
+    exceptionName
+    // frames.last.catchExceptions.get(exceptionName) match {
+    //   case Some(label) => label.name
+    //   case None => exceptionName
+    // }
+  }
+
+
   def putVarOnStack(name: String): Unit = {
 
     frames.last.declaredVars += name
@@ -156,6 +191,9 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], var s
   // The size of the local variables in the stack frame
   var localVarSize: Int = 0
 
+  // Exceptions to be caught in this frame
+  val catchExceptions: mutable.HashMap[String, Label] = mutable.HashMap()
+
   val definedVarMap : mutable.Map[String, Boolean] = mutable.HashMap[String, Boolean]()
 
   val lazyToLabel : mutable.HashMap[String, (String, ListBuffer[Instruction])] = mutable.HashMap[String, (String, ListBuffer[Instruction])]()
@@ -197,6 +235,7 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], var s
         definedVarMap.put(name, true);
       }
     }
+
 
     println("definedVarMap is\n" + definedVarMap)
 

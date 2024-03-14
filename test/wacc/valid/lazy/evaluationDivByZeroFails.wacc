@@ -1,0 +1,7 @@
+# Should throw div by zero error
+
+begin 
+    lazy int x = 1/0;
+    lazy x = 1 + 1/0;
+    println x
+end

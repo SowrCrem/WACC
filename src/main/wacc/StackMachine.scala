@@ -160,6 +160,8 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], var s
 
   val lazyToLabel : mutable.HashMap[String, (String, ListBuffer[Instruction])] = mutable.HashMap[String, (String, ListBuffer[Instruction])]()
 
+  val numLazyAsgns : mutable.Map[String, Int] = mutable.HashMap[String, Int]()
+
   // The size of the parameters in the stack frame
   var pushedArgSize = 0
 

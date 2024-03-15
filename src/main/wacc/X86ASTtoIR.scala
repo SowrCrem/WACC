@@ -374,7 +374,7 @@ object X86IRGenerator {
         val label = Label(s"catch_${c.exception.exception}_${StackMachine.stackFrameCounter}")
         val catchStats : ListBuffer[Instruction] = ListBuffer(label) 
         catchStats ++= addFrame
-        c.stats.foreach(s => catchStats ++= statToIR(s))
+        c.stats.foreach(s => catchStats ++= statToIR(s)) 
         catchStats ++= StackMachine.popFrame()
         catchStats += Jump(endTryLabelName)
         catchBlocks += catchStats

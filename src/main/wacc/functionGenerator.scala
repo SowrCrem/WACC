@@ -4,7 +4,7 @@ import scala.collection.mutable._
 import parsley.internal.machine.instructions.Instr
 import parsley.internal.deepembedding.singletons.Offset
 
-object functionGenerator {
+class functionGenerator() {
 
   private val funcLabelsAndBody = new HashMap[String, ListBuffer[Instruction]]()
 
@@ -20,11 +20,6 @@ object functionGenerator {
 
   def setDefined(name: String): Unit = {
     funcDefined.put(name, true)
-  }
-
-  def addFunction(name: String, body: ListBuffer[Instruction]): Unit = {
-    funcLabelsAndBody.put(name, body)
-    funcDefined.put(name, false)
   }
 
   def addFunction(
@@ -55,17 +50,12 @@ object functionGenerator {
   }
 
   def generateFunctionCode(): ListBuffer[Instruction] = {
-
     val code = new ListBuffer[Instruction]()
     for ((label, body) <- funcLabelsAndBody) {
-    
-
       code += Label("_" + label)
       code ++= body
-     
     }
     code
-
   }
 
   def reset(): Unit = {

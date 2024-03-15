@@ -70,7 +70,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       symbolTable.lookupAll(ident.value + "_c", Some(symbolTable)) match {
         case Some(_) => {
           val classSymbolTable = symbolTable.enterScope()
-          // println(classSymbolTable.outOfScope)
 
           // Add fields to symbol table
           fields.foreach(field => check(field, classSymbolTable, None))
@@ -120,7 +119,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
 
           // Set outer access to true for class' symbol table
           classSymbolTable.setOutOfScope()
-          // println(classSymbolTable.outOfScope)
 
           None // Class has no type
 
@@ -134,7 +132,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
 
     // FIELD DECLARATIONS
     case FieldDecl(access, typeNode, ident) => {
-      // Append _m to the field name to avoid conflicts with variable names
       symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
         case Some(_) => {
           errors += new AlreadyDefinedError(position, ident.value)
@@ -146,7 +143,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             case Private() => typeNode.setPrivate() 
             case Public()  => {}
           }
-          // println("Added field " + ident.value + " type " + typeNode + " to symbol table")
           symbolTable.add(ident.value, typeNode)
           Some(typeNode)
         }
@@ -221,10 +217,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         case Some(ClassTypeNode(className)) => {
           symbolTable.lookupAll(className.value + "_c", Some(symbolTable)) match {
             case Some(cls@Class(_, _, _, _)) => {
-              // println(className)
-              // println(callObj)
-              // cls.symbolTable.printSymbolTable()
-              
               // Calls are inner calls by default - set to outer 
               callObj.setOuterCall()
               check(callObj, cls.symbolTable, returnType)
@@ -270,8 +262,8 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     }
 
     // CLASS FIELD ACCESS
-    case ClassField(className, fieldName) => {
-      symbolTable.lookupAll(className.value, Some(symbolTable)) match {
+    case ClassField(objName, fieldName) => {
+      symbolTable.lookupAll(objName.value, Some(symbolTable)) match {
         case Some(ClassTypeNode(clsName)) => {
           symbolTable.lookupAll(clsName.value + "_c", Some(symbolTable)) match {
             case Some(cls@Class(_, _, _, _)) => {
@@ -287,7 +279,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         }
         case _ => {
           // Class has not been instantiated
-          errors += new NotDefinedError(position, className.value)
+          errors += new NotDefinedError(position, objName.value)
           None
         }
       }
@@ -337,7 +329,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     case i@IdentAsgn(typeNode, ident, rvalue) => {
       // Check rvalue (expr)
       val exprType = check(rvalue, symbolTable, returnType)
-      // println("Type of " + rvalue + " is " + exprType)
 
       // Add variable to symbol table
       symbolTable.lookup(ident.value) match {
@@ -418,7 +409,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             if (rvalue != ArrayLiter(List())(position.pos) && 
               rvalue != Null()(position.pos) && 
               exprType.getOrElse(None) != Null()(position.pos)) {
-              // println(ident.value + " " + typeNode + " :" + rvalue)
               errors += new TypeMismatchError(position, 
                 typeNode.toString(), exprType.getOrElse(" none1").toString())
             } else {
@@ -598,7 +588,6 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
         case Some(Func(typeNode, _, paramList, _)) =>
           val expectedTypes = paramList.paramList.map(_.typeNode)
           if (checkArgList(args, expectedTypes, position, symbolTable, returnType)) {
-            // println("Type of " + ident + " is " + typeNode)
             // If the function is private, check if it is an inner call
             typeNode.access match {
               case Private() => {

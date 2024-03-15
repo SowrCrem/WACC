@@ -179,7 +179,7 @@ object NewPair extends ParserBridgePos2[Expr, Expr, NewPair]
 
 /* EXTENSION - Simple Classes */
 
-case class ClassField(className: Ident, fieldName: Ident)(val pos: (Int, Int)) extends Expr
+case class ClassField(ident: Ident, fieldName: Ident)(val pos: (Int, Int)) extends Expr
 object ClassField extends ParserBridgePos2[Ident, Ident, ClassField]
 
 case class NewClass(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Expr

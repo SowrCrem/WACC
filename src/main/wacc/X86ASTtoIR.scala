@@ -8,8 +8,6 @@ import parsley.internal.machine.instructions.Instr
 import java.security.Identity
 import scala.collection.immutable.ListMapBuilder
 
-
-
 object X86IRGenerator {
 
 
@@ -24,6 +22,8 @@ object X86IRGenerator {
   /** The library function generator
     */
   val lib: LibFunGenerator = new LibFunGenerator()
+  val functionGenerator: functionGenerator = new functionGenerator()
+  val classFuncGenerator: functionGenerator = new functionGenerator()
 
   val regTracker = new RegisterTracker
 
@@ -82,7 +82,6 @@ object X86IRGenerator {
       Label("main")
     )
 
-    // instructions ++= mainInitialisation
 
     ast.symbolTable.printSymbolTable()
 
@@ -93,7 +92,6 @@ object X86IRGenerator {
 
     // Pop the main frame
     val decrementStackInstr = StackMachine.popFrame()
-    // instructions ++= decrementStackInstr
 
     instructions ++= initDirectives
     instructions ++= Directive("section .rodata") +: rodataDirectives
@@ -138,24 +136,23 @@ object X86IRGenerator {
     */
   def astToIR(position: Position): Buffer[Instruction] = position match {
     case prog @ Program(classList, funcList, stat) => {
+      val instructions = new ListBuffer[Instruction]
 
-      val funcIR = new ListBuffer[Instruction]
+      for (cls <- classList) {
+        // classGenerator.addClass(cls.ident.value, cls, ListBuffer())
+      }
 
       for (func <- funcList) {
         functionGenerator.addFunction(func.ident.value, func, ListBuffer())
       }
 
-      val ir = new ListBuffer[Instruction]
       val statInstrs = for (s <- stat) yield statToIR(s)
-      ir ++= statInstrs.flatten
-      ir.appendAll(funcIR)
+      instructions ++= statInstrs.flatten
     }
   }
 
   def generateFunctionIR(func: Func, table: SymbolTable, paramList: ParamList): ListBuffer[Instruction] = {
-
     val setupStack = StackMachine.addFrame(table, Some(paramList))
-
 
     val body = {
       val table = func.symbolTable
@@ -168,7 +165,6 @@ object X86IRGenerator {
     var modifiedBody = ListBuffer[Instruction]()
     var foundReturn = false
 
-
     for (instr <- body) {
       if (instr.isInstanceOf[ReturnInstr]) {
         foundReturn = true
@@ -177,7 +173,6 @@ object X86IRGenerator {
       modifiedBody += instr
     }
 
-    // ListBuffer() ++ setupStack ++ modifiedBody
     if (foundReturn) {
       ListBuffer() ++ setupStack ++ modifiedBody
     } else {
@@ -188,7 +183,6 @@ object X86IRGenerator {
   }
 
   // ------- Stack Machine Abstraction -------------------------------------------//
-
 
   /**
     * Moves the stack pointer to the address of the variable
@@ -246,7 +240,6 @@ object X86IRGenerator {
   def findingVarOnStackIR(ident : String, asgnType : AsgnType) : ListBuffer[Instruction] = {
     findingVarOnStackIR(ident, ListBuffer[Instruction](), asgnType)
   }
-
 
   /**
     * Given a variable, find it in the stack, complete a set of instructions using the variable and push the variable back onto the stack
@@ -482,8 +475,6 @@ object X86IRGenerator {
           }
 
         }
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // TODO: need to have cases for pairs and array elements later
       }
     }
 
@@ -492,7 +483,7 @@ object X86IRGenerator {
 
       val asgnType = Declare
 
-      // // Step 1: Allocate space on the stack based on the variable size
+      // Step 1: Allocate space on the stack based on the variable size
       val instructions = ListBuffer[Instruction]().empty
 
       // Step 2: Initialize the variable with the given expression
@@ -513,7 +504,6 @@ object X86IRGenerator {
             }
             case _ => ListBuffer[Instruction]().empty 
           }
-
         }
         // If lhs is a pairtype node of any types
         case PairTypeNode(_, _) => {
@@ -783,47 +773,12 @@ object X86IRGenerator {
 
     /* EXTENSION - Void Types */
     case CallVoid(ident, paramList) => {
-      val instructions = new ListBuffer[Instruction]().empty
-      val functionNode = functionGenerator.getFunctionNode(ident.value)
-      
-      val handleParams = ListBuffer[Instruction]().empty
-      for (param <- paramList) {
-        handleParams ++= exprToIR(param)
-        handleParams ++= ListBuffer(
-          PushRegisters(List(Dest), InstrSize.fullReg)
-        )
-      }
+      generateFuncCallIR(ident, paramList)
+    }
 
-      val incrementStackInstr = new ListBuffer[Instruction]().empty
-      if (paramList.size > 0) {
-        for (i <- 0 until paramList.size) {
-          incrementStackInstr ++= ListBuffer(
-            PopRegisters(List(G0), InstrSize.fullReg)
-          )
-        }
-      }
-
-      if (!functionGenerator.isDefined(functionNode.ident.value)) {
-        functionGenerator.setDefined(functionNode.ident.value)
-
-        val funcBody = generateFunctionIR(
-          functionNode, 
-          functionGenerator.getFunctionTable(ident.value), 
-          functionNode.paramList
-        )
-
-        functionGenerator.addFunction(
-          functionNode.ident.value,
-          functionNode,
-          funcBody
-        )
-
-        functionGenerator.addFunction(ident.value, functionNode, funcBody)
-      }
-
-      instructions ++= handleParams 
-      instructions += CallInstr(ident.value)
-      instructions ++= incrementStackInstr
+    /* EXTENSION - Simple Classes */
+    case ClassCallVoid(className, voidCallObj) => {
+      ListBuffer()
     }
 
     case _ => {
@@ -831,6 +786,50 @@ object X86IRGenerator {
         "Statement not implemented: " + stat.toString()
       )
     }
+  }
+
+  def generateFuncCallIR(ident: Ident, paramList: List[Expr]): ListBuffer[Instruction] = {
+    val functionNode = functionGenerator.getFunctionNode(ident.value)
+    
+    val handleParams = ListBuffer[Instruction]().empty
+    for (param <- paramList) {
+      handleParams ++= exprToIR(param)
+      handleParams ++= ListBuffer(
+        PushRegisters(List(Dest), InstrSize.fullReg)
+      )
+    }
+
+    val incrementStackInstr = new ListBuffer[Instruction]().empty
+    if (paramList.size > 0) {
+      for (i <- 0 until paramList.size) {
+        incrementStackInstr ++= ListBuffer(
+          PopRegisters(List(G0), InstrSize.fullReg)
+        )
+      }
+    }
+
+    if (!functionGenerator.isDefined(functionNode.ident.value)) {
+      functionGenerator.setDefined(functionNode.ident.value)
+
+      val funcBody = generateFunctionIR(
+        functionNode, 
+        functionGenerator.getFunctionTable(ident.value), 
+        functionNode.paramList
+      )
+
+      functionGenerator.addFunction(
+        functionNode.ident.value,
+        functionNode,
+        funcBody
+      )
+
+      functionGenerator.addFunction(ident.value, functionNode, funcBody)
+    }
+
+    val instructions = ListBuffer[Instruction]().empty
+    instructions ++= handleParams 
+    instructions += CallInstr(ident.value)
+    instructions ++= incrementStackInstr
   }
 
   def matchPrintType(typeNode: TypeNode): ListBuffer[Instruction] = {
@@ -1240,46 +1239,37 @@ object X86IRGenerator {
       intBinOp(expr1, expr2, ArithmOperations.mod)
     }
     case Call(ident, paramList) => {
-      val instructions = new ListBuffer[Instruction]().empty
-      val functionNode = functionGenerator.getFunctionNode(ident.value)
-      val handleParams = ListBuffer[Instruction]().empty
+      generateFuncCallIR(ident, paramList)
+    }
 
-      for (param <- paramList) {
-        handleParams ++= exprToIR(param)
-        handleParams ++= ListBuffer(
-          PushRegisters(List(Dest), InstrSize.fullReg)
-        )
-      }
+    /* EXTENSION  - Simple Classes */
+    case NewClass(ident, args) => {
+      val instructions = ListBuffer[Instruction]()
+      // val classNode = classGenerator.getClassNode(ident.value)
+      // val classSize = classNode.size
 
-      val incrementStackInstr = new ListBuffer[Instruction]().empty
+      // Initialize member variables to null
+      // var offset = 0
+      // for (arg <- args) {
+      //   instructions ++= exprToIR(arg)
+      //   val memberInfo = classGenerator.getClassMembers(ident.value).find(_.offset == offset)
+      //   memberInfo match {
+      //     case Some(info) =>
+      //       instructions += Mov(RegisterPtr(G2, InstrSize.fullReg, info.offset), Dest, InstrSize.fullReg)
+      //     case None =>
+      //       throw new RuntimeException(s"Member variable not found at offset $offset for class ${ident.value}")
+      //   }
+      //   offset += MAX_REGSIZE // Assuming 8-byte member variables
+      // }
 
-      if (paramList.size > 0) {
-        for (i <- 0 until paramList.size) {
-          incrementStackInstr ++= ListBuffer(
-            PopRegisters(List(G0), InstrSize.fullReg)
-          )
-        }
-      }
+      instructions
+    }
+    case ClassField(objName, fieldName) => {
+      ListBuffer()
 
-
-      if (!functionGenerator.isDefined(functionNode.ident.value)) {
-
-        functionGenerator.setDefined(functionNode.ident.value)
-
-        val funcBody = generateFunctionIR(functionNode, functionGenerator.getFunctionTable(ident.value), functionNode.paramList)
-        functionGenerator.addFunction(
-          functionNode.ident.value,
-          functionNode,
-          funcBody
-        )
-
-        functionGenerator.addFunction(ident.value, functionNode, funcBody)
-
-      }
-
-
-      instructions ++= handleParams += CallInstr(ident.value) ++= incrementStackInstr
-
+    }
+    case ClassCall(className, callObj) => {
+      ListBuffer()
     }
   }
 

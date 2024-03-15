@@ -68,7 +68,8 @@ object Main {
       }
       parser.parse(fileContent) match {
         case Success(prog) => prog match {
-          case Program(classList, funcList, _) => 
+          case p@Program(classList, funcList, _) => 
+            println(p)
           parser.validFunctions(classList, funcList) match {
             case true  => semanticCheck(prog, fileName)
             case false => syntaxError("Non-terminating branches or invalid return statements found")

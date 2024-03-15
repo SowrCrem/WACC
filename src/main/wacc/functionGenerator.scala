@@ -1,5 +1,6 @@
 package wacc
 
+import wacc.LibFunGenerator
 import scala.collection.mutable._
 import parsley.internal.machine.instructions.Instr
 import parsley.internal.deepembedding.singletons.Offset
@@ -13,6 +14,8 @@ object functionGenerator {
   private val labelsToFuncs = new HashMap[String, Func]()
 
   private val funcDefined = new HashMap[String, Boolean]()
+
+  private val exceptionsToBeCaught : Set[LibFunGenerator.ExceptionNames] = Set()
 
   def isDefined(name: String): Boolean = {
     funcDefined(name)

@@ -16,7 +16,13 @@ import scala.collection.mutable._
 import parsley.internal.machine.instructions.Instr
 import parsley.internal.deepembedding.singletons.Offset
 
+
+object LibFunGenerator {
+  sealed trait ExceptionNames
+}
 class LibFunGenerator {
+
+  import LibFunGenerator._
 
   /** The counter for the number of data strings
     */
@@ -98,7 +104,7 @@ class LibFunGenerator {
     * 
     * See examples below for overflow, divideByZero, and outOfMemory
   */
-  sealed abstract trait ErrType {
+  sealed abstract trait ErrType extends ExceptionNames{
     val labelName: String
     val dataName: String
     val errMessage: String
@@ -240,7 +246,7 @@ class LibFunGenerator {
 
   sealed abstract trait LibFun {
     val funName: String
-    val possibleErrors: List[ErrType]
+    val possibleErrors: Set[ErrType]
     var printFlag: Boolean = false
 
     /**
@@ -265,7 +271,7 @@ class LibFunGenerator {
     /**
       *  @return a list of error types that should be caught
     */
-    def exceptionsToBeCaught: List[ErrType] =
+    def exceptionsToBeCaught: Set[ErrType] =
       possibleErrors.filter(_.shouldBeCaught)
 
     def funIR: List[Instruction]
@@ -289,7 +295,7 @@ class LibFunGenerator {
 
   case object malloc extends LibFun {
     val funName = "_malloc"
-    val possibleErrors = List(outOfMemory)
+    val possibleErrors = Set(outOfMemory)
 
     def funIR = {
       if (malloc.printFlag) {
@@ -661,8 +667,8 @@ class LibFunGenerator {
       Cmp(G1, Immediate32(0), InstrSize.halfReg), // Compare the index with 0
       ConditionalMov(G2, G1, InstrCond.lessThan, InstrSize.halfReg), // Move G1 to G2 if G1 less than 0
       JumpIfCond(outOfBounds.getJumpLabel, InstrCond.lessThan), // Jump to outOfBounds if less than 0
-      Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.fullReg), // Move the base address of the array to G0
-      Cmp(G1, G0, InstrSize.fullReg), // Compare the index with the base address
+      Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.halfReg), // Move the base address of the array to G0
+      Cmp(G1, G0, InstrSize.halfReg), // Compare the index with the base address
       ConditionalMov(G2, G1, InstrCond.greaterThan, InstrSize.halfReg), // Move G1 to G2 if greater than the base address
       JumpIfCond(outOfBounds.getJumpLabel, InstrCond.greaterThanEqual), // Jump to outOfBounds if greater than the base address
       Mov(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.fullReg), InstrSize.fullReg), // Calculate the address of the element in the array
@@ -810,18 +816,22 @@ class LibFunGenerator {
     */
   def reset(): Unit = {
     dataCounter = -1
-    exitFlag = false
-    printStringFlag = false
-    printLnFlag = false
-    printIntFlag = false
-    printBoolFlag = false
-    printCharFlag = false
-    printPtrFlag = false
-    readCharFlag = false
-    readIntFlag = false
-    mallocFlag = false
-    badCharFlag = false
-    arrayLoad8Flag = false
+    libFunsToCatch.clear()
+    var exitFlag: Boolean = false
+    var printStringFlag: Boolean = false
+    var printIntFlag: Boolean = false
+    var printCharFlag: Boolean = false
+    var printBoolFlag: Boolean = false
+    var printLnFlag: Boolean = false
+    var printPtrFlag: Boolean = false
+    var readCharFlag: Boolean = false
+    var readIntFlag: Boolean = false
+    var mallocFlag: Boolean = false
+    var badCharFlag: Boolean = false
+    var arrayLoad8Flag: Boolean = false
+    var arrayStore8Flag: Boolean = false
+    var freeArrayFlag: Boolean = false
+    var freePairFlag: Boolean = false
     malloc.setFlag(false)
     badChar.setFlag(false)
     overflow.setFlag(false)

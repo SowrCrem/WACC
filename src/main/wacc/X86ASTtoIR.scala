@@ -23,7 +23,7 @@ object X86IRGenerator {
 
   /** The library function generator
     */
-  var lib: LibFunGenerator = null;
+  var lib : LibFunGenerator = null
 
   val regTracker = new RegisterTracker
 
@@ -1422,11 +1422,11 @@ object X86IRGenerator {
   def reset(): Unit = {
     stringLiterals.clear()
     rodataDirectives.clear()
-    lib.reset()
+    lib = null
     lazyLabelToInstruction.clear()
     functionGenerator.reset()
+
     labelCounter = 0
-    lib = null;
     
   }
 

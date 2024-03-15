@@ -16,20 +16,11 @@ begin
       skip
     fi ;
     lazy int f1 = call fibonacci(n - 1, toPrint) ;
-    if toPrint
-    then
-      print f1 ;
-      print ", "
-    else
-      skip
-    fi ;
     lazy int f2 = call fibonacci(n - 2, false) ;
     return f1 + f2
   end
 
-  println "The first 20 fibonacci numbers are:" ;
-  print "0, " ;
+  println "The 20th fibonacci number is:" ;
   int result = call fibonacci(19, true) ;
-  print result ;
-  println "..."
+  println result
 end

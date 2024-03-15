@@ -119,6 +119,10 @@ sealed trait Stat extends Position {
   def setLazy(): Unit = {
     isLazy = true
   }
+
+  def isLazyStat(): Boolean = {
+    isLazy;
+  }
 }
 
 case class Skip()(val pos: (Int, Int)) extends Stat

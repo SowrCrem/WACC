@@ -207,6 +207,9 @@ object lexer {
       "null" -> Label(
         label="null"
       ),
+      "lazy" -> Label(
+        label="lazy declaration"
+      ),
     )
   }
 

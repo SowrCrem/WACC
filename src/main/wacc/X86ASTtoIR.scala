@@ -12,6 +12,8 @@ import scala.collection.immutable.ListMapBuilder
 
 object X86IRGenerator {
 
+
+
   object AsgnType extends Enumeration {
     type AsgnType = Value
     val Reassign, Declare, Retrieve = Value
@@ -24,6 +26,8 @@ object X86IRGenerator {
   val lib: LibFunGenerator = new LibFunGenerator()
 
   val regTracker = new RegisterTracker
+
+  val lazyLabelToInstruction : Map[String, List[Instruction]] = new HashMap[String, List[Instruction]]()
 
   val stringLiterals: Map[String, String] = Map()
   var rodataDirectives: ListBuffer[Directive] = ListBuffer()
@@ -101,11 +105,22 @@ object X86IRGenerator {
     instructions += Mov(
       Dest,
       Immediate32(0),
-      InstrSize.fullReg
+      InstrSize.fullReg 
     ) // Return 0 if no exit function
     instructions ++= List(
       ReturnInstr()
     )
+
+
+    // add lazy labels to instructions
+
+    for ((label, instrs) <- lazyLabelToInstruction) {
+      instructions ++= ListBuffer(
+        Label(s"_${label}")
+      ) ++= instrs ++= ListBuffer(
+        ReturnInstr()
+      )
+    }
 
     instructions ++= lib.addLibFuns()
 
@@ -244,6 +259,33 @@ object X86IRGenerator {
     findingVarOnStackIR(ident, instrs, 0, asgnType)
   }
 
+  def processInstructions(
+    asgnType: AsgnType,
+    offset: Int,
+    extraOffset: Int,
+    fpchange: Int,
+    instrs: ListBuffer[Instruction])
+  : ListBuffer[Instruction] = {
+    val moveInstr = asgnType match {
+      case (Declare | Reassign) => moveExprToAddress(offset - extraOffset)
+      case Retrieve => findVarInCurrFrame(offset - extraOffset)
+    }
+    fpchange match {
+      case 0 => instrs ++= moveInstr
+      case _ => {
+        goToVarStackAddress(fpchange, MAX_REGSIZE) match {
+          case (setupStack, restoreStack) => {
+            val instructions = ListBuffer[Instruction]().empty
+            instructions.prependAll(setupStack)
+            instructions ++= moveInstr
+            instructions ++= restoreStack
+            instrs ++= instructions
+          }
+          case _ => throw new RuntimeException("Invalid return from attempt to find variable in stack")
+        }
+      }
+    }
+  }
 
   /**
     * Given a variable, find it in the stack, complete a set of instructions using the variable and push the variable back onto the stack
@@ -255,29 +297,50 @@ object X86IRGenerator {
     */
   def findingVarOnStackIR(ident: String, instrs : ListBuffer[Instruction], extraOffset : Int, asgnType : AsgnType) : ListBuffer[Instruction] = {
     StackMachine.offset(ident) match {
-      case (Some((offset, fpchange)), true) => {
-        val moveInstr = asgnType match {
-          case (Declare | Reassign) => moveExprToAddress(offset - extraOffset)
-          case Retrieve => findVarInCurrFrame(offset - extraOffset)
-        }
-        fpchange match {
-          case 0 => instrs ++= moveInstr
-          case _ => {
-            goToVarStackAddress(fpchange, MAX_REGSIZE) match {
-              case (setupStack, restoreStack) => {
-                val instructions = ListBuffer[Instruction]().empty
-                instructions.prependAll(setupStack)
-                instructions ++= moveInstr
-                instructions ++= restoreStack
-                instrs ++= instructions
+      case (Some((offset, fpchange)), true, frame) => {
+        processInstructions(
+          asgnType,
+          offset,
+          extraOffset,
+          fpchange,
+          instrs
+        )
+      }
+      case (Some((offset, fpchange)), false, frame) => {
+
+        asgnType match {
+          case (Declare) => {
+            val generateVarIR : ListBuffer[Instruction] = processInstructions(asgnType, offset, extraOffset, fpchange, instrs)
+            val label = s"lazy_${ident}${StackMachine.stackFrameCounter}"
+            val lazyInstructions = generateVarIR
+            lazyLabelToInstruction.addOne(label, lazyInstructions.toList)
+            frame.addLazyIRLabel(ident, label, lazyInstructions)
+            ListBuffer()
+          }
+          case (Retrieve) => {
+            val label = frame.getLazyIRLabel(ident)._1
+            // if we are in an inner scope we need to move the frame pointer and stack pointer back to the original 
+            // scope before we can execute the lazy instructions
+            frame.setDefined(ident)
+            fpchange match {
+              case 0 => {
+                instrs ++= ListBuffer(CallInstr(label))
               }
-              case _ => throw new RuntimeException("Invalid return from attempt to find variable in stack")
+              case change => {
+                goToVarStackAddress(fpchange, MAX_REGSIZE) match {
+                  case (setupStack, restoreStack) => {
+                    val instructions = ListBuffer[Instruction]().empty
+                    instructions.prependAll(setupStack)
+                    instructions ++= ListBuffer(CallInstr(label))
+                    instructions ++= restoreStack
+                    instrs ++= instructions
+                  }
+                  case _ => throw new RuntimeException("Invalid return from attempt to find variable in stack")
+                }
+              }
             }
           }
         }
-      }
-      case (Some((offset, fpchange)), false) => {
-        ???
       }
       case _ => throw new RuntimeException(s"Variable ${ident} not found in stack")
     }
@@ -286,6 +349,10 @@ object X86IRGenerator {
   // ------- Statement IR Generation -----------------------------------------------//
 
   def statToIR(stat: Stat): Buffer[Instruction] = stat match {
+    case LazyStat(pos) => {
+      val instructions = statToIR(pos)
+      instructions
+    }
     case be @ BeginEnd(statList) => {
       val body = {
         val table = be.symbolTable
@@ -345,7 +412,7 @@ object X86IRGenerator {
           val assignment = exprToIR(rhs)
 
           StackMachine.offset(ident.value) match {
-            case (Some((offset, fpchange)), true) => fpchange match {
+            case (Some((offset, fpchange)), true, _) => fpchange match {
                 case 0 => {
                   instructions ++= ListBuffer(
                     Mov(Dest, FPOffset(offset), InstrSize.fullReg)
@@ -404,7 +471,7 @@ object X86IRGenerator {
                   instructions.prependAll(setup)
                 }
             }
-            case (Some((offset, fpchange)), false) => {
+            case (Some((offset, fpchange)), false, _) => {
               ???
             }
             case _ => {
@@ -420,10 +487,10 @@ object X86IRGenerator {
       }
     }
 
-    case IdentAsgn(typeNode, ident, rhs) => {
+    case i@IdentAsgn(typeNode, ident, rhs) => {
 
 
-      val asgnType = Reassign
+      val asgnType = Declare
 
       // // Step 1: Allocate space on the stack based on the variable size
       val instructions = ListBuffer[Instruction]().empty
@@ -431,8 +498,6 @@ object X86IRGenerator {
       // Step 2: Initialize the variable with the given expression
       val preInstr = typeNode match {
         case atn @ ArrayTypeNode(_) => {
-          // lib.setMallocFlag(true)
-          // lib.outOfMemory.setFlag(true)
 
           /** Use G2 for array pointers for time being when assigning arrays as
             * a special case of the calling convention.
@@ -444,17 +509,7 @@ object X86IRGenerator {
             case ArrayLiter(arrayElements) => {
               val arrSize = arrayElements.size
               atn.setLength(arrSize)
-              List(
-                // Mov(
-                //   Arg0,
-                //   Immediate32((arrSize) * MAX_REGSIZE + HALF_REGSIZE),
-                //   InstrSize.halfReg
-                // ),
-                // CallInstr("malloc"),
-                // Mov(G2, Dest, InstrSize.fullReg),
-                // AddInstr(G2, Immediate32(HALF_REGSIZE), InstrSize.fullReg)
-              )
-
+              List()
             }
             case _ => ListBuffer[Instruction]().empty 
           }
@@ -487,11 +542,11 @@ object X86IRGenerator {
       instructions ++= exprToIR(rhs)
       instructions.prependAll(preInstr)
 
-      // Step 3: Update StackMachine context with the new variable
-      StackMachine.putVarOnStack(ident.value)
-      //Can abstract stackmachine.offset part of the function
-      // can abstract Som
-      findingVarOnStackIR(ident.value, instructions, Reassign)
+        // Step 3: Update StackMachine context with the new variable
+        StackMachine.putVarOnStack(ident.value)
+        //Can abstract stackmachine.offset part of the function
+        // can abstract Som
+        findingVarOnStackIR(ident.value, instructions, asgnType)
     }
     case Print(expr) => {
       printToIR(expr, false)
@@ -602,7 +657,7 @@ object X86IRGenerator {
       expr match {
         case Ident(ident) => {
           StackMachine.offset(ident) match {
-            case (Some((offset, fpchange)), true) => {
+            case (Some((offset, fpchange)), true, _) => {
               fpchange match {
                 case 0 => {
                   // Use offset as start of stack
@@ -636,7 +691,7 @@ object X86IRGenerator {
                 }
               }
             }
-            case (Some((offset, fpchange)), false) => {
+            case (Some((offset, fpchange)), false, _) => {
               ???
             }
             case _ => {
@@ -675,7 +730,7 @@ object X86IRGenerator {
         case Ident(ident) => {
           // Find position in stack
           StackMachine.offset(ident) match {
-            case (Some((offset, fpchange)), true) => {
+            case (Some((offset, fpchange)), true, _ ) => {
               val readLogic = ListBuffer(
                 // mov rax, qword ptr [rbp - offset]
                 Mov(Dest, FPOffset(offset), InstrSize.fullReg),
@@ -706,7 +761,7 @@ object X86IRGenerator {
                 }
               }
             }
-            case (Some((offset, fpchange)), false) => {
+            case (Some((offset, fpchange)), false, _) => {
               ???
             }
             case _ => {
@@ -1009,7 +1064,7 @@ object X86IRGenerator {
       val instructions: ListBuffer[Instruction] = ListBuffer()
 
       StackMachine.offset(ident.value) match {
-        case (Some((offset, fpchange)), true) => {
+        case (Some((offset, fpchange)), true, _) => {
           fpchange match {
             case 0 => {
 
@@ -1050,7 +1105,7 @@ object X86IRGenerator {
             }
           }
         }
-        case (Some((offset, fpchange)), false) => {
+        case (Some((offset, fpchange)), false, _) => {
           ???
         }
         case _ => {
@@ -1331,6 +1386,7 @@ object X86IRGenerator {
     stringLiterals.clear()
     rodataDirectives.clear()
     lib.reset()
+    lazyLabelToInstruction.clear()
     functionGenerator.reset()
     labelCounter = 0
   }

@@ -5,6 +5,7 @@ import scala.collection.mutable.ListBuffer
 import scala.annotation.tailrec
 import parsley.internal.machine.instructions.Pop
 import java.util.HashMap
+import parsley.internal.machine.instructions.Instr
 
 /** Special Grade Cursed Object
   */
@@ -42,7 +43,7 @@ object StackMachine {
    * @return An optional tuple containing the offset of the variable and the total offset of the frame.
    *         Returns None if the variable is not found in any of the frames.
    */
-  def offset(name: String): (Option[(Int, Int)], Boolean) = {
+  def offset(name: String): (Option[(Int, Int)], Boolean, StackFrame) = {
 
     var totalOffset = 0
 
@@ -66,12 +67,12 @@ object StackMachine {
             offset + totalOffset + 8
           )
 
-          return (Some((offset + 8, totalOffset)), frame.definedVarMap(name))
+          return (Some((offset + 8, totalOffset)), frame.definedVarMap(name), frame)
         }
       }
     })
 
-    (None, false)
+    (None, false, null)
   }
 
   /**
@@ -88,6 +89,7 @@ object StackMachine {
 
     // Create a new stack frame for the current scope
     val newFrame = new StackFrame(symbolTable, opParamList, stackFrameCounter)
+    stackFrameCounter += 1
 
     println("adding frame:")
     newFrame.printFrame()
@@ -143,22 +145,22 @@ object StackMachine {
     })
     println("End of stack --------------------")
   }
-
 }
 
 /** StackFrame class */
 
 // Each stack frame is a dictionary of variables and their types for a given scope in the program
 // (e.g. a function, a loop, a conditional block, etc.)
-class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], stackFrameCounter: Int) {
+class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], var stackFrameCounter: Int) {
 
   // The size of the local variables in the stack frame
   var localVarSize: Int = 0
 
   val definedVarMap : mutable.Map[String, Boolean] = mutable.HashMap[String, Boolean]()
 
-  val lazyToLabel : mutable.HashMap[String, String] = mutable.HashMap[String, String]()
+  val lazyToLabel : mutable.HashMap[String, (String, ListBuffer[Instruction])] = mutable.HashMap[String, (String, ListBuffer[Instruction])]()
 
+  val numLazyAsgns : mutable.Map[String, Int] = mutable.HashMap[String, Int]()
 
   // The size of the parameters in the stack frame
   var pushedArgSize = 0
@@ -191,7 +193,6 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], stack
 
       if (symbolTable.isLazyVar(name)) {
         definedVarMap.put(name, false);
-        lazyToLabel.put(name, "lazy_" + name + "_" + stackFrameCounter.toString());
       } else {
         definedVarMap.put(name, true);
       }
@@ -222,6 +223,32 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], stack
       case None => {}
     }
   }
+
+  def setDefined(name: String): Unit = {
+    if (!definedVarMap.contains(name)) {
+      println("Variable not found in current frame:" + name + "\n")
+      this.printFrame()
+      throw new Exception("Variable not found in current frame")
+    }
+    definedVarMap.put(name, true)
+  }
+
+  /**
+    * Get the label and the IR for a lazy variable
+    *
+    * @param name The name of the lazy variable
+    * @return A tuple containing the label and the IR for the lazy variable
+    */
+  def getLazyIRLabel(name: String): (String, ListBuffer[Instruction]) = {
+    lazyToLabel(name)
+  }
+
+
+  def addLazyIRLabel(name: String, label: String, ir: ListBuffer[Instruction]): Unit = {
+    lazyToLabel.addOne(name, (label, ir))
+    printf("Added lazy IR for %s with label %s\n", name, label)
+  }
+
 
   def findVarOffset(name: String): Int = {
     if (varMap.contains(name)) {

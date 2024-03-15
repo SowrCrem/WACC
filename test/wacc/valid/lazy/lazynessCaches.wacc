@@ -8,5 +8,6 @@ begin
     lazy int a = b;
     println a;
     b = 6;
+    lazy a = b;
     println a 
 end

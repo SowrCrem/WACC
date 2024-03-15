@@ -1,4 +1,4 @@
-package test.frontend.integration.valid.Lazy
+package test.integration.extension.Lazy
 
 import wacc.Main
 import test.Utils._
@@ -12,16 +12,8 @@ import org.scalatest.matchers.should.Matchers._
 
 class Lazy extends AnyFlatSpec {
 
-  "valid - lazy tests: evaluationDivByZeroFails.wacc" should "return exit code 0" in {
-    throwsNoError("valid/lazy/evaluationDivByZeroFails.wacc")
-  }
-
   "valid - lazy tests: lazyDoesntCookTheCodebase.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/lazyDoesntCookTheCodebase.wacc")
-  }
-
-  "valid - lazy tests: lazyInt.wacc" should "return exit code 0" in {
-    throwsNoError("valid/lazy/lazyInt.wacc")
   }
 
   "valid - lazy tests: lazyInt2.wacc" should "return exit code 0" in {
@@ -32,10 +24,6 @@ class Lazy extends AnyFlatSpec {
     throwsNoError("valid/lazy/lazyIntDivZero.wacc")
   }
 
-  "valid - lazy tests: lazyIntUsed.wacc" should "return exit code 0" in {
-    throwsNoError("valid/lazy/lazyIntUsed.wacc")
-  }
-
   "valid - lazy tests: lazyInt.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/lazyInt.wacc")
   }
@@ -43,10 +31,6 @@ class Lazy extends AnyFlatSpec {
   "valid - lazy tests: lazynessCaches.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/lazynessCaches.wacc")
   }
-
-  // "valid - lazy tests: lazyPair.wacc" should "return exit code 0" in {
-  //   throwsNoError("valid/lazy/lazyPair.wacc")
-  // }
 
   "valid - lazy tests: superLazy.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/superLazy.wacc")

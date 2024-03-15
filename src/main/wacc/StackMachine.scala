@@ -234,7 +234,7 @@ class StackFrame(symbolTable: SymbolTable, opParamList: Option[ParamList], var s
           varMap += (name -> localVarSize)
           localVarSize += typenode.size
           printf("Adding %s to stack frame with size %d\n", name, localVarSize)
-        }
+        } //0x5555555592a0
       }
 
       if (symbolTable.isLazyVar(name)) {

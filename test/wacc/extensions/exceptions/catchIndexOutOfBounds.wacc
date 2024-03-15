@@ -5,6 +5,7 @@ begin
   int[] arr = [1,2,3,4,5];
   try {
     println arr[7];
+    println "everything is somehow fine" ;
     exit -1
   } catch (Exception: ArrayIndexOutOfBounds) {
     println "Caught Index Out Of Bounds"

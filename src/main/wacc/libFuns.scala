@@ -595,18 +595,18 @@ class LibFunGenerator {
     }
     outOfBounds.setFlag(true)
     List(
-      Label("_arrLoad8"),
-      PushRegisters(List(G0), InstrSize.fullReg),
-      Cmp(G1, Immediate32(0), InstrSize.halfReg),
-      ConditionalMov(G1, G2, InstrCond.lessThan, InstrSize.halfReg),
-      JumpIfCond(outOfBounds.getJumpLabel, InstrCond.lessThan),
-      Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.halfReg),
-      Cmp(G1, G0, InstrSize.halfReg),
-      ConditionalMov(G1, G2, InstrCond.greaterThan, InstrSize.halfReg),
-      JumpIfCond(outOfBounds.getJumpLabel, InstrCond.greaterThan),
-      Mov(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.fullReg), InstrSize.fullReg),
-      PopRegisters(List(G0), InstrSize.fullReg),
-      ReturnInstr()
+      Label("_arrLoad8"), // Label for the array load function
+      PushRegisters(List(G0), InstrSize.fullReg), // Push the registers onto the stack
+      Cmp(G1, Immediate32(0), InstrSize.halfReg), // Compare the index with 0
+      ConditionalMov(G2, G1, InstrCond.lessThan, InstrSize.halfReg), // Move G1 to G2 if G1 less than 0
+      JumpIfCond(outOfBounds.getJumpLabel, InstrCond.lessThan), // Jump to outOfBounds if less than 0
+      Mov(G0, RegisterPtr(Arg5, InstrSize.halfReg, -HALF_REGSIZE), InstrSize.fullReg), // Move the base address of the array to G0
+      Cmp(G1, G0, InstrSize.fullReg), // Compare the index with the base address
+      ConditionalMov(G2, G1, InstrCond.greaterThan, InstrSize.halfReg), // Move G1 to G2 if greater than the base address
+      JumpIfCond(outOfBounds.getJumpLabel, InstrCond.greaterThanEqual), // Jump to outOfBounds if greater than the base address
+      Mov(Arg5, ArrayAccessPtr(Arg5, G1, MAX_REGSIZE, InstrSize.fullReg), InstrSize.fullReg), // Calculate the address of the element in the array
+      PopRegisters(List(G0), InstrSize.fullReg), // Pop the registers from the stack
+      ReturnInstr() // Return from the function
     )
   }
 

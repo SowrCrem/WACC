@@ -9,8 +9,15 @@ import org.scalatest.Pending
 import org.scalatest.compatible.Assertion
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
+import org.scalatest.BeforeAndAfterEach
+import wacc.{X86IRGenerator, semanticChecker}
 
-class Lazy extends AnyFlatSpec {
+class Lazy extends AnyFlatSpec with BeforeAndAfterEach {
+
+  override protected def afterEach(): Unit = {
+    semanticChecker.reset()
+    X86IRGenerator.reset()
+  }
 
   "valid - lazy tests: lazyDoesntCookTheCodebase.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/lazyDoesntCookTheCodebase.wacc")

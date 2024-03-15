@@ -32,4 +32,5 @@ class ExceptionsBackend extends AnyFlatSpec with BeforeAndAfterEach {
     val path = constructPath(List("extensions", "exceptions", "catchIndexOutOfBounds.wacc"))
     runSucceeds(path, "", 0)
   }
+  
 }

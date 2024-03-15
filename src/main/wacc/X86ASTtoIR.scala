@@ -1107,6 +1107,8 @@ object X86IRGenerator {
               for (e <- eList) {
                 instructions ++= ListBuffer(Mov(Arg5, Dest, InstrSize.fullReg))
                 instructions ++= exprToIR(e)
+                // G1 represents the index of the array
+                // Arg5 represents the address of the array
                 instructions ++= ListBuffer(
                   Mov(G1, Dest, InstrSize.halfReg),
                   CallInstr("arrLoad8"),

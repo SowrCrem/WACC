@@ -22,6 +22,10 @@ class LibFunGenerator {
     */
   private var dataCounter = -1
 
+  /** The list of instructions for each library function to catch
+    */
+  private val libFunsToCatch = new ListBuffer[ListBuffer[Instruction]]()
+
   // -------------------- Flags for the library functions ---------------------------------------
 
   // The flags indicate that their corresponding functions must be added to the assembly output if set to true
@@ -47,7 +51,7 @@ class LibFunGenerator {
   def addLibFuns(): ListBuffer[Instruction] = {
 
     val libFuns = new ListBuffer[Instruction]()
-    libFuns ++= addMallocFunc()
+    libFuns ++= malloc.funIR
     libFuns ++= freeArrayIR()
     libFuns ++= freePairIR()
     libFuns ++= arrLoad8IR()
@@ -101,8 +105,22 @@ class LibFunGenerator {
     var printErrFlag = false
     val exceptionName : String
 
+    /**
+      * Gets the block to jump to depending on whether the error should be caught
+      *
+      * @return the label to jump to
+      */
     def getJumpLabel: String = {
       StackMachine.getExceptionLabelName(labelName)
+    }
+
+    /**
+      * Checks whether the error should be caught
+      * 
+      * @return a bool indicating whether the error should be caught
+      */
+    def shouldBeCaught: Boolean = {
+      getJumpLabel != labelName
     }
 
     /**
@@ -218,21 +236,68 @@ class LibFunGenerator {
     val errMessage: String = "runtime error: invalid character, not ascii character\\n"
     val exceptionName: String = "BadCharError"
   }
-  /**
-    * Sets the flag to print malloc assembly code
-    * @param flag
+
+
+  sealed abstract trait LibFun {
+    val funName: String
+    val possibleErrors: List[ErrType]
+    var printFlag: Boolean = false
+
+    /**
+      *  @return a bool indicating whether the assembly for this library function should be printed
+      * (default is false)
     */
-  def setMallocFlag(flag: Boolean): Unit = {
-    mallocFlag = flag
-    outOfMemory.setFlag(true)
+    private def getFlag: Boolean = {
+      printFlag
+    }
+
+    /**
+      * Sets the flag for the library function
+      * @param flag
+      */
+    def setFlag(flag: Boolean): Unit = {
+      printFlag = flag
+      for (e <- possibleErrors) {
+        e.setFlag(flag)
+      }
+    }
+
+    /**
+      *  @return a list of error types that should be caught
+    */
+    def exceptionsToBeCaught: List[ErrType] =
+      possibleErrors.filter(_.shouldBeCaught)
+
+    val funIR: List[Instruction]
+
+    def addNestedCatchBlocks(): ListBuffer[Instruction] = {
+      if (exceptionsToBeCaught.isEmpty) {
+        ListBuffer[Instruction]()
+      } else {
+        val funInstrs = funIR
+        if (funInstrs.isEmpty) {
+          throw new RuntimeException("Function IR is empty - flag not set?")
+        } else {
+          val instructions : ListBuffer[Instruction] = ListBuffer(Label(funName+"_catch_"+X86IRGenerator.labelCounter))
+          instructions ++= funInstrs
+        }
+      }
+    }
+      
+
   }
 
+  case object malloc extends LibFun {
+    val funName = "_malloc"
+    val possibleErrors = List(outOfMemory)
+    val funIR = addMallocFunc()
+  }
   /**
     * Adds the malloc function to the IR based on the flag set in the compiler
     * @return A list of instructions representing the malloc function
   */
   def addMallocFunc(): List[Instruction] = {
-    if (mallocFlag) {
+    if (malloc.printFlag) {
       List(
         Label("_malloc"),
         PushRegisters(List(FP), InstrSize.fullReg),

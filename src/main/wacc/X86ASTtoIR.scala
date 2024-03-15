@@ -1065,7 +1065,7 @@ object X86IRGenerator {
     case s @ SndNode(e) => pairExprToIR(e, "Snd")
 
     case NewPair(fst, snd) => {
-      lib.setMallocFlag(true)
+      lib.malloc.setFlag(true)
 
       // int[] a = [1,2,3]
       // pair b = newpair(a, a)
@@ -1157,7 +1157,7 @@ object X86IRGenerator {
       var offset: Int =
         0 // As we initially store the size of the array in the first 4 bytes
 
-      lib.setMallocFlag(true)      
+      lib.malloc.setFlag(true)     
       val instructions: ListBuffer[Instruction] = ListBuffer(
         Mov(
           Arg0,

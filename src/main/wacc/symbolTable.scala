@@ -8,6 +8,12 @@ class SymbolTable(val parent: Option[SymbolTable]) {
   var children: List[SymbolTable] = List()
 
   var LazyVars: Set[String] = Set()
+  
+  var outOfScope : Boolean = false
+
+  def setOutOfScope(): Unit = {
+    outOfScope = true
+  }
 
   // Add identity and position node into dictionary
   def add(identName: String, position: TypeNode): Unit = {
@@ -31,9 +37,9 @@ class SymbolTable(val parent: Option[SymbolTable]) {
   // TODO: Make this global (non-dependent on its class)
   @tailrec
   final def lookupAll(
-    name: String, 
+    name: String,
     symbolTable: Option[SymbolTable]
-  ) : Option[Position] = symbolTable match {
+  ): Option[Position] = symbolTable match {
     case None => None 
     case Some(st) => st.lookup(name) match {
       case None        => lookupAll(name, st.parent)

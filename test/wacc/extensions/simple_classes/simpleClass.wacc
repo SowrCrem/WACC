@@ -15,7 +15,7 @@ begin
 		private string name;
 		private int weight
 		
-		public constructor animal(string newName, int newWeight) is
+		constructor animal(string newName, int newWeight) is
 			name = newName;
 			weight = newWeight
 		end
@@ -29,11 +29,11 @@ begin
 		end
 	end
 	
-	animal Aaron = new animal("Aaron", 100);
+	object animal Aaron = new animal("Aaron", 100);
 	string name = call Aaron.getName();
 	println name;
 	call Aaron.setName("Fatty");
-	name = Aaron.getName();
+	name = call Aaron.getName();
 	println name
 	
 end

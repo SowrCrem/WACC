@@ -1,0 +1,25 @@
+# void class method call (with empty constructor)
+
+# Output:
+# Parses class inclusion correctly
+#
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+	class empty is
+    constructor empty() is
+      skip
+    end
+
+    public void printMessage() is
+      println "Void functions work correctly within classes"
+    end
+	end
+
+  object empty empty = new empty();
+  call empty.printMessage()
+end

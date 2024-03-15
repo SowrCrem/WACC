@@ -23,6 +23,11 @@ class SimpleClasses extends AnyFlatSpec with BeforeAndAfterEach {
     runSucceeds(path)
   }
 
+  it should "run extensions/simple_classes/classVoidMethod.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "classVoidMethod.wacc"))
+    runSucceeds(path)
+  }
+
   it should "run extensions/simple_classes/simpleClass.wacc" in {
     val path = constructPath(List("extensions", "simple_classes", "simpleClass.wacc"))
     runSucceeds(path)

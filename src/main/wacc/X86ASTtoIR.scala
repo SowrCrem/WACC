@@ -122,7 +122,7 @@ object X86IRGenerator {
     *   The intermediate representation of the given AST
     */
   def astToIR(position: Position): Buffer[Instruction] = position match {
-    case prog @ Program(funcList, stat) => {
+    case prog @ Program(classList, funcList, stat) => {
 
       val funcIR = new ListBuffer[Instruction]
 
@@ -646,6 +646,12 @@ object X86IRGenerator {
             }
           }
         }
+        case _ => {
+          throw new RuntimeException(
+            "Value (type: " + expr.typeNode.toString() +
+              ") should not reach this case"
+          )
+        }
       }
 
       instructions
@@ -765,6 +771,11 @@ object X86IRGenerator {
       instructions ++= incrementStackInstr
     }
 
+    case _ => {
+      throw new RuntimeException(
+        "Statement not implemented: " + stat.toString()
+      )
+    }
   }
 
   def matchPrintType(typeNode: TypeNode): ListBuffer[Instruction] = {

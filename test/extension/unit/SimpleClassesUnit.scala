@@ -18,8 +18,15 @@ class SimpleClassesUnit extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
+  // Syntax tests
+
   "WACC" should "parse extensions/simple_classes/emptyClass.wacc" in {
     val path = constructPath(List("extensions", "simple_classes", "emptyClass.wacc"))
+    parsesWithoutSyntaxError(path)
+  }
+
+  it should "parse extensions/simple_classes/classVoidMethod.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "classVoidMethod.wacc"))
     parsesWithoutSyntaxError(path)
   }
 
@@ -28,5 +35,61 @@ class SimpleClassesUnit extends AnyFlatSpec with BeforeAndAfterEach {
     parsesWithoutSyntaxError(path)
   }
 
+  it should "parse extensions/simple_classes/invalidClassMethodCall.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "invalidClassMethodCall.wacc"))
+    parsesWithoutSyntaxError(path)
+  }
+
+  it should "parse extensions/simple_classes/publicMemberAccess.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "publicMemberAccess.wacc"))
+    parsesWithoutSyntaxError(path)
+  }
+
+  it should "parse extensions/simple_classes/privateMemberAccess.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "privateMemberAccess.wacc"))
+    parsesWithoutSyntaxError(path)
+  }
+
+
+  // Semantic tests
+
+  it should "analyze extensions/simple_classes/emptyClass.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "emptyClass.wacc"))
+    parsesWithoutSyntaxError(path)
+    afterEach()
+    parsesWithoutSemanticError(path)
+  }
+
+  it should "analyze extensions/simple_classes/classVoidMethod.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "classVoidMethod.wacc"))
+    parsesWithoutSyntaxError(path)
+    afterEach()
+    parsesWithoutSemanticError(path)
+  }
+
+  it should "analyze extensions/simple_classes/simpleClass.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "simpleClass.wacc"))
+    parsesWithoutSyntaxError(path)
+    afterEach()
+    parsesWithoutSemanticError(path)
+  }
+
+  it should "fail analyzing extensions/simple_classes/invalidClassMethodCall.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "invalidClassMethodCall.wacc"))
+    throwsSemanticError(path)
+  }
+
+  it should "analyze extensions/simple_classes/publicMemberAccess.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "publicMemberAccess.wacc"))
+    parsesWithoutSyntaxError(path)
+    afterEach()
+    parsesWithoutSemanticError(path)
+  }
+
+  it should "fail analyzing extensions/simple_classes/privateMemberAccess.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "privateMemberAccess.wacc"))
+    throwsSemanticError(path)
+  }
+  
 
 }

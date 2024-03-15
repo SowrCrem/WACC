@@ -1,0 +1,24 @@
+# private class member access should fail
+
+# Output:
+# #semantic_error#
+
+# Exit:
+# 200
+
+# Program:
+
+begin
+	class empty is
+    private string name
+
+    constructor empty() is
+      name = "Wagwan"
+    end
+	end
+
+  object empty emptyObj = new empty();
+  println emptyObj.name;
+  emptyObj.name = "Mandem";
+  println emptyObj.name
+end

@@ -152,6 +152,26 @@ object Errors {
        Seq(expected ++ actual))
   }
 
+  // Expected constructor name to match class name
+  class ConstructorNameError(
+    position: Position, 
+    val expected: String,
+    val actual: String
+  ) extends SemanticError(position, Seq(expected ++ actual)) {
+    override def getErrMessage() = 
+      (s"Constructor name mismatch: expected $expected but got $actual", 
+       Seq(expected ++ actual))
+  }
+
+  // Cannot access private member or function
+  class PrivateAccessError(
+    position: Position, 
+    val message: String
+  ) extends SemanticError(position, Seq(message)) {
+    override def getErrMessage() = 
+      (s"Access error: tried to access private $message", Seq(message))
+  }
+
   class ScopeError(
     position: Position, 
     val message: String

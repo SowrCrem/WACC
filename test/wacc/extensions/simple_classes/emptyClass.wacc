@@ -1,6 +1,7 @@
-# empty class implementation
+# empty class constructor implementation
 
 # Output:
+# Parses class with empty constructor correctly
 #
 
 # Exit:
@@ -10,7 +11,11 @@
 
 begin
 	class empty is
-    public constructor
+    constructor empty() is
+      skip
+    end
 	end
-  println "Parses class inclusion correctly"
+
+  object empty emptyObj = new empty();
+  println "Parses class with empty constructor correctly"
 end

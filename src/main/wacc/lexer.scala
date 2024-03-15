@@ -137,6 +137,11 @@ object lexer {
         label="access modifier"
       ),
 
+      /* EXTENSION - Lazy Evaluation */
+      "lazy" -> Label(
+        label="lazy"
+      ),
+
       /* EXTENSION - Void Types */
       "void" -> Label(
         label="type"
@@ -170,7 +175,7 @@ object lexer {
         label="statement"
       ),
       "exit" -> Label(
-        label="statement"
+        label="exit statement"
       ),
       "print" -> Label(
         label="statement"

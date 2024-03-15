@@ -40,12 +40,12 @@ class Array extends AnyFlatSpec {
     throwsSemanticError("invalid/semanticErr/array/noArrayCovariance.wacc")
   }
 
-  "semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" in {
-    throwsSemanticError("invalid/semanticErr/array/nonMatchingArrays.wacc")
-  }
-
   "semanticErr - array tests: noStringIndex.wacc" should "return exit code 200" in {
     throwsSemanticError("invalid/semanticErr/array/noStringIndex.wacc")
+  }
+
+  "semanticErr - array tests: nonMatchingArrays.wacc" should "return exit code 200" in {
+    throwsSemanticError("invalid/semanticErr/array/nonMatchingArrays.wacc")
   }
 
   "semanticErr - array tests: wrongArrayDimension.wacc" should "return exit code 200" in {

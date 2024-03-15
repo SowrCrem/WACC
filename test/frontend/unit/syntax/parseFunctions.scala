@@ -64,6 +64,7 @@ class parseFunctions extends AnyFlatSpec {
     val input = "begin int f(int x) is skip end skip end"
     val expected = Success(
       Program(
+        List(),
         List(
           Func(
             IntTypeNode()(pos),
@@ -85,6 +86,7 @@ class parseFunctions extends AnyFlatSpec {
       "begin int f(int x) is skip end int g(int x) is skip end skip end"
     val expected = Success(
       Program(
+        List(),
         List(
           Func(
             IntTypeNode()(pos),
@@ -114,6 +116,7 @@ class parseFunctions extends AnyFlatSpec {
       "begin int f(int x) is return 5 end int g(int x) is return 2 end int x = call f(5) end"
     val expected = Success(
       Program(
+        List(),
         List(
           Func(
             IntTypeNode()(pos),
@@ -143,6 +146,7 @@ class parseFunctions extends AnyFlatSpec {
       "begin int f(int x) is return 5 end int y = call f(5) end"
     val expected = Success(
       Program(
+        List(),
         List(
           Func(
             IntTypeNode()(pos),

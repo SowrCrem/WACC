@@ -20,16 +20,16 @@ class While extends AnyFlatSpec {
     throwsSyntaxError("invalid/syntaxErr/while/dooErr.wacc")
   }
 
-  "syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/while/whileNodone.wacc")
+  "syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {
+    throwsSyntaxError("invalid/syntaxErr/while/whilErr.wacc")
   }
 
   "syntaxErr - while tests: whileNodo.wacc" should "return exit code 100" in {
     throwsSyntaxError("invalid/syntaxErr/while/whileNodo.wacc")
   }
 
-  "syntaxErr - while tests: whilErr.wacc" should "return exit code 100" in {
-    throwsSyntaxError("invalid/syntaxErr/while/whilErr.wacc")
+  "syntaxErr - while tests: whileNodone.wacc" should "return exit code 100" in {
+    throwsSyntaxError("invalid/syntaxErr/while/whileNodone.wacc")
   }
 
 }

@@ -16,16 +16,16 @@ class Lazy extends AnyFlatSpec {
     throwsNoError("valid/lazy/lazyDoesntCookTheCodebase.wacc")
   }
 
+  "valid - lazy tests: lazyInt.wacc" should "return exit code 0" in {
+    throwsNoError("valid/lazy/lazyInt.wacc")
+  }
+
   "valid - lazy tests: lazyInt2.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/lazyInt2.wacc")
   }
 
   "valid - lazy tests: lazyIntDivZero.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/lazyIntDivZero.wacc")
-  }
-
-  "valid - lazy tests: lazyInt.wacc" should "return exit code 0" in {
-    throwsNoError("valid/lazy/lazyInt.wacc")
   }
 
   "valid - lazy tests: lazynessCaches.wacc" should "return exit code 0" in {

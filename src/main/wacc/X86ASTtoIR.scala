@@ -1426,6 +1426,8 @@ object X86IRGenerator {
     lazyLabelToInstruction.clear()
     functionGenerator.reset()
     labelCounter = 0
+    lib = null;
+    
   }
 
 }

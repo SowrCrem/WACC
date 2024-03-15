@@ -23,7 +23,7 @@ object X86IRGenerator {
 
   /** The library function generator
     */
-  val lib: LibFunGenerator = new LibFunGenerator()
+  var lib: LibFunGenerator = null;
 
   val regTracker = new RegisterTracker
 
@@ -68,6 +68,7 @@ object X86IRGenerator {
     *   The intermediate representation of the program
     */
   def generateIR(ast: Program): Buffer[Instruction] = {
+    lib = new LibFunGenerator()
     val instructions: Buffer[Instruction] = new ListBuffer[Instruction].empty
 
     // Add the necessary directives

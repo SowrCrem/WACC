@@ -268,7 +268,7 @@ class LibFunGenerator {
     def exceptionsToBeCaught: List[ErrType] =
       possibleErrors.filter(_.shouldBeCaught)
 
-    val funIR: List[Instruction]
+    def funIR: List[Instruction]
 
     def addNestedCatchBlocks(): ListBuffer[Instruction] = {
       if (exceptionsToBeCaught.isEmpty) {
@@ -290,28 +290,24 @@ class LibFunGenerator {
   case object malloc extends LibFun {
     val funName = "_malloc"
     val possibleErrors = List(outOfMemory)
-    val funIR = addMallocFunc()
-  }
-  /**
-    * Adds the malloc function to the IR based on the flag set in the compiler
-    * @return A list of instructions representing the malloc function
-  */
-  def addMallocFunc(): List[Instruction] = {
-    if (malloc.printFlag) {
-      List(
-        Label("_malloc"),
-        PushRegisters(List(FP), InstrSize.fullReg),
-        Mov(FP, SP, InstrSize.fullReg),
-        AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
-        CallPLT("malloc"), 
-        Cmp(Dest, Immediate32(0), InstrSize.fullReg),
-        JumpIfCond(outOfMemory.getJumpLabel, InstrCond.equal),
-        Mov(SP, FP, InstrSize.fullReg),
-        PopRegisters(List(FP), InstrSize.fullReg),
-        ReturnInstr()
-      )
-    } else {
-      List.empty[Instruction]
+
+    def funIR = {
+      if (malloc.printFlag) {
+        List(
+          Label("_malloc"),
+          PushRegisters(List(FP), InstrSize.fullReg),
+          Mov(FP, SP, InstrSize.fullReg),
+          AndInstr(SP, Immediate32(-16), InstrSize.fullReg),
+          CallPLT("malloc"), 
+          Cmp(Dest, Immediate32(0), InstrSize.fullReg),
+          JumpIfCond(outOfMemory.getJumpLabel, InstrCond.equal),
+          Mov(SP, FP, InstrSize.fullReg),
+          PopRegisters(List(FP), InstrSize.fullReg),
+          ReturnInstr()
+        )
+      } else {
+        List.empty[Instruction]
+      }
     }
   }
 
@@ -819,6 +815,20 @@ class LibFunGenerator {
     printLnFlag = false
     printIntFlag = false
     printBoolFlag = false
+    printCharFlag = false
+    printPtrFlag = false
+    readCharFlag = false
+    readIntFlag = false
+    mallocFlag = false
+    badCharFlag = false
+    arrayLoad8Flag = false
+    malloc.setFlag(false)
+    badChar.setFlag(false)
+    overflow.setFlag(false)
+    divideByZero.setFlag(false)
+    outOfMemory.setFlag(false)
+    nullDerefOrFree.setFlag(false)
+    outOfBounds.setFlag(false)
   }
 
 }

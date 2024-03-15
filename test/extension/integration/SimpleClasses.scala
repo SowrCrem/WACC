@@ -33,9 +33,9 @@ class SimpleClasses extends AnyFlatSpec with BeforeAndAfterEach {
     runSucceeds(path)
   }
 
-  it should "fail semantic extensions/void_types/invalidClassMethodCall.wacc" in {
-    val path = constructPath(List("extensions", "void_types", "invalidClassMethodCall.wacc"))
-    throwsSemanticError(path)
+  it should "run extensions/simple_classes/publicMemberAccess.wacc" in {
+    val path = constructPath(List("extensions", "simple_classes", "publicMemberAccess.wacc"))
+    runSucceeds(path)
   }
 
   // TODO: Add more tests for simple classes

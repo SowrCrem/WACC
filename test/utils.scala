@@ -99,11 +99,19 @@ object Utils {
     runSucceeds(path, expOutput, expReturn, Some(inputs.mkString(" ")))
   }
 
+  def runSucceeds(path: String): Assertion = {
+    runSucceeds(path, "", 0)
+  }
+
   def runSucceeds(path: String, expReturn: Int): Assertion = {
     runSucceeds(path, "", expReturn)
   }
 
-  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0, inputs: Option[String] = None): Assertion = synchronized {
+  def runSucceeds(path: String, expOutput: String, expReturn: Int): Assertion = {
+    runSucceeds(path, expOutput, expReturn, None)
+  }
+
+  def runSucceeds(path: String, expOutput: String, expReturn: Int = 0, inputs: Option[String] = None): Assertion = synchronized {
     Main.setBackendTests()
     try {
       throwsNoError(path)
@@ -121,7 +129,7 @@ object Utils {
     val exeReturn = exeCommand.!
     try {
       val exeOutput = exeCommand.!!
-      // exeOutput shouldBe expOutput
+      exeOutput shouldBe expOutput
       printf("\nTest-output: \n" + exeOutput)
     } catch {
       case e: Throwable => exeReturn match {

@@ -89,6 +89,18 @@ object lexer {
       "%" -> Label(
         label="arithmetic operator"
       ),
+
+      /* EXTENSION - Bitwise Operators */
+      "&" -> Label(
+        label="bitwise operator"
+      ),
+      "|" -> Label(
+        label="bitwise operator"
+      ),
+      "~" -> Label(
+        label="bitwise operator"
+      ),
+
       "ord" -> Label(
         label="unary operator"
       ),
@@ -106,6 +118,28 @@ object lexer {
       ),
       ";" -> Label(
         label="semicolon"
+      ),
+
+      /* EXTENSION - Simple Classes */
+      "class" -> Label(
+        label="class"
+      ),
+      "constructor" -> Label(
+        label="constructor"
+      ),
+      "new" -> Label(
+        label="new"
+      ),
+      "public" -> Label(
+        label="access modifier"
+      ),
+      "private" -> Label(
+        label="access modifier"
+      ),
+
+      /* EXTENSION - Lazy Evaluation */
+      "lazy" -> Label(
+        label="lazy"
       ),
 
       /* EXTENSION - Void Types */
@@ -141,7 +175,7 @@ object lexer {
         label="statement"
       ),
       "exit" -> Label(
-        label="statement"
+        label="exit statement"
       ),
       "print" -> Label(
         label="statement"
@@ -220,6 +254,16 @@ object lexer {
     ),
     symbolDesc = SymbolDesc.plain.copy(
       hardKeywords = Set(
+        /* EXTENSION - Void Types */
+        "void",
+
+        /* EXTENSION - Simple Classes */
+        "class",
+        "constructor",
+        "new",
+        "public",
+        "private",
+
         "int",
         "bool",
         "char",
@@ -267,6 +311,7 @@ object lexer {
         "!=",
         "&&",
         "||",
+
         /* EXTENSION - Bitwise Operators */
         "&",
         "|",

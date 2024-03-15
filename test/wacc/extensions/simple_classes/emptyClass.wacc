@@ -1,0 +1,21 @@
+# empty class constructor implementation
+
+# Output:
+# Parses class with empty constructor correctly
+#
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+	class empty is
+    constructor empty() is
+      skip
+    end
+	end
+
+  object empty emptyObj = new empty();
+  println "Parses class with empty constructor correctly"
+end

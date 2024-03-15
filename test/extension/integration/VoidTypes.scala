@@ -18,14 +18,21 @@ class VoidTypes extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
-  "WACC" should "compile extensions/void_types/simpleVoid.wacc" in {
+  "WACC" should "run extensions/void_types/simpleVoid.wacc" in {
     val path = constructPath(List("extensions", "void_types", "simpleVoid.wacc"))
     runSucceeds(path, "Hello!")
   }
 
-  it should "compile extensions/void_types/voidWithParams.wacc" in {
+  it should "run extensions/void_types/voidWithParams.wacc" in {
     val path = constructPath(List("extensions", "void_types", "voidWithParams.wacc"))
     runSucceeds(path)
   }
+
+  it should "fail parsing extensions/void_types/invalidVoidSyntax.wacc" in {
+    val path = constructPath(List("extensions", "void_types", "invalidVoidSyntax.wacc"))
+    throwsSyntaxError(path)
+  }
+
+  // TODO: Add more tests for void types
 
 }

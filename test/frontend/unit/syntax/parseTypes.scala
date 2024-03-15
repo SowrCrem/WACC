@@ -164,6 +164,7 @@ class parseTypes extends AnyFlatSpec {
     ) shouldBe Success(
       Program(
         List(),
+        List(),
         List(
           IdentAsgn(
             ArrayTypeNode(IntTypeNode()(pos))(pos),

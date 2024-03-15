@@ -40,7 +40,7 @@ object parser {
   lazy val atoms =
     atomic(arrayelemParser) | 
     intParser | boolParser | charParser | stringParser |
-      identifierParser | bracketsParser
+      atomic(classFieldParser) | identifierParser | bracketsParser
 
   // -- Pair Parser ----------------------------------------------- //
 
@@ -91,6 +91,7 @@ object parser {
     Ops(InfixR)(And <# "&&"),
     Ops(InfixR)(Or <# "||")
   )
+
   lazy val arrayLiteralParser: Parsley[Expr] = {
     val arrayLiteral = "[" ~> sepBy(exprParser, ",") <~ "]"
     ArrayLiter(arrayLiteral)
@@ -111,10 +112,15 @@ object parser {
   lazy val pairTypeParser: Parsley[PairTypeNode] = 
     PairTypeNode("pair" ~> "(" ~> pairElemTypeParser <~ ",", pairElemTypeParser <~ ")")
 
+  /* EXTENSION - Void Types */
   lazy val voidTypeParser: Parsley[VoidTypeNode] = VoidTypeNode <# "void"
 
+  /* EXTENSION - Simple Classes */
+  lazy val classTypeParser: Parsley[ClassTypeNode] = ClassTypeNode("object" ~> identifierParser)
+
   lazy val typeParser: Parsley[TypeNode] =
-    atomic(arrayTypeParser) | baseTypeParser | pairTypeParser | voidTypeParser
+    atomic(arrayTypeParser) | baseTypeParser | pairTypeParser | 
+      voidTypeParser | classTypeParser
 
   // -- Statement Parsers ----------------------------------------- //
 
@@ -140,19 +146,32 @@ object parser {
   val printlnParser: Parsley[Stat] = 
     Println("println" ~> notFollowedBy(pairElemParser | arrayLiteralParser) ~> exprParser)
 
-  val callParser: Parsley[Stat] = 
+  val callParser: Parsley[Call] = 
     Call("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
 
+  /* EXTENSION - Simple Classes */
+  val newClassParser: Parsley[Expr] = 
+    NewClass("new" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
+
+  val classCallParser: Parsley[Expr] =
+    ClassCall("call" ~> identifierParser <~ ".",
+              Call(identifierParser, "(" ~> sepBy(exprParser,",") <~ ")"))
+
+  val classFieldParser: Parsley[Expr] = 
+    ClassField(identifierParser, "." ~> identifierParser)
+
   val assignRhs = {
-    val assignRhs = exprParser | pairLitParser | callParser
+    val assignRhs = exprParser | pairLitParser | 
+      newClassParser | atomic(classCallParser) | callParser
     assignRhs
   }
 
   val identAsgnParser: Parsley[IdentAsgn] = 
-    IdentAsgn(typeParser, atomic(identifierParser), "=" ~> assignRhs)
+    IdentAsgn(typeParser, identifierParser, "=" ~> assignRhs)
 
   val assignLhs = {
-    val assignLhs = atomic(arrayelemParser) | identifierParser | pairLitParser
+    val assignLhs = atomic(arrayelemParser) | pairLitParser |
+      atomic(classFieldParser) | identifierParser
     assignLhs
   }
 
@@ -166,9 +185,15 @@ object parser {
     val lazyStat = LazyStat("lazy" ~> statAtoms)
     lazyStat
   }
+
+  /* EXTENSION - Void Types */
   val callVoidParser: Parsley[Stat] = 
     CallVoid("call" ~> identifierParser, "(" ~> sepBy(exprParser,",") <~ ")")
 
+  /* EXTENSION - Simple Classes */
+  val classCallVoidParser: Parsley[Stat] =
+    ClassCallVoid("call" ~> identifierParser <~ ".",
+                  CallVoid(identifierParser, "(" ~> sepBy(exprParser,",") <~ ")"))
   val exceptionParser : Parsley[ExceptionType] = 
     ExceptionType("Exception" ~> ":" ~> lexer.exceptionName)
   
@@ -182,7 +207,8 @@ object parser {
     skipParser | tryCatchParser | identAsgnParser |lazyStatParser|  asgnEqParser |
       readParser | freeParser | returnParser |
       exitParser | printParser | printlnParser |
-      ifParser | whileParser | beginParser | callVoidParser 
+      ifParser | whileParser | beginParser | 
+        atomic(classCallVoidParser) |  callVoidParser  
   }
 
 
@@ -190,7 +216,7 @@ object parser {
 
   // -- Param Parser ----------------------------------------------- //
 
-  val paramParser: Parsley[Param] = Param(typeParser, atomic(identifierParser))
+  val paramParser: Parsley[Param] = Param(typeParser, identifierParser)
 
   val paramListParser: Parsley[ParamList] =
     ParamList(sepBy(paramParser, ","))
@@ -198,10 +224,42 @@ object parser {
   // -- Function Parser -------------------------------------------- //
 
   val funcParser: Parsley[Func] = 
-    Func(typeParser, identifierParser,"(" ~> paramListParser <~ ")", "is" ~> stmtParser <~ "end")
+    Func(typeParser, 
+         identifierParser, 
+         "(" ~> paramListParser <~ ")", 
+         "is" ~> stmtParser <~ "end")
+
+  /* EXTENSION - Simple Classes */
+  // -- Class Parser ---------------------------------------------- //
+
+  val accessModParser: Parsley[AccessMod] = 
+    Public <# "public" | Private <# "private"
+
+  val classFuncParser: Parsley[ClassFunc] = 
+    ClassFunc(accessModParser, funcParser)
+
+  val constructorParser: Parsley[Constructor] = 
+    Constructor(identifierParser, 
+                "(" ~> paramListParser <~ ")", 
+                "is" ~> stmtParser <~ "end")
+
+  val fieldDeclParser: Parsley[FieldDecl] = 
+    FieldDecl(accessModParser, typeParser, identifierParser)
+
+  val fieldDeclListParser: Parsley[List[FieldDecl]] = 
+    sepBy(fieldDeclParser, ";")
+
+  val classParser: Parsley[Class] = 
+    Class("class" ~> identifierParser, 
+          "is" ~> fieldDeclListParser, 
+          "constructor" ~> constructorParser,
+          many(classFuncParser) <~ "end")
 
   // -- Program Parser --------------------------------------------- //
-  val program: Parsley[Program] = Program("begin" ~> many(atomic(funcParser)), stmtParser <~ "end")
+  val program: Parsley[Program] = 
+    Program("begin" ~> atomic(many(classParser)), 
+            many(atomic(funcParser)), 
+            stmtParser <~ "end")
 
   // -- Parser ---------------------------------------------------- //
   val parser = fully(program)
@@ -229,16 +287,31 @@ object parser {
     } 
   }
 
-  def validFunctions(funcs: List[Func]): Boolean = {
-    funcs.forall(func => 
-      func match {
-        case Func(funcType, _, _, stmts) => {
-          funcType match {
-            case VoidTypeNode() => noReturnStatements(stmts)
-            case _              => validEndingStatement(stmts)
-          }
+  def validFunction(func: Func): Boolean =
+    func match {
+      case Func(funcType, _, _, stmts) => {
+        funcType match {
+          case VoidTypeNode() => noReturnStatements(stmts)
+          case _              => validEndingStatement(stmts)
+        }
+      }
+    }
+
+  def validFunctions(classes: List[Class], funcs: List[Func]): Boolean = {
+    val classesValidity = classes.forall(cls =>
+      cls match {
+        case Class(_, _, constr@Constructor(_, _, stmts), classFuncs) => {
+          noReturnStatements(stmts) &&
+          classFuncs.forall(classFunc =>
+            classFunc match {
+              case ClassFunc(_, func) => 
+                validFunction(func) 
+            }
+          )
         }
       }
     )
+
+    classesValidity && funcs.forall(func => validFunction(func))
   }
 }

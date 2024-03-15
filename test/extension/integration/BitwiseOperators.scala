@@ -18,23 +18,26 @@ class BitwiseOperators extends AnyFlatSpec with BeforeAndAfterEach {
     X86IRGenerator.reset()
   }
 
-  "WACC" should "parse extensions/bitwise_operators/simpleAnd.wacc" in {
+  "WACC" should "run extensions/bitwise_operators/simpleAnd.wacc" in {
     val path = constructPath(List("extensions", "bitwise_operators", "simpleAnd.wacc"))
     runSucceeds(path)
   }
 
-  it should "parse extensions/bitwise_operators/simpleOr.wacc" in {
+  it should "run extensions/bitwise_operators/simpleOr.wacc" in {
     val path = constructPath(List("extensions", "bitwise_operators", "simpleOr.wacc"))
     runSucceeds(path)
   }
 
-  it should "parse extensions/bitwise_operators/simpleNot.wacc" in {
+  it should "run extensions/bitwise_operators/simpleNot.wacc" in {
     val path = constructPath(List("extensions", "bitwise_operators", "simpleNot.wacc"))
     runSucceeds(path)
   }
 
-  it should "parse extensions/bitwise_operators/varAnd.wacc" in {
+  it should "run extensions/bitwise_operators/varAnd.wacc" in {
     val path = constructPath(List("extensions", "bitwise_operators", "varAnd.wacc"))
     runSucceeds(path)
   }
+
+  // TODO: Add more tests for bitwise operators
+  
 }

@@ -1,0 +1,44 @@
+# call private class method outside of class scope
+
+# Output:
+# #semantic_error#
+
+# Exit:
+# 200
+
+# Program:
+
+begin
+	class animal is
+		private string name;
+		private int weight
+		
+		constructor animal(string newName, int newWeight) is
+			name = newName;
+			weight = newWeight
+		end
+		
+		public string getName() is
+			return name
+		end
+		
+		public void setName(string newName) is
+			name = newName
+		end
+		
+		private int calcHalfWeight() is
+			int x = weight / 2;
+			return x
+		end
+		
+		public int getHalfWeight() is
+			int x = call calcHalfWeight();
+			return x
+		end
+	end
+	
+	object animal Aaron = new animal("Aaron", 100);
+	int hw = call Aaron.calcHalfWeight();
+	println hw
+	
+end

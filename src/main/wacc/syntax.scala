@@ -55,19 +55,48 @@ trait ParserBridgePos4[-A, -B, -C, -D, +E] extends ParserSingletonBridgePos[(A, 
 
 // Program (Extending Position)
 
-case class Program(funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) extends Position {
-  var symbolTable: SymbolTable  = new SymbolTable(None);
+case class Program(classList: List[Class], funcList: List[Func], stats: List[Stat])(val pos:(Int, Int)) extends Position {
+  var symbolTable: SymbolTable = new SymbolTable(None)
 }
-object Program extends ParserBridgePos2[List[Func], List[Stat], Program]
+object Program extends ParserBridgePos3[List[Class], List[Func], List[Stat], Program]
+
+/* EXTENSION - Simple Classes */
+case class Class(ident: Ident, fields: List[FieldDecl], constr: Constructor, classFuncList: List[ClassFunc])(val pos: (Int, Int)) extends Position with TypeNode {
+  var symbolTable: SymbolTable = new SymbolTable(None)
+}
+object Class extends ParserBridgePos4[Ident, List[FieldDecl], Constructor, List[ClassFunc], Class]
+
+case class FieldDecl(access: AccessMod, typeNode: TypeNode, ident: Ident)(val pos: (Int, Int)) extends Position
+object FieldDecl extends ParserBridgePos3[AccessMod, TypeNode, Ident, FieldDecl]
+
+case class Constructor(ident: Ident, paramList: ParamList, statList: List[Stat])(val pos: (Int, Int)) extends Position with TypeNode {
+  var symbolTable: SymbolTable = new SymbolTable(None)
+}
+object Constructor extends ParserBridgePos3[Ident, ParamList, List[Stat], Constructor]
+
+case class ClassFunc(access: AccessMod, func: Func)(val pos: (Int, Int)) extends Position
+object ClassFunc extends ParserBridgePos2[AccessMod, Func, ClassFunc]
+
+// Access Modifier (Extending Position)
+
+trait AccessMod extends Position
+
+case class Public()(val pos: (Int, Int)) extends AccessMod
+object Public extends ParserBridgePos0[Public]
+
+case class Private()(val pos: (Int, Int)) extends AccessMod
+object Private extends ParserBridgePos0[Private]
 
 case class Func(typeNode: TypeNode, ident: Ident, paramList: ParamList, statList: List[Stat])(val pos: (Int, Int)) extends Position with TypeNode {
-  var symbolTable: SymbolTable = new SymbolTable(None);
+  var symbolTable: SymbolTable = new SymbolTable(None)
 }
 object Func extends ParserBridgePos4[TypeNode, Ident, ParamList, List[Stat], Func]
 
+/* EXTENSION - Lazy statements */
 // Lazy Stat
-case class LazyStat(stat: Stat)(val pos: (Int, Int)) extends Stat{
-  var symbolTable: SymbolTable = new SymbolTable(None);
+
+case class LazyStat(stat: Stat)(val pos: (Int, Int)) extends Stat {
+  var symbolTable: SymbolTable = new SymbolTable(None)
 }
 object LazyStat extends ParserBridgePos1[Stat, LazyStat]
 
@@ -96,7 +125,7 @@ object ParamList extends ParserBridgePos1[List[Param], ParamList]
 // Param (Extending Position)
 
 case class Param(typenode: TypeNode, ident: Ident)(val pos: (Int, Int)) extends Position with Expr  {
-  typeNode = typenode;
+  typeNode = typenode
 }
 object Param extends ParserBridgePos2[TypeNode, Ident, Param]
 
@@ -105,7 +134,7 @@ sealed trait Stat extends Position {
   var isLazy: Boolean = false
 
   def setLazy(): Unit = {
-    isLazy = true;
+    isLazy = true
   }
 
   def isLazyStat(): Boolean = {
@@ -128,16 +157,14 @@ object Return extends ParserBridgePos1[Expr, Return] {
   override def labels: List[String] = List("return")
 }
 case class Exit(expr: Expr)(val pos: (Int, Int)) extends Stat
-object Exit extends ParserBridgePos1[Expr, Exit] {
-  override def labels = List("exit statement")
-}
+object Exit extends ParserBridgePos1[Expr, Exit]
 case class Print(expr: Expr)(val pos: (Int, Int)) extends Stat
 object Print extends ParserBridgePos1[Expr, Print]
 case class Println(expr: Expr)(val pos: (Int, Int)) extends Stat
 object Println extends ParserBridgePos1[Expr, Println]
 case class If(expr: Expr, stats1: List[Stat], stats2: List[Stat])(val pos: (Int, Int)) extends Stat {
-  var symbolTableTrue: SymbolTable = new SymbolTable(None);
-  var symbolTableFalse: SymbolTable = new SymbolTable(None);
+  var symbolTableTrue: SymbolTable = new SymbolTable(None)
+  var symbolTableFalse: SymbolTable = new SymbolTable(None)
 
 }
 object If extends ParserBridgePos3[Expr, List[Stat], List[Stat], If] {
@@ -145,13 +172,13 @@ object If extends ParserBridgePos3[Expr, List[Stat], List[Stat], If] {
 
 }
 case class While(expr: Expr, stats: List[Stat])(val pos: (Int, Int)) extends Stat {
-  var symbolTable: SymbolTable = new SymbolTable(None);  
+  var symbolTable: SymbolTable = new SymbolTable(None)  
 }
 object While extends ParserBridgePos2[Expr, List[Stat], While] {
   override def labels = List("while loop")
 }
 case class BeginEnd(stats: List[Stat])(val pos: (Int, Int)) extends Stat {
-  var symbolTable: SymbolTable = new SymbolTable(None);
+  var symbolTable: SymbolTable = new SymbolTable(None)
 }
 object BeginEnd extends ParserBridgePos1[List[Stat], BeginEnd]
 
@@ -160,17 +187,48 @@ sealed trait RValue
 
 // Expr (Extending Position)
 sealed trait Expr extends Position with RValue {
-  var typeNode: TypeNode = null;
+  var typeNode: TypeNode = null
 }
 
 
 case class NewPair(fst: Expr, snd: Expr)(val pos: (Int, Int)) extends Expr
 object NewPair extends ParserBridgePos2[Expr, Expr, NewPair]
-case class Call(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat
+
+/* EXTENSION - Simple Classes */
+
+case class ClassField(className: Ident, fieldName: Ident)(val pos: (Int, Int)) extends Expr
+object ClassField extends ParserBridgePos2[Ident, Ident, ClassField]
+
+case class NewClass(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Expr
+object NewClass extends ParserBridgePos2[Ident, List[Expr], NewClass]
+
+case class ClassCall(ident: Ident, callObject: Call)(val pos: (Int, Int)) extends Expr
+object ClassCall extends ParserBridgePos2[Ident, Call, ClassCall]
+
+case class ClassCallVoid(ident: Ident, callObject: CallVoid)(val pos: (Int, Int)) extends Stat
+object ClassCallVoid extends ParserBridgePos2[Ident, CallVoid, ClassCallVoid]
+
+case class Call(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat {
+  private var innerCall: Boolean = true;
+  def getInnerCall(): Boolean = {
+    innerCall
+  }
+  def setOuterCall(): Unit = {
+    innerCall = false
+  }
+}
 object Call extends ParserBridgePos2[Ident, List[Expr], Call]
 
 /* EXTENSION - Void Types */
-case class CallVoid(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat
+case class CallVoid(ident: Ident, args: List[Expr])(val pos: (Int, Int)) extends Stat {
+  private var innerCall: Boolean = true;
+  def getInnerCall(): Boolean = {
+    innerCall
+  }
+  def setOuterCall(): Unit = {
+    innerCall = false
+  }
+}
 object CallVoid extends ParserBridgePos2[Ident, List[Expr], CallVoid]
 
 case class ArrayLiter(exprList: List[Expr])(val pos: (Int, Int)) extends Expr  
@@ -313,8 +371,13 @@ object Ident extends ParserBridgePos1[String, Ident]
 
 // Type nodes
 trait TypeNode extends Position {
-  var isParam : Boolean = false;
-  val size = 0;
+  var isParam : Boolean = false
+  var access : AccessMod = Public()(0, 0)
+  val size : Int = 0
+
+  def setPrivate(): Unit = {
+    access = Private()(0, 0)
+  }
 }
 
 sealed trait BaseTypeNode extends TypeNode with PairElemTypeNode
@@ -325,6 +388,12 @@ case class VoidTypeNode()(val pos: (Int, Int)) extends TypeNode {
   override val size: Int = 0
 }
 object VoidTypeNode extends ParserBridgePos0[VoidTypeNode]
+
+/* EXTENSION - Simple Classes */
+case class ClassTypeNode(className: Ident)(val pos: (Int, Int)) extends TypeNode {
+  override val size: Int = 0
+}
+object ClassTypeNode extends ParserBridgePos1[Ident, ClassTypeNode]
 
 case class IntTypeNode()(val pos: (Int, Int)) extends BaseTypeNode {
   override def toString: String = "integer"
@@ -361,18 +430,13 @@ case class ArrayTypeNode(elementType: TypeNode)(val pos: (Int, Int)) extends Pai
   var length: Int = 0
   override val size: Int = 8 
   def setLength(len: Int): Unit = {
-    length = len;
+    length = len
   }
 
 }
 object ArrayTypeNode extends ParserBridgePos1[TypeNode, ArrayTypeNode]
 
 sealed trait PairElemTypeNode extends TypeNode 
-
-
-case class ErrorTypeNode()(val pos: (Int, Int)) extends TypeNode with PairElemTypeNode 
-object ErrorTypeNode extends ParserBridgePos0[ErrorTypeNode]
-
 
 case class PairTypeNode(fst: PairElemTypeNode, snd: PairElemTypeNode)(val pos: (Int, Int)) extends TypeNode with LValue with PairElemTypeNode {
   override def toString: String = s"pair(${fst.toString}, ${snd.toString})"

@@ -76,6 +76,7 @@ class checkFunctions extends SemanticUnitTester {
   
   "The type checker" should "accept function calls" in {
     val position = Program(
+      List(),
       List(Func(
           IntTypeNode()(pos),
           Ident("f")(pos),

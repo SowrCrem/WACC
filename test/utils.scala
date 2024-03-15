@@ -32,7 +32,11 @@ object Utils {
 
     def checkSucceedsStats(statList: List[Stat]): Assertion = checkSucceeds(List(), statList)
 
-    def checkSucceeds(funcList: List[Func], statList: List[Stat]): Assertion = checkSucceeds(Program(funcList, statList)(pos))
+    def checkSucceeds(funcList: List[Func], statList: List[Stat]): Assertion = 
+      checkSucceeds(List(), funcList, statList)
+    
+    def checkSucceeds(classList: List[Class], funcList: List[Func], statList: List[Stat]): Assertion = 
+      checkSucceeds(Program(classList, funcList, statList)(pos))
 
     def checkSucceeds(node: Position): Assertion = noException should be thrownBy typeChecker.check(node)
 
@@ -47,10 +51,10 @@ object Utils {
   def parseSucceeds(input: String, expected: Stat): Assertion = parseSucceeds(input, List(expected))
 
   def parseSucceeds(input: String, expected: List[Stat]): Assertion =
-    parser.parse("begin " + input + " end") shouldBe Success(Program(List(), expected)(pos))
+    parser.parse("begin " + input + " end") shouldBe Success(Program(List(), List(), expected)(pos))
 
   def parseSucceeds(input: String, expected: Expr): Assertion =
-    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), List(Exit(expected)(pos)))(pos))
+    parser.parse("begin exit " + input + " end") shouldBe Success(Program(List(), List(), List(Exit(expected)(pos)))(pos))
 
   def parseFails(input: String, errorMessage: String = ""): Assertion = errorMessage match {
     case "" => parser.parse("begin exit " + input + " end") should matchPattern {
@@ -95,11 +99,19 @@ object Utils {
     runSucceeds(path, expOutput, expReturn, Some(inputs.mkString(" ")))
   }
 
+  def runSucceeds(path: String): Assertion = {
+    runSucceeds(path, "", 0)
+  }
+
   def runSucceeds(path: String, expReturn: Int): Assertion = {
     runSucceeds(path, "", expReturn)
   }
 
-  def runSucceeds(path: String, expOutput: String = "", expReturn: Int = 0, inputs: Option[String] = None): Assertion = synchronized {
+  def runSucceeds(path: String, expOutput: String, expReturn: Int): Assertion = {
+    runSucceeds(path, expOutput, expReturn, None)
+  }
+
+  def runSucceeds(path: String, expOutput: String, expReturn: Int = 0, inputs: Option[String] = None): Assertion = synchronized {
     Main.setBackendTests()
     try {
       throwsNoError(path)
@@ -117,7 +129,7 @@ object Utils {
     val exeReturn = exeCommand.!
     try {
       val exeOutput = exeCommand.!!
-      // exeOutput shouldBe expOutput
+      exeOutput shouldBe expOutput
       printf("\nTest-output: \n" + exeOutput)
     } catch {
       case e: Throwable => exeReturn match {

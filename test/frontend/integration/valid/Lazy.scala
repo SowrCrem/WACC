@@ -40,9 +40,9 @@ class Lazy extends AnyFlatSpec {
     throwsNoError("valid/lazy/lazynessCaches.wacc")
   }
 
-  // "valid - lazy tests: lazyPair.wacc" should "return exit code 0" in {
-  //   throwsNoError("valid/lazy/lazyPair.wacc")
-  // }
+  "valid - lazy tests: lazyPair.wacc" should "return exit code 0" in {
+    throwsNoError("valid/lazy/lazyPair.wacc")
+  }
 
   "valid - lazy tests: superLazy.wacc" should "return exit code 0" in {
     throwsNoError("valid/lazy/superLazy.wacc")

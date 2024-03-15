@@ -32,4 +32,42 @@ class BitwiseOperatorsUnit extends AnyFlatSpec with BeforeAndAfterEach {
     val path = constructPath(List("extensions", "bitwise_operators", "simpleNot.wacc"))
     parsesWithoutSyntaxError(path)
   }
+
+  it should "parse extensions/bitwise_operators/varAnd.wacc" in {
+    val path = constructPath(List("extensions", "bitwise_operators", "varAnd.wacc"))
+    parsesWithoutSyntaxError(path)
+  }
+
+  it should "analyse extensions/bitwise_operators/simpleAnd.wacc" in {
+    val path = constructPath(List("extensions", "bitwise_operators", "simpleAnd.wacc"))
+    parsesWithoutSyntaxError(path)
+    semanticChecker.reset()
+    X86IRGenerator.reset()
+    parsesWithoutSemanticError(path)
+  }
+
+  it should "analyse extensions/bitwise_operators/simpleOr.wacc" in {
+    val path = constructPath(List("extensions", "bitwise_operators", "simpleOr.wacc"))
+    parsesWithoutSyntaxError(path)
+    semanticChecker.reset()
+    X86IRGenerator.reset()
+    parsesWithoutSemanticError(path)
+  }
+
+  it should "analyse extensions/bitwise_operators/simpleNot.wacc" in {
+    val path = constructPath(List("extensions", "bitwise_operators", "simpleNot.wacc"))
+    parsesWithoutSyntaxError(path)
+    semanticChecker.reset()
+    X86IRGenerator.reset()
+    parsesWithoutSemanticError(path)
+  }
+
+  it should "analyse extensions/bitwise_operators/varAnd.wacc" in {
+    val path = constructPath(List("extensions", "bitwise_operators", "varAnd.wacc"))
+    parsesWithoutSyntaxError(path)
+    semanticChecker.reset()
+    X86IRGenerator.reset()
+    parsesWithoutSemanticError(path)
+  }
+
 }

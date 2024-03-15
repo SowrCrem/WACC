@@ -27,49 +27,289 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       returnType: Option[TypeNode]
   ): Option[TypeNode] = position match {
     // PROGRAMS
-    case prog@Program(funcList, statList) => //checkProgram(position, funcList, stat)
-      {
+    case prog@Program(classList, funcList, statList) => {
 
-
-        funcList.foreach {
-          case func@Func(typeNode, ident, paramList, statList) => {
-            symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
-              case Some(_) => {
-                errors += new AlreadyDefinedError(position, ident.value)
-              }
-              case None => symbolTable.add(ident.value + "_f", func)
-            }
+      // Add classes to symbol table
+      classList.foreach {
+        case classNode@Class(ident, fields, constr, classFucList) => {
+          symbolTable.lookupAll(ident.value + "_c", Some(symbolTable)) match {
+            case Some(_) => errors += new AlreadyDefinedError(position, ident.value)
+            case None => symbolTable.add(ident.value + "_c", classNode)
           }
         }
+      } 
 
-        // Check functions
-        funcList.foreach(func => check(func, symbolTable, None))
-        // Check statements
-        statList.foreach(stat => check(stat, symbolTable, None))
+      // Check classes
+      classList.foreach(cls => check(cls, symbolTable, None))
 
-
-        // Set the symbol table of the program to the current (root) symbol table
-        prog.symbolTable = symbolTable
-
-        None // Program has no type
-
-
+      // Add functions to symbol table 
+      funcList.foreach {
+        case funcNode@Func(typeNode, ident, _, _) => {
+          symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
+            case Some(_) => errors += new AlreadyDefinedError(position, ident.value)
+            case None => symbolTable.add(ident.value + "_f", funcNode)
+          }
+        }
       }
+
+      // Check functions
+      funcList.foreach(func => check(func, symbolTable, None))
+
+      // Check statements
+      statList.foreach(stat => check(stat, symbolTable, None))
+
+      // Set the symbol table of the program to the current (root) symbol table
+      prog.symbolTable = symbolTable
+
+      None // Program has no type
+
+    }
+
+    /* EXTENSION - Simple Classes */
+
+    // CLASSES
+    case cls@Class(ident, fields, constr, classFuncList) => {
+      symbolTable.lookupAll(ident.value + "_c", Some(symbolTable)) match {
+        case Some(_) => {
+          val classSymbolTable = symbolTable.enterScope()
+          // println(classSymbolTable.outOfScope)
+
+          // Add fields to symbol table
+          fields.foreach(field => check(field, classSymbolTable, None))
+          
+          // Constructor ident must be the same as the class ident
+          if (ident.value != constr.ident.value) {
+            errors += new ConstructorNameError(position, ident.value, constr.ident.value)
+            None
+          }
+          
+          // Add constructor to symbol table
+          classSymbolTable.lookupAll(ident.value + "_f", Some(classSymbolTable)) match {
+            case Some(_) => {
+              // There should only ever be one constructor per class
+              errors += new AlreadyDefinedError(position, ident.value)
+            }
+            case None => {
+              classSymbolTable.add(ident.value + "_f", constr)
+            }
+          }
+          
+          // Check constructor
+          check(constr, classSymbolTable, None)
+
+          // Add class functions to symbol table
+          classFuncList.foreach {
+            case ClassFunc(access, func@Func(typeNode, ident, _, _)) => {
+              access match {
+                case Private() => typeNode.setPrivate()
+                case _         => {}
+              }
+              // Add underlying function to symbol table
+              classSymbolTable.lookupAll(ident.value + "_f", Some(classSymbolTable)) match {
+                case Some(_) => errors += new AlreadyDefinedError(position, ident.value)
+                case None    => classSymbolTable.add(ident.value + "_f", func)
+              }
+            }
+          }
+
+          // Check class functions
+          classFuncList.foreach {
+            case ClassFunc(_, func) => check(func, classSymbolTable, None) 
+          }
+
+          // Set the symbol table of the class to the current (scoped) symbol table
+          cls.symbolTable = classSymbolTable
+
+          // Set outer access to true for class' symbol table
+          classSymbolTable.setOutOfScope()
+          // println(classSymbolTable.outOfScope)
+
+          None // Class has no type
+
+        }
+        case None => {
+          errors += new NotDefinedError(position, ident.value)
+          None
+        }
+      }
+    }
+
+    // FIELD DECLARATIONS
+    case FieldDecl(access, typeNode, ident) => {
+      // Append _m to the field name to avoid conflicts with variable names
+      symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
+        case Some(_) => {
+          errors += new AlreadyDefinedError(position, ident.value)
+          None
+        }
+        case None => {
+          // Fields are public by default, so we only need to check if they are private
+          access match {
+            case Private() => typeNode.setPrivate() 
+            case Public()  => {}
+          }
+          // println("Added field " + ident.value + " type " + typeNode + " to symbol table")
+          symbolTable.add(ident.value, typeNode)
+          Some(typeNode)
+        }
+      }
+    }
     
-    // FUNCTIONS
-    case func@Func(typeNode, ident, paramList, statList) =>
-      {
-        symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
-        case Some(_) =>
-          val newSymbolTable = symbolTable.enterScope()
+    // CONSTRUCTORS
+    case constr@Constructor(ident, paramList, statList) => {
+      symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
+        case Some(_) => {
+          val constrSymbolTable = symbolTable.enterScope()
           paramList.paramList.foreach(param => {
-            newSymbolTable.lookupAll(param.ident.value, Some(newSymbolTable)) match {
+            constrSymbolTable.lookupAll(param.ident.value, Some(constrSymbolTable)) match {
               case Some(_) =>
                 errors += new AlreadyDefinedError(position, param.ident.value)
               case None =>
                 param.typeNode.isParam = true;
                 param.ident.typeNode = param.typeNode
-                newSymbolTable.add(param.ident.value, param.typeNode)
+                constrSymbolTable.add(param.ident.value, param.typeNode)
+            }
+          })
+          constr.symbolTable = constrSymbolTable
+          symbolTable.add(ident.value + "_f", constr)
+          
+          // Check statements
+          statList.foreach(stat => check(stat, constrSymbolTable, None))
+
+          Some(ClassTypeNode(ident)(position.pos))
+        }
+        case None => {
+          errors += new NotDefinedError(position, ident.value)
+          None
+        }
+      }
+    }
+
+    // CLASS FUNCTIONS
+    case ClassFunc(_, func) => {
+      println("SHOULD NEVER REACH CLASSFUNC CHECK")
+      Some(func.typeNode)
+    }
+
+    // NEW CLASS INSTANCES
+    case NewClass(ident, args) => {     // Calling the class constructor (classname)
+      // Look up the class in top-level ST
+      symbolTable.lookupAll(ident.value + "_c", Some(symbolTable)) match {
+        case Some(Class(_, _, constr, _)) => {
+          val expectedTypes = constr.paramList.paramList.map(_.typeNode)
+          if (checkArgList(args, expectedTypes, position, symbolTable, returnType)) {
+            Some(ClassTypeNode(ident)(position.pos))
+          } else {
+            // Expected types do not match actual types
+            var argTypes = args.map(arg => check(arg, symbolTable, returnType))
+            errors += new ArgTypeError(position, 
+              expectedTypes.map(_.toString()).mkString(", "), 
+              argTypes.map(_.getOrElse("none").toString()).mkString(", ")
+            )
+            None
+          }
+        }
+        case _ => {
+          // Class not found
+          errors += new NotDefinedError(position, ident.value)
+          None
+        }
+      }
+    }
+
+    // CLASS FUNCTION CALLS
+    case ClassCall(ident, callObj@Call(funcName, args)) => {
+      symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
+        case Some(ClassTypeNode(className)) => {
+          symbolTable.lookupAll(className.value + "_c", Some(symbolTable)) match {
+            case Some(cls@Class(_, _, _, _)) => {
+              // println(className)
+              // println(callObj)
+              // cls.symbolTable.printSymbolTable()
+              
+              // Calls are inner calls by default - set to outer 
+              callObj.setOuterCall()
+              check(callObj, cls.symbolTable, returnType)
+            }
+            case _ => {
+              // Class not found
+              errors += new NotDefinedError(position, className.value)
+              None
+            }
+          }
+        }
+        case _ => {
+          // Class has not been instantiated
+          errors += new NotDefinedError(position, ident.value)
+          None
+        }
+      }
+    } 
+
+    // CLASS VOID FUNCTION CALLS
+    case ClassCallVoid(ident, voidCallObj@CallVoid(funcName, args)) => {
+      symbolTable.lookupAll(ident.value, Some(symbolTable)) match {
+        case Some(ClassTypeNode(className)) => {
+          symbolTable.lookupAll(className.value + "_c", Some(symbolTable)) match {
+            case Some(cls@Class(_, _, _, _)) => {
+              // Calls are inner calls by default - set to outer 
+              voidCallObj.setOuterCall()
+              check(voidCallObj, cls.symbolTable, returnType)
+            }
+            case _ => {
+              // Class not found
+              errors += new NotDefinedError(position, className.value)
+              None
+            }
+          }
+        }
+        case _ => {
+          // Class has not been instantiated
+          errors += new NotDefinedError(position, ident.value)
+          None
+        }
+      }
+    }
+
+    // CLASS FIELD ACCESS
+    case ClassField(className, fieldName) => {
+      symbolTable.lookupAll(className.value, Some(symbolTable)) match {
+        case Some(ClassTypeNode(clsName)) => {
+          symbolTable.lookupAll(clsName.value + "_c", Some(symbolTable)) match {
+            case Some(cls@Class(_, _, _, _)) => {
+              cls.symbolTable.setOutOfScope()
+              check(fieldName, cls.symbolTable, returnType)
+            }
+            case _ => {
+              // Class not found
+              errors += new NotDefinedError(position, clsName.value)
+              None
+            }
+          }
+        }
+        case _ => {
+          // Class has not been instantiated
+          errors += new NotDefinedError(position, className.value)
+          None
+        }
+      }
+    }
+    // TODO: Add ClassTypeNode cases into IdentAsgn + AsgnEq
+
+    
+    // FUNCTIONS
+    case func@Func(typeNode, ident, paramList, statList) => {
+      symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
+        case Some(_) => {
+          val funcSymbolTable = symbolTable.enterScope()
+          paramList.paramList.foreach(param => {
+            funcSymbolTable.lookupAll(param.ident.value, Some(funcSymbolTable)) match {
+              case Some(_) =>
+                errors += new AlreadyDefinedError(position, param.ident.value)
+              case None =>
+                param.typeNode.isParam = true;
+                param.ident.typeNode = param.typeNode
+                funcSymbolTable.add(param.ident.value, param.typeNode)
             }
           })
           symbolTable.add(ident.value, func)
@@ -77,12 +317,15 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           // Set the symbol table of the function to the new (scoped) symbol table
 
           // Check statements
-          statList.foreach(stat => check(stat, newSymbolTable, Some(typeNode)))
-          func.symbolTable = newSymbolTable
+          statList.foreach(stat => check(stat, funcSymbolTable, Some(typeNode)))
+          func.symbolTable = funcSymbolTable
 
           Some(typeNode)
-        case None => errors += new NotDefinedError(position, ident.value)
+        }
+        case None => {
+          errors += new NotDefinedError(position, ident.value)
           None
+        }
       }
     }
     case tryStat@TryCatchStat(tryStmts, catches) => {
@@ -112,21 +355,21 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
 
     // VARIABLE DECLARATIONS
     case i@IdentAsgn(typeNode, ident, rvalue) => {
-      
       // Check rvalue (expr)
       val exprType = check(rvalue, symbolTable, returnType)
+      // println("Type of " + rvalue + " is " + exprType)
 
+      // Add variable to symbol table
       symbolTable.lookup(ident.value) match {
-        case Some(t) =>
-          t match {
-            case Func(_, _, _, _) =>
-              ident.typeNode = typeNode
-              symbolTable.add(ident.value, typeNode)
-            case x if x != typeNode =>
-              ident.typeNode = typeNode
-              symbolTable.add(ident.value, typeNode)
-            case _  => errors += new AlreadyDefinedError(position, ident.value)
-          }
+        case Some(t) => t match {
+          case Func(_, _, _, _) =>
+            ident.typeNode = typeNode
+            symbolTable.add(ident.value, typeNode)
+          case x if x != typeNode =>
+            ident.typeNode = typeNode
+            symbolTable.add(ident.value, typeNode)
+          case _  => errors += new AlreadyDefinedError(position, ident.value)
+        }
         case None => {
           ident.typeNode = typeNode
           symbolTable.add(ident.value, typeNode)
@@ -195,6 +438,7 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
             if (rvalue != ArrayLiter(List())(position.pos) && 
               rvalue != Null()(position.pos) && 
               exprType.getOrElse(None) != Null()(position.pos)) {
+              // println(ident.value + " " + typeNode + " :" + rvalue)
               errors += new TypeMismatchError(position, 
                 typeNode.toString(), exprType.getOrElse(" none1").toString())
             } else {
@@ -369,29 +613,25 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       }
     
     // FUNCTION CALLS
-    case Call(ident, args) =>
-      def checkArgList(
-          argList: List[Expr],
-          expected: List[TypeNode]
-      ): Boolean = {
-        // Check if the number of arguments matches the number of parameters
-        if (argList.length != expected.length) {
-          errors += new ArgNumError(position, expected.length, argList.length)
-          false
-        }
-        
-        val argTypes = argList.map(arg => check(arg, symbolTable, returnType))
-
-        argTypes.zip(expected).forall { 
-          case (argType, expectedType) => 
-            argType == Some(expectedType) || argType == Some(Null()(position.pos))
-        }
-      }
-
+    case call@Call(ident, args) => {
       symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
         case Some(Func(typeNode, _, paramList, _)) =>
           val expectedTypes = paramList.paramList.map(_.typeNode)
-          if (checkArgList(args, expectedTypes)) {
+          if (checkArgList(args, expectedTypes, position, symbolTable, returnType)) {
+            // println("Type of " + ident + " is " + typeNode)
+            // If the function is private, check if it is an inner call
+            typeNode.access match {
+              case Private() => {
+                call.getInnerCall() match {
+                  case true => {}
+                  case false => {
+                    errors += new PrivateAccessError(position, ident.value)
+                    None
+                  }
+                }
+              }
+              case Public() => {}
+            }
             Some(typeNode)
           } else {
             // Expected types do not match actual types
@@ -407,36 +647,28 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
           errors += new NotDefinedError(position, ident.value)
           None
       }
+    }
       
     /* EXTENSION - Void Types */
-    case CallVoid(ident, args) => {
-      def checkArgList(
-          argList: List[Expr],
-          expected: List[TypeNode]
-      ): Boolean = {
-        // Check if the number of arguments matches the number of parameters
-        if (argList.length != expected.length) {
-          errors += new ArgNumError(position, expected.length, argList.length)
-          false
-        }
-        // println("1")
-        val argTypes = argList.map(arg => check(arg, symbolTable, returnType))
-        // println("2")
-
-        argTypes.zip(expected).forall { 
-          case (argType, expectedType) => 
-            argType == Some(expectedType) || argType == Some(Null()(position.pos))
-        }
-      }
-
+    case voidCall@CallVoid(ident, args) => {
       symbolTable.lookupAll(ident.value + "_f", Some(symbolTable)) match {
         case Some(Func(typeNode, _, paramList, _)) =>
           val expectedTypes = paramList.paramList.map(_.typeNode)
-          if (checkArgList(args, expectedTypes)) {
-            // println("3")
-            // println(args)
-            // println(expectedTypes)
-            None
+          if (checkArgList(args, expectedTypes, position, symbolTable, returnType)) {
+            // If the function is private, check if it is an inner call
+            typeNode.access match {
+              case Private() => {
+                voidCall.getInnerCall() match {
+                  case true => {}
+                  case false => {
+                    errors += new PrivateAccessError(position, ident.value)
+                    None
+                  }
+                }
+              }
+              case Public() => {}
+            }
+            Some(VoidTypeNode()(position.pos))
           } else {
             // Expected types do not match actual types
             var argTypes = args.map(arg => check(arg, symbolTable, returnType))
@@ -674,18 +906,30 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
     case StringLiter(_) => Some(StringTypeNode()(position.pos))
     case i@Ident(value) =>
       symbolTable.lookupAll(value, Some(symbolTable)) match {
-        case Some(t) =>
+        case Some(t) => {
           t match {
-            case (Func(typeNode, _, _, _)) => Some(typeNode)
-            case _                         => {
+            case ClassFunc(_, Func(typeNode, _, _, _)) => Some(typeNode)
+            case Func(typeNode, _, _, _) => Some(typeNode)
+            case _ => {
               i.typeNode = t.asInstanceOf[TypeNode]
-              Some(t.asInstanceOf[TypeNode])
+              i.typeNode.access match {
+                case Private() => symbolTable.outOfScope match {
+                  case true => {
+                    errors += new PrivateAccessError(position, value)
+                    None
+                  }
+                  case _ => {}  // Inner Access
+                }
+                case _ => {}
+              }
+              Some(i.typeNode)
             }
           }
-        case None =>
-          // Identifier not found
+        }
+        case None => {
           errors += new NotDefinedError(position, value)
           None
+        }
       }
     case b@Brackets(expr) =>{
       val x = check(expr, symbolTable, returnType)
@@ -698,6 +942,29 @@ class TypeChecker(var initialSymbolTable: SymbolTable) {
       println("Type checking not implemented for " + position)
       errors += new NotDefinedError(position, "Type checking not implemented for " + position)
       None
+
+  }
+
+  // Check the list of arguments for a function call
+  def checkArgList(
+      argList: List[Expr],
+      expected: List[TypeNode],
+      position: Position,
+      symbolTable: SymbolTable,
+      returnType: Option[TypeNode]
+  ): Boolean = {
+    // Check if the number of arguments matches the number of parameters
+    if (argList.length != expected.length) {
+      errors += new ArgNumError(position, expected.length, argList.length)
+      false
+    }
+    
+    val argTypes = argList.map(arg => check(arg, symbolTable, returnType))
+
+    argTypes.zip(expected).forall { 
+      case (argType, expectedType) => 
+        argType == Some(expectedType) || argType == Some(Null()(position.pos))
+    }
   }
 
   def compatiblePairTypes(

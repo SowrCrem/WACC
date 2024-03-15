@@ -287,6 +287,9 @@ val builder = new WaccErrorBuilder with LexToken {
 
   private val lexer = new Lexer(desc, errorConfig)
   val integer: Parsley[Int] = lexer.lexeme.integer.decimal32
+  val hexInt = lexer.lexeme.integer.hexadecimal32
+  val octInt = lexer.lexeme.integer.octal32
+  val binInt = lexer.lexeme.integer.binary32
   val implicits = lexer.lexeme.symbol.implicits
 
   private val escapeChar: Parsley[Char] = {

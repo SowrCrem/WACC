@@ -16,7 +16,7 @@ import parsley.errors.ErrorBuilder
 import parsley.combinator._
 import lexer.implicits.implicitSymbol
 import parsley.syntax.lift
-import lexer.{integer, fully, char, implicits, ident, string}
+import lexer.{integer, fully, char, implicits, ident, string, hexInt, octInt}
 import parsley.Parsley.notFollowedBy
 import parsley.debug._
 import parsley.Parsley.lookAhead
@@ -30,6 +30,9 @@ object parser {
   lazy val arrayelemParser: Parsley[Expr] =
     ArrayElem(Ident(lexer.ident), some("[" ~> exprParser <~ "]"))
   lazy val intParser: Parsley[Expr] = IntLiter(lexer.integer)
+  lazy val hexParser: Parsley[Expr] = IntLiter(lexer.hexInt)
+  lazy val octParser: Parsley[Expr] = IntLiter(lexer.octInt)
+
   lazy val boolParser: Parsley[Expr] = BoolLiter(lexer.bool)
   lazy val charParser: Parsley[Expr] = CharLiter(lexer.char)
   lazy val stringParser: Parsley[Expr] = StringLiter(lexer.string)

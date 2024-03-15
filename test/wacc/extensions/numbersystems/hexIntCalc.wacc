@@ -1,0 +1,14 @@
+# simple integer calculation
+
+# Output:
+# 0x7d
+#
+
+# Program:
+
+begin
+  int x = 0x42 ;
+  int y = 0x3b ;
+  int z = x + y ;
+  println z
+end

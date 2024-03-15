@@ -66,18 +66,24 @@ object Main {
           return -1
         }
       }
-      parser.parse(fileContent) match {
-        case Success(prog) => prog match {
-          case Program(classList, funcList, _) => 
-          parser.validFunctions(classList, funcList) match {
-            case true  => semanticCheck(prog, fileName)
-            case false => syntaxError("Non-terminating branches or invalid return statements found")
+      macroPreProcessor.preprocess(fileContent) match {
+        case Right(macroSubstitutedFileContent) => {
+          fileContent = macroSubstitutedFileContent
+          parser.parse(fileContent) match {
+            case Success(prog) => prog match {
+              case Program(classList, funcList, _) => parser.validFunctions(classList, funcList) match {
+                case true  => semanticCheck(prog, fileName)
+                case false => syntaxError("Non-terminating branches found")
+              }
+              case _ => syntaxError("Program is not Well-Formed")
+            }
+            case Failure(msg) => syntaxError(msg)
           }
-          case _ => syntaxError("Program is not Well-Formed")
         }
-        case Failure(msg) => syntaxError(msg)
+        case Left(msg) => syntaxError(msg)
       }
     }
+
     case None => {
       println("IO Error: No file path provided")
       -1

@@ -1,0 +1,21 @@
+# Output
+# 1
+# 7
+
+begin
+  println "hello" ;
+  lazy pair(int, int) p = newpair(2, 3) ;
+  lazy pair(int, pair) q = newpair(1, p) ;
+  println "reached" ;
+  fst p = 1;
+  snd p = 1;
+  println "reached" ;
+  println (fst p) ;
+  
+  println (snd q) ;
+  println (fst snd q) ;
+  int y = snd snd q;
+  println y ;
+  int x = fst p ;
+  println x
+end
